@@ -1,7 +1,7 @@
 <template>
     <v-form v-model="valid" @submit="login" @submit.prevent>
         <v-container class="text-center">
-            <h1>Se connecter</h1>
+            <h1>{{ TITLE }}</h1>
             <v-row>
                 <v-col cols="12">
                     <base-text-field v-model="email" label="E-mail" :model="email" required :rules="emailRules" />
@@ -11,7 +11,7 @@
                         :rules="passwordRules" type="password" />
                 </v-col>
                 <v-col cols="12">
-                    <base-button block :disabled="!valid" text="Se connecter" type="submit" />
+                    <base-button block :disabled="!valid" :text="TITLE" type="submit" />
                 </v-col>
             </v-row>
             <base-link text="Pas de compte ? S'inscrire" to="/register" />
@@ -30,6 +30,8 @@ import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
+
+const TITLE = "Se connecter";
 
 const valid = ref(false);
 const email = ref("");

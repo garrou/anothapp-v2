@@ -6,6 +6,6 @@ export type TextFieldVariant =
   | "solo"
   | "solo-inverted"
   | "solo-filled"
-  | undefined
+  | undefined;
 
-export type TextFieldType = "text" | "password"
+export type TextFieldType = "text" | "password";

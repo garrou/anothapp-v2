@@ -4,4 +4,4 @@ export type BaseCardVariant =
     | "tonal"
     | "outlined"
     | "text"
-    | "plain"
+    | "plain";

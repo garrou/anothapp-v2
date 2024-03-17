@@ -25,6 +25,6 @@ const router = createRouter({
       component: () => import("../views/series/Series.vue")
     }
   ]
-})
+});
 
-export default router
+export default router;

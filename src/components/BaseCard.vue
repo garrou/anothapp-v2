@@ -15,5 +15,5 @@ defineProps({
     title: { type: String, required: false },
     variant: { type: String as PropType<BaseCardVariant>, default: "elevated" },
     width: { type: Number, required: false },
-})
+});
 </script>

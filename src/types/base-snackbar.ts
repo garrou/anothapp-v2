@@ -1,1 +1,1 @@
-export type BaseSnackbarLocation = "bottom"
+export type BaseSnackbarLocation = "bottom center";

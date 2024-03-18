@@ -3,7 +3,6 @@
 
   <div class="text-center ga-3">
     <base-link text="Se connecter" to="/login" />
-    <base-link text="S'inscrire" to="/register" />
   </div>
 </template>
 

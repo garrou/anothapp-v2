@@ -1,5 +1,5 @@
 <template>
-    <v-btn :block="block" :color="color" class="mt-2" :disabled="disabled" :icon="icon" :size="size" :text="text" :to="href" :type="type" />
+    <v-btn :block="block" :color="color" :disabled="disabled" :icon="icon" :size="size" :text="text" :to="href" :type="type" />
 </template>
 
 <script lang="ts" setup>

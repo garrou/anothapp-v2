@@ -9,6 +9,16 @@ const getSeries = async (title: string = "", kind: string = ""): Promise<Respons
     });
 }
 
+const updateFavorite = async (serieId: number): Promise<Response> => {
+    return fetch(`${import.meta.env.VITE_SERVER}/shows/${serieId}/favorite`, {
+        headers: {
+            "Authorization": `Bearer ${storageService.getJwt()}`
+        },
+        method: "PATCH"
+    });
+}
+
 export default {
-    getSeries
+    getSeries,
+    updateFavorite
 }

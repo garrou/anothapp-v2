@@ -2,7 +2,7 @@
     <v-container>
         <v-row>
             <v-col v-for="serie in series" cols="12" sm="6" md="4" lg="3">
-                <serie-card :serie="serie" @favorite="updateFavorite" />
+                <serie-card :serie="serie" @update-favorite="displaySnackbar" />
             </v-col>
         </v-row>
         <base-snackbar v-model="snackbar" :text="message" />
@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts" setup>
-import BaseSnackbar from '@/components/BaseSnackbar.vue';
+import BaseSnackbar from '@/components/base/BaseSnackbar.vue';
 import SerieCard from '@/components/SerieCard.vue';
 import type { Serie } from '@/models/internal/serie';
 import serieService from '@/services/serieService';
@@ -27,20 +27,13 @@ const getSeries = async (): Promise<Serie[]> => {
     if (isSuccess(resp.status)) {
         return await resp.json();
     } else {
-        message.value = (await resp.json()).message;
-        snackbar.value = true;
+        displaySnackbar((await resp.json()).message);
     }
     return [];
 }
 
-const updateFavorite = async (id: number, title: string): Promise<void> => {
-    const resp = await serieService.updateFavorite(id);
-
-    if (isSuccess(resp.status)) {
-        message.value = `"${title}" ajoutée aux favorites`;
-    } else {
-        message.value = (await resp.json()).message;
-    }
+const displaySnackbar = (msg: string): void => {
+    message.value = msg;
     snackbar.value = true;
 }
 

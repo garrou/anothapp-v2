@@ -1,7 +1,7 @@
-const endpoint = import.meta.env.VITE_SERVER;
+import { ENDPOINT } from "./constants";
 
 const login = async (email: string, password: string) => {
-    return fetch(`${endpoint}/users/login`, {
+    return fetch(`${ENDPOINT}/users/login`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -14,7 +14,7 @@ const login = async (email: string, password: string) => {
 }
 
 const register = async (email: string, password: string, confirm: string) => {
-    return fetch(`${endpoint}/users/register`, {
+    return fetch(`${ENDPOINT}/users/register`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

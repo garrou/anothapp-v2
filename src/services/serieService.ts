@@ -1,7 +1,16 @@
+import { ENDPOINT } from "./constants";
 import storageService from "./storageService";
 
+const getSeasonsBySerieId = async (id: number): Promise<Response> => {
+    return fetch(`${ENDPOINT}/shows/${id}/seasons`, {
+        headers: {
+            "Authorization": `Bearer ${storageService.getJwt()}`
+        }
+    });
+}
+
 const getSeries = async (title: string = "", kind: string = ""): Promise<Response> => {
-    const url = `${import.meta.env.VITE_SERVER}/shows`;
+    const url = `${ENDPOINT}/shows`;
     return fetch(url, {
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`
@@ -9,8 +18,8 @@ const getSeries = async (title: string = "", kind: string = ""): Promise<Respons
     });
 }
 
-const updateFavorite = async (serieId: number): Promise<Response> => {
-    return fetch(`${import.meta.env.VITE_SERVER}/shows/${serieId}/favorite`, {
+const updateFavoriteBySerieId = async (id: number): Promise<Response> => {
+    return fetch(`${ENDPOINT}/shows/${id}/favorite`, {
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`
         },
@@ -19,6 +28,7 @@ const updateFavorite = async (serieId: number): Promise<Response> => {
 }
 
 export default {
+    getSeasonsBySerieId,
     getSeries,
-    updateFavorite
+    updateFavoriteBySerieId
 }

@@ -1,8 +1,8 @@
 <template>
     <v-container>
         <v-row>
-            <v-col v-for="serie in series" cols="6" md="4" lg="3">
-                <serie-card :serie="serie" @update-favorite="displaySnackbar" />
+            <v-col v-for="season in seasons" cols="6" md="4" lg="3">
+                <season-card :season="season" />
             </v-col>
         </v-row>
         <v-snackbar v-model="snackbar" :text="message" />
@@ -10,33 +10,33 @@
 </template>
 
 <script lang="ts" setup>
-import SerieCard from "@/components/SerieCard.vue";
-import type { Serie } from "@/models/internal/serie";
+import SeasonCard from "@/components/SeasonCard.vue";
+import type { Season } from "@/models/internal/season";
 import serieService from "@/services/serieService";
 import { isSuccess } from "@/utils/response";
 import { onBeforeMount, ref, watch } from "vue";
 
-const series = ref<Serie[]>([]);
+const props = defineProps({
+    id: { type: Number, required: true }
+});
+
 const message = ref("");
+const seasons = ref<Season[]>([]);
 const snackbar = ref(false);
 
-const getSeries = async (): Promise<Serie[]> => {
-    const resp = await serieService.getSeries();
+const getSeasons = async (): Promise<Season[]> => {
+    const resp = await serieService.getSeasonsBySerieId(props.id);
     const data = await resp.json();
 
     if (isSuccess(resp.status)) {
         return data;
     } 
-    displaySnackbar(data.message);
+    message.value = data.message;
     return [];
 }
 
-const displaySnackbar = (msg: string): void => {
-    message.value = msg;
-}
-
 onBeforeMount(async () => {
-    series.value = await getSeries();
+    seasons.value = await getSeasons();
 });
 
 watch(message, () => {

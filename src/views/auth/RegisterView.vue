@@ -4,31 +4,27 @@
             <h1>{{ TITLE }}</h1>
             <v-row>
                 <v-col cols="12">
-                    <base-text-field label="E-mail" :model="email" required :rules="emailRules" suffix="@xyz.com" />
+                    <v-text-field label="E-mail" :model="email" required :rules="emailRules" suffix="@xyz.com" />
                 </v-col>
                 <v-col cols="12">
-                    <base-text-field :counter="true" label="Mot de passe" :model="password" required
+                    <v-text-field :counter="true" label="Mot de passe" :model="password" required
                         :rules="passwordRules" type="password" />
                 </v-col>
                 <v-col cols="12">
-                    <base-text-field :counter="true" label="Confirmer le mot de passe" :model="confirmPassword" required
+                    <v-text-field :counter="true" label="Confirmer le mot de passe" :model="confirmPassword" required
                         :rules="passwordRules" type="password" />
                 </v-col>
                 <v-col cols="12">
-                    <base-button block :disabled="!valid" :text="TITLE" type="submit" />
+                    <v-btn block :disabled="!valid" :text="TITLE" type="submit" />
                 </v-col>
             </v-row>
-            <base-link text="Déjà membre ? Se connecter" to="/login" />
+            <router-link text="Déjà membre ? Se connecter" to="/login" />
         </v-container>
-        <base-alert v-if="displayError" :text="error" />
+        <v-alert v-if="displayError" :text="error" />
     </v-form>
 </template>
 
 <script lang="ts" setup>
-import BaseAlert from "@/components/BaseAlert.vue";
-import BaseButton from "@/components/BaseButton.vue";
-import BaseLink from "@/components/BaseLink.vue";
-import BaseTextField from "@/components/BaseTextField.vue";
 import userService from "@/services/userService";
 import { computed, ref } from "vue";
 import { useRouter } from "vue-router";

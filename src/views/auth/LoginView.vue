@@ -4,26 +4,22 @@
             <h1>{{ TITLE }}</h1>
             <v-row>
                 <v-col cols="12">
-                    <base-text-field v-model="email" label="E-mail" :model="email" required :rules="emailRules" />
+                    <v-text-field v-model="email" label="E-mail" :model="email" required :rules="emailRules" />
                 </v-col>
                 <v-col cols="12">
-                    <base-text-field v-model="password" :counter="true" label="Mot de passe" :model="password" required
+                    <v-text-field v-model="password" :counter="true" label="Mot de passe" :model="password" required
                         :rules="passwordRules" type="password" />
                 </v-col>
                 <v-col cols="12">
-                    <base-button block :disabled="!valid" :text="TITLE" type="submit" />
+                    <v-btn block :disabled="!valid" :text="TITLE" type="submit" />
                 </v-col>
             </v-row>
-            <base-link text="Pas de compte ? S'inscrire" to="/register" />
+            <router-link text="Pas de compte ? S'inscrire" to="/register" />
         </v-container>
-        <base-alert v-if="displayError" :text="error" />
+        <v-alert v-if="displayError" :text="error" />
     </v-form>
 </template>
 <script lang="ts" setup>
-import BaseAlert from "@/components/BaseAlert.vue";
-import BaseButton from "@/components/BaseButton.vue";
-import BaseLink from "@/components/BaseLink.vue";
-import BaseTextField from "@/components/BaseTextField.vue";
 import storageService from "@/services/storageService";
 import userService from "@/services/userService";
 import { computed, ref } from "vue";

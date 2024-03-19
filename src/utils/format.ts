@@ -1,0 +1,1 @@
+export const buildUrl = (url: string, query: string, param?: string, separator: string = "&"): string => url.concat(param ? `${separator}${query}=${param}` : "");

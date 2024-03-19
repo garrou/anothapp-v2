@@ -4,11 +4,11 @@
             <h1>{{ TITLE }}</h1>
             <v-row>
                 <v-col cols="12">
-                    <v-text-field v-model="email" label="E-mail" :model="email" required :rules="emailRules" />
+                    <v-text-field v-model="email" label="E-mail" :model="email" required :rules="emailRules" variant="underlined" />
                 </v-col>
                 <v-col cols="12">
                     <v-text-field v-model="password" :counter="true" label="Mot de passe" :model="password" required
-                        :rules="passwordRules" type="password" />
+                        :rules="passwordRules" type="password" variant="underlined" />
                 </v-col>
                 <v-col cols="12">
                     <v-btn block :disabled="!valid" :text="TITLE" type="submit" />
@@ -16,13 +16,11 @@
             </v-row>
             <router-link text="Pas de compte ? S'inscrire" to="/register" />
         </v-container>
-        <v-alert v-if="displayError" :text="error" />
     </v-form>
 </template>
 <script lang="ts" setup>
-import storageService from "@/services/storageService";
 import userService from "@/services/userService";
-import { computed, ref } from "vue";
+import { ref } from "vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
@@ -32,9 +30,6 @@ const TITLE = "Se connecter";
 const valid = ref(false);
 const email = ref("");
 const password = ref("");
-const error = ref("");
-
-const displayError = computed(() => error.value.length > 0);
 
 const emailRules = [
     (value?: string) => {
@@ -59,13 +54,9 @@ const passwordRules = [
 ];
 
 const login = async () => {
-    const resp = await userService.login(email.value, password.value);
+    const success = await userService.login(email.value, password.value);
 
-    if (resp.status === 200) {
-        storageService.storeJwt((await resp.json()).token);
+    if (success)
         router.replace("/series");
-    } else {
-        error.value = (await resp.json()).message;
-    }
 }
 </script>

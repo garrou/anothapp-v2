@@ -1,45 +1,55 @@
 <template>
-    <v-container>
-        <v-row>
-            <v-col v-for="serie in series" cols="6" md="4" lg="3">
-                <serie-card :serie="serie" @update-favorite="displaySnackbar" />
-            </v-col>
-        </v-row>
-        <v-snackbar v-model="snackbar" :text="message" />
-    </v-container>
+    <v-form @submit="getSeries" @submit.prevent>
+        <v-container>
+            <v-row justify="center">
+                <v-col>
+                    <v-text-field v-model="search" label="Titre de la série" variant="underlined" />
+                </v-col>
+                <v-col>
+                    <v-btn icon="mdi-magnify" type="submit" />
+                </v-col>
+            </v-row>
+            <v-row>
+                <v-col v-for="serie in series" cols="6" md="4" lg="3" :key="serie.id">
+                    <v-skeleton-loader :loading="loading" type="card">
+                        <v-responsive>
+                            <serie-card :serie="serie" @update-favorite="displaySnackbar" />
+                        </v-responsive>
+                    </v-skeleton-loader>
+                </v-col>
+            </v-row>
+            <v-snackbar v-model="snackbar" :text="message" />
+        </v-container>
+    </v-form>
 </template>
 
 <script lang="ts" setup>
 import SerieCard from "@/components/SerieCard.vue";
 import type { Serie } from "@/models/internal/serie";
 import serieService from "@/services/serieService";
-import { isSuccess } from "@/utils/response";
 import { onBeforeMount, ref, watch } from "vue";
 
-const series = ref<Serie[]>([]);
+const loading = ref(true);
 const message = ref("");
+const search = ref("");
+const series = ref<Serie[]>([]);
 const snackbar = ref(false);
-
-const getSeries = async (): Promise<Serie[]> => {
-    const resp = await serieService.getSeries();
-    const data = await resp.json();
-
-    if (isSuccess(resp.status)) {
-        return data;
-    } 
-    displaySnackbar(data.message);
-    return [];
-}
 
 const displaySnackbar = (msg: string): void => {
     message.value = msg;
+    snackbar.value = true;
+}
+
+const getSeries = async (): Promise<void> => {
+    series.value = await serieService.getSeries(search.value);
+    loading.value = false;
 }
 
 onBeforeMount(async () => {
-    series.value = await getSeries();
+    await getSeries();
 });
 
-watch(message, () => {
-    snackbar.value = true;
+watch(search, () => {
+    loading.value = true;
 });
 </script>

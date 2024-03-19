@@ -16,7 +16,7 @@
 import SeasonCard from "@/components/SeasonCard.vue";
 import type { Season } from "@/models/internal/season";
 import serieService from "@/services/serieService";
-import { onBeforeMount, ref, watch } from "vue";
+import { onBeforeMount, ref } from "vue";
 
 const props = defineProps({
     id: { type: Number, required: true }

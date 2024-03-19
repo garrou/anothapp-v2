@@ -10,6 +10,7 @@ import router from "./router";
 import { createVuetify } from "vuetify";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
+import { useSnackbarStore } from '@/stores/snackbar';
 
 const vuetify = createVuetify({
   components,
@@ -21,7 +22,9 @@ app.use(createPinia());
 app.use(router);
 app.use(vuetify);
 
-app.config.errorHandler = (err) => {
-  window.alert(err);
+const snackbarStore = useSnackbarStore();
+
+app.config.errorHandler = (err: unknown) => {
+  snackbarStore.setError(err as Error);
 }
 app.mount("#app");

@@ -13,12 +13,11 @@
                 <v-col v-for="serie in series" cols="6" md="4" lg="3" :key="serie.id">
                     <v-skeleton-loader :loading="loading" type="card">
                         <v-responsive>
-                            <serie-card :serie="serie" @update-favorite="displaySnackbar" />
+                            <serie-card :serie="serie" />
                         </v-responsive>
                     </v-skeleton-loader>
                 </v-col>
             </v-row>
-            <v-snackbar v-model="snackbar" :text="message" />
         </v-container>
     </v-form>
 </template>
@@ -30,15 +29,8 @@ import serieService from "@/services/serieService";
 import { onBeforeMount, ref, watch } from "vue";
 
 const loading = ref(true);
-const message = ref("");
 const search = ref("");
 const series = ref<Serie[]>([]);
-const snackbar = ref(false);
-
-const displaySnackbar = (msg: string): void => {
-    message.value = msg;
-    snackbar.value = true;
-}
 
 const getSeries = async (): Promise<void> => {
     series.value = await serieService.getSeries(search.value);

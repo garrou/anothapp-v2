@@ -18,15 +18,14 @@
 <script lang="ts" setup>
 import type { Serie } from '@/models/internal/serie';
 import serieService from '@/services/serieService';
+import { useSnackbarStore } from '@/stores/snackbar';
 import { computed, ref, type PropType } from 'vue';
-
-const emit = defineEmits<{
-    updateFavorite: [msg: string]
-}>();
 
 const props = defineProps({
     serie: { type: Object as PropType<Serie>, required: true }
-})
+});
+
+const snackBarStore = useSnackbarStore();
 
 const isFavorite = ref(props.serie.favorite);
 
@@ -40,7 +39,7 @@ const updateFavorite = async (): Promise<void> => {
             ? `"${props.serie.title}" supprimée des favorites`
             : `"${props.serie.title}" ajoutée aux favorites`;
         isFavorite.value = !isFavorite.value;
-        emit("updateFavorite", message);
+        snackBarStore.setMessage(message);
     }
 }
 

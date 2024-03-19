@@ -38,11 +38,22 @@ const register = async (email: string, password: string, confirm: string): Promi
 
     if (isSuccess(resp.status))
         return true;
-    
+
     throw new Error(data.message);
 }
 
+const isLoggedIn = async (): Promise<boolean> => {
+    const resp = await fetch(`${ENDPOINT}/users/me`, { 
+        headers: {
+            "Authorization": `Bearer ${storageService.getJwt()}`
+        }
+    });
+    return isSuccess(resp.status);
+}
+
+
 export default {
+    isLoggedIn,
     login,
     register,
 }

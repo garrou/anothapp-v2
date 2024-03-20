@@ -1,7 +1,13 @@
 <template>
-    <v-card rounded="10">
+    <v-card>
         <router-link :to="`/series/${serie.id}`">
-            <v-img :src="serie.poster" class="align-end" cover />
+            <v-img :src="serie.poster" class="align-end" cover>
+                <template v-slot:placeholder>
+                    <v-row align="center" class="fill-height ma-0" justify="center">
+                        <v-progress-circular color="black" indeterminate />
+                    </v-row>
+                </template>
+            </v-img>
         </router-link>
 
         <v-card-subtitle class="pt-4">
@@ -33,14 +39,13 @@ const favoriteColor = computed(() => isFavorite.value ? "red" : "surface-variant
 
 const updateFavorite = async (): Promise<void> => {
     const success = await serieService.updateFavoriteBySerieId(props.serie.id);
+    if (!success) return
 
-    if (success) {
-        const message = isFavorite.value
-            ? `"${props.serie.title}" supprimée des favorites`
-            : `"${props.serie.title}" ajoutée aux favorites`;
-        isFavorite.value = !isFavorite.value;
-        snackBarStore.setMessage(message);
-    }
+    const message = isFavorite.value
+        ? `"${props.serie.title}" supprimée des favorites`
+        : `"${props.serie.title}" ajoutée aux favorites`;
+    isFavorite.value = !isFavorite.value;
+    snackBarStore.setMessage(message);
 }
 
 const share = () => {

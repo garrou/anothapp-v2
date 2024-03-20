@@ -1,35 +1,24 @@
 <template>
     <v-layout v-if="navbar" class="overflow-visible" style="height: 50px;">
         <v-bottom-navigation mode="shift">
-            <v-btn>
-                <v-icon>mdi-television-play</v-icon>
-
-                <span>Video</span>
+            <v-btn to="/series">
+                <v-icon>mdi-view-headline</v-icon>
+                <span>Mes séries</span>
             </v-btn>
-
             <v-btn>
-                <v-icon>mdi-music-note</v-icon>
-
-                <span>Music</span>
+                <v-icon>mdi-magnify</v-icon>
+                <span>Découvrir</span>
             </v-btn>
-
             <v-btn>
-                <v-icon>mdi-book</v-icon>
-
-                <span>Book</span>
-            </v-btn>
-
-            <v-btn>
-                <v-icon>mdi-image</v-icon>
-
-                <span>Image</span>
+                <v-icon>mdi-account</v-icon>
+                <span>Profil</span>
             </v-btn>
         </v-bottom-navigation>
     </v-layout>
 </template>
 
 <script lang="ts" setup>
-import { computed, onBeforeMount, ref } from 'vue';
+import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 
 const route = useRoute();

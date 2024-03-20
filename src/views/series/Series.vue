@@ -36,7 +36,7 @@ const series = ref<Serie[]>([]);
 
 const loadSeries = async (): Promise<void> => {
     loading.value = true;
-    series.value = await getSeries({ refresh: false, title: search.value });
+    series.value = await getSeries({ title: search.value });
     loading.value = false;
 }
 

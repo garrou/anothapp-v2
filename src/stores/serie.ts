@@ -9,15 +9,18 @@ export const useSerieStore = defineStore("serie", () => {
     return series.value.size > 0;
   }
 
-  const setSeries = (all: Serie[]) => {
-    all.forEach((serie) => series.value.set(serie.id, serie));
+  const setSeries = (ser: Serie[]): void => {
+    series.value = ser.reduce((acc, curr: Serie) => {
+      acc.set(curr.id, curr);
+      return acc;
+    }, new Map<number, Serie>);
   }
 
   const getSerie = (id: number): Serie => {
     const serie = series.value.get(id);
 
     if (!serie)
-        throw new Error(`La série ${id} n'existe pas`);
+      throw new Error(`La série ${id} n'existe pas`);
 
     return serie;
   }
@@ -28,7 +31,7 @@ export const useSerieStore = defineStore("serie", () => {
       .filter((serie) => regex.test(serie.title));
   }
 
-  const getSeries = () => {
+  const getSeries = (): Serie[] => {
     return Array.from(series.value.values());
   }
 

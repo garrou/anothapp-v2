@@ -19,21 +19,22 @@ import type { Season } from "@/models/internal/season";
 import type { Serie } from "@/models/internal/serie";
 import { useSerieStore } from "@/stores/serie";
 import { onBeforeMount, ref } from "vue";
-import { useSerie } from "@/composables/serie";
+import { useSeason } from "@/composables/season";
 
 const props = defineProps({
     id: { type: Number, required: true }
 });
 
-const { getSeasonsBySerieId } = useSerie();
+const { getSeasonsBySerieId } = useSeason();
 const serieStore = useSerieStore();
 
-const loading = ref(true);
+const loading = ref(false);
 const serie = ref<Serie>();
 const seasons = ref<Season[]>([]);
 
 const getSeasons = async (): Promise<void> => {
-    seasons.value = await getSeasonsBySerieId(props.id);
+    loading.value = true;
+    seasons.value = await getSeasonsBySerieId({ serieId: props.id });
     loading.value = false;
 }
 

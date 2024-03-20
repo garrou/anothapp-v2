@@ -11,6 +11,7 @@ const router = createRouter({
   routes: [
     {
       path: "/",
+      name: "home",
       component: HomeView
     },
     {
@@ -48,6 +49,10 @@ router.beforeEach(async (to, from) => {
     return {
       path: "/login",
       query: { redirect: to.fullPath }
+    }
+  } else if (!to.meta.requiresAuth && isLoggedIn) {
+    return {
+      path: "/series"
     }
   }
 });

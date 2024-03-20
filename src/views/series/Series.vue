@@ -2,10 +2,10 @@
     <v-form @submit="getSeries" @submit.prevent>
         <v-container>
             <v-row justify="center">
-                <v-col>
+                <v-col cols="9">
                     <v-text-field v-model="search" label="Titre de la série" variant="underlined" />
                 </v-col>
-                <v-col>
+                <v-col cols="3">
                     <v-btn icon="mdi-magnify" type="submit" />
                 </v-col>
             </v-row>
@@ -26,22 +26,19 @@
 import SerieCard from "@/components/SerieCard.vue";
 import type { Serie } from "@/models/internal/serie";
 import serieService from "@/services/serieService";
-import { onBeforeMount, ref, watch } from "vue";
+import { onBeforeMount, ref } from "vue";
 
-const loading = ref(true);
+const loading = ref(false);
 const search = ref("");
 const series = ref<Serie[]>([]);
 
 const getSeries = async (): Promise<void> => {
-    series.value = await serieService.getSeries(search.value);
+    loading.value = true;
+    series.value = await serieService.getSeries(search.value)
     loading.value = false;
 }
 
 onBeforeMount(async () => {
     await getSeries();
-});
-
-watch(search, () => {
-    loading.value = true;
 });
 </script>

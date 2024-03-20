@@ -12,8 +12,8 @@
 </template>
 
 <script lang="ts" setup>
-import type { Season } from '@/models/internal/season';
-import type { PropType } from 'vue';
+import type { Season } from "@/models/internal/season";
+import type { PropType } from "vue";
 
 defineProps({
     season: { type: Object as PropType<Season>, required: true }

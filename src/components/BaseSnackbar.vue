@@ -11,9 +11,9 @@
 </template>
 
 <script lang="ts" setup>
-import { useSnackbarStore } from '@/stores/snackbar';
-import { storeToRefs } from 'pinia';
-import { ref, watch } from 'vue';
+import { useSnackbarStore } from "@/stores/snackbar";
+import { storeToRefs } from "pinia";
+import { ref, watch } from "vue";
 
 const snackBarStore = useSnackbarStore();
 const { message, subject } = storeToRefs(snackBarStore);

@@ -1,8 +1,10 @@
 <template>
-  <router-view />
+  <router-view /> 
+  <base-navbar />
   <base-snackbar />
 </template>
 
 <script setup lang="ts">
-  import BaseSnackbar from './components/BaseSnackbar.vue';
+import BaseNavbar from "./components/BaseNavbar.vue";
+import BaseSnackbar from "./components/BaseSnackbar.vue";
 </script>

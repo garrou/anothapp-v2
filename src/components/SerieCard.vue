@@ -1,5 +1,5 @@
 <template>
-    <v-card>
+    <v-card rounded="10">
         <router-link :to="`/series/${serie.id}`">
             <v-img :src="serie.poster" class="align-end" cover />
         </router-link>
@@ -16,10 +16,10 @@
 </template>
 
 <script lang="ts" setup>
-import type { Serie } from '@/models/internal/serie';
-import serieService from '@/services/serieService';
-import { useSnackbarStore } from '@/stores/snackbar';
-import { computed, ref, type PropType } from 'vue';
+import type { Serie } from "@/models/internal/serie";
+import serieService from "@/services/serieService";
+import { useSnackbarStore } from "@/stores/snackbar";
+import { computed, ref, type PropType } from "vue";
 
 const props = defineProps({
     serie: { type: Object as PropType<Serie>, required: true }

@@ -34,7 +34,7 @@ const router = createRouter({
     {
       path: "/series/:id",
       component: SerieDetails,
-      props: true,
+      props: (route) => ({ id: Number(route.params.id) }),
       meta: {
         requiresAuth: true
       }

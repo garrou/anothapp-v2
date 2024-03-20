@@ -1,5 +1,5 @@
 <template>
-    <v-form @submit="getSeries" @submit.prevent>
+    <v-form @submit="loadSeries" @submit.prevent>
         <v-container>
             <v-row justify="center">
                 <v-col cols="9">
@@ -11,7 +11,7 @@
             </v-row>
             <v-row>
                 <v-col v-for="serie in series" cols="6" md="4" lg="3" :key="serie.id">
-                    <v-skeleton-loader :loading="loading" type="card">
+                    <v-skeleton-loader :loading="loading" type="card" elevation="3">
                         <v-responsive>
                             <serie-card :serie="serie" />
                         </v-responsive>
@@ -25,20 +25,22 @@
 <script lang="ts" setup>
 import SerieCard from "@/components/SerieCard.vue";
 import type { Serie } from "@/models/internal/serie";
-import serieService from "@/services/serieService";
 import { onBeforeMount, ref } from "vue";
+import { useSerie } from "@/composables/serie";
+
+const { getSeries } = useSerie();
 
 const loading = ref(false);
-const search = ref("");
+const search = ref();
 const series = ref<Serie[]>([]);
 
-const getSeries = async (): Promise<void> => {
+const loadSeries = async (): Promise<void> => {
     loading.value = true;
-    series.value = await serieService.getSeries(search.value)
+    series.value = await getSeries({ refresh: false, title: search.value });
     loading.value = false;
 }
 
 onBeforeMount(async () => {
-    await getSeries();
+    await loadSeries();
 });
 </script>

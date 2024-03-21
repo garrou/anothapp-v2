@@ -1,13 +1,13 @@
 <template>
     <v-container v-if="infos && seasons">
         <v-toolbar density="compact">
-            <v-app-bar-nav-icon to="/series">
+            <v-app-bar-nav-icon @click="$router.back()">
                 <v-icon>mdi-arrow-left</v-icon>
             </v-app-bar-nav-icon>
 
             <v-toolbar-title>{{ infos.serie.title }}</v-toolbar-title>
 
-            <v-btn icon>
+            <v-btn icon @click="changeFavorite">
                 <v-icon :color="favoriteColor">mdi-heart</v-icon>
             </v-btn>
 
@@ -74,15 +74,16 @@ const props = defineProps({
 
 const items = ["Informations", "Saisons"].map((text, index) => ({ title: text, value: index + 1 }));
 
-const { getSerie } = useSerie();
+const { getSerie, updateFavorite } = useSerie();
 const { getSeasonsBySerieId } = useSearch();
 
 const loading = ref(false);
 const infos = ref<SerieInfos>();
 const seasons = ref<Season[]>();
 const tab = ref(1);
+const isFavorite = ref(infos.value?.serie.favorite);
 
-const favoriteColor = computed(() => infos.value?.serie.favorite ? "red" : "surface-variant");
+const favoriteColor = computed(() => isFavorite.value ? "red" : "surface-variant");
 const time = computed(() => minsToStringHoursDays(infos.value?.time));
 
 const load = async (): Promise<void> => {
@@ -90,6 +91,11 @@ const load = async (): Promise<void> => {
     infos.value = await getSerie({ id: props.id });
     seasons.value = await getSeasonsBySerieId(props.id);
     loading.value = false;
+}
+
+const changeFavorite = async () => {
+    if (!infos.value?.serie) return
+    isFavorite.value = await updateFavorite(infos.value?.serie);
 }
 
 onBeforeMount(async () => {

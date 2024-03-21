@@ -2,8 +2,11 @@ import type { Serie, SerieInfos } from "@/models/internal/serie";
 import serieService from "@/services/serieService";
 import type { SerieSearchOptions } from "@/types/search";
 import { isError } from "@/utils/response";
+import { useSnackbar } from "./snackbar";
 
 export function useSerie() {
+
+    const snackBar = useSnackbar();
 
     const getSerie = async (options: SerieSearchOptions): Promise<SerieInfos> => {
         const { id } = options;
@@ -32,15 +35,19 @@ export function useSerie() {
         return data;
     }
 
-    const updateFavoriteBySerieId = async (id: number): Promise<boolean> => {
-        const resp = await serieService.updateFavoriteBySerieId(id);
+    const updateFavorite = async (serie: Serie): Promise<boolean> => {
+        const resp = await serieService.updateFavoriteBySerieId(serie.id);
         const data = await resp.json();
 
         if (isError(resp.status))
             throw new Error(data.message);
 
-        return true;
+        const message = serie.favorite
+            ? `"${serie.title}" supprimée des favorites`
+            : `"${serie.title}" ajoutée aux favorites`;
+        snackBar.setMessage(message);
+        return !serie.favorite;
     }
 
-    return { getSerie, getSeries, updateFavoriteBySerieId }
+    return { getSerie, getSeries, updateFavorite }
 }

@@ -1,6 +1,18 @@
 import { buildUrl } from "@/utils/format";
 import { ENDPOINT } from "./constants";
 import storageService from "./storageService";
+import type { Season } from "@/models/internal/season";
+
+const addSeason = async (id: number, season: Season): Promise<Response> => {
+    return fetch(`${ENDPOINT}/shows/${id}/seasons`, {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${storageService.getJwt()}`,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(season)
+    });
+}
 
 const deleteSerie = async (id: number): Promise<Response> => {
     return fetch(`${ENDPOINT}/shows/${id}`, {
@@ -46,6 +58,7 @@ const updateFavoriteBySerieId = async (id: number): Promise<Response> => {
 }
 
 export default {
+    addSeason,
     deleteSerie,
     getSeasonsBySerieId,
     getSerie,

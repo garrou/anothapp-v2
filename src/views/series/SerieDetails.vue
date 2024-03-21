@@ -22,19 +22,26 @@
         </base-toolbar>
 
         <v-window v-model="tab">
-            <v-window-item :value="1" class="pa-2">
+            <v-window-item class="pa-2" :value="1">
                 <v-card class="mb-2">
                     <v-row>
                         <v-col cols="3">
                             <base-image :src="infos.serie.poster" max-height="350" class="ma-2" />
                         </v-col>
                         <v-col cols="9">
-                            <v-card-title>Temps de visionnage</v-card-title>
-                            <v-card-text>{{ time }}</v-card-text>
+                            <v-card-title>{{ time }}</v-card-title>
 
-                            <v-card-title>Avancement {{ infos.seasons.length }} / {{ seasons.length }}</v-card-title>
+                            <v-card-title>Saisons {{ infos.seasons.length }} / {{ seasons.length }}</v-card-title>
                             <v-card-text>
                                 <v-progress-linear v-model="infos.seasons.length" :max="seasons.length" rounded />
+                            </v-card-text>
+
+                            <v-card-title>Episodes {{ infos.episodes }}</v-card-title>
+
+                            <v-card-text>
+                                <v-btn @click="sort(infos.seasons)" class="mb-2">
+                                    <v-icon>{{ orderIcon }}</v-icon>
+                                </v-btn>
                             </v-card-text>
                         </v-col>
                     </v-row>
@@ -43,12 +50,13 @@
                 <seasons-row :loading="loading" :seasons="infos.seasons" />
             </v-window-item>
 
-            <v-window-item :value="2">
-                <seasons-row :loading="loading" :seasons="seasons">
-                    <template #add>
-                        <v-btn color="surface-variant" icon="mdi-tray-plus" variant="text" @click="" />
-                    </template>
-                </seasons-row>
+            <v-window-item class="pa-2" :value="2">
+
+                <v-btn @click="sort(seasons)" class="mb-2">
+                    <v-icon>{{ orderIcon }}</v-icon>
+                </v-btn>
+
+                <seasons-row :addable="true" :loading="loading" :seasons="seasons" @add="newSeason" />
             </v-window-item>
         </v-window>
     </v-container>
@@ -64,6 +72,7 @@ import BaseToolbar from "@/components/BaseToolbar.vue";
 import SeasonsRow from "@/components/SeasonsRow.vue";
 import type { SerieInfos } from "@/models/internal/serie";
 import { computed, onBeforeMount, ref } from "vue";
+import { useSeason } from "@/composables/season";
 import { useSearch } from "@/composables/search";
 import { useSerie } from "@/composables/serie";
 import type { Season } from "@/models/internal/season";
@@ -74,6 +83,7 @@ const props = defineProps({
     id: { type: Number, required: true }
 });
 
+const { addSeason } = useSeason();
 const { deleteSerie, getSerie, updateFavorite } = useSerie();
 const { getSeasonsBySerieId } = useSearch();
 
@@ -83,8 +93,10 @@ const isFavorite = ref(false);
 const loading = ref(false);
 const seasons = ref<Season[]>();
 const tab = ref(1);
+const order = ref(true);
 
 const favoriteColor = computed(() => isFavorite.value ? "red" : "surface-variant");
+const orderIcon = computed(() => order.value ? "mdi-sort-numeric-descending" : "mdi-sort-numeric-ascending");
 const time = computed(() => minsToStringHoursDays(infos.value?.time));
 
 const load = async (): Promise<void> => {
@@ -93,6 +105,16 @@ const load = async (): Promise<void> => {
     seasons.value = await getSeasonsBySerieId(props.id);
     isFavorite.value = infos.value?.serie.favorite;
     loading.value = false;
+}
+
+const sort = (arr: Season[]) => {
+    order.value = !order.value;
+    arr.sort((a: Season, b: Season) => order.value ? a.number - b.number : b.number - a.number);
+}
+
+const newSeason = async (season: Season) => {
+    if (!infos.value?.serie) return
+    await addSeason(infos.value.serie, season);
 }
 
 const changeFavorite = async () => {

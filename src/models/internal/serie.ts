@@ -13,9 +13,11 @@ export interface Serie {
 
 export interface SerieInfos {
 
-    serie: Serie,
+    serie: Serie;
 
-    seasons: Season[],
+    seasons: Season[];
 
-    time: number
+    time: number;
+
+    episodes: number;
 }

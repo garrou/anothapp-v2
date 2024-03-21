@@ -8,9 +8,9 @@ export function useSnackbar() {
       setError(err);
     }
   
-    const showMessage = (msg: string) => {
+    const showSuccess = (msg: string) => {
       setMessage(msg);
     }
   
-    return { showError, showMessage };
+    return { showError, showSuccess };
 }

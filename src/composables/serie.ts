@@ -15,7 +15,7 @@ export function useSerie() {
         if (isError(resp.status))
             throw new Error(data.message);
 
-        snackBar.showMessage(`Série "${serie.title}" supprimée`);
+        snackBar.showSuccess(`Série "${serie.title}" supprimée`);
         return true;
     }
 
@@ -56,7 +56,7 @@ export function useSerie() {
         const message = data.favorite
             ? `"${serie.title}" ajoutée aux favoris`
             : `"${serie.title}" supprimée des favoris`;
-        snackBar.showMessage(message);
+        snackBar.showSuccess(message);
         return data.favorite;
     }
 

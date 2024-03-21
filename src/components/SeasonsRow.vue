@@ -4,11 +4,8 @@
             <v-skeleton-loader :loading="loading" type="card" elevation="3">
                 <v-responsive>
                     <season-card :season="season">
-                        <template #add>
-                            <slot name="add" />
-                        </template>
-                        <template #delete>
-                            <slot name="delete" />
+                        <template v-if="addable" #add>
+                            <v-btn color="surface-variant" icon="mdi-tray-plus" variant="text" @click="$emit('add', season)" />
                         </template>
                     </season-card>
                 </v-responsive>
@@ -23,6 +20,7 @@ import { type PropType } from 'vue';
 import type { Season } from '@/models/internal/season';
 
 defineProps({
+    addable: { type: Boolean, default: false },
     seasons: { type: Array as PropType<Season[]>, required: true },
     loading: { type: Boolean, required: true }
 });

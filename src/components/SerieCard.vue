@@ -22,30 +22,31 @@
 </template>
 
 <script lang="ts" setup>
+import { useSerie } from "@/composables/serie";
 import type { Serie } from "@/models/internal/serie";
-import serieService from "@/services/serieService";
-import { useSnackbarStore } from "@/stores/snackbar";
+import { useSnackbar } from "@/composables/snackbar";
 import { computed, ref, type PropType } from "vue";
 
 const props = defineProps({
     serie: { type: Object as PropType<Serie>, required: true }
 });
 
-const snackBarStore = useSnackbarStore();
+const snackBar = useSnackbar();
+const { updateFavoriteBySerieId } = useSerie();
 
 const isFavorite = ref(props.serie.favorite);
 
 const favoriteColor = computed(() => isFavorite.value ? "red" : "surface-variant");
 
 const updateFavorite = async (): Promise<void> => {
-    const success = await serieService.updateFavoriteBySerieId(props.serie.id);
+    const success = await updateFavoriteBySerieId(props.serie.id);
     if (!success) return
 
     const message = isFavorite.value
         ? `"${props.serie.title}" supprimée des favorites`
         : `"${props.serie.title}" ajoutée aux favorites`;
     isFavorite.value = !isFavorite.value;
-    snackBarStore.setMessage(message);
+    snackBar.setMessage(message);
 }
 
 const share = () => {

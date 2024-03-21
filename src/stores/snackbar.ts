@@ -2,6 +2,7 @@ import { ref } from "vue"
 import { defineStore } from "pinia"
 
 export const useSnackbarStore = defineStore("snackbar", () => {
+  
   const message = ref("");
   const subject = ref("");
 

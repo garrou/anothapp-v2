@@ -11,12 +11,10 @@
 </template>
 
 <script lang="ts" setup>
-import { useSnackbarStore } from "@/stores/snackbar";
-import { storeToRefs } from "pinia";
+import { useSnackbar } from "@/composables/snackbar";
 import { ref, watch } from "vue";
 
-const snackBarStore = useSnackbarStore();
-const { message, subject } = storeToRefs(snackBarStore);
+const { message, subject } = useSnackbar();
 const snackbar = ref(false);
 
 watch(message, () => {

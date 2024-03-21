@@ -17,29 +17,29 @@
 import SeasonCard from "@/components/SeasonCard.vue";
 import type { Season } from "@/models/internal/season";
 import type { Serie } from "@/models/internal/serie";
-import { useSerieStore } from "@/stores/serie";
 import { onBeforeMount, ref } from "vue";
 import { useSeason } from "@/composables/season";
+import { useSerie } from "@/composables/serie";
 
 const props = defineProps({
     id: { type: Number, required: true }
 });
 
 const { getSeasonsBySerieId } = useSeason();
-const serieStore = useSerieStore();
+const { getSerie } = useSerie();
 
 const loading = ref(false);
 const serie = ref<Serie>();
 const seasons = ref<Season[]>([]);
 
-const getSeasons = async (): Promise<void> => {
+const load = async (): Promise<void> => {
     loading.value = true;
+    serie.value = await getSerie({ id: props.id });
     seasons.value = await getSeasonsBySerieId({ serieId: props.id });
     loading.value = false;
 }
 
 onBeforeMount(async () => {
-    serie.value = serieStore.getSerie(props.id);
-    await getSeasons();
+    await load();
 });
 </script>

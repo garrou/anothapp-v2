@@ -1,7 +1,8 @@
 export type SerieSearchOptions = {
     refresh?: boolean,
     title?: string,
-    kind?: string
+    kind?: string,
+    id?: number
 }
 
 export type SeasonSearchOptions = {

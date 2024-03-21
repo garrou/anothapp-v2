@@ -2,7 +2,7 @@ export interface Season {
 
     number: number;
 
-    episode: number;
+    episodes: number;
 
     image?: string;
 }

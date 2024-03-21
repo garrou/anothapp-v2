@@ -1,12 +1,12 @@
 <template>
     <v-form @submit="loadSeries" @submit.prevent>
         <v-container>
-            <v-row justify="center">
+            <v-row justify="center" align="center">
                 <v-col cols="9">
                     <v-text-field v-model="search" label="Titre de la série" variant="underlined" />
                 </v-col>
                 <v-col cols="3">
-                    <v-btn icon="mdi-magnify" type="submit" />
+                    <v-btn icon="mdi-magnify" type="submit" size="small" />
                 </v-col>
             </v-row>
             <v-row>

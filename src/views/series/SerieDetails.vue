@@ -1,58 +1,54 @@
 <template>
     <v-container v-if="infos && seasons">
-        <v-toolbar color="white" density="compact">
-            <v-app-bar-nav-icon @click="$router.replace('/series')">
-                <v-icon>mdi-chevron-left</v-icon>
-            </v-app-bar-nav-icon>
+        <base-toolbar :title="infos.serie.title" @back="$router.push('/series')">
+            <template #firstBtn>
+                <v-btn icon @click="changeFavorite">
+                    <v-icon :color="favoriteColor">mdi-heart</v-icon>
+                </v-btn>
+            </template>
 
-            <v-toolbar-title>{{ infos.serie.title }}</v-toolbar-title>
+            <template #secondBtn>
+                <v-btn icon @click="dialog = true">
+                    <v-icon>mdi-delete</v-icon>
+                </v-btn>
+            </template>
 
-            <v-btn icon @click="changeFavorite">
-                <v-icon :color="favoriteColor">mdi-heart</v-icon>
-            </v-btn>
-
-            <v-btn icon @click="dialog = true">
-                <v-icon>mdi-delete</v-icon>
-            </v-btn>
-
-            <template v-slot:extension>
+            <template #tabs>
                 <v-tabs v-model="tab" align-tabs="title">
-                    <v-tab :value="1">Informations</v-tab>
-                    <v-tab :value="2">Saisons</v-tab>
+                    <v-tab :value="1">Mes saisons</v-tab>
+                    <v-tab :value="2">Ajouter</v-tab>
                 </v-tabs>
             </template>
-        </v-toolbar>
+        </base-toolbar>
 
-        <v-window v-model="tab" class="pa-1">
-            <v-window-item title="Informations" :value="1">
-                <v-card class="mb-1">
-                    <v-card-title>Temps de visionnage</v-card-title>
-                    <v-card-text>{{ time }}</v-card-text>
+        <v-window v-model="tab">
+            <v-window-item :value="1" class="pa-2">
+                <v-card class="mb-2">
+                    <v-row>
+                        <v-col cols="3">
+                            <base-image :src="infos.serie.poster" max-height="350" class="ma-2" />
+                        </v-col>
+                        <v-col cols="9">
+                            <v-card-title>Temps de visionnage</v-card-title>
+                            <v-card-text>{{ time }}</v-card-text>
+
+                            <v-card-title>Avancement {{ infos.seasons.length }} / {{ seasons.length }}</v-card-title>
+                            <v-card-text>
+                                <v-progress-linear v-model="infos.seasons.length" :max="seasons.length" rounded />
+                            </v-card-text>
+                        </v-col>
+                    </v-row>
                 </v-card>
-                <v-card>
-                    <v-card-title>Saisons vues ({{ infos.seasons.length }} / {{ seasons.length }})</v-card-title>
-                    <v-card-text>
-                        <v-progress-linear v-model="infos.seasons.length" height="10" :max="seasons.length" rounded
-                            striped />
-                    </v-card-text>
-                </v-card>
+
+                <seasons-row :loading="loading" :seasons="infos.seasons" />
             </v-window-item>
 
-            <v-window-item title="Mes saisons" :value="2">
-                <v-row>
-                    <v-col v-for="season in infos.seasons" cols="6" md="4" lg="3" :key="season.number">
-                        <v-skeleton-loader :loading="loading" type="card" elevation="3">
-                            <v-responsive>
-                                <season-card :season="season">
-                                    <template #delete>
-                                        <v-btn color="surface-variant" icon="mdi-delete" size="small" variant="text"
-                                            @click="" />
-                                    </template>
-                                </season-card>
-                            </v-responsive>
-                        </v-skeleton-loader>
-                    </v-col>
-                </v-row>
+            <v-window-item :value="2">
+                <seasons-row :loading="loading" :seasons="seasons">
+                    <template #add>
+                        <v-btn color="surface-variant" icon="mdi-tray-plus" variant="text" @click="" />
+                    </template>
+                </seasons-row>
             </v-window-item>
         </v-window>
     </v-container>
@@ -63,14 +59,16 @@
 
 <script lang="ts" setup>
 import BaseDialog from "@/components/BaseDialog.vue";
-import SeasonCard from "@/components/SeasonCard.vue";
+import BaseImage from "@/components/BaseImage.vue";
+import BaseToolbar from "@/components/BaseToolbar.vue";
+import SeasonsRow from "@/components/SeasonsRow.vue";
 import type { SerieInfos } from "@/models/internal/serie";
 import { computed, onBeforeMount, ref } from "vue";
 import { useSearch } from "@/composables/search";
 import { useSerie } from "@/composables/serie";
-import { minsToStringHoursDays } from "@/utils/format";
 import type { Season } from "@/models/internal/season";
 import router from "@/router";
+import { minsToStringHoursDays } from "@/utils/format";
 
 const props = defineProps({
     id: { type: Number, required: true }
@@ -81,7 +79,7 @@ const { getSeasonsBySerieId } = useSearch();
 
 const dialog = ref(false);
 const infos = ref<SerieInfos>();
-const isFavorite = ref(infos.value?.serie.favorite);
+const isFavorite = ref(false);
 const loading = ref(false);
 const seasons = ref<Season[]>();
 const tab = ref(1);
@@ -93,12 +91,14 @@ const load = async (): Promise<void> => {
     loading.value = true;
     infos.value = await getSerie({ id: props.id });
     seasons.value = await getSeasonsBySerieId(props.id);
+    isFavorite.value = infos.value?.serie.favorite;
     loading.value = false;
 }
 
 const changeFavorite = async () => {
     if (!infos.value?.serie) return
-    isFavorite.value = await updateFavorite(infos.value?.serie);
+    await updateFavorite(infos.value?.serie);
+    isFavorite.value = !isFavorite.value;
 }
 
 const removeSerie = async () => {

@@ -1,13 +1,7 @@
 <template>
     <v-card>
-        <router-link :to="link">
-            <v-img :src="serie.poster" class="align-end" cover>
-                <template v-slot:placeholder>
-                    <v-row align="center" class="fill-height ma-0" justify="center">
-                        <v-progress-circular color="black" indeterminate />
-                    </v-row>
-                </template>
-            </v-img>
+        <router-link :to="link" @click="">
+            <base-image :src="serie.poster" cover />
         </router-link>
 
         <v-card-subtitle class="pt-4">
@@ -15,12 +9,13 @@
         </v-card-subtitle>
 
         <v-card-actions>
-            <v-btn :color="favoriteColor" icon="mdi-heart" size="small" variant="text" @click="changeFavorite" />
+            <v-btn :color="favoriteColor" icon="mdi-heart" variant="text" @click="changeFavorite" />
         </v-card-actions>
     </v-card>
 </template>
 
 <script lang="ts" setup>
+import BaseImage from "./BaseImage.vue";
 import { useSerie } from "@/composables/serie";
 import type { Serie } from "@/models/internal/serie";
 import { computed, ref, type PropType } from "vue";

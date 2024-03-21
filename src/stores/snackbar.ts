@@ -1,20 +1,26 @@
 import { ref } from "vue"
 import { defineStore } from "pinia"
+import type { SnakbarMessage } from "@/models/snackbar";
 
 export const useSnackbarStore = defineStore("snackbar", () => {
   
-  const message = ref("");
-  const subject = ref("");
+  const message = ref<SnakbarMessage>();
 
   const setError = (err: Error) => {
-    subject.value = "Error";
-    message.value = err.message;
+    message.value = {
+      color: "red",
+      message: err.message,
+      subject: "Error"
+    };
   }
 
   const setMessage = (msg: string) => {
-    subject.value = "Message";
-    message.value = msg;
+    message.value = {
+      color: "green",
+      message: msg,
+      subject: "Ok"
+    };
   }
 
-  return { message, subject, setError, setMessage };
+  return { message, setError, setMessage };
 });

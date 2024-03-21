@@ -15,7 +15,7 @@ export function useSerie() {
         if (isError(resp.status))
             throw new Error(data.message);
 
-        snackBar.setMessage(`Série "${serie.title}" supprimée`);
+        snackBar.showMessage(`Série "${serie.title}" supprimée`);
         return true;
     }
 
@@ -53,11 +53,11 @@ export function useSerie() {
         if (isError(resp.status))
             throw new Error(data.message);
 
-        const message = serie.favorite
-            ? `"${serie.title}" supprimée des favorites`
-            : `"${serie.title}" ajoutée aux favorites`;
-        snackBar.setMessage(message);
-        return !serie.favorite;
+        const message = data.favorite
+            ? `"${serie.title}" ajoutée aux favoris`
+            : `"${serie.title}" supprimée des favoris`;
+        snackBar.showMessage(message);
+        return data.favorite;
     }
 
     return { deleteSerie, getSerie, getSeries, updateFavorite }

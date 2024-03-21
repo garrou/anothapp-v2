@@ -27,7 +27,6 @@ const getSerie = async (id: number): Promise<Response> => {
     });
 }
 
-
 const getSeries = async (title?: string, kind?: string): Promise<Response> => {
     const url = buildUrl(`${ENDPOINT}/shows`, "title", title, "?");
     return fetch(url, {

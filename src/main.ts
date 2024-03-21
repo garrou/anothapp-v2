@@ -25,6 +25,6 @@ app.use(vuetify);
 const snackbar = useSnackbar();
 
 app.config.errorHandler = (err: unknown) => {
-  snackbar.setError(err as Error);
+  snackbar.showError(err as Error);
 }
 app.mount("#app");

@@ -1,8 +1,8 @@
 <template>
-    <v-snackbar v-model="snackbar" color="success" variant="elevated" :vertical="false">
-        <div class="text-subtitle-1 pb-2">{{ subject }}</div>
+    <v-snackbar v-if="message" v-model="snackbar" :color="message.color" variant="elevated" :vertical="false">
+        <div class="text-subtitle-1 pb-2">{{ message.subject }}</div>
 
-        <p>{{ message }}</p>
+        <p>{{ message.message }}</p>
 
         <template v-slot:actions>
             <v-btn color="text-white" variant="text" @click="snackbar = false">Ok</v-btn>
@@ -11,10 +11,11 @@
 </template>
 
 <script lang="ts" setup>
-import { useSnackbar } from "@/composables/snackbar";
 import { ref, watch } from "vue";
+import { useSnackbarStore } from "@/stores/snackbar";
+import { storeToRefs } from "pinia";
 
-const { message, subject } = useSnackbar();
+const { message } = storeToRefs(useSnackbarStore());
 const snackbar = ref(false);
 
 watch(message, () => {

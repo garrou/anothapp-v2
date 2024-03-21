@@ -1,3 +1,5 @@
+import type { Season } from "./season";
+
 export interface Serie {
 
     id: number;
@@ -7,4 +9,13 @@ export interface Serie {
     poster: string;
 
     favorite: boolean;
+}
+
+export interface SerieInfos {
+
+    serie: Serie,
+
+    seasons: Season[],
+
+    time: number
 }

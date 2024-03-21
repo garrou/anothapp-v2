@@ -1,6 +1,6 @@
 <template>
     <v-card>
-        <router-link :to="`/series/${serie.id}`">
+        <router-link :to="link">
             <v-img :src="serie.poster" class="align-end" cover>
                 <template v-slot:placeholder>
                     <v-row align="center" class="fill-height ma-0" justify="center">
@@ -11,7 +11,7 @@
         </router-link>
 
         <v-card-subtitle class="pt-4">
-            <router-link :text="serie.title" to="`/series/${serie.id}`" class="text-black" />
+            <router-link :text="serie.title" :to="link" class="text-black" />
         </v-card-subtitle>
 
         <v-card-actions>
@@ -31,11 +31,13 @@ const props = defineProps({
     serie: { type: Object as PropType<Serie>, required: true }
 });
 
+
+const link = `/series/${props.serie.id}`;
+
 const snackBar = useSnackbar();
 const { updateFavoriteBySerieId } = useSerie();
 
 const isFavorite = ref(props.serie.favorite);
-
 const favoriteColor = computed(() => isFavorite.value ? "red" : "surface-variant");
 
 const updateFavorite = async (): Promise<void> => {

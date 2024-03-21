@@ -6,7 +6,8 @@
         <v-card-subtitle>{{ season.episode }} épisodes</v-card-subtitle>
 
         <v-card-actions>
-            <v-btn color="surface-variant" icon="mdi-delete" size="small" variant="text" @click="" />
+            <slot name="delete" />
+            <slot name="add" />
         </v-card-actions>
     </v-card>
 </template>

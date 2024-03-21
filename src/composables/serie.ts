@@ -1,11 +1,11 @@
-import type { Serie } from "@/models/internal/serie";
+import type { Serie, SerieInfos } from "@/models/internal/serie";
 import serieService from "@/services/serieService";
 import type { SerieSearchOptions } from "@/types/search";
 import { isError } from "@/utils/response";
 
 export function useSerie() {
 
-    const getSerie = async (options: SerieSearchOptions): Promise<Serie> => {
+    const getSerie = async (options: SerieSearchOptions): Promise<SerieInfos> => {
         const { id } = options;
 
         if (!id)

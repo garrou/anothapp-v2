@@ -25,6 +25,21 @@ const router = createRouter({
       component: RegisterView
     },
     {
+      path: "/discover",
+      component: Series,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: "/discover/:id",
+      component: Series,
+      props: (route) => ({ id: Number(route.params.id) }),
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
       path: "/series",
       component: Series,
       meta: {

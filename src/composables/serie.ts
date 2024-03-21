@@ -8,6 +8,17 @@ export function useSerie() {
 
     const snackBar = useSnackbar();
 
+    const deleteSerie = async (serie: Serie): Promise<boolean> => {
+        const resp = await serieService.deleteSerie(serie.id);
+        const data = await resp.json();
+
+        if (isError(resp.status))
+            throw new Error(data.message);
+
+        snackBar.setMessage(`Série "${serie.title}" supprimée`);
+        return true;
+    }
+
     const getSerie = async (options: SerieSearchOptions): Promise<SerieInfos> => {
         const { id } = options;
 
@@ -49,5 +60,5 @@ export function useSerie() {
         return !serie.favorite;
     }
 
-    return { getSerie, getSeries, updateFavorite }
+    return { deleteSerie, getSerie, getSeries, updateFavorite }
 }

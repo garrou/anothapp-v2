@@ -16,7 +16,6 @@
 
         <v-card-actions>
             <v-btn :color="favoriteColor" icon="mdi-heart" size="small" variant="text" @click="changeFavorite" />
-            <v-btn color="surface-variant" icon="mdi-share-variant" size="small" variant="text" @click="share" />
         </v-card-actions>
     </v-card>
 </template>
@@ -35,13 +34,10 @@ const link = `/series/${props.serie.id}`;
 const { updateFavorite } = useSerie();
 
 const isFavorite = ref(props.serie.favorite);
+
 const favoriteColor = computed(() => isFavorite.value ? "red" : "surface-variant");
 
 const changeFavorite = async (): Promise<void> => {
     isFavorite.value = await updateFavorite(props.serie);
-}
-
-const share = () => {
-    // TODO
 }
 </script>

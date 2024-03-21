@@ -2,6 +2,15 @@ import { buildUrl } from "@/utils/format";
 import { ENDPOINT } from "./constants";
 import storageService from "./storageService";
 
+const deleteSerie = async (id: number): Promise<Response> => {
+    return fetch(`${ENDPOINT}/shows/${id}`, {
+        headers: {
+            "Authorization": `Bearer ${storageService.getJwt()}`
+        },
+        method: "DELETE"
+    });
+}
+
 const getSeasonsBySerieId = async (id: number): Promise<Response> => {
     return fetch(`${ENDPOINT}/shows/${id}/seasons`, {
         headers: {
@@ -38,6 +47,7 @@ const updateFavoriteBySerieId = async (id: number): Promise<Response> => {
 }
 
 export default {
+    deleteSerie,
     getSeasonsBySerieId,
     getSerie,
     getSeries,

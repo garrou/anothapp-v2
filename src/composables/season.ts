@@ -1,5 +1,5 @@
-import type { Season } from "@/models/internal/season";
-import type { Serie } from "@/models/internal/serie";
+import type { Season } from "@/models/season";
+import type { Serie } from "@/models/serie";
 import serieService from "@/services/serieService";
 import type { SeasonSearchOptions } from "@/types/search";
 import { isError } from "@/utils/response";

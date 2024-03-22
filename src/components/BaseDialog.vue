@@ -1,5 +1,5 @@
 <template>
-    <v-dialog :max-width="width" persistent>
+    <v-dialog :max-width="width" :persistent="persistent">
         <v-card :text="text" :title="title">
             <template v-slot:actions>
                 <v-spacer></v-spacer>
@@ -20,6 +20,7 @@
 defineProps({
     cancelText: { type: String, default: "Annuler" },
     confirmText: { type: String, default: "Confirmer" },
+    persistent: { type: Boolean, default: false },
     text: { type: String, required: true },
     title: { type: String, required: true },
     width: { type: Number, default: 400 }

@@ -1,11 +1,13 @@
 <template>
-    <v-card>
-        <router-link :to="link">
-            <base-image :src="serie.poster" cover max-height="580" />
+    <v-card @click="$emit('show', serie)">
+        <router-link v-if="!addable" :to="link">
+            <base-image cover max-height="580" :src="serie.poster" />
         </router-link>
+        <base-image v-else cover max-height="580" :src="serie.poster" />
 
         <v-card-subtitle class="pt-4">
-            <router-link :text="serie.title" :to="link" class="text-black" />
+            <router-link v-if="!addable" class="text-black" :text="serie.title" :to="link" />
+            <span v-else>{{ serie.title }}</span>
         </v-card-subtitle>
 
         <v-card-actions>
@@ -18,7 +20,7 @@
 <script lang="ts" setup>
 import BaseImage from "./BaseImage.vue";
 import { useSerie } from "@/composables/serie";
-import type { Serie } from "@/models/internal/serie";
+import type { Serie } from "@/models/serie";
 import { computed, ref, type PropType } from "vue";
 
 const props = defineProps({
@@ -26,7 +28,7 @@ const props = defineProps({
 });
 
 const addable = !!props.serie.description;
-const link = addable ? `/discover/${props.serie.id}` : `/series/${props.serie.id}`;
+const link = `/series/${props.serie.id}`;
 
 const { addSerie, updateFavorite } = useSerie();
 
@@ -41,4 +43,4 @@ const add = async () => {
 const changeFavorite = async (): Promise<void> => {
     isFavorite.value = await updateFavorite(props.serie);
 }
-</script>
+</script>@/models/serie

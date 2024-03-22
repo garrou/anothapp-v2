@@ -23,7 +23,7 @@
                     <p class="mb-1 text-subtitle-1">Saisons {{ infos.seasons.length }} / {{ seasons.length }}</p>
                     <v-progress-linear v-model="infos.seasons.length" class="mb-3 text-subtitle-1" :max="seasons.length"
                         rounded />
-                    <p class="mb-1 text-subtitle-1">Episodes {{ infos.episodes }}</p>
+                    <p class="mb-1 text-subtitle-1">{{ infos.episodes }} épisodes</p>
                     <p class="mb-1 text-subtitle-1">{{ time }}</p>
                 </v-col>
             </v-row>
@@ -61,12 +61,12 @@ import BaseDialog from "@/components/BaseDialog.vue";
 import BaseImage from "@/components/BaseImage.vue";
 import BaseToolbar from "@/components/BaseToolbar.vue";
 import SeasonsRow from "@/components/SeasonsRow.vue";
-import type { SerieInfos } from "@/models/internal/serie";
+import type { SerieInfos } from "@/models/serie";
 import { computed, onBeforeMount, ref } from "vue";
 import { useSeason } from "@/composables/season";
 import { useSearch } from "@/composables/search";
 import { useSerie } from "@/composables/serie";
-import type { Season } from "@/models/internal/season";
+import type { Season } from "@/models/season";
 import router from "@/router";
 import { minsToStringHoursDays } from "@/utils/format";
 
@@ -100,9 +100,9 @@ const load = async (): Promise<void> => {
 }
 
 const orderSeasons = () => {
-    order.value = !order.value;
     const func = (a: Season, b: Season) => order.value ? a.number - b.number : b.number - a.number;
     tab.value == 1 ? infos.value?.seasons.sort(func) : seasons.value?.sort(func);
+    order.value = !order.value;
 }
 
 const newSeason = async (season: Season) => {
@@ -125,4 +125,4 @@ const removeSerie = async () => {
 onBeforeMount(async () => {
     await load();
 });
-</script>
+</script>@/models/season@/models/serie

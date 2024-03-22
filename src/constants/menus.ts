@@ -29,9 +29,9 @@ export const NAV_MENU = [
         link: "/discover"
     },
     {
-        title: "Mes amis",
-        icon: "mdi-account-heart",
-        link: "/friends"
+        title: "Statistiques",
+        icon: "mdi-chart-bar",
+        link: "/stats"
     },
     {
         title: "Mon profil",

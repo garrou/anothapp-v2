@@ -8,17 +8,17 @@ export const useSnackbarStore = defineStore("snackbar", () => {
 
   const setError = (err: Error) => {
     message.value = {
-      color: "red",
+      color: "error",
       message: err.message,
-      subject: "Error"
+      subject: "Erreur"
     };
   }
 
   const setMessage = (msg: string) => {
     message.value = {
-      color: "green",
+      color: "success",
       message: msg,
-      subject: "Ok"
+      subject: "Succès"
     };
   }
 

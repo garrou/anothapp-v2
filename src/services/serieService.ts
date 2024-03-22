@@ -1,8 +1,8 @@
 import { buildUrl } from "@/utils/format";
 import { ENDPOINT } from "../constants/services";
 import storageService from "./storageService";
-import type { Season } from "@/models/internal/season";
-import type { Serie } from "@/models/internal/serie";
+import type { Season } from "@/models/season";
+import type { Serie } from "@/models/serie";
 
 const addSeason = async (id: number, season: Season): Promise<Response> => {
     return fetch(`${ENDPOINT}/shows/${id}/seasons`, {

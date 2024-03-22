@@ -5,6 +5,7 @@ import RegisterView from "@/views/auth/RegisterView.vue";
 import Series from "@/views/series/Series.vue";
 import SerieDetails from "@/views/series/SerieDetails.vue";
 import { useUser } from "@/composables/user";
+import Discover from "@/views/discover/Discover.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -25,23 +26,6 @@ const router = createRouter({
       component: RegisterView
     },
     {
-      path: "/discover",
-      name: "discover",
-      component: Series,
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: "/discover/:id",
-      name: "discover-details",
-      component: Series,
-      props: (route) => ({ id: Number(route.params.id) }),
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
       path: "/series",
       name: "series",
       component: Series,
@@ -54,6 +38,14 @@ const router = createRouter({
       name: "serie-details",
       component: SerieDetails,
       props: (route) => ({ id: Number(route.params.id) }),
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: "/discover",
+      name: "discover",
+      component: Discover,
       meta: {
         requiresAuth: true
       }

@@ -17,11 +17,11 @@
 <script lang="ts" setup>
 import SeasonCard from './SeasonCard.vue';
 import { type PropType } from 'vue';
-import type { Season } from '@/models/internal/season';
+import type { Season } from '@/models/season';
 
 defineProps({
     addable: { type: Boolean, default: false },
     seasons: { type: Array as PropType<Season[]>, required: true },
     loading: { type: Boolean, required: true }
 });
-</script>
+</script>@/models/season

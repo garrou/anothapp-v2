@@ -22,4 +22,4 @@ defineProps({
 
 const slots = useSlots();
 const margin = ref(slots.add ? "" : "mb-2");
-</script>
+</script>@/models/season

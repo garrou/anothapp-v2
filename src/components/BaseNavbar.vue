@@ -10,12 +10,11 @@
 </template>
 
 <script lang="ts" setup>
-import { PAGE_WITHOUT_BOTTOM_NAVBAR } from '@/constants/menu';
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
-import { NAV_MENU } from "@/constants/menu";
+import { NAV_MENU, PAGE_WITHOUT_BOTTOM_NAVBAR } from '@/constants/menus';
 
 const route = useRoute();
 
 const navbar = computed(() => !PAGE_WITHOUT_BOTTOM_NAVBAR.includes(route.name as string));
-</script>
+</script>@/constants/menus@/constants/menus

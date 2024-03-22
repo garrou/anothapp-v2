@@ -1,17 +1,8 @@
 <template>
     <v-layout>
         <v-app-bar :elevation="2" density="compact">
-            <template #prepend>
-                <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-            </template>
-
             <v-app-bar-title>A</v-app-bar-title>
         </v-app-bar>
-
-        <v-navigation-drawer v-model="drawer" location="left" temporary>
-            <v-list-item v-for="(item, index) in SERIES_MENU" :key="index" :prepend-icon="item.icon" :title="item.title"
-                @click="" />
-        </v-navigation-drawer>
     </v-layout>
 
     <v-container class="mt-10">
@@ -32,33 +23,43 @@
                 <v-col v-for="serie in series" cols="6" md="4" lg="3" :key="serie.id">
                     <v-skeleton-loader :loading="loading" type="card" elevation="3">
                         <v-responsive>
-                            <serie-card :serie="serie" />
+                            <serie-card :serie="serie" @show="show" />
                         </v-responsive>
                     </v-skeleton-loader>
                 </v-col>
             </v-row>
         </v-form>
     </v-container>
+
+    <v-dialog v-if="selected" v-model="dialog">
+        <serie-details :serie="selected" />
+    </v-dialog>
 </template>
 
 <script lang="ts" setup>
 import SerieCard from "@/components/SerieCard.vue";
+import SerieDetails from "@/components/SerieDetails.vue";
 import type { Serie } from "@/models/serie";
 import { onBeforeMount, ref } from "vue";
-import { useSerie } from "@/composables/serie";
-import { SERIES_MENU } from "@/constants/menus";
+import { useSearch } from "@/composables/search";
 
-const { getSeries } = useSerie();
+const { getSeries } = useSearch();
 
+const dialog = ref(false);
 const loading = ref(false);
-const search = ref();
+const search = ref("");
 const series = ref<Serie[]>([]);
-const drawer = ref(false);
+const selected = ref<Serie>();
 
 const loadSeries = async (): Promise<void> => {
     loading.value = true;
     series.value = await getSeries({ title: search.value });
     loading.value = false;
+}
+
+const show = (serie: Serie) => {
+    dialog.value = true;
+    selected.value = serie;
 }
 
 onBeforeMount(async () => {

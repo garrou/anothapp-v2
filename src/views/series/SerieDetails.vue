@@ -3,7 +3,7 @@
         <base-toolbar icon="mdi-chevron-left" :title="infos.serie.title" @back="$router.push('/series')">
             <template #firstBtn>
                 <v-btn icon @click="changeFavorite">
-                    <v-icon :color="favoriteColor">mdi-heart</v-icon>
+                    <v-icon :color="favoriteColor">{{ FAVORITE_ICON }}</v-icon>
                 </v-btn>
             </template>
 
@@ -69,6 +69,7 @@ import { useSerie } from "@/composables/serie";
 import type { Season } from "@/models/season";
 import router from "@/router";
 import { minsToStringHoursDays } from "@/utils/format";
+import { FAVORITE_ICON } from "@/constants/icons";
 
 const props = defineProps({
     id: { type: Number, required: true }

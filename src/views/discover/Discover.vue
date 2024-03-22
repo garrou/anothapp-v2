@@ -1,6 +1,6 @@
 <template>
     <v-layout>
-        <v-app-bar :elevation="2" density="compact">
+        <v-app-bar :density="DENSITY" :elevation="ELEVATION" >
             <v-app-bar-title>A</v-app-bar-title>
         </v-app-bar>
     </v-layout>
@@ -14,14 +14,14 @@
                 <v-col cols="3">
                     <v-btn type="submit" size="small">
                         <template #default>
-                            <v-icon icon="mdi-magnify" />
+                            <v-icon :icon="SEARCH_ICON" />
                         </template>
                     </v-btn>
                 </v-col>
             </v-row>
             <v-row>
                 <v-col v-for="serie in series" cols="6" md="4" lg="3" :key="serie.id">
-                    <v-skeleton-loader :loading="loading" type="card" elevation="3">
+                    <v-skeleton-loader :elevation="ELEVATION" :loading="loading" type="card">
                         <v-responsive>
                             <serie-card :serie="serie" @show="show" />
                         </v-responsive>
@@ -42,6 +42,8 @@ import SerieDetails from "@/components/SerieDetails.vue";
 import type { Serie } from "@/models/serie";
 import { onBeforeMount, ref } from "vue";
 import { useSearch } from "@/composables/search";
+import { DENSITY, ELEVATION } from "@/constants/style";
+import { SEARCH_ICON } from "@/constants/icons";
 
 const { getSeries } = useSearch();
 

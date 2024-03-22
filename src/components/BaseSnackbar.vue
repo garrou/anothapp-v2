@@ -4,7 +4,7 @@
 
         <p>{{ message.message }}</p>
 
-        <template v-slot:actions>
+        <template #actions>
             <v-btn color="text-white" variant="text" @click="snackbar = false">Ok</v-btn>
         </template>
     </v-snackbar>
@@ -20,5 +20,5 @@ const snackbar = ref(false);
 
 watch(message, () => {
     snackbar.value = true;
-})
+});
 </script>

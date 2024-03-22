@@ -1,7 +1,7 @@
 <template>
     <!-- TODO: add lazy-src -->
     <v-img :src="src" class="align-end" :cover="cover">
-        <template v-slot:placeholder>
+        <template #placeholder>
             <v-row align="center" class="fill-height ma-0" justify="center">
                 <v-progress-circular color="black" indeterminate />
             </v-row>

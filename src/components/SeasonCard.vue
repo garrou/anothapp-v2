@@ -12,7 +12,7 @@
 
 <script lang="ts" setup>
 import BaseImage from "./BaseImage.vue";
-import type { Season } from "@/models/internal/season";
+import type { Season } from "@/models/season";
 import type { PropType } from "vue";
 import { ref, useSlots } from "vue";
 

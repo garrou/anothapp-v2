@@ -1,11 +1,11 @@
 <template>
     <v-row>
         <v-col v-for="season in seasons" cols="6" md="4" lg="3" :key="season.number">
-            <v-skeleton-loader :loading="loading" type="card" elevation="3">
+            <v-skeleton-loader  :elevation="ELEVATION" :loading="loading" type="card">
                 <v-responsive>
                     <season-card :season="season">
                         <template v-if="addable" #add>
-                            <v-btn color="surface-variant" icon="mdi-plus-thick" variant="text" @click="$emit('add', season)" />
+                            <v-btn color="surface-variant" :icon="ADD_ICON" variant="text" @click="$emit('add', season)" />
                         </template>
                     </season-card>
                 </v-responsive>
@@ -18,6 +18,8 @@
 import SeasonCard from './SeasonCard.vue';
 import { type PropType } from 'vue';
 import type { Season } from '@/models/season';
+import { ELEVATION } from '@/constants/style';
+import { ADD_ICON } from '@/constants/icons';
 
 defineProps({
     addable: { type: Boolean, default: false },

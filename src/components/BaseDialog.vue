@@ -1,7 +1,7 @@
 <template>
     <v-dialog :max-width="width" :persistent="persistent">
         <v-card :text="text" :title="title">
-            <template v-slot:actions>
+            <template #actions>
                 <v-spacer></v-spacer>
 
                 <v-btn @click="$emit('cancel')">

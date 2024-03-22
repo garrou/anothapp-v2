@@ -5,7 +5,7 @@
                 <v-responsive>
                     <season-card :season="season">
                         <template v-if="addable" #add>
-                            <v-btn color="surface-variant" icon="mdi-tray-plus" variant="text" @click="$emit('add', season)" />
+                            <v-btn color="surface-variant" icon="mdi-plus-thick" variant="text" @click="$emit('add', season)" />
                         </template>
                     </season-card>
                 </v-responsive>

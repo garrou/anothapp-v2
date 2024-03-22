@@ -1,5 +1,5 @@
 import { buildUrl } from "@/utils/format";
-import { ENDPOINT } from "./constants";
+import { ENDPOINT } from "../constants/services";
 import storageService from "./storageService";
 import type { Season } from "@/models/internal/season";
 

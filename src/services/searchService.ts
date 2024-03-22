@@ -1,4 +1,4 @@
-import { ENDPOINT } from "./constants";
+import { ENDPOINT } from "../constants/services";
 import storageService from "./storageService";
 
 const getSerie = async (id: number): Promise<Response> => {

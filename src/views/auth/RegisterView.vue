@@ -1,5 +1,5 @@
 <template>
-    <v-form v-model="valid" @submit="register" @submit.prevent>
+    <v-form v-model="valid" @submit="createAccount" @submit.prevent>
         <v-container class="text-center">
             <h1>{{ TITLE }}</h1>
             <v-row>
@@ -24,14 +24,13 @@
 </template>
 
 <script lang="ts" setup>
-import userService from "@/services/userService";
+import { useUser } from "@/composables/user";
+import { EMAIL_PATTERN, MIN_PASSWORD_LENGTH } from "@/constants/auth";
 import { ref } from "vue";
-import { useRouter } from "vue-router";
 
-const router = useRouter();
+const { register } = useUser();
 
 const TITLE = "S'inscrire";
-const MIN_PASSWORD_LENGTH = 8;
 
 const valid = ref(false);
 const email = ref("");
@@ -44,7 +43,7 @@ const emailRules = [
         return "Email requis.";
     },
     (value: string) => {
-        if (/.+@.+\..+/.test(value)) return true;
+        if (EMAIL_PATTERN.test(value)) return true;
         return "Email doit être valide.";
     }
 ];
@@ -63,10 +62,7 @@ const passwordRules = [
     }
 ];
 
-const register = async () => {
-    const success = await userService.register(email.value, password.value, confirmPassword.value);
-
-    if (success)
-        router.push("/login");
+const createAccount = async () => {
+    await register(email.value, password.value, confirmPassword.value);
 }
 </script>

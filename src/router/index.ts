@@ -4,7 +4,7 @@ import LoginView from "@/views/auth/LoginView.vue";
 import RegisterView from "@/views/auth/RegisterView.vue";
 import Series from "@/views/series/Series.vue";
 import SerieDetails from "@/views/series/SerieDetails.vue";
-import userService from "@/services/userService";
+import { useUser } from "@/composables/user";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,6 +26,7 @@ const router = createRouter({
     },
     {
       path: "/discover",
+      name: "discover",
       component: Series,
       meta: {
         requiresAuth: true
@@ -33,6 +34,7 @@ const router = createRouter({
     },
     {
       path: "/discover/:id",
+      name: "discover-details",
       component: Series,
       props: (route) => ({ id: Number(route.params.id) }),
       meta: {
@@ -41,6 +43,7 @@ const router = createRouter({
     },
     {
       path: "/series",
+      name: "series",
       component: Series,
       meta: {
         requiresAuth: true
@@ -48,6 +51,7 @@ const router = createRouter({
     },
     {
       path: "/series/:id",
+      name: "serie-details",
       component: SerieDetails,
       props: (route) => ({ id: Number(route.params.id) }),
       meta: {
@@ -58,8 +62,9 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from) => {
-  const isLoggedIn = await userService.isLoggedIn();
-
+  const { checkAuth } = useUser();
+  const isLoggedIn = await checkAuth();
+  
   if (to.meta.requiresAuth && !isLoggedIn) {
     return {
       path: "/login",

@@ -1,5 +1,5 @@
 <template>
-    <v-form v-model="valid" @submit="login" @submit.prevent>
+    <v-form v-model="valid" @submit="authenticate" @submit.prevent>
         <v-container class="text-center">
             <h1>{{ TITLE }}</h1>
             <v-row>
@@ -19,13 +19,12 @@
     </v-form>
 </template>
 <script lang="ts" setup>
-import userService from "@/services/userService";
+import { useUser } from "@/composables/user";
 import { ref } from "vue";
-import { useRouter } from "vue-router";
-
-const router = useRouter();
 
 const TITLE = "Se connecter";
+
+const { login } = useUser();
 
 const valid = ref(false);
 const email = ref("");
@@ -53,10 +52,7 @@ const passwordRules = [
     }
 ];
 
-const login = async () => {
-    const success = await userService.login(email.value, password.value);
-
-    if (success)
-        router.replace("/series");
+const authenticate = async () => {
+    await login(email.value, password.value);
 }
 </script>

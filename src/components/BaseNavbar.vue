@@ -1,29 +1,21 @@
 <template>
     <v-layout v-if="navbar" class="overflow-visible" style="height: 50px;">
         <v-bottom-navigation mode="shift">
-            <v-btn to="/series">
-                <v-icon>mdi-view-headline</v-icon>
-                <span>Mes séries</span>
-            </v-btn>
-            <v-btn>
-                <v-icon>mdi-magnify</v-icon>
-                <span>Découvrir</span>
-            </v-btn>
-            <v-btn>
-                <v-icon>mdi-account</v-icon>
-                <span>Profil</span>
+            <v-btn v-for="(item, index) in NAV_MENU" :key="index" :to="item.link">
+                <v-icon>{{ item.icon }}</v-icon>
+                <span>{{ item.title }}</span>
             </v-btn>
         </v-bottom-navigation>
     </v-layout>
 </template>
 
 <script lang="ts" setup>
+import { PAGE_WITHOUT_BOTTOM_NAVBAR } from '@/constants/menu';
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
+import { NAV_MENU } from "@/constants/menu";
 
 const route = useRoute();
 
-const PAGE_WITHOUT_NAVBAR = ["home", "login", "register"];
-
-const navbar = computed(() => !PAGE_WITHOUT_NAVBAR.includes(route.name as string));
+const navbar = computed(() => !PAGE_WITHOUT_BOTTOM_NAVBAR.includes(route.name as string));
 </script>

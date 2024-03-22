@@ -1,9 +1,16 @@
-import { isSuccess } from "@/utils/response";
-import { ENDPOINT } from "./constants";
+import { ENDPOINT } from "../constants/services";
 import storageService from "./storageService";
 
-const login = async (email: string, password: string): Promise<boolean> => {
-    const resp = await fetch(`${ENDPOINT}/users/login`, {
+const checkAuth = async (): Promise<Response> => {
+    return fetch(`${ENDPOINT}/users/me`, { 
+        headers: {
+            "Authorization": `Bearer ${storageService.getJwt()}`
+        }
+    });
+}
+
+const login = async (email: string, password: string): Promise<Response> => {
+    return fetch(`${ENDPOINT}/users/login`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -13,17 +20,10 @@ const login = async (email: string, password: string): Promise<boolean> => {
             "password": password
         })
     });
-    const data = await resp.json();
-
-    if (isSuccess(resp.status)) {
-        storageService.storeJwt(data.token);
-        return true;
-    }
-    throw new Error(data.message);
 }
 
-const register = async (email: string, password: string, confirm: string): Promise<boolean> => {
-    const resp = await fetch(`${ENDPOINT}/users/register`, {
+const register = async (email: string, password: string, confirm: string): Promise<Response> => {
+    return fetch(`${ENDPOINT}/users/register`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -34,26 +34,10 @@ const register = async (email: string, password: string, confirm: string): Promi
             "confirm": confirm
         })
     });
-    const data = await resp.json();
-
-    if (isSuccess(resp.status))
-        return true;
-
-    throw new Error(data.message);
 }
-
-const isLoggedIn = async (): Promise<boolean> => {
-    const resp = await fetch(`${ENDPOINT}/users/me`, { 
-        headers: {
-            "Authorization": `Bearer ${storageService.getJwt()}`
-        }
-    });
-    return isSuccess(resp.status);
-}
-
 
 export default {
-    isLoggedIn,
+    checkAuth,
     login,
     register,
 }

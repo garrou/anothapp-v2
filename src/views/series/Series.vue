@@ -1,6 +1,20 @@
 <template>
-    <v-form @submit="loadSeries" @submit.prevent>
-        <v-container>
+    <v-layout>
+        <v-app-bar :elevation="2" density="compact">
+            <template v-slot:prepend>
+                <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+            </template>
+
+            <v-app-bar-title>A</v-app-bar-title>
+        </v-app-bar>
+
+        <v-navigation-drawer v-model="drawer" location="left" temporary>
+            <v-list-item v-for="(item, index) in SERIES_MENU" :key="index" :prepend-icon="item.icon" :title="item.title" @click="" />
+        </v-navigation-drawer>
+    </v-layout>
+
+    <v-container class="mt-10">
+        <v-form @submit="loadSeries" @submit.prevent>
             <v-row justify="center" align="center">
                 <v-col cols="9">
                     <v-text-field v-model="search" label="Titre de la série" variant="underlined" />
@@ -18,8 +32,8 @@
                     </v-skeleton-loader>
                 </v-col>
             </v-row>
-        </v-container>
-    </v-form>
+        </v-form>
+    </v-container>
 </template>
 
 <script lang="ts" setup>
@@ -27,12 +41,14 @@ import SerieCard from "@/components/SerieCard.vue";
 import type { Serie } from "@/models/internal/serie";
 import { onBeforeMount, ref } from "vue";
 import { useSerie } from "@/composables/serie";
+import { SERIES_MENU } from "@/constants/menu";
 
 const { getSeries } = useSerie();
 
 const loading = ref(false);
 const search = ref();
 const series = ref<Serie[]>([]);
+const drawer = ref(false);
 
 const loadSeries = async (): Promise<void> => {
     loading.value = true;

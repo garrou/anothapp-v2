@@ -3,10 +3,24 @@ import serieService from "@/services/serieService";
 import type { SerieSearchOptions } from "@/types/search";
 import { isError } from "@/utils/response";
 import { useSnackbar } from "./snackbar";
+import { useRouter } from "vue-router";
 
 export function useSerie() {
 
     const snackBar = useSnackbar();
+    const router = useRouter();
+
+    const addSerie = async (serie: Serie): Promise<boolean> => {
+        const resp = await serieService.addSerie(serie);
+        const data = await resp.json();
+
+        if (isError(resp.status))
+            throw new Error(data.message);
+
+        snackBar.showSuccess(`Série "${serie.title} ajoutée`);
+        router.push(`/series/${serie.id}`);
+        return true;
+    }
 
     const deleteSerie = async (serie: Serie): Promise<boolean> => {
         const resp = await serieService.deleteSerie(serie.id);
@@ -60,5 +74,5 @@ export function useSerie() {
         return data.favorite;
     }
 
-    return { deleteSerie, getSerie, getSeries, updateFavorite }
+    return { addSerie, deleteSerie, getSerie, getSeries, updateFavorite }
 }

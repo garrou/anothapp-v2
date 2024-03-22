@@ -20,7 +20,11 @@
                     <v-text-field v-model="search" label="Titre de la série" variant="underlined" />
                 </v-col>
                 <v-col cols="3">
-                    <v-btn icon="mdi-magnify" type="submit" size="small" />
+                    <v-btn type="submit" size="small">
+                        <template #default>
+                            <v-icon icon="mdi-magnify" />
+                        </template>
+                    </v-btn>
                 </v-col>
             </v-row>
             <v-row>

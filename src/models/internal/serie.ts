@@ -9,6 +9,24 @@ export interface Serie {
     poster: string;
 
     favorite: boolean;
+
+    duration: number;
+
+    description?: string;
+        
+    seasons?: number;
+        
+    episodes?: number;
+        
+    network?: string;
+        
+    note?: number;
+        
+    status?: string;
+        
+    creation?: number;
+        
+    kinds?: string[];
 }
 
 export interface SerieInfos {

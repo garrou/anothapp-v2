@@ -9,7 +9,8 @@
         </v-card-subtitle>
 
         <v-card-actions>
-            <v-btn :color="favoriteColor" icon="mdi-heart" variant="text" @click="changeFavorite" />
+            <v-btn v-if="!addable" :color="favoriteColor" icon="mdi-heart" variant="text" @click="changeFavorite" />
+            <v-btn v-else icon="mdi-plus-thick" variant="text" @click="add" />
         </v-card-actions>
     </v-card>
 </template>
@@ -24,13 +25,18 @@ const props = defineProps({
     serie: { type: Object as PropType<Serie>, required: true }
 });
 
-const link = `/series/${props.serie.id}`;
+const addable = !!props.serie.description;
+const link = addable ? `/discover/${props.serie.id}` : `/series/${props.serie.id}`;
 
-const { updateFavorite } = useSerie();
+const { addSerie, updateFavorite } = useSerie();
 
 const isFavorite = ref(props.serie.favorite);
 
 const favoriteColor = computed(() => isFavorite.value ? "red" : "surface-variant");
+
+const add = async () => {
+    await addSerie(props.serie);
+}
 
 const changeFavorite = async (): Promise<void> => {
     isFavorite.value = await updateFavorite(props.serie);

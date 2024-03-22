@@ -2,6 +2,7 @@ import { buildUrl } from "@/utils/format";
 import { ENDPOINT } from "../constants/services";
 import storageService from "./storageService";
 import type { Season } from "@/models/internal/season";
+import type { Serie } from "@/models/internal/serie";
 
 const addSeason = async (id: number, season: Season): Promise<Response> => {
     return fetch(`${ENDPOINT}/shows/${id}/seasons`, {
@@ -12,6 +13,23 @@ const addSeason = async (id: number, season: Season): Promise<Response> => {
         },
         body: JSON.stringify(season)
     });
+}
+
+const addSerie = async (serie: Serie): Promise<Response> => {
+    return fetch(`${ENDPOINT}/shows`, {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${storageService.getJwt()}`,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            "id": serie.id,
+            "title": serie.title,
+            "poster": serie.poster,
+            "kinds": serie.kinds,
+            "duration": serie.duration
+        })
+    }); 
 }
 
 const deleteSerie = async (id: number): Promise<Response> => {
@@ -59,6 +77,7 @@ const updateFavoriteBySerieId = async (id: number): Promise<Response> => {
 
 export default {
     addSeason,
+    addSerie,
     deleteSerie,
     getSeasonsBySerieId,
     getSerie,

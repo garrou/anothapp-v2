@@ -12,53 +12,44 @@
                     <v-icon>mdi-delete</v-icon>
                 </v-btn>
             </template>
-
-            <template #tabs>
-                <v-tabs v-model="tab" align-tabs="title">
-                    <v-tab :value="1">Mes saisons</v-tab>
-                    <v-tab :value="2">Ajouter</v-tab>
-                </v-tabs>
-            </template>
         </base-toolbar>
 
-        <v-window v-model="tab">
-            <v-window-item class="pa-2" :value="1">
-                <v-card class="mb-2">
-                    <v-row>
-                        <v-col cols="3">
-                            <base-image :src="infos.serie.poster" max-height="350" class="ma-2" />
-                        </v-col>
-                        <v-col cols="9">
-                            <v-card-title>{{ time }}</v-card-title>
+        <v-card class="mb-2 pa-2">
+            <v-row>
+                <v-col cols="3">
+                    <base-image :src="infos.serie.poster" max-height="350" />
+                </v-col>
+                <v-col cols="9">
+                    <p class="mb-1 text-subtitle-1">{{ time }}</p>
+                    <p class="mb-1 text-subtitle-1">Saisons {{ infos.seasons.length }} / {{ seasons.length }}</p>
+                    <v-progress-linear v-model="infos.seasons.length" class="mb-3 text-subtitle-1" :max="seasons.length"
+                        rounded />
+                    <p class="mb-1 text-subtitle-1">Episodes {{ infos.episodes }}</p>
+                </v-col>
+            </v-row>
+        </v-card>
 
-                            <v-card-title>Saisons {{ infos.seasons.length }} / {{ seasons.length }}</v-card-title>
-                            <v-card-text>
-                                <v-progress-linear v-model="infos.seasons.length" :max="seasons.length" rounded />
-                            </v-card-text>
+        <v-card>
+            <v-tabs v-model="tab" align-tabs="title">
+                <v-tab :value="1">Mes saisons</v-tab>
+                <v-tab :value="2">Ajouter</v-tab>
+            </v-tabs>
+        </v-card>
 
-                            <v-card-title>Episodes {{ infos.episodes }}</v-card-title>
+        <v-btn @click="sort" class="my-2">
+            <v-icon>{{ orderIcon }}</v-icon>
+        </v-btn>
 
-                            <v-card-text>
-                                <v-btn @click="sort(infos.seasons)" class="mb-2">
-                                    <v-icon>{{ orderIcon }}</v-icon>
-                                </v-btn>
-                            </v-card-text>
-                        </v-col>
-                    </v-row>
-                </v-card>
-
+        <v-window v-model="tab" class="pa-2">
+            <v-window-item :value="1">
                 <seasons-row :loading="loading" :seasons="infos.seasons" />
             </v-window-item>
 
-            <v-window-item class="pa-2" :value="2">
-
-                <v-btn @click="sort(seasons)" class="mb-2">
-                    <v-icon>{{ orderIcon }}</v-icon>
-                </v-btn>
-
+            <v-window-item :value="2" class="pa-2">
                 <seasons-row :addable="true" :loading="loading" :seasons="seasons" @add="newSeason" />
             </v-window-item>
         </v-window>
+
     </v-container>
 
     <base-dialog v-model="dialog" title="Supprimer" text="Confirmez-vous la suppression de la série ?"
@@ -107,9 +98,10 @@ const load = async (): Promise<void> => {
     loading.value = false;
 }
 
-const sort = (arr: Season[]) => {
+const sort = () => {
     order.value = !order.value;
-    arr.sort((a: Season, b: Season) => order.value ? a.number - b.number : b.number - a.number);
+    const func = (a: Season, b: Season) => order.value ? a.number - b.number : b.number - a.number;
+    tab.value == 1 ? infos.value?.seasons.sort(func) : seasons.value?.sort(func);
 }
 
 const newSeason = async (season: Season) => {

@@ -9,10 +9,6 @@
         <slot name="firstBtn" />
 
         <slot name="secondBtn" />
-
-        <template v-slot:extension>
-            <slot name="tabs" />
-        </template>
     </v-toolbar>
 </template>
 

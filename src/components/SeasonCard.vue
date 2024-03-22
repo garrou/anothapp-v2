@@ -1,6 +1,6 @@
 <template>
     <v-card>
-        <base-image v-if="season.image" class="align-end" cover :src="season.image" max-height="580" max-width="420" />
+        <base-image v-if="season.image" class="align-end" cover :src="season.image" max-height="580" />
         <v-card-title>Saison {{ season.number }}</v-card-title>
         <v-card-subtitle :class="margin">{{ season.episodes }} épisodes</v-card-subtitle>
 

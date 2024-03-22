@@ -1,6 +1,6 @@
 <template>
     <v-container v-if="infos && seasons">
-        <base-toolbar :title="infos.serie.title" @back="$router.push('/series')">
+        <base-toolbar icon="mdi-chevron-left" :title="infos.serie.title" @back="$router.push('/series')">
             <template #firstBtn>
                 <v-btn icon @click="changeFavorite">
                     <v-icon :color="favoriteColor">mdi-heart</v-icon>
@@ -20,32 +20,32 @@
                     <base-image :src="infos.serie.poster" max-height="350" />
                 </v-col>
                 <v-col cols="9">
-                    <p class="mb-1 text-subtitle-1">{{ time }}</p>
                     <p class="mb-1 text-subtitle-1">Saisons {{ infos.seasons.length }} / {{ seasons.length }}</p>
                     <v-progress-linear v-model="infos.seasons.length" class="mb-3 text-subtitle-1" :max="seasons.length"
                         rounded />
                     <p class="mb-1 text-subtitle-1">Episodes {{ infos.episodes }}</p>
+                    <p class="mb-1 text-subtitle-1">{{ time }}</p>
                 </v-col>
             </v-row>
         </v-card>
 
-        <v-card>
+        <v-card class="mb-2">
             <v-tabs v-model="tab" align-tabs="title">
                 <v-tab :value="1">Mes saisons</v-tab>
                 <v-tab :value="2">Ajouter</v-tab>
             </v-tabs>
         </v-card>
 
-        <v-btn @click="sort" class="my-2">
+        <v-btn v-if="displayOrder" @click="orderSeasons" class="mb-2 ms-1">
             <v-icon>{{ orderIcon }}</v-icon>
         </v-btn>
 
-        <v-window v-model="tab" class="pa-2">
+        <v-window v-model="tab" class="pa-1">
             <v-window-item :value="1">
                 <seasons-row :loading="loading" :seasons="infos.seasons" />
             </v-window-item>
 
-            <v-window-item :value="2" class="pa-2">
+            <v-window-item :value="2">
                 <seasons-row :addable="true" :loading="loading" :seasons="seasons" @add="newSeason" />
             </v-window-item>
         </v-window>
@@ -86,6 +86,7 @@ const seasons = ref<Season[]>();
 const tab = ref(1);
 const order = ref(true);
 
+const displayOrder = computed(() => [1,2].includes(tab.value));
 const favoriteColor = computed(() => isFavorite.value ? "red" : "surface-variant");
 const orderIcon = computed(() => order.value ? "mdi-sort-numeric-descending" : "mdi-sort-numeric-ascending");
 const time = computed(() => minsToStringHoursDays(infos.value?.time));
@@ -98,7 +99,7 @@ const load = async (): Promise<void> => {
     loading.value = false;
 }
 
-const sort = () => {
+const orderSeasons = () => {
     order.value = !order.value;
     const func = (a: Season, b: Season) => order.value ? a.number - b.number : b.number - a.number;
     tab.value == 1 ? infos.value?.seasons.sort(func) : seasons.value?.sort(func);

@@ -8,7 +8,7 @@ export const formatDate = (date: Date): string => moment(date).format("DD/MM/YYY
 
 export const minsToStringDays = (mins: number): string => {
     const days = Math.floor(mins / MINS_IN_DAY);
-    return `${days} jour${days > 1 ? "s" : ""}`;
+    return days === 0 ? "" : `${days} jour${days > 1 ? "s" : ""}`;
 }
 
 export const minsToStringHours = (mins: number): string => {

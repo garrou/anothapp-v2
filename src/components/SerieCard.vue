@@ -1,7 +1,7 @@
 <template>
     <v-card>
-        <router-link :to="link" @click="">
-            <base-image :src="serie.poster" cover max-height="580" max-width="420" />
+        <router-link :to="link">
+            <base-image :src="serie.poster" cover max-height="580" />
         </router-link>
 
         <v-card-subtitle class="pt-4">

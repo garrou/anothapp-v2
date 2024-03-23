@@ -1,13 +1,13 @@
 <template>
     <v-row align="center">
-        <v-col cols="12" md="6">
+        <v-col cols="12" md="6" class="preview-img">
             <base-image max-height="580" :src="serie.poster" />
         </v-col>
         <v-col cols="12" md="6">
             <v-card-title>{{ serie.title }}</v-card-title>
             <v-card-subtitle>{{ seasons }} • {{ serie.network }}</v-card-subtitle>
 
-            <v-alert class="mt-2" :color="statusColor" :density="DENSITY" icon="$success" :title="serie.status" />
+            <v-alert class="mt-2" :color="status" :density="DENSITY" :icon="icon" :title="serie.status" />
 
             <v-card class="my-2" :elevation="ELEVATION">
                 <v-card-item>
@@ -61,6 +61,15 @@ const props = defineProps({
 const kinds = props.serie.kinds?.join(" • ");
 const note = props.serie.note?.toFixed(2);
 const seasons = `${props.serie.seasons} saison${props.serie.seasons ?? 0 > 1 ? 's' : ''}`;
-const statusColor = props.serie.status === "En cours" ? "info" : "success";
+const status = props.serie.status === "En cours" ? "info" : "success";
+const icon = `\$${status}`;
 const totalDuration = minsToStringHoursDays(props.serie.duration * (props.serie.episodes ?? 0));
 </script>
+
+<style scoped>
+.preview-img {
+    @media screen and (max-width: 960px) {
+        display: none;
+    }
+}
+</style>

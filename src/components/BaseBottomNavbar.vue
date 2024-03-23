@@ -18,4 +18,4 @@ import { DENSITY } from '@/constants/style';
 const route = useRoute();
 
 const navbar = computed(() => !PAGE_WITHOUT_BOTTOM_NAVBAR.includes(route.name as string));
-</script>@/constants/menus@/constants/menus
+</script>

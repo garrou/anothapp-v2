@@ -44,12 +44,21 @@
             <v-window-item :value="1">
                 <seasons-row :loading="loading" :seasons="infos.seasons" />
             </v-window-item>
-
             <v-window-item :value="2">
-                <seasons-row :addable="true" :loading="loading" :seasons="seasons" @add="newSeason" />
+                <seasons-row :addable="true" :loading="loading" :seasons="seasons" @add="newSeason"
+                    @show="showSeason" />
             </v-window-item>
         </v-window>
     </v-container>
+
+    <base-modal v-if="selected" v-model="modal">
+        <v-card align="center" class="pa-2">
+            <v-card-title class="d-flex flex-row-reverse">
+                <v-btn icon="mdi-close" variant="text" @click="modal = false" />
+            </v-card-title>
+            <season-details :id="id" :season="selected" />
+        </v-card>
+    </base-modal>
 
     <base-confirm v-model="confirm" title="Supprimer" text="Confirmez-vous la suppression de la série ?"
         @cancel="confirm = false" @confirm="removeSerie" />
@@ -57,8 +66,10 @@
 
 <script lang="ts" setup>
 import BaseConfirm from "@/components/BaseConfirm.vue";
+import BaseModal from "@/components/BaseModal.vue";
 import BaseImage from "@/components/BaseImage.vue";
 import BaseToolbar from "@/components/BaseToolbar.vue";
+import SeasonDetails from "@/components/SeasonDetails.vue";
 import SeasonsRow from "@/components/SeasonsRow.vue";
 import type { SerieInfos } from "@/models/serie";
 import { computed, onBeforeMount, ref } from "vue";
@@ -82,9 +93,11 @@ const confirm = ref(false);
 const infos = ref<SerieInfos>();
 const isFavorite = ref(false);
 const loading = ref(false);
-const seasons = ref<Season[]>();
-const tab = ref(1);
 const order = ref(true);
+const seasons = ref<Season[]>();
+const modal = ref(false);
+const selected = ref<Season>();
+const tab = ref(1);
 
 const displayOrder = computed(() => [1, 2].includes(tab.value));
 const favoriteColor = computed(() => isFavorite.value ? "red" : "surface-variant");
@@ -99,30 +112,35 @@ const load = async (): Promise<void> => {
     loading.value = false;
 }
 
-const orderSeasons = () => {
+const orderSeasons = (): void => {
     const func = (a: Season, b: Season) => order.value ? a.number - b.number : b.number - a.number;
     tab.value == 1 ? infos.value?.seasons.sort(func) : seasons.value?.sort(func);
     order.value = !order.value;
 }
 
-const newSeason = async (season: Season) => {
+const newSeason = async (season: Season): Promise<void> => {
     if (!infos.value?.serie) return
     await addSeason(infos.value.serie, season);
 }
 
-const changeFavorite = async () => {
+const changeFavorite = async (): Promise<void> => {
     if (!infos.value?.serie) return
     await updateFavorite(infos.value?.serie);
     isFavorite.value = !isFavorite.value;
 }
 
-const removeSerie = async () => {
+const removeSerie = async (): Promise<void> => {
     if (!infos.value?.serie) return
     confirm.value = !await deleteSerie(infos.value?.serie);
     router.replace("/series");
 }
 
+const showSeason = (season: Season): void => {
+    selected.value = season;
+    modal.value = true;
+}
+
 onBeforeMount(async () => {
     await load();
 });
-</script>@/models/season@/models/serie
+</script>

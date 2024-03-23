@@ -1,11 +1,12 @@
 <template>
     <v-row>
         <v-col v-for="season in seasons" cols="6" md="4" lg="3" :key="season.number">
-            <v-skeleton-loader  :elevation="ELEVATION" :loading="loading" type="card">
+            <v-skeleton-loader :elevation="ELEVATION" :loading="loading" type="card">
                 <v-responsive>
-                    <season-card :season="season">
+                    <season-card :season="season" @show="show">
                         <template v-if="addable" #add>
-                            <v-btn color="surface-variant" :icon="ADD_ICON" variant="text" @click="$emit('add', season)" />
+                            <v-btn color="surface-variant" :icon="ADD_ICON" variant="text"
+                                @click="$emit('add', season)" />
                         </template>
                     </season-card>
                 </v-responsive>
@@ -26,4 +27,13 @@ defineProps({
     seasons: { type: Array as PropType<Season[]>, required: true },
     loading: { type: Boolean, required: true }
 });
-</script>@/models/season
+
+const emit = defineEmits<{
+    "add": [Season],
+    "show": [Season]
+}>();   
+
+const show = (season: Season) => {
+    emit("show", season);
+}
+</script>

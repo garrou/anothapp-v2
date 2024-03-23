@@ -49,6 +49,14 @@ const getSeasonsBySerieId = async (id: number): Promise<Response> => {
     });
 }
 
+const getSeasonInfosBySerieIdByNumber = async (id: number, num: number): Promise<Response> => {
+    return fetch(`${ENDPOINT}/shows/${id}/seasons/${num}`, {
+        headers: {
+            "Authorization": `Bearer ${storageService.getJwt()}`
+        }
+    });
+}
+
 const getSerie = async (id: number): Promise<Response> => {
     return fetch(`${ENDPOINT}/shows/${id}`, {
         headers: {
@@ -80,6 +88,7 @@ export default {
     addSerie,
     deleteSerie,
     getSeasonsBySerieId,
+    getSeasonInfosBySerieIdByNumber,
     getSerie,
     getSeries,
     updateFavoriteBySerieId

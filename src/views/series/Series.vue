@@ -27,9 +27,9 @@ import { DENSITY, ELEVATION } from "@/constants/style";
 
 const { getSeries } = useSerie();
 
+const drawer = ref(false);
 const loading = ref(false);
 const series = ref<Serie[]>([]);
-const drawer = ref(false);
 
 const fetchSeries = async (title?: string): Promise<void> => {
     loading.value = true;

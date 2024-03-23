@@ -1,4 +1,4 @@
-import type { Season } from "@/models/season";
+import type { Season, SeasonInfos } from "@/models/season";
 import type { Serie } from "@/models/serie";
 import serieService from "@/services/serieService";
 import type { SeasonSearchOptions } from "@/types/search";
@@ -21,6 +21,16 @@ export function useSeason() {
         return data;
     }
 
+    const getSeasonInfosBySerieIdByNumber = async (id: number, num: number): Promise<SeasonInfos> => {
+        const resp = await serieService.getSeasonInfosBySerieIdByNumber(id, num);
+        const data = await resp.json();
+
+        if (isError(resp.status))
+            throw new Error(data.message);
+
+        return data;
+    }
+
     const addSeason = async (serie: Serie, season: Season): Promise<void> => {
         const resp = await serieService.addSeason(serie.id, season);
         const data = await resp.json();
@@ -32,5 +42,5 @@ export function useSeason() {
         return data;
     }
 
-    return { addSeason, getSeasonsBySerieId }
+    return { addSeason, getSeasonsBySerieId, getSeasonInfosBySerieIdByNumber }
 }

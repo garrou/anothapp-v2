@@ -3,7 +3,7 @@ import HomeView from "../views/HomeView.vue";
 import LoginView from "@/views/auth/LoginView.vue";
 import RegisterView from "@/views/auth/RegisterView.vue";
 import Series from "@/views/series/Series.vue";
-import SerieDetails from "@/views/series/SerieDetails.vue";
+import Serie from "@/views/series/Serie.vue";
 import { useUser } from "@/composables/user";
 import Discover from "@/views/discover/Discover.vue";
 
@@ -35,8 +35,8 @@ const router = createRouter({
     },
     {
       path: "/series/:id",
-      name: "serie-details",
-      component: SerieDetails,
+      name: "serie",
+      component: Serie,
       props: (route) => ({ id: Number(route.params.id) }),
       meta: {
         requiresAuth: true

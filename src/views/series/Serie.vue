@@ -3,12 +3,12 @@
         <base-toolbar icon="mdi-chevron-left" :title="infos.serie.title" @back="$router.push('/series')">
             <template #firstBtn>
                 <v-btn icon @click="changeFavorite">
-                    <v-icon :color="favoriteColor">{{ FAVORITE_ICON }}</v-icon>
+                    <v-icon :color="favoriteColor" :icon="FAVORITE_ICON" />
                 </v-btn>
             </template>
 
             <template #secondBtn>
-                <v-btn icon @click="dialog = true">
+                <v-btn icon @click="confirm = true">
                     <v-icon>mdi-delete</v-icon>
                 </v-btn>
             </template>
@@ -49,15 +49,14 @@
                 <seasons-row :addable="true" :loading="loading" :seasons="seasons" @add="newSeason" />
             </v-window-item>
         </v-window>
-
     </v-container>
 
-    <base-dialog v-model="dialog" title="Supprimer" text="Confirmez-vous la suppression de la série ?"
-        @cancel="dialog = false" @confirm="removeSerie" />
+    <base-confirm v-model="confirm" title="Supprimer" text="Confirmez-vous la suppression de la série ?"
+        @cancel="confirm = false" @confirm="removeSerie" />
 </template>
 
 <script lang="ts" setup>
-import BaseDialog from "@/components/BaseDialog.vue";
+import BaseConfirm from "@/components/BaseConfirm.vue";
 import BaseImage from "@/components/BaseImage.vue";
 import BaseToolbar from "@/components/BaseToolbar.vue";
 import SeasonsRow from "@/components/SeasonsRow.vue";
@@ -79,7 +78,7 @@ const { addSeason } = useSeason();
 const { deleteSerie, getSerie, updateFavorite } = useSerie();
 const { getSeasonsBySerieId } = useSearch();
 
-const dialog = ref(false);
+const confirm = ref(false);
 const infos = ref<SerieInfos>();
 const isFavorite = ref(false);
 const loading = ref(false);
@@ -87,7 +86,7 @@ const seasons = ref<Season[]>();
 const tab = ref(1);
 const order = ref(true);
 
-const displayOrder = computed(() => [1,2].includes(tab.value));
+const displayOrder = computed(() => [1, 2].includes(tab.value));
 const favoriteColor = computed(() => isFavorite.value ? "red" : "surface-variant");
 const orderIcon = computed(() => order.value ? "mdi-sort-numeric-descending" : "mdi-sort-numeric-ascending");
 const time = computed(() => minsToStringHoursDays(infos.value?.time));
@@ -119,7 +118,7 @@ const changeFavorite = async () => {
 
 const removeSerie = async () => {
     if (!infos.value?.serie) return
-    dialog.value = !await deleteSerie(infos.value?.serie);
+    confirm.value = !await deleteSerie(infos.value?.serie);
     router.replace("/series");
 }
 

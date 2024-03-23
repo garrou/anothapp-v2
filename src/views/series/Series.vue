@@ -14,56 +14,30 @@
         </v-navigation-drawer>
     </v-layout>
 
-    <v-container class="mt-10">
-        <v-form @submit="loadSeries" @submit.prevent>
-            <v-row align="center">
-                <v-col cols="9">
-                    <v-text-field v-model="search" label="Titre de la série" variant="underlined" />
-                </v-col>
-                <v-col cols="3">
-                    <v-btn type="submit" size="small">
-                        <template #default>
-                            <v-icon :icon="SEARCH_ICON" />
-                        </template>
-                    </v-btn>
-                </v-col>
-            </v-row>
-            <v-row>
-                <v-col v-for="serie in series" cols="6" md="4" lg="3" :key="serie.id">
-                    <v-skeleton-loader :elevation="ELEVATION" :loading="loading" type="card">
-                        <v-responsive>
-                            <serie-card :serie="serie" />
-                        </v-responsive>
-                    </v-skeleton-loader>
-                </v-col>
-            </v-row>
-        </v-form>
-    </v-container>
+    <series-row :loading="loading" :series="series" @search="fetchSeries" />
 </template>
 
 <script lang="ts" setup>
-import SerieCard from "@/components/SerieCard.vue";
+import SeriesRow from "@/components/SeriesRow.vue";
 import type { Serie } from "@/models/serie";
 import { onBeforeMount, ref } from "vue";
 import { useSerie } from "@/composables/serie";
 import { SERIES_MENU } from "@/constants/menus";
 import { DENSITY, ELEVATION } from "@/constants/style";
-import { SEARCH_ICON } from "@/constants/icons";
 
 const { getSeries } = useSerie();
 
 const loading = ref(false);
-const search = ref();
 const series = ref<Serie[]>([]);
 const drawer = ref(false);
 
-const loadSeries = async (): Promise<void> => {
+const fetchSeries = async (title?: string): Promise<void> => {
     loading.value = true;
-    series.value = await getSeries({ title: search.value });
+    series.value = await getSeries({ title: title });
     loading.value = false;
 }
 
 onBeforeMount(async () => {
-    await loadSeries();
+    await fetchSeries();
 });
 </script>

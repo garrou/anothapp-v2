@@ -15,7 +15,7 @@
                 <v-col v-for="serie in series" cols="6" md="4" lg="3" :key="serie.id">
                     <v-skeleton-loader :elevation="ELEVATION" :loading="loading" type="card">
                         <v-responsive>
-                            <serie-card :serie="serie" @show="show" />
+                            <serie-card :serie="serie" @showSerie="showSerie" />
                         </v-responsive>
                     </v-skeleton-loader>
                 </v-col>
@@ -26,10 +26,10 @@
 
 <script lang="ts" setup>
 import SerieCard from "@/components/SerieCard.vue";
-import { SEARCH_ICON } from '@/constants/icons';
-import { ELEVATION } from '@/constants/style';
-import type { Serie } from '@/models/serie';
-import { ref, type PropType } from 'vue';
+import { SEARCH_ICON } from "@/constants/icons";
+import { ELEVATION } from "@/constants/style";
+import type { Serie } from "@/models/serie";
+import { ref, type PropType } from "vue";
 
 defineProps({
     loading: { type: Boolean, required: true },
@@ -37,13 +37,13 @@ defineProps({
 });
 
 const emit = defineEmits<{
-    "show": [Serie],
+    "showSerie": [Serie],
     "search": [string]
 }>();
 
 const search = ref("");
 
-const show = (serie: Serie) => {
-    emit("show", serie);
+const showSerie = (serie: Serie) => {
+    emit("showSerie", serie);
 }
 </script>

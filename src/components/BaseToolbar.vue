@@ -13,7 +13,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { DENSITY } from '@/constants/style';
+import type { DENSITY } from "@/constants/style";
 
 defineProps({
     icon: { type: String, required: true },

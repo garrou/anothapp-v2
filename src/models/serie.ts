@@ -9,6 +9,8 @@ export interface Serie {
     poster: string;
 
     favorite: boolean;
+        
+    kinds: string[];
 
     duration: number;
 
@@ -25,8 +27,6 @@ export interface Serie {
     status?: string;
         
     creation?: number;
-        
-    kinds?: string[];
 }
 
 export interface SerieInfos {

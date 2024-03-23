@@ -5,7 +5,7 @@
         </v-app-bar>
     </v-layout>
 
-    <series-row :loading="loading" :series="series" @search="fetchSeries" @show="show" />
+    <series-row :loading="loading" :series="series" @search="fetchSeries" @show-serie="showSerie" />
 
     <base-modal v-if="selected" v-model="modal">
         <v-card align="center" class="pa-2">
@@ -39,7 +39,7 @@ const fetchSeries = async (title?: string): Promise<void> => {
     loading.value = false;
 }
 
-const show = (serie: Serie) => {
+const showSerie = (serie: Serie) => {
     modal.value = true;
     selected.value = serie;
 }

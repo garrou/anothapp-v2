@@ -42,18 +42,18 @@
 
         <v-window v-model="tab" class="pa-1">
             <v-window-item :value="1">
-                <seasons-row :loading="loading" :seasons="infos.seasons" />
+                <seasons-row :loading="loading" :seasons="infos.seasons" @show-season="showSeason" />
             </v-window-item>
             <v-window-item :value="2">
-                <seasons-row :addable="true" :loading="loading" :seasons="seasons" @add="newSeason"
-                    @show="showSeason" />
+                <seasons-row addable :loading="loading" :seasons="seasons" @add="newSeason" />
             </v-window-item>
         </v-window>
     </v-container>
 
-    <base-modal v-if="selected" v-model="modal">
-        <v-card align="center" class="pa-2">
-            <v-card-title class="d-flex flex-row-reverse">
+    <base-modal v-if="selected" v-model="modal" :max-width="500">
+        <v-card class="pa-2">
+            <v-card-title class="d-flex justify-space-between">
+                <span>Saison {{ selected.number }}</span>
                 <v-btn icon="mdi-close" variant="text" @click="modal = false" />
             </v-card-title>
             <season-details :id="id" :season="selected" />
@@ -80,6 +80,7 @@ import type { Season } from "@/models/season";
 import router from "@/router";
 import { minsToStringHoursDays } from "@/utils/format";
 import { FAVORITE_ICON } from "@/constants/icons";
+import { useSnackbar } from "@/composables/snackbar";
 
 const props = defineProps({
     id: { type: Number, required: true }
@@ -88,6 +89,7 @@ const props = defineProps({
 const { addSeason } = useSeason();
 const { deleteSerie, getSerie, updateFavorite } = useSerie();
 const { getSeasonsBySerieId } = useSearch();
+const { showError } = useSnackbar();
 
 const confirm = ref(false);
 const infos = ref<SerieInfos>();
@@ -119,18 +121,27 @@ const orderSeasons = (): void => {
 }
 
 const newSeason = async (season: Season): Promise<void> => {
-    if (!infos.value?.serie) return
+    if (!infos.value?.serie) {
+        showError("Impossible d'ajouter une saison");
+        return
+    }
     await addSeason(infos.value.serie, season);
 }
 
 const changeFavorite = async (): Promise<void> => {
-    if (!infos.value?.serie) return
+    if (!infos.value?.serie) {
+        showError("Impossible d'ajouter en favoris");
+        return
+    }
     await updateFavorite(infos.value?.serie);
     isFavorite.value = !isFavorite.value;
 }
 
 const removeSerie = async (): Promise<void> => {
-    if (!infos.value?.serie) return
+    if (!infos.value?.serie) {
+        showError("Impossible de supprimer la série");
+        return
+    }
     confirm.value = !await deleteSerie(infos.value?.serie);
     router.replace("/series");
 }

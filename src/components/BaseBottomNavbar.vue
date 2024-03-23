@@ -10,10 +10,10 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
-import { useRoute } from 'vue-router';
-import { NAV_MENU, PAGE_WITHOUT_BOTTOM_NAVBAR } from '@/constants/menus';
-import { DENSITY } from '@/constants/style';
+import { computed } from "vue";
+import { useRoute } from "vue-router";
+import { NAV_MENU, PAGE_WITHOUT_BOTTOM_NAVBAR } from "@/constants/menus";
+import { DENSITY } from "@/constants/style";
 
 const route = useRoute();
 

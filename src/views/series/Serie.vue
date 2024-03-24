@@ -95,9 +95,9 @@ const confirm = ref(false);
 const infos = ref<SerieInfos>();
 const isFavorite = ref(false);
 const loading = ref(false);
-const order = ref(true);
-const seasons = ref<Season[]>();
 const modal = ref(false);
+const order = ref(false);
+const seasons = ref<Season[]>();
 const selected = ref<Season>();
 const tab = ref(1);
 
@@ -116,7 +116,7 @@ const load = async (): Promise<void> => {
 
 const orderSeasons = (): void => {
     const func = (a: Season, b: Season) => order.value ? a.number - b.number : b.number - a.number;
-    tab.value == 1 ? infos.value?.seasons.sort(func) : seasons.value?.sort(func);
+    tab.value === 1 ? infos.value?.seasons.sort(func) : seasons.value?.sort(func);
     order.value = !order.value;
 }
 

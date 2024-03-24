@@ -28,9 +28,9 @@ import { useUser } from "@/composables/user";
 import { EMAIL_PATTERN, MIN_PASSWORD_LENGTH } from "@/constants/auth";
 import { ref } from "vue";
 
-const { register } = useUser();
-
 const TITLE = "S'inscrire";
+
+const { register } = useUser();
 
 const valid = ref(false);
 const email = ref("");

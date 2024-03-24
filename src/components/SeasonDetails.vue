@@ -2,9 +2,9 @@
     <v-card-text v-if="infos">
         <div class="font-weight-bold ms-1 mb-2">{{ time }}</div>
         <v-timeline align="start" density="compact">
-            <v-timeline-item v-for="season in infos.seasons" :key="season.id" size="x-small">
+            <v-timeline-item v-for="season in infos.seasons" size="x-small" :key="season.id">
                 <div class="mb-4">
-                    <div class="font-weight-normal">{{ formatDate(season.addedAt) }}</div>
+                    <span class="font-weight-normal">{{ formatDate(season.addedAt) }}</span>
                 </div>
             </v-timeline-item>
         </v-timeline>

@@ -56,7 +56,7 @@ import { DENSITY, ELEVATION } from "@/constants/style";
 
 const props = defineProps({
     serie: { type: Object as PropType<Serie>, required: true }
-})
+});
 
 const kinds = props.serie.kinds?.join(" • ");
 const note = props.serie.note?.toFixed(2);

@@ -18,5 +18,5 @@ import type { DENSITY } from "@/constants/style";
 defineProps({
     icon: { type: String, required: true },
     title: { type: String, required: true }
-})
+});
 </script>

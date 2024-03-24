@@ -5,7 +5,6 @@
         <v-card-subtitle>{{ season.episodes }} épisodes</v-card-subtitle>
 
         <v-card-actions>
-            <slot name="details" />
             <slot name="add" />
         </v-card-actions>
     </v-card>

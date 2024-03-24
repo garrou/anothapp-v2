@@ -6,6 +6,8 @@ import Series from "@/views/series/Series.vue";
 import Serie from "@/views/series/Serie.vue";
 import { useUser } from "@/composables/user";
 import Discover from "@/views/discover/Discover.vue";
+import Statistics from "@/views/stats/Statistics.vue";
+import Profile from "@/views/profile/Profile.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -46,6 +48,22 @@ const router = createRouter({
       path: "/discover",
       name: "discover",
       component: Discover,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: "/stats",
+      name: "stats",
+      component: Statistics,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: "/profile",
+      name: "profile",
+      component: Profile,
       meta: {
         requiresAuth: true
       }

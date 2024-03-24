@@ -11,7 +11,7 @@ interface SeasonDetails {
 
     id: number;
 
-    addedAt: Date;
+    addedAt: string;
 }
 
 export interface SeasonInfos {

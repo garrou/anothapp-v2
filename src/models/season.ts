@@ -1,17 +1,18 @@
+interface SeasonDetails {
+
+    addedAt: string;
+
+    id: number;
+}
+
+
 export interface Season {
-
-    number: number;
-
+    
     episodes: number;
 
     image?: string;
-}
 
-interface SeasonDetails {
-
-    id: number;
-
-    addedAt: string;
+    number: number;
 }
 
 export interface SeasonInfos {
@@ -19,4 +20,15 @@ export interface SeasonInfos {
     seasons: SeasonDetails[];
 
     time: number;
+}
+
+export interface SeasonTimeline {
+
+    addedAt: string;
+
+    season: Season;
+
+    showId: number;
+
+    showTitle: string
 }

@@ -2,7 +2,7 @@
     <v-card>
         <base-image v-if="season.image" class="align-end" cover :src="season.image" max-height="580" />
         <v-card-title>Saison {{ season.number }}</v-card-title>
-        <v-card-subtitle>{{ season.episodes }} épisodes</v-card-subtitle>
+        <v-card-subtitle v-if="season.episodes">{{ season.episodes }} épisodes</v-card-subtitle>
 
         <v-card-actions>
             <slot name="add" />

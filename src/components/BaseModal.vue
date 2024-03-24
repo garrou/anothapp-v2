@@ -1,8 +1,11 @@
 <template>
     <v-dialog class="overflow-auto" :max-width="maxWidth" :persistent="persistent">
-        <template #default>
+        <v-card>
+            <v-card-title class="d-flex justify-space-between">
+                <slot name="title" />
+            </v-card-title>
             <slot name="default" />
-        </template>
+        </v-card>
     </v-dialog>
 </template>
 

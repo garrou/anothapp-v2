@@ -5,5 +5,7 @@ export type SerieSearchOptions = {
 }
 
 export type SeasonSearchOptions = {
-    serieId: number
+    month?: number,
+    serieId?: number,
+    year?: number
 }

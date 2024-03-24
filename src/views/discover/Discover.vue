@@ -1,5 +1,5 @@
 <template>
-    <base-app-bar @search="fetchSeries" />
+    <base-app-bar search @search="fetchSeries" />
 
     <series-row :loading="loading" :series="series" @show-serie="showSerie" />
 

@@ -1,16 +1,30 @@
-import type { Season, SeasonInfos } from "@/models/season";
+import type { Season, SeasonInfos, SeasonTimeline } from "@/models/season";
 import type { Serie } from "@/models/serie";
 import serieService from "@/services/serieService";
 import type { SeasonSearchOptions } from "@/types/search";
 import { isError } from "@/utils/response";
 import { useSnackbar } from "./snackbar";
+import seasonService from "@/services/seasonService";
 
 export function useSeason() {
 
     const snackbar = useSnackbar();
 
+    const getSeasonsTimeline = async (month: number): Promise<SeasonTimeline[]> => {
+        const resp = await seasonService.getSeasons(undefined, month);
+        const data = await resp.json();
+
+        if (isError(resp.status))
+            throw new Error(data.message);
+
+        return data;
+    }
+
     const getSeasonsBySerieId = async (options: SeasonSearchOptions): Promise<Season[]> => {
         const { serieId } = options;
+
+        if (!serieId)
+            throw new Error("Impossible de récupérer les données");
 
         const resp = await serieService.getSeasonsBySerieId(serieId);
         const data = await resp.json();
@@ -42,5 +56,5 @@ export function useSeason() {
         return data;
     }
 
-    return { addSeason, getSeasonsBySerieId, getSeasonInfosBySerieIdByNumber }
+    return { addSeason, getSeasonsBySerieId, getSeasonsTimeline, getSeasonInfosBySerieIdByNumber }
 }

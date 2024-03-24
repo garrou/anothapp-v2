@@ -11,6 +11,7 @@ import { createVuetify } from "vuetify";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
 import { useSnackbar } from "@/composables/snackbar";
+import { views } from "./views";
 
 const vuetify = createVuetify({
   components,
@@ -27,4 +28,9 @@ const snackbar = useSnackbar();
 app.config.errorHandler = (err: unknown) => {
   snackbar.showError(err as Error);
 }
+
+Object
+  .entries(views)
+  .forEach(([name, component]) => app.component(name, component));
+
 app.mount("#app");

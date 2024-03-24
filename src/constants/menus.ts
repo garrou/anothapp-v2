@@ -1,23 +1,6 @@
 import { ADD_ICON, FAVORITE_ICON } from "./icons";
 
-export const SERIES_MENU = [
-    {
-        title: "Ma liste",
-        icon: "mdi-format-list-bulleted-square"
-    },
-    {
-        title: "Continuer",
-        icon: "mdi-play"
-    },
-    {
-        title: "Historique",
-        icon: "mdi-timeline-clock"
-    },
-    {
-        title: "Favoris",
-        icon: FAVORITE_ICON
-    }
-];
+export const PAGE_WITHOUT_BOTTOM_NAVBAR = ["home", "login", "register"]
 
 export const NAV_MENU = [
     {
@@ -42,4 +25,26 @@ export const NAV_MENU = [
     }
 ];
 
-export const PAGE_WITHOUT_BOTTOM_NAVBAR = ["home", "login", "register"]
+
+export const SERIES_MENU = [
+    {
+        title: "Ma liste",
+        icon: "mdi-format-list-bulleted-square",
+        component: "List"
+    },
+    {
+        title: "Continuer",
+        icon: "mdi-play",
+        component: "Continue"
+    },
+    {
+        title: "Historique",
+        icon: "mdi-timeline-clock",
+        component: "History"
+    },
+    {
+        title: "Favoris",
+        icon: FAVORITE_ICON,
+        component: "Favorites"
+    }
+];

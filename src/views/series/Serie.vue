@@ -51,13 +51,11 @@
     </v-container>
 
     <base-modal v-if="selected" v-model="modal" :max-width="500">
-        <v-card class="pa-2">
-            <v-card-title class="d-flex justify-space-between">
-                <span>Saison {{ selected.number }}</span>
-                <v-btn icon="mdi-close" variant="text" @click="modal = false" />
-            </v-card-title>
-            <season-details :id="id" :season="selected" />
-        </v-card>
+        <template #title>
+            <span>Saison {{ selected.number }}</span>
+            <v-btn icon="mdi-close" variant="text" @click="modal = false" />
+        </template>
+        <season-details :id="id" :season="selected" />
     </base-modal>
 
     <base-confirm v-model="confirm" title="Supprimer" text="Confirmez-vous la suppression de la série ?"
@@ -65,6 +63,7 @@
 </template>
 
 <script lang="ts" setup>
+import BaseAppBar from "@/components/BaseAppBar.vue";
 import BaseConfirm from "@/components/BaseConfirm.vue";
 import BaseModal from "@/components/BaseModal.vue";
 import BaseImage from "@/components/BaseImage.vue";

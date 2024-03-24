@@ -1,11 +1,7 @@
 <template>
-    <v-layout>
-        <v-app-bar :density="DENSITY" :elevation="ELEVATION">
-            <v-app-bar-title>A</v-app-bar-title>
-        </v-app-bar>
-    </v-layout>
+    <base-app-bar @search="fetchSeries" />
 
-    <series-row :loading="loading" :series="series" @search="fetchSeries" @show-serie="showSerie" />
+    <series-row :loading="loading" :series="series" @show-serie="showSerie" />
 
     <base-modal v-if="selected" v-model="modal">
         <v-card align="center" class="pa-2">
@@ -18,13 +14,13 @@
 </template>
 
 <script lang="ts" setup>
+import BaseAppBar from "@/components/BaseAppBar.vue";
 import BaseModal from "@/components/BaseModal.vue";
 import SeriesRow from "@/components/SeriesRow.vue";
 import SerieDetails from "@/components/SerieDetails.vue";
 import type { Serie } from "@/models/serie";
 import { onBeforeMount, ref } from "vue";
 import { useSearch } from "@/composables/search";
-import { DENSITY, ELEVATION } from "@/constants/style";
 
 const { getSeries } = useSearch();
 

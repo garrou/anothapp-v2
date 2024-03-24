@@ -13,7 +13,7 @@
                 @click="changeFavorite" />
             <div v-else>
                 <v-btn :icon="ADD_ICON" variant="text" @click="add" />
-                <v-btn :icon="DETAILS_ICON" variant="text" @click="$emit('show', serie)" />
+                <v-btn :icon="DETAILS_ICON" variant="text" @click="$emit('showSerie', serie)" />
             </div>
         </v-card-actions>
     </v-card>

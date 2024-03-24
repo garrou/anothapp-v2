@@ -20,16 +20,16 @@
         </v-app-bar>
 
         <v-navigation-drawer v-model="drawer" location="left" temporary>
-            <v-list-item v-for="(item, index) in SERIES_MENU" :key="index" :prepend-icon="item.icon" :title="item.title"
-                @click="selectMenu(item.component)" />
+            <v-list-item v-for="(item, index) in APP_MENU" :key="index" :prepend-icon="item.icon" :title="item.title"
+                @click="selectMenu(item)" />
         </v-navigation-drawer>
 
-        <base-modal v-model="modal" :max-width="800">
+        <base-modal v-if="selected" v-model="modal" :max-width="800">
             <template #title>
-                <span>Historique</span>
+                <span>{{ selected.title }}</span>
                 <v-btn icon="mdi-close" variant="text" @click="modal = false" />
             </template>
-            <component :is="selected" />
+            <component :is="selected.component" />
         </base-modal>
     </v-layout>
 </template>
@@ -38,8 +38,9 @@
 import BaseModal from "./BaseModal.vue";
 import { DENSITY, ELEVATION } from "@/constants/style";
 import { SEARCH_ICON } from "@/constants/icons";
-import { SERIES_MENU } from "@/constants/menus";
+import { APP_MENU } from "@/constants/menus";
 import { ref } from "vue";
+import type { MenuItem } from "@/types/menu";
 
 defineProps({
     search: { type: Boolean, default: false }
@@ -47,11 +48,11 @@ defineProps({
 
 const drawer = ref(false);
 const modal = ref(false);
-const selected = ref();
+const selected = ref<MenuItem>();
 const title = ref<string>();
 
-const selectMenu = (component: string) => {
-    selected.value = component;
+const selectMenu = (item: MenuItem) => {
+    selected.value = item;
     modal.value = true;
 }
 </script>

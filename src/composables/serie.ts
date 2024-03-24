@@ -33,6 +33,16 @@ export function useSerie() {
         return true;
     }
 
+    const getFavoriteSeries = async (): Promise<Serie[]> => {
+        const resp = await serieService.getSeriesByStatus("favorite");
+        const data = await resp.json();
+
+        if (isError(resp.status))
+            throw new Error(data.message);
+
+        return data;
+    }
+
     const getSerie = async (options: SerieSearchOptions): Promise<SerieInfos> => {
         const { id } = options;
 
@@ -60,6 +70,16 @@ export function useSerie() {
         return data;
     }
 
+    const getSeriesNotStarted = async (): Promise<Serie[]> => {
+        const resp = await serieService.getSeriesByStatus("not-started");
+        const data = await resp.json();
+
+        if (isError(resp.status))
+            throw new Error(data.message);
+
+        return data;
+    }
+
     const updateFavorite = async (serie: Serie): Promise<boolean> => {
         const resp = await serieService.updateFavoriteBySerieId(serie.id);
         const data = await resp.json();
@@ -74,5 +94,5 @@ export function useSerie() {
         return data.favorite;
     }
 
-    return { addSerie, deleteSerie, getSerie, getSeries, updateFavorite }
+    return { addSerie, deleteSerie, getFavoriteSeries, getSerie, getSeries, getSeriesNotStarted, updateFavorite }
 }

@@ -1,10 +1,10 @@
-export type SerieSearchOptions = {
+export interface  SerieSearchOptions {
     title?: string,
     kind?: string,
     id?: number
 }
 
-export type SeasonSearchOptions = {
+export interface SeasonSearchOptions {
     month?: number,
     serieId?: number,
     year?: number

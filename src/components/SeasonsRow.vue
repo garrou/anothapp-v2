@@ -31,8 +31,8 @@ defineProps({
 });
 
 const emit = defineEmits<{
-    "addSeason": [Season],
-    "showSeason": [Season]
+    addSeason: [Season],
+    showSeason: [Season]
 }>();
 
 const showSeason = (season: Season) => {

@@ -1,6 +1,6 @@
 <template>
     <v-container>
-        <v-select v-model="month" :density="DENSITY" :items="MONTHS" item-title="text" item-value="value" />
+        <v-select v-model="month" :density="DENSITY" :items="MONTHS" item-title="text" item-value="value" @update:model-value="getHistory" />
         <v-timeline>
             <v-timeline-item v-for="season in timeline" size="x-small" :key="season.showId * season.season.number">
                 <template v-slot:opposite>
@@ -56,11 +56,12 @@ const { getSeasonsTimeline } = useSeason();
 const month = ref(0);
 const timeline = ref<SeasonTimeline[]>([]);
 
-const showHistory = async () => {
+const getHistory = async () => {
+    console.log("lauite")
     timeline.value = await getSeasonsTimeline(month.value);
 }
 
 onBeforeMount(async () => {
-    await showHistory();
+    await getHistory();
 })
 </script>

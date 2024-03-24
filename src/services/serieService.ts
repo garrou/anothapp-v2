@@ -74,6 +74,15 @@ const getSeries = async (title?: string, kind?: string): Promise<Response> => {
     });
 }
 
+const getSeriesByStatus = async (status: string): Promise<Response> => {
+    const url = buildUrl(`${ENDPOINT}/shows`, "status", status, "?");
+    return fetch(url, {
+        headers: {
+            "Authorization": `Bearer ${storageService.getJwt()}`
+        }
+    });
+}
+
 const updateFavoriteBySerieId = async (id: number): Promise<Response> => {
     return fetch(`${ENDPOINT}/shows/${id}/favorite`, {
         headers: {
@@ -91,5 +100,6 @@ export default {
     getSeasonInfosBySerieIdByNumber,
     getSerie,
     getSeries,
+    getSeriesByStatus,
     updateFavoriteBySerieId
 }

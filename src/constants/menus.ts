@@ -1,3 +1,4 @@
+import type { MenuItem } from "@/types/menu";
 import { ADD_ICON, FAVORITE_ICON } from "./icons";
 
 export const PAGE_WITHOUT_BOTTOM_NAVBAR = ["home", "login", "register"]
@@ -26,7 +27,7 @@ export const NAV_MENU = [
 ];
 
 
-export const SERIES_MENU = [
+export const APP_MENU: MenuItem[] = [
     {
         title: "Ma liste",
         icon: "mdi-format-list-bulleted-square",

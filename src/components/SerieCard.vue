@@ -9,9 +9,9 @@
         </v-card-subtitle>
 
         <v-card-actions>
-            <v-btn v-if="!addable" :color="favoriteColor" :icon="FAVORITE_ICON" variant="text"
+            <v-btn v-if="!addable && lovable" :color="favoriteColor" :icon="FAVORITE_ICON" variant="text"
                 @click="changeFavorite" />
-            <div v-else>
+            <div v-else-if="addable">
                 <v-btn :icon="ADD_ICON" variant="text" @click="add" />
                 <v-btn :icon="DETAILS_ICON" variant="text" @click="$emit('showSerie', serie)" />
             </div>
@@ -27,8 +27,14 @@ import type { Serie } from "@/models/serie";
 import { computed, ref, type PropType } from "vue";
 
 const props = defineProps({
+    lovable: { type: Boolean, default: false },
     serie: { type: Object as PropType<Serie>, required: true }
 });
+
+const emit = defineEmits<{
+    showSerie: [Serie]
+    refreshFavs: []
+}>();
 
 const addable = !!props.serie.description;
 const link = addable ? `/discover/${props.serie.id}` : `/series/${props.serie.id}`;
@@ -45,5 +51,6 @@ const add = async () => {
 
 const changeFavorite = async (): Promise<void> => {
     isFavorite.value = await updateFavorite(props.serie);
+    emit("refreshFavs");
 }
 </script>

@@ -4,14 +4,14 @@
             <h1>{{ TITLE }}</h1>
             <v-row>
                 <v-col cols="12">
-                    <v-text-field label="E-mail" :model="email" required :rules="emailRules" suffix="@xyz.com" variant="underlined" />
+                    <v-text-field v-model="email" label="E-mail" required :rules="emailRules" suffix="@xyz.com" variant="underlined" />
                 </v-col>
                 <v-col cols="12">
-                    <v-text-field :counter="true" label="Mot de passe" :model="password" required
+                    <v-text-field v-model="password" :counter="true" label="Mot de passe" required
                         :rules="passwordRules" type="password" variant="underlined" />
                 </v-col>
                 <v-col cols="12">
-                    <v-text-field :counter="true" label="Confirmer le mot de passe" :model="confirmPassword" required
+                    <v-text-field v-model="confirmPassword" :counter="true" label="Confirmer le mot de passe" required
                         :rules="passwordRules" type="password" variant="underlined" />
                 </v-col>
                 <v-col cols="12">

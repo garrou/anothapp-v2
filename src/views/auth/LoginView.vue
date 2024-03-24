@@ -4,10 +4,10 @@
             <h1>{{ TITLE }}</h1>
             <v-row>
                 <v-col cols="12">
-                    <v-text-field v-model="email" label="E-mail" :model="email" required :rules="emailRules" variant="underlined" />
+                    <v-text-field v-model="email" label="E-mail" required :rules="emailRules" variant="underlined" />
                 </v-col>
                 <v-col cols="12">
-                    <v-text-field v-model="password" :counter="true" label="Mot de passe" :model="password" required
+                    <v-text-field v-model="password" :counter="true" label="Mot de passe" required
                         :rules="passwordRules" type="password" variant="underlined" />
                 </v-col>
                 <v-col cols="12">

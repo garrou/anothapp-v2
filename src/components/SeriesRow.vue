@@ -1,26 +1,14 @@
 <template>
     <v-container class="mt-10">
-        <v-form @submit="$emit('search', search)" @submit.prevent>
-            <v-row align="center">
-                <v-col cols="9">
-                    <v-text-field v-model="search" label="Titre de la série" variant="underlined" />
-                </v-col>
-                <v-col cols="3">
-                    <v-btn type="submit" size="small">
-                        <v-icon :icon="SEARCH_ICON" />
-                    </v-btn>
-                </v-col>
-            </v-row>
-            <v-row>
-                <v-col v-for="serie in series" cols="6" md="4" lg="3" :key="serie.id">
-                    <v-skeleton-loader :elevation="ELEVATION" :loading="loading" type="card">
-                        <v-responsive>
-                            <serie-card :serie="serie" @showSerie="showSerie" />
-                        </v-responsive>
-                    </v-skeleton-loader>
-                </v-col>
-            </v-row>
-        </v-form>
+        <v-row>
+            <v-col v-for="serie in series" cols="6" md="4" lg="3" :key="serie.id">
+                <v-skeleton-loader :elevation="ELEVATION" :loading="loading" type="card">
+                    <v-responsive>
+                        <serie-card :serie="serie" @showSerie="showSerie" />
+                    </v-responsive>
+                </v-skeleton-loader>
+            </v-col>
+        </v-row>
     </v-container>
 </template>
 
@@ -37,8 +25,7 @@ defineProps({
 });
 
 const emit = defineEmits<{
-    "showSerie": [Serie],
-    "search": [string]
+    "showSerie": [Serie]
 }>();
 
 const search = ref("");

@@ -1,7 +1,7 @@
 <template>
     <v-card-text v-if="infos">
         <div class="font-weight-bold ms-1 mb-2">{{ time }}</div>
-        <v-timeline align="start" density="compact">
+        <v-timeline align="start" :density="DENSITY">
             <v-timeline-item v-for="season in infos.seasons" size="x-small" :key="season.id">
                 <div class="mb-4">
                     <span class="font-weight-normal">{{ formatDate(season.addedAt) }}</span>
@@ -17,6 +17,7 @@ import { computed, onBeforeMount, ref } from "vue";
 import type { Season, SeasonInfos } from "@/models/season";
 import { useSeason } from "@/composables/season";
 import { formatDate, minsToStringHoursDays } from "@/utils/format";
+import { DENSITY } from "@/constants/style";
 
 const props = defineProps({
     id: { type: Number, required: true },

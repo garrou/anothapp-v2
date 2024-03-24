@@ -5,7 +5,16 @@
                 <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
             </template>
 
-            <v-app-bar-title>A</v-app-bar-title>
+            <template #title>
+                <v-text-field v-model="search" :append-inner-icon="SEARCH_ICON" class="mb-4" hide-details
+                    label="Title de la série" single-line variant="plain" @click:append-inner="fetchSeries" />
+            </template>
+
+            <template #append>
+                <v-btn icon>
+                    <v-icon>mdi-dots-vertical</v-icon>
+                </v-btn>
+            </template>
         </v-app-bar>
 
         <v-navigation-drawer v-model="drawer" location="left" temporary>
@@ -14,7 +23,7 @@
         </v-navigation-drawer>
     </v-layout>
 
-    <series-row :loading="loading" :series="series" @search="fetchSeries" />
+    <series-row :loading="loading" :series="series" />
 </template>
 
 <script lang="ts" setup>
@@ -24,16 +33,18 @@ import { onBeforeMount, ref } from "vue";
 import { useSerie } from "@/composables/serie";
 import { SERIES_MENU } from "@/constants/menus";
 import { DENSITY, ELEVATION } from "@/constants/style";
+import { SEARCH_ICON } from "@/constants/icons";
 
 const { getSeries } = useSerie();
 
 const drawer = ref(false);
 const loading = ref(false);
+const search = ref<string>();
 const series = ref<Serie[]>([]);
 
-const fetchSeries = async (title?: string): Promise<void> => {
+const fetchSeries = async (): Promise<void> => {
     loading.value = true;
-    series.value = await getSeries({ title: title });
+    series.value = await getSeries({ title: search.value });
     loading.value = false;
 }
 

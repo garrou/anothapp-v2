@@ -97,11 +97,10 @@ export function useSerie() {
         if (isError(resp.status))
             throw new Error(data.message);
 
-        const message = data.favorite
+        snackBar.showSuccess(data.favorite
             ? `"${serie.title}" ajoutée aux favoris`
-            : `"${serie.title}" supprimée des favoris`;
-        snackBar.showSuccess(message);
-        return data.favorite;
+            : `"${serie.title}" supprimée des favoris`);
+        return data.result;
     }
 
     return { addSerie, deleteSerie, getFavoriteSeries, getSerie, getSeries, getSeriesNotStarted, getSeriesToContinue, updateFavorite }

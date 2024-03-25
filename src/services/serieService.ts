@@ -6,30 +6,30 @@ import type { Serie } from "@/models/serie";
 
 const addSeason = async (id: number, season: Season): Promise<Response> => {
     return fetch(`${ENDPOINT}/shows/${id}/seasons`, {
-        method: "POST",
+        body: JSON.stringify(season),
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`,
             "Content-Type": "application/json",
         },
-        body: JSON.stringify(season)
+        method: "POST",
     });
 }
 
 const addSerie = async (serie: Serie): Promise<Response> => {
     return fetch(`${ENDPOINT}/shows`, {
-        method: "POST",
-        headers: {
-            "Authorization": `Bearer ${storageService.getJwt()}`,
-            "Content-Type": "application/json",
-        },
         body: JSON.stringify({
             "id": serie.id,
             "title": serie.title,
             "poster": serie.poster,
             "kinds": serie.kinds,
             "duration": serie.duration
-        })
-    }); 
+        }),
+        headers: {
+            "Authorization": `Bearer ${storageService.getJwt()}`,
+            "Content-Type": "application/json",
+        },
+        method: "POST",
+    });
 }
 
 const deleteSerie = async (id: number): Promise<Response> => {
@@ -84,9 +84,13 @@ const getSeriesByStatus = async (status: string): Promise<Response> => {
 }
 
 const updateFavoriteBySerieId = async (id: number): Promise<Response> => {
-    return fetch(`${ENDPOINT}/shows/${id}/favorite`, {
+    return fetch(`${ENDPOINT}/shows/${id}`, {
+        body: JSON.stringify({
+            "favorite": "update"
+        }),
         headers: {
-            "Authorization": `Bearer ${storageService.getJwt()}`
+            "Authorization": `Bearer ${storageService.getJwt()}`,
+            "Content-Type": "application/json",
         },
         method: "PATCH"
     });

@@ -5,7 +5,7 @@
         </router-link>
 
         <v-card-subtitle class="pt-4">
-            <router-link class="text-black" :text="serie.title" :to="link" />
+            <router-link :text="serie.title" :to="link" />
         </v-card-subtitle>
 
         <v-card-actions>

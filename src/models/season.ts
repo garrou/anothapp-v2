@@ -5,12 +5,11 @@ interface SeasonDetails {
     id: number;
 }
 
-
 export interface Season {
     
     episodes: number;
 
-    image?: string;
+    image: string;
 
     number: number;
 }

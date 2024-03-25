@@ -14,6 +14,8 @@ export interface Serie {
 
     duration: number;
 
+    missing: number;
+
     description?: string;
         
     seasons?: number;

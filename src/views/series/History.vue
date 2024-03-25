@@ -4,9 +4,7 @@
         <v-timeline>
             <v-timeline-item v-for="season in timeline" size="x-small" :key="season.showId * season.season.number">
                 <template v-slot:opposite>
-                    <router-link :to="`/series/${season.showId}`">
-                        <strong class="text-black">{{ season.showTitle }}</strong>
-                    </router-link>
+                    <router-link :text="season.showTitle" :to="`/series/${season.showId}`" />
                     <p v-if="season.addedAt">{{ formatDate(season.addedAt) }}</p>
                 </template>
                 <season-card :season="season.season" />
@@ -57,7 +55,6 @@ const month = ref(0);
 const timeline = ref<SeasonTimeline[]>([]);
 
 const getHistory = async () => {
-    console.log("lauite")
     timeline.value = await getSeasonsTimeline(month.value);
 }
 

@@ -70,7 +70,7 @@ import BaseImage from "@/components/BaseImage.vue";
 import BaseToolbar from "@/components/BaseToolbar.vue";
 import SeasonDetails from "@/components/SeasonDetails.vue";
 import SeasonsRow from "@/components/SeasonsRow.vue";
-import type { SerieInfos } from "@/models/serie";
+import type { SerieInfo } from "@/models/serie";
 import { computed, onBeforeMount, ref } from "vue";
 import { useSeason } from "@/composables/season";
 import { useSearch } from "@/composables/search";
@@ -91,7 +91,7 @@ const { getSeasonsBySerieId } = useSearch();
 const { showError } = useSnackbar();
 
 const confirm = ref(false);
-const infos = ref<SerieInfos>();
+const infos = ref<SerieInfo>();
 const isFavorite = ref(false);
 const loading = ref(false);
 const modal = ref(false);

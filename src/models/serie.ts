@@ -31,7 +31,7 @@ export interface Serie {
     creation?: number;
 }
 
-export interface SerieInfos {
+export interface SerieInfo {
 
     serie: Serie;
 

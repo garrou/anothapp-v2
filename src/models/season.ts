@@ -1,4 +1,4 @@
-interface SeasonDetails {
+interface SeasonDetail {
 
     addedAt: string;
 
@@ -14,9 +14,9 @@ export interface Season {
     number: number;
 }
 
-export interface SeasonInfos {
+export interface SeasonInfo {
 
-    seasons: SeasonDetails[];
+    seasons: SeasonDetail[];
 
     time: number;
 }

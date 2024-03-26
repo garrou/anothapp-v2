@@ -17,7 +17,7 @@
 import BaseAppBar from "@/components/BaseAppBar.vue";
 import BaseModal from "@/components/BaseModal.vue";
 import SeriesRow from "@/components/SeriesRow.vue";
-import SerieDetails from "@/components/SerieDetails.vue";
+import SerieDetail from "@/components/SerieDetail.vue";
 import type { Serie } from "@/models/serie";
 import { onBeforeMount, ref } from "vue";
 import { useSearch } from "@/composables/search";

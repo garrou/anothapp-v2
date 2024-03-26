@@ -14,7 +14,7 @@
 <script lang="ts" setup>
 import type { PropType } from "vue";
 import { computed, onBeforeMount, ref } from "vue";
-import type { Season, SeasonInfos } from "@/models/season";
+import type { Season, SeasonInfo } from "@/models/season";
 import { useSeason } from "@/composables/season";
 import { formatDate, minsToStringHoursDays } from "@/utils/format";
 import { DENSITY } from "@/constants/style";
@@ -26,7 +26,7 @@ const props = defineProps({
 
 const { getSeasonInfosBySerieIdByNumber } = useSeason();
 
-const infos = ref<SeasonInfos>();
+const infos = ref<SeasonInfo>();
 const time = computed(() => minsToStringHoursDays(infos.value?.time));
 
 const fetchSeasons = async () => {

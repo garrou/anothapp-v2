@@ -29,5 +29,5 @@ export const minsToStringHoursDays = (mins: number = 0): string => {
 }
 
 export const buildUrl = (url: string, query: string, param?: string | number, separator: string = "&"): string => {
-    return url.concat(param !== undefined ? `${separator}${query}=${param}` : "");
+    return param === undefined ? url : url.concat(`${separator}${query}=${param}`);
 }

@@ -1,5 +1,5 @@
 <template>
-    <v-layout>
+    <v-layout class="mb-10">
         <v-app-bar :density="DENSITY" :elevation="ELEVATION">
             <template #prepend>
                 <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
@@ -40,7 +40,7 @@ import { DENSITY, ELEVATION } from "@/constants/style";
 import { SEARCH_ICON } from "@/constants/icons";
 import { APP_MENU } from "@/constants/menus";
 import { ref } from "vue";
-import type { MenuItem } from "@/types/menu";
+import type { AppMenuItem } from "@/types/menu";
 
 defineProps({
     search: { type: Boolean, default: false }
@@ -48,10 +48,10 @@ defineProps({
 
 const drawer = ref(false);
 const modal = ref(false);
-const selected = ref<MenuItem>();
+const selected = ref<AppMenuItem>();
 const title = ref<string>();
 
-const selectMenu = (item: MenuItem) => {
+const selectMenu = (item: AppMenuItem) => {
     selected.value = item;
     modal.value = true;
 }

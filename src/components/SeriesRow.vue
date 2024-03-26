@@ -1,5 +1,5 @@
 <template>
-    <v-container class="mt-10">
+    <v-container>
         <v-row>
             <v-col v-for="serie in series" cols="6" md="4" lg="3" :key="serie.id">
                 <v-skeleton-loader :elevation="ELEVATION" :loading="loading" type="card">

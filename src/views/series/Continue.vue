@@ -7,7 +7,7 @@
                     <td>
                         <router-link :text="serie.title" :to="`/series/${serie.id}`" />
                     </td>
-                    <td>{{ serie.missing }} saison{{ serie.missing > 1 ? 's' : '' }}</td>
+                    <td>{{  buildPlural("saison", serie.missing) }}</td>
                 </tr>
             </tbody>
         </v-table>
@@ -18,6 +18,7 @@
 import BaseImage from "@/components/BaseImage.vue";
 import { useSerie } from "@/composables/serie";
 import type { Serie } from "@/models/serie";
+import { buildPlural } from "@/utils/format";
 import { onBeforeMount } from "vue";
 import { ref } from "vue";
 

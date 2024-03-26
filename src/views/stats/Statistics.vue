@@ -19,12 +19,13 @@ import BaseAppBar from '@/components/BaseAppBar.vue';
 import { useStatistic } from '@/composables/statistic';
 import { ELEVATION } from '@/constants/style';
 import type { Stat } from '@/models/stat';
-import { minsToStringHoursDays } from '@/utils/format';
+import { buildPlural, minsToStringHoursDays } from '@/utils/format';
 import { computed, onBeforeMount, ref } from 'vue';
 
 const { getStats } = useStatistic();
 
 const stat = ref<Stat>();
+
 const cardsConfig = computed(() => [
     {
         "icon": "mdi-timer-sand",
@@ -54,8 +55,6 @@ const cardsConfig = computed(() => [
         "value": `${stat.value?.bestMonth.date} : ${minsToStringHoursDays(stat.value?.bestMonth.time)}`
     }
 ]);
-
-const buildPlural = (text: string, value?: number): string => `${value} ${text}${value ?? 0 > 1 ? 's' : ''}`;
 
 onBeforeMount(async () => {
     stat.value = await getStats();

@@ -8,6 +8,7 @@ import { useUser } from "@/composables/user";
 import Discover from "@/views/discover/Discover.vue";
 import Statistics from "@/views/stats/Statistics.vue";
 import Profile from "@/views/profile/Profile.vue";
+import Friends from "@/views/friends/Friends.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -64,6 +65,14 @@ const router = createRouter({
       path: "/profile",
       name: "profile",
       component: Profile,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: "/friends",
+      name: "friends",
+      component: Friends,
       meta: {
         requiresAuth: true
       }

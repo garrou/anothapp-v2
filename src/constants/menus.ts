@@ -5,9 +5,14 @@ export const PAGE_WITHOUT_BOTTOM_NAVBAR = ["home", "login", "register"]
 
 export const NAV_MENU: BottomNavMenuItem[] = [
     {
-        title: "Mes séries",
+        title: "Séries",
         icon: "mdi-view-headline",
         link: "/series"
+    },
+    {
+        title: "Amis",
+        icon: "mdi-account-heart",
+        link: "/friends"
     },
     {
         title: "Ajouter",
@@ -15,12 +20,12 @@ export const NAV_MENU: BottomNavMenuItem[] = [
         link: "/discover"
     },
     {
-        title: "Statistiques",
+        title: "Statis",
         icon: "mdi-chart-bar",
         link: "/stats"
     },
     {
-        title: "Mon profil",
+        title: "Profil",
         icon: "mdi-account",
         link: "/profile"
     }

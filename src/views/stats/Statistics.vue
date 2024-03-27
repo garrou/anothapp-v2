@@ -2,7 +2,7 @@
     <base-app-bar />
     <v-container>
         <v-row v-if="stat">
-            <v-col v-for="(obj, _, index) in cardsConfig" cols="6" md="4" :key="index">
+            <v-col v-for="(obj, _, index) in cardsConfig" cols="12" md="6" :key="index">
                 <v-card class="mb-2" :elevation="ELEVATION" :prepend-icon="obj.icon">
                     <template #title>{{ obj.title }}</template>
                     <v-card-subtitle v-if="obj.value" class="mb-2">

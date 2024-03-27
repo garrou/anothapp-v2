@@ -7,7 +7,7 @@
                     <td>
                         <router-link :text="serie.title" :to="`/series/${serie.id}`" />
                     </td>
-                    <td>{{  buildPlural("saison", serie.missing) }}</td>
+                    <td>{{ buildPlural("saison", serie.missing) }}</td>
                 </tr>
             </tbody>
         </v-table>

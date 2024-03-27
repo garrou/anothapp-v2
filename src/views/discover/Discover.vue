@@ -8,7 +8,7 @@
             <v-card-title class="d-flex flex-row-reverse">
                 <v-btn icon="mdi-close" variant="text" @click="modal = false" />
             </v-card-title>
-            <serie-details :serie="selected" />
+            <serie-detail :serie="selected" />
         </v-card>
     </base-modal>
 </template>

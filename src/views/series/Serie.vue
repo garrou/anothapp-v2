@@ -63,7 +63,6 @@
 </template>
 
 <script lang="ts" setup>
-import BaseAppBar from "@/components/BaseAppBar.vue";
 import BaseConfirm from "@/components/BaseConfirm.vue";
 import BaseModal from "@/components/BaseModal.vue";
 import BaseImage from "@/components/BaseImage.vue";

@@ -2,7 +2,7 @@
     <v-container>
         <v-select v-model="month" :density="DENSITY" :items="MONTHS" item-title="text" item-value="value" @update:model-value="getHistory" />
         <v-timeline>
-            <v-timeline-item v-for="season in timeline" size="x-small" :key="season.showId * season.season.number">
+            <v-timeline-item v-for="(season, index) in timeline" size="x-small" :key="index">
                 <template v-slot:opposite>
                     <router-link :text="season.showTitle" :to="`/series/${season.showId}`" />
                     <p v-if="season.addedAt">{{ formatDate(season.addedAt) }}</p>

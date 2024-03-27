@@ -30,6 +30,8 @@ const valid = ref(false);
 const email = ref("");
 const password = ref("");
 
+// TODO username
+
 const emailRules = [
     (value?: string) => {
         if (value) return true

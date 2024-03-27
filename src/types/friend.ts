@@ -1,0 +1,1 @@
+export type FriendStatus = "friend" | "send" | "receive";

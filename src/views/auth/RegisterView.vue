@@ -37,6 +37,8 @@ const email = ref("");
 const password = ref("");
 const confirmPassword = ref("");
 
+// TODO username
+
 const emailRules = [
     (value?: string) => {
         if (value) return true;

@@ -4,14 +4,18 @@
             <h1>{{ TITLE }}</h1>
             <v-row>
                 <v-col cols="12">
-                    <v-text-field v-model="email" label="E-mail" required :rules="emailRules" suffix="@xyz.com" variant="underlined" />
+                    <v-text-field v-model="username" counter label="Username" required :rules="nameRules" variant="underlined" />
                 </v-col>
                 <v-col cols="12">
-                    <v-text-field v-model="password" :counter="true" label="Mot de passe" required
+                    <v-text-field v-model="email" label="E-mail" required :rules="emailRules" suffix="@xyz.com"
+                        variant="underlined" />
+                </v-col>
+                <v-col cols="12">
+                    <v-text-field v-model="password" counter label="Mot de passe" required
                         :rules="passwordRules" type="password" variant="underlined" />
                 </v-col>
                 <v-col cols="12">
-                    <v-text-field v-model="confirmPassword" :counter="true" label="Confirmer le mot de passe" required
+                    <v-text-field v-model="confirmPassword" counter label="Confirmer le mot de passe" required
                         :rules="passwordRules" type="password" variant="underlined" />
                 </v-col>
                 <v-col cols="12">
@@ -25,7 +29,7 @@
 
 <script lang="ts" setup>
 import { useUser } from "@/composables/user";
-import { EMAIL_PATTERN, MIN_PASSWORD_LENGTH } from "@/constants/auth";
+import { EMAIL_PATTERN, MAX_PASSWORD, MAX_USERNAME, MIN_PASSWORD, MIN_USERNAME, PASSWORD_PATTERN, USERNAME_PATTERN } from "@/constants/auth";
 import { ref } from "vue";
 
 const TITLE = "S'inscrire";
@@ -36,17 +40,27 @@ const valid = ref(false);
 const email = ref("");
 const password = ref("");
 const confirmPassword = ref("");
+const username = ref("");
 
-// TODO username
+const nameRules = [
+    (value?: string) => {
+        if (value) return true;
+        return "Username requis";
+    },
+    (value: string) => {
+        if (USERNAME_PATTERN.test(value)) return true;
+        return `Le username doit être valide (${MIN_USERNAME} - ${MAX_USERNAME}) sans '@'`;
+    }
+]
 
 const emailRules = [
     (value?: string) => {
         if (value) return true;
-        return "Email requis.";
+        return "Email requis";
     },
     (value: string) => {
         if (EMAIL_PATTERN.test(value)) return true;
-        return "Email doit être valide.";
+        return "L'email doit être valide";
     }
 ];
 
@@ -56,15 +70,13 @@ const passwordRules = [
         return "Un mot de passe est requis.";
     },
     (value: string) => {
-        if (value.length >= MIN_PASSWORD_LENGTH) return true;
-        return `Le mot de passe doit contenir au moins ${MIN_PASSWORD_LENGTH} caractères.`;
+        if (PASSWORD_PATTERN.test(value)) return true;
+        return `Le mot de passe doit être valide (${MIN_PASSWORD} - ${MAX_PASSWORD})`;
     },
-    () => {
-        return password.value === confirmPassword.value;
-    }
+    () => password.value === confirmPassword.value
 ];
 
 const createAccount = async () => {
-    await register(email.value, password.value, confirmPassword.value);
+    await register(email.value, password.value, confirmPassword.value, username.value);
 }
 </script>

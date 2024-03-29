@@ -26,9 +26,9 @@ export function useUser() {
         return true;
     }
 
-    const register = async (email: string, password: string, confirm: string): Promise<void> => {
+    const register = async (email: string, password: string, confirm: string, username: string): Promise<void> => {
 
-        const resp = await userService.register(email, password, confirm);
+        const resp = await userService.register(email, password, confirm, username);
         const data = await resp.json();
 
         if (isError(resp.status))

@@ -23,6 +23,9 @@ export const formatDate = (toFormat: string): string => {
 }
 
 export const minsToStringHoursDays = (mins: number = 0): string => {
+    if (!mins || mins === 0)
+        return "0 h";
+
     const hours = minsToStringHours(mins);
     const days = minsToStringDays(mins);
     return `${hours} • ${days}`;

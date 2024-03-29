@@ -9,11 +9,11 @@ const checkAuth = async (): Promise<Response> => {
     });
 }
 
-const login = async (email: string, password: string): Promise<Response> => {
+const login = async (name: string, password: string): Promise<Response> => {
     return fetch(`${ENDPOINT}/users/login`, {
         body: JSON.stringify({
-            "email": email,
-            "password": password
+            name,
+            password
         }),
         headers: {
             "Content-Type": "application/json",
@@ -22,12 +22,13 @@ const login = async (email: string, password: string): Promise<Response> => {
     });
 }
 
-const register = async (email: string, password: string, confirm: string): Promise<Response> => {
+const register = async (email: string, password: string, confirm: string, username: string): Promise<Response> => {
     return fetch(`${ENDPOINT}/users/register`, {
         body: JSON.stringify({
-            "email": email,
-            "password": password,
-            "confirm": confirm
+            email,
+            confirm,
+            username,
+            password,
         }),
         headers: {
             "Content-Type": "application/json",

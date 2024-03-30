@@ -14,8 +14,8 @@ export function useUser() {
         return isSuccess(resp.status);
     }
 
-    const login = async (email: string, password: string): Promise<boolean> => {
-        const resp = await userService.login(email, password);
+    const login = async (identifier: string, password: string): Promise<boolean> => {
+        const resp = await userService.login(identifier, password);
         const data = await resp.json();
 
         if (isError(resp.status))
@@ -24,6 +24,11 @@ export function useUser() {
         storageService.storeJwt(data.token);
         router.replace("/series");
         return true;
+    }
+
+    const logout = () => {
+        storageService.deleteJwt();
+        router.replace("/login");
     }
 
     const register = async (email: string, password: string, confirm: string, username: string): Promise<void> => {
@@ -38,5 +43,5 @@ export function useUser() {
         router.push("/login");
     }
 
-    return { checkAuth, login, register }
+    return { checkAuth, login, logout, register }
 }

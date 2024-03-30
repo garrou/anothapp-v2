@@ -9,10 +9,10 @@ const checkAuth = async (): Promise<Response> => {
     });
 }
 
-const login = async (name: string, password: string): Promise<Response> => {
+const login = async (identifier: string, password: string): Promise<Response> => {
     return fetch(`${ENDPOINT}/users/login`, {
         body: JSON.stringify({
-            name,
+            identifier,
             password
         }),
         headers: {

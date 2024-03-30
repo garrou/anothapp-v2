@@ -24,27 +24,33 @@
                 @click="selectMenu(item)" />
         </v-navigation-drawer>
 
-        <base-modal v-if="selected" v-model="modal" :max-width="800">
+        <base-modal v-if="selected && selected.component" v-model="modal" :max-width="800">
             <template #title>
                 <span>{{ selected.title }}</span>
                 <v-btn icon="mdi-close" variant="text" @click="modal = false" />
             </template>
             <component :is="selected.component" />
         </base-modal>
+        <base-confirm v-else v-model="modal" text="Confirmez-vous la déconnexion ?" title="Se déconnecter" persistent
+            @cancel="modal = false" @confirm="logout" />
     </v-layout>
 </template>
 
 <script lang="ts" setup>
+import BaseConfirm from "./BaseConfirm.vue";
 import BaseModal from "./BaseModal.vue";
 import { DENSITY, ELEVATION } from "@/constants/style";
 import { SEARCH_ICON } from "@/constants/icons";
 import { APP_MENU } from "@/constants/menus";
 import { ref } from "vue";
 import type { AppMenuItem } from "@/types/menu";
+import { useUser } from "@/composables/user";
 
 defineProps({
     search: { type: Boolean, default: false }
 });
+
+const { logout } = useUser();
 
 const drawer = ref(false);
 const modal = ref(false);

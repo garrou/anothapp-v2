@@ -2,7 +2,7 @@
     <v-form v-model="valid" @submit="createAccount" @submit.prevent>
         <v-container class="text-center">
             <h1>{{ TITLE }}</h1>
-            <v-row>
+            <v-row class="mb-2">
                 <v-col cols="12">
                     <v-text-field v-model="username" counter label="Username" required :rules="nameRules" variant="underlined" />
                 </v-col>

@@ -12,5 +12,5 @@ export interface BottomNavMenuItem extends MenuItem {
 
 export interface AppMenuItem extends MenuItem {
 
-    component: string;
+    component?: string;
 }

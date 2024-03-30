@@ -2,9 +2,9 @@
     <v-form v-model="valid" @submit="authenticate" @submit.prevent>
         <v-container class="text-center">
             <h1>{{ TITLE }}</h1>
-            <v-row>
+            <v-row class="mb-2">
                 <v-col cols="12">
-                    <v-text-field v-model="name" label="Username ou email" required variant="underlined" />
+                    <v-text-field v-model="identifier" label="Username ou email" required :rules="idRules" variant="underlined" />
                 </v-col>
                 <v-col cols="12">
                     <v-text-field v-model="password" :counter="true" label="Mot de passe" required
@@ -27,17 +27,24 @@ const TITLE = "Se connecter";
 const { login } = useUser();
 
 const valid = ref(false);
-const name = ref("");
+const identifier = ref("");
 const password = ref("");
+
+const idRules = [
+    (value?: string) => {
+        if (value) return true;
+        return "Le username ou l'email est requis";
+    }
+];
 
 const passwordRules = [
     (value?: string) => {
-        if (value) return true
-        return "Le mot de passe est requis."
+        if (value) return true;
+        return "Le mot de passe est requis";
     }
 ];
 
 const authenticate = async () => {
-    await login(name.value, password.value);
+    await login(identifier.value, password.value);
 }
 </script>

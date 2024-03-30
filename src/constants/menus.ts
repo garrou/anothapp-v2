@@ -52,5 +52,9 @@ export const APP_MENU: AppMenuItem[] = [
         title: "Favoris",
         icon: FAVORITE_ICON,
         component: "Favorites"
+    },
+    { 
+        title: "Se déconnecter",
+        icon: "mdi-logout",
     }
 ];

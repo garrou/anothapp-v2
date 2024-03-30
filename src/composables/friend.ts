@@ -1,4 +1,4 @@
-import type { Friend, FriendResponse } from "@/models/friend";
+import type { FriendResponse } from "@/models/friend";
 import friendService from "@/services/friendService"
 import type { FriendStatus } from "@/types/friend";
 import { isError } from "@/utils/response";

@@ -3,6 +3,7 @@ import userService from "@/services/userService"
 import { isError, isSuccess } from "@/utils/response";
 import { useRouter } from "vue-router";
 import { useSnackbar } from "./snackbar";
+import type { User } from "@/models/user";
 
 export function useUser() {
 
@@ -12,6 +13,16 @@ export function useUser() {
     const checkAuth = async (): Promise<boolean> => {
         const resp = await userService.checkAuth();
         return isSuccess(resp.status);
+    }
+
+    const getUsers = async (username: string): Promise<User[]> => {
+        const resp = await userService.getUser(username);
+        const data = await resp.json();
+
+        if (isError(resp.status))
+            throw new Error(data.message);
+
+        return data;
     }
 
     const login = async (identifier: string, password: string): Promise<boolean> => {
@@ -43,5 +54,5 @@ export function useUser() {
         router.push("/login");
     }
 
-    return { checkAuth, login, logout, register }
+    return { checkAuth, getUsers, login, logout, register }
 }

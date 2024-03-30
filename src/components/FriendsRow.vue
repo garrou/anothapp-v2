@@ -1,9 +1,8 @@
 <template>
     <v-container>
-        <v-form v-if="search" @submit="$emit('search', email)" @submit.prevent>
-            <v-text-field v-model="email" :append-inner-icon="SEARCH_ICON" class="mb-4" clearable
-                label="Email utilisateur" required variant="underlined" @click:append-inner="$emit('search', email)"
-                @click:clear="$emit('search', undefined)" />
+        <v-form v-if="search" @submit="$emit('search', username)" @submit.prevent>
+            <v-text-field v-model="username" :append-inner-icon="SEARCH_ICON" class="mb-4" clearable
+                label="Email utilisateur" required variant="underlined" @click:append-inner="$emit('search', username)" />
         </v-form>
 
         <v-row>
@@ -13,7 +12,7 @@
                         <v-card>
                             <base-image v-if="friend.picture" cover max-height="580" :src="friend.picture" />
 
-                            <v-card-subtitle class="pt-4">{{ friend.email }}</v-card-subtitle>
+                            <v-card-subtitle class="pt-4">{{ friend.username }}</v-card-subtitle>
 
                             <v-card-actions>
                                 <v-btn variant="text" @click="">Profil</v-btn>
@@ -30,13 +29,13 @@
 import { SEARCH_ICON } from "@/constants/icons";
 import BaseImage from "./BaseImage.vue";
 import { ELEVATION } from "@/constants/style";
-import type { Friend } from "@/models/friend";
+import type { User } from "@/models/user";
 import { ref, type PropType } from "vue";
 
-const email = ref("");
+const username = ref("");
 
 defineProps({
-    friends: { type: Array as PropType<Friend[]>, default: () => [] },
+    friends: { type: Array as PropType<User[]>, default: () => [] },
     loading: { type: Boolean, default: false },
     search: { type: Boolean, default: false }
 });

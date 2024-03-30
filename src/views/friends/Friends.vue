@@ -14,7 +14,7 @@
                 <friends-row :friends="friends?.friend" :loading="loading" />
             </v-window-item>
             <v-window-item :value="2">
-                <friends-row search />
+                <friends-row :friends="searched" search @search="searchUser" />
             </v-window-item>
             <v-window-item :value="3">
                 <friends-row :friends="friends?.receive" :loading="loading" />
@@ -32,12 +32,22 @@ import BaseAppBar from '@/components/BaseAppBar.vue';
 import { onBeforeMount, ref } from 'vue';
 import { useFriend } from '@/composables/friend';
 import type { FriendResponse } from '@/models/friend';
+import type { User } from '@/models/user';
+import { useUser } from '@/composables/user';
 
 const { getFriends } = useFriend();
+const { getUsers } = useUser();
 
 const friends = ref<FriendResponse>();
+const searched = ref<User[]>([]);
 const loading = ref(false);
 const tab = ref(0);
+
+const searchUser = async (username: string) => {
+    loading.value = true;
+    searched.value = await getUsers(username);
+    loading.value = false;
+}
 
 onBeforeMount(async () => {
     loading.value = true;

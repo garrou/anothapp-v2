@@ -1,17 +1,10 @@
-export interface Friend {
-
-    id: string;
-
-    email: string;
-
-    picture?: string;
-}
+import type { User } from "./user";
 
 export interface FriendResponse {
 
-    send: Friend[];
+    send: User[];
 
-    receive: Friend[];
+    receive: User[];
 
-    friend: Friend[];
+    friend: User[];
 }

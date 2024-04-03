@@ -8,6 +8,12 @@
             </template>
 
             <template #secondBtn>
+                <v-btn icon @click="$router.push(`/discover/${id}`)">
+                    <v-icon :icon="DETAILS_ICON" />
+                </v-btn>
+            </template>
+
+            <template #thirdBtn>
                 <v-btn icon @click="confirm = true">
                     <v-icon>mdi-delete</v-icon>
                 </v-btn>
@@ -77,7 +83,7 @@ import { useSerie } from "@/composables/serie";
 import type { Season } from "@/models/season";
 import router from "@/router";
 import { minsToStringHoursDays } from "@/utils/format";
-import { FAVORITE_ICON } from "@/constants/icons";
+import { DETAILS_ICON, FAVORITE_ICON } from "@/constants/icons";
 import { useSnackbar } from "@/composables/snackbar";
 
 const props = defineProps({

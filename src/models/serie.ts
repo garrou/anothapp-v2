@@ -1,10 +1,13 @@
 import type { Season } from "./season";
 
-export interface Serie {
+interface BaseSerie {
 
     id: number;
 
     title: string;
+}
+
+export interface Serie extends BaseSerie {
 
     poster: string;
 
@@ -41,3 +44,5 @@ export interface SerieInfo {
 
     episodes: number;
 }
+
+export interface Similar extends BaseSerie {}

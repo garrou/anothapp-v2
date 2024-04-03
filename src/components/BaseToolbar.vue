@@ -9,6 +9,8 @@
         <slot name="firstBtn" />
 
         <slot name="secondBtn" />
+
+        <slot name="thirdBtn" />
     </v-toolbar>
 </template>
 

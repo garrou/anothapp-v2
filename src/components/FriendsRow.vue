@@ -7,8 +7,8 @@
 
         <v-row v-if="friends.length > 0">
             <v-col v-for="(friend, index) in friends" cols="6" md="4" lg="3" :key="index">
-                <v-skeleton-loader :elevation="ELEVATION" :loading="loading" type="card">
-                    <v-responsive>
+                <base-skeleton :loading="loading" type="card">
+                    <template #content>
                         <v-card>
                             <base-image v-if="friend.picture" cover max-height="580" :src="friend.picture" />
 
@@ -18,8 +18,8 @@
                                 <v-btn variant="text" @click="">Profil</v-btn>
                             </v-card-actions>
                         </v-card>
-                    </v-responsive>
-                </v-skeleton-loader>
+                    </template>
+                </base-skeleton>
             </v-col>
         </v-row>
         <span v-else>Aucun résultat</span>
@@ -29,7 +29,7 @@
 <script lang="ts" setup>
 import { SEARCH_ICON } from "@/constants/icons";
 import BaseImage from "./BaseImage.vue";
-import { ELEVATION } from "@/constants/style";
+import BaseSkeleton from "./BaseSkeleton.vue";
 import type { User } from "@/models/user";
 import { ref, type PropType } from "vue";
 

@@ -25,4 +25,9 @@ defineProps({
     title: { type: String, required: true },
     width: { type: Number, default: 400 }
 });
+
+defineEmits<{
+    cancel: []
+    confirm: []
+}>();
 </script>

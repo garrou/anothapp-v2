@@ -4,7 +4,7 @@
             <v-col v-for="serie in series" cols="6" md="4" lg="3" :key="serie.id">
                 <v-skeleton-loader :elevation="ELEVATION" :loading="loading" type="card">
                     <v-responsive>
-                        <serie-card :lovable="lovable" :serie="serie" @show-serie="showSerie" @refresh-favs="$emit('refreshFavs')" />
+                        <serie-card :lovable="lovable" :serie="serie" @show-serie="$emit('showSerie', serie)" @refresh-favs="$emit('refreshFavs')" />
                     </v-responsive>
                 </v-skeleton-loader>
             </v-col>
@@ -28,8 +28,4 @@ const emit = defineEmits<{
     showSerie: [Serie]
     refreshFavs: []
 }>();
-
-const showSerie = (serie: Serie) => {
-    emit("showSerie", serie);
-}
 </script>

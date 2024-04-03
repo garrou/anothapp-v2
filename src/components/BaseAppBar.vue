@@ -50,6 +50,10 @@ defineProps({
     search: { type: Boolean, default: false }
 });
 
+defineEmits<{
+    search: [string|undefined]
+}>();
+
 const { logout } = useUser();
 
 const drawer = ref(false);

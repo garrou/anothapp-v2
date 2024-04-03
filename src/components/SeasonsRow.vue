@@ -9,7 +9,7 @@
                                 @click="$emit('addSeason', season)" />
                         </template>
                     </season-card>
-                    <season-card v-else :season="season" @showSeason="showSeason"
+                    <season-card v-else :season="season" @showSeason="$emit('showSeason', season)"
                         @click="$emit('showSeason', season)" />
                 </v-responsive>
             </v-skeleton-loader>
@@ -30,12 +30,8 @@ defineProps({
     loading: { type: Boolean, required: true }
 });
 
-const emit = defineEmits<{
-    addSeason: [Season],
+defineEmits<{
+    addSeason: [Season]
     showSeason: [Season]
 }>();
-
-const showSeason = (season: Season) => {
-    emit("showSeason", season);
-}
 </script>

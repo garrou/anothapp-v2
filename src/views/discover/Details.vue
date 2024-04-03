@@ -17,6 +17,7 @@ import BaseToolbar from '@/components/BaseToolbar.vue';
 import SerieDetail from '@/components/SerieDetail.vue';
 import { useSearch } from '@/composables/search';
 import { useSerie } from '@/composables/serie';
+import { useSnackbar } from '@/composables/snackbar';
 import { ADD_ICON } from '@/constants/icons';
 import type { Serie } from '@/models/serie';
 import { onBeforeMount, ref } from 'vue';
@@ -27,11 +28,15 @@ const props = defineProps({
 
 const { getSerie } = useSearch();
 const { addSerie } = useSerie();
+const { showError } = useSnackbar(); 
 
 const serie = ref<Serie>();
 
 const add = async () => {
-    if (!serie.value) return
+    if (!serie.value) {
+        showError("Impossible d'ajouter la série");
+        return;
+    }
     await addSerie(serie.value);
 }
 

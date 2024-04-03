@@ -45,7 +45,7 @@
                 <seasons-row :loading="loading" :seasons="infos.seasons" @show-season="showSeason" />
             </v-window-item>
             <v-window-item :value="2">
-                <seasons-row addable :loading="loading" :seasons="seasons" @add="newSeason" />
+                <seasons-row addable :loading="loading" :seasons="seasons" @add-season="newSeason" />
             </v-window-item>
         </v-window>
     </v-container>
@@ -119,11 +119,13 @@ const orderSeasons = (): void => {
 }
 
 const newSeason = async (season: Season): Promise<void> => {
+    console.log("coucou")
     if (!infos.value?.serie) {
         showError("Impossible d'ajouter une saison");
         return
     }
     await addSeason(infos.value.serie, season);
+    infos.value = await getSerie({ id: props.id });
 }
 
 const changeFavorite = async (): Promise<void> => {

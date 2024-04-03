@@ -33,11 +33,15 @@ import { ELEVATION } from "@/constants/style";
 import type { User } from "@/models/user";
 import { ref, type PropType } from "vue";
 
-const username = ref("");
+const username = ref<string>();
 
 defineProps({
     friends: { type: Array as PropType<User[]>, default: () => [] },
     loading: { type: Boolean, default: false },
     search: { type: Boolean, default: false }
 });
+
+defineEmits<{
+    search: [string|undefined]
+}>();
 </script>

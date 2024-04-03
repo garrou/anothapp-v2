@@ -6,19 +6,33 @@
 
         <v-toolbar-title>{{ title }}</v-toolbar-title>
 
-        <slot name="firstBtn" />
+        <v-menu>
+            <template v-slot:activator="{ props }">
+              <v-btn icon="mdi-dots-vertical" v-bind="props"></v-btn>
+            </template>
 
-        <slot name="secondBtn" />
-
-        <slot name="thirdBtn" />
+            <v-list>
+              <v-list-item v-if="slots.firstBtn">
+                <slot name="firstBtn" />
+              </v-list-item>
+              <v-list-item v-if="slots.secondBtn">
+                <slot name="secondBtn" />
+              </v-list-item>
+              <v-list-item v-if="slots.thirdBtn">
+                <slot name="thirdBtn" />
+              </v-list-item>
+            </v-list>
+        </v-menu>
     </v-toolbar>
 </template>
 
 <script lang="ts" setup>
-import type { DENSITY } from "@/constants/style";
+import { useSlots } from 'vue';
 
 defineProps({
     icon: { type: String, required: true },
     title: { type: String, required: true }
 });
+
+const slots = useSlots();
 </script>

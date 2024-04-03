@@ -9,8 +9,12 @@
                                 @click="$emit('addSeason', season)" />
                         </template>
                     </season-card>
-                    <season-card v-else :season="season" @showSeason="$emit('showSeason', season)"
-                        @click="$emit('showSeason', season)" />
+                    <season-card v-else :season="season" @click="$emit('showSeason', season)">
+                        <template #show>
+                            <v-btn color="surface-variant" :icon="DETAILS_ICON" variant="text"
+                                @click="$emit('showSeason', season)" />
+                        </template>
+                    </season-card>
                 </template>
             </base-skeleton>
         </v-col>
@@ -22,7 +26,7 @@ import BaseSkeleton from "./BaseSkeleton.vue";
 import SeasonCard from "./SeasonCard.vue";
 import { type PropType } from "vue";
 import type { Season } from "@/models/season";
-import { ADD_ICON } from "@/constants/icons";
+import { ADD_ICON, DETAILS_ICON } from "@/constants/icons";
 
 defineProps({
     addable: { type: Boolean, default: false },

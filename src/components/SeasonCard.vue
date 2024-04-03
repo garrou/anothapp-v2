@@ -6,6 +6,7 @@
 
         <v-card-actions>
             <slot name="add" />
+            <slot name="show" />
         </v-card-actions>
     </v-card>
 </template>

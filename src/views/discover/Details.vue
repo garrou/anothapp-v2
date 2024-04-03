@@ -1,8 +1,8 @@
 <template>
     <v-container v-if="serie">
         <base-toolbar icon="mdi-chevron-left" :title="serie.title">
-            <template elevation="0" #firstBtn>
-                <v-btn icon @click="add">
+            <template #firstBtn>
+                <v-btn elevation="0" icon @click="add">
                     <v-icon :icon="ADD_ICON" />
                 </v-btn>
             </template>

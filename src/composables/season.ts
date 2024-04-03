@@ -10,6 +10,16 @@ export function useSeason() {
 
     const snackbar = useSnackbar();
 
+    const deleteSeason = async (id: number): Promise<void> => {
+        const resp = await seasonService.deleteSeasonById(id);
+        const data = await resp.json();
+
+        if (isError(resp.status))
+            throw new Error(data.message);
+
+        snackbar.showSuccess("Visionnage supprimé");
+    }
+
     const getSeasonsTimeline = async (month: number): Promise<SeasonTimeline[]> => {
         const resp = await seasonService.getSeasons(undefined, month);
         const data = await resp.json();
@@ -56,5 +66,5 @@ export function useSeason() {
         return data;
     }
 
-    return { addSeason, getSeasonsBySerieId, getSeasonsTimeline, getSeasonInfosBySerieIdByNumber }
+    return { addSeason, deleteSeason, getSeasonsBySerieId, getSeasonsTimeline, getSeasonInfosBySerieIdByNumber }
 }

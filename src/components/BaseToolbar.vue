@@ -6,7 +6,7 @@
 
         <v-toolbar-title>{{ title }}</v-toolbar-title>
 
-        <v-menu>
+        <v-menu open-on-click open-on-hover>
             <template v-slot:activator="{ props }">
               <v-btn icon="mdi-dots-vertical" v-bind="props"></v-btn>
             </template>

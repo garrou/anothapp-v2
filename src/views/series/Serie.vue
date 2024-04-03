@@ -15,7 +15,7 @@
 
             <template #thirdBtn>
                 <v-btn icon elevation="0" @click="confirm = true">
-                    <v-icon>mdi-delete</v-icon>
+                    <v-icon :icon="DELETE_ICON" />
                 </v-btn>
             </template>
         </base-toolbar>
@@ -61,7 +61,7 @@
             <span>Saison {{ selected.number }}</span>
             <v-btn icon="mdi-close" variant="text" @click="modal = false" />
         </template>
-        <season-details :id="id" :season="selected" />
+        <season-details :id="id" :season="selected" @refresh="refresh" />
     </base-modal>
 
     <base-confirm v-model="confirm" title="Supprimer" text="Confirmez-vous la suppression de la série ?"
@@ -83,7 +83,7 @@ import { useSerie } from "@/composables/serie";
 import type { Season } from "@/models/season";
 import router from "@/router";
 import { minsToStringHoursDays } from "@/utils/format";
-import { DETAILS_ICON, FAVORITE_ICON } from "@/constants/icons";
+import { DELETE_ICON, DETAILS_ICON, FAVORITE_ICON } from "@/constants/icons";
 import { useSnackbar } from "@/composables/snackbar";
 
 const props = defineProps({
@@ -110,6 +110,11 @@ const favoriteColor = computed(() => isFavorite.value ? "red" : "surface-variant
 const orderIcon = computed(() => order.value ? "mdi-sort-numeric-descending" : "mdi-sort-numeric-ascending");
 const time = computed(() => minsToStringHoursDays(infos.value?.time));
 
+const refresh = async () => {
+    modal.value = false;
+    await load();
+}
+
 const load = async (): Promise<void> => {
     loading.value = true;
     infos.value = await getSerie({ id: props.id });
@@ -125,10 +130,9 @@ const orderSeasons = (): void => {
 }
 
 const newSeason = async (season: Season): Promise<void> => {
-    console.log("coucou")
     if (!infos.value?.serie) {
         showError("Impossible d'ajouter une saison");
-        return
+        return;
     }
     await addSeason(infos.value.serie, season);
     infos.value = await getSerie({ id: props.id });

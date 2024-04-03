@@ -14,7 +14,15 @@ export const useSnackbarStore = defineStore("snackbar", () => {
     };
   }
 
-  const setMessage = (msg: string) => {
+  const setInfo = (msg: string) => {
+    message.value = {
+      color: "info",
+      message: msg,
+      subject: "Information"
+    };
+  }
+
+  const setSuccess = (msg: string) => {
     message.value = {
       color: "success",
       message: msg,
@@ -22,5 +30,5 @@ export const useSnackbarStore = defineStore("snackbar", () => {
     };
   }
 
-  return { message, setError, setMessage };
+  return { message, setError, setInfo, setSuccess };
 });

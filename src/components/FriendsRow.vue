@@ -5,7 +5,7 @@
                 label="Email utilisateur" required variant="underlined" @click:append-inner="$emit('search', username)" />
         </v-form>
 
-        <v-row>
+        <v-row v-if="friends.length > 0">
             <v-col v-for="(friend, index) in friends" cols="6" md="4" lg="3" :key="index">
                 <v-skeleton-loader :elevation="ELEVATION" :loading="loading" type="card">
                     <v-responsive>
@@ -22,6 +22,7 @@
                 </v-skeleton-loader>
             </v-col>
         </v-row>
+        <span v-else>Aucun résultat</span>
     </v-container>
 </template>
 

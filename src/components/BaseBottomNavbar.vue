@@ -1,7 +1,7 @@
 <template>
     <v-layout v-if="navbar" class="mt-10">
-        <v-bottom-navigation :density="DENSITY" mode="shift">
-            <v-btn v-for="(item, index) in NAV_MENU" class="btn" :key="index" :to="item.link">
+        <v-bottom-navigation :density="DENSITY" mode="default">
+            <v-btn v-for="(item, index) in NAV_MENU" :key="index" :to="item.link">
                 <v-icon>{{ item.icon }}</v-icon>
                 <span>{{ item.title }}</span>
             </v-btn>
@@ -21,7 +21,13 @@ const navbar = computed(() => !PAGE_WITHOUT_BOTTOM_NAVBAR.includes(route.name as
 </script>
 
 <style scoped>
-.btn {
-    min-width: 74px;
+@media screen and (max-width: 960px) {
+    .v-btn {
+        min-width: 75px !important;
+    }
+
+    .v-btn span {
+        display: none;
+    }
 }
 </style>

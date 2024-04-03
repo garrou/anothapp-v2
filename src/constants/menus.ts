@@ -20,9 +20,9 @@ export const NAV_MENU: BottomNavMenuItem[] = [
         link: "/discover"
     },
     {
-        title: "Statis",
+        title: "Dashboard",
         icon: "mdi-chart-bar",
-        link: "/stats"
+        link: "/dashboard"
     },
     {
         title: "Profil",

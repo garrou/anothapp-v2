@@ -6,7 +6,7 @@ import Series from "@/views/series/Series.vue";
 import Serie from "@/views/series/Serie.vue";
 import { useUser } from "@/composables/user";
 import Discover from "@/views/discover/Discover.vue";
-import Statistics from "@/views/stats/Statistics.vue";
+import Dashboard from "@/views/stats/Dashboard.vue";
 import Profile from "@/views/profile/Profile.vue";
 import Friends from "@/views/friends/Friends.vue";
 
@@ -54,9 +54,9 @@ const router = createRouter({
       }
     },
     {
-      path: "/stats",
-      name: "stats",
-      component: Statistics,
+      path: "/dashboard",
+      name: "dashboard",
+      component: Dashboard,
       meta: {
         requiresAuth: true
       }

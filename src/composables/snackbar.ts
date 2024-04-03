@@ -2,7 +2,7 @@ import { useSnackbarStore } from "@/stores/snackbar";
 
 export function useSnackbar() {
 
-    const { setError, setMessage } = useSnackbarStore();
+    const { setError, setInfo, setSuccess } = useSnackbarStore();
 
     const showError = (err: Error | string) => {
         if (typeof err === "string")
@@ -12,8 +12,12 @@ export function useSnackbar() {
     }
 
     const showSuccess = (msg: string) => {
-        setMessage(msg);
+        setSuccess(msg);
     }
 
-    return { showError, showSuccess };
+    const showInfo = (msg: string) => {
+        setInfo(msg);
+    }
+
+    return { showError, showInfo, showSuccess };
 }

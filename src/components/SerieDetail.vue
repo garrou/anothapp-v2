@@ -51,7 +51,7 @@
 import BaseImage from "./BaseImage.vue";
 import { type PropType } from "vue";
 import type { Serie } from "@/models/serie";
-import { minsToStringHoursDays } from "@/utils/format";
+import { buildPlural, minsToStringHoursDays } from "@/utils/format";
 import { DENSITY, ELEVATION } from "@/constants/style";
 
 const props = defineProps({
@@ -60,7 +60,7 @@ const props = defineProps({
 
 const kinds = props.serie.kinds?.join(" • ");
 const note = props.serie.note?.toFixed(2);
-const seasons = `${props.serie.seasons} saison${props.serie.seasons ?? 0 > 1 ? "s" : ""}`;
+const seasons = buildPlural("saison", props.serie.seasons);
 const status = props.serie.status === "En cours" ? "info" : "success";
 const icon = `\$${status}`;
 const totalDuration = minsToStringHoursDays(props.serie.duration * (props.serie.episodes ?? 0));

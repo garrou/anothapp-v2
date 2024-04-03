@@ -9,6 +9,7 @@ import Discover from "@/views/discover/Discover.vue";
 import Dashboard from "@/views/stats/Dashboard.vue";
 import Profile from "@/views/profile/Profile.vue";
 import Friends from "@/views/friends/Friends.vue";
+import Details from "@/views/discover/Details.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -49,6 +50,15 @@ const router = createRouter({
       path: "/discover",
       name: "discover",
       component: Discover,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: "/discover/:id",
+      name: "details",
+      component: Details,
+      props: (route) => ({ id: Number(route.params.id) }),
       meta: {
         requiresAuth: true
       }

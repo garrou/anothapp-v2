@@ -6,6 +6,16 @@ import { isError } from "@/utils/response";
 
 export function useSearch() {
 
+    const getSerie = async (id: number): Promise<Serie> => {
+        const resp = await searchService.getSerie(id);
+        const data = await resp.json();
+
+        if (isError(resp.status))
+            throw new Error(data.message);
+
+        return data;
+    }
+
     const getSeries = async (options: SerieSearchOptions): Promise<Serie[]> => {
         const resp = await searchService.getSeries(options.title);
         const data = await resp.json();
@@ -26,5 +36,5 @@ export function useSearch() {
         return data;
     }
 
-    return { getSeasonsBySerieId, getSeries }
+    return { getSeasonsBySerieId, getSerie, getSeries }
 }

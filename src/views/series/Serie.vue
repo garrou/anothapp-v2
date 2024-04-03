@@ -1,6 +1,6 @@
 <template>
     <v-container v-if="infos && seasons">
-        <base-toolbar icon="mdi-chevron-left" :title="infos.serie.title" @back="$router.back()">
+        <base-toolbar icon="mdi-chevron-left" :title="infos.serie.title">
             <template #firstBtn>
                 <v-btn icon @click="changeFavorite">
                     <v-icon :color="favoriteColor" :icon="FAVORITE_ICON" />

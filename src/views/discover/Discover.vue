@@ -4,12 +4,11 @@
     <series-row :loading="loading" :series="series" @show-serie="showSerie" />
 
     <base-modal v-if="selected" v-model="modal">
-        <v-card align="center" class="pa-2">
-            <v-card-title class="d-flex flex-row-reverse">
-                <v-btn icon="mdi-close" variant="text" @click="modal = false" />
-            </v-card-title>
-            <serie-detail :serie="selected" />
-        </v-card>
+        <template #title>
+            <v-spacer />
+            <v-btn icon="mdi-close" variant="text" @click="modal = false" />
+        </template>
+        <serie-detail :serie="selected" />
     </base-modal>
 </template>
 

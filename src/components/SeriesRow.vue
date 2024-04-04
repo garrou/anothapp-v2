@@ -1,5 +1,6 @@
 <template>
     <v-container>
+        <span v-if="total">{{ buildPlural("série", series.length) }}</span>
         <v-row>
             <v-col v-for="serie in series" cols="6" md="4" lg="3" :key="serie.id">
                 <base-skeleton :loading="loading" type="card">
@@ -14,12 +15,14 @@
 import BaseSkeleton from "./BaseSkeleton.vue";
 import SerieCard from "@/components/SerieCard.vue";
 import type { Serie } from "@/models/serie";
+import { buildPlural } from "@/utils/format";
 import type { PropType } from "vue";
 
 defineProps({
     loading: { type: Boolean, required: true },
     lovable: { type: Boolean, default: false },
-    series: { type: Array as PropType<Serie[]>, required: true }
+    series: { type: Array as PropType<Serie[]>, required: true },
+    total: { type: Boolean, default: false }
 });
 
 const emit = defineEmits<{

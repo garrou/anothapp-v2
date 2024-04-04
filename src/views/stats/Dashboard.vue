@@ -19,7 +19,7 @@ import BaseAppBar from '@/components/BaseAppBar.vue';
 import { useStatistic } from '@/composables/statistic';
 import { ELEVATION } from '@/constants/style';
 import type { Stat } from '@/models/stat';
-import { buildPlural, minsToStringHoursDays } from '@/utils/format';
+import { minsToStringHoursDays } from '@/utils/format';
 import { computed, onBeforeMount, ref } from 'vue';
 
 const { getStats } = useStatistic();
@@ -39,15 +39,18 @@ const cardsConfig = computed(() => [
     },
     {
         "icon": "mdi-play",
-        "title": buildPlural("série", stat.value?.nbSeries),
+        "title": "Séries",
+        "value": stat.value?.nbSeries
     },
     {
         "icon": "mdi-play",
-        "title": buildPlural("saison", stat.value?.nbSeasons),
+        "title": "Saisons",
+        "value": stat.value?.nbSeasons
     },
     {
         "icon": "mdi-play",
-        "title": buildPlural("episode", stat.value?.nbEpisodes),
+        "title": "Episodes",
+        "value": stat.value?.nbEpisodes,
     },
     {
         "icon": "mdi-crown",

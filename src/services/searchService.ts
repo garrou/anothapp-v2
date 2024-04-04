@@ -2,6 +2,14 @@ import { buildUrl } from "@/utils/format";
 import { ENDPOINT } from "../constants/services";
 import storageService from "./storageService";
 
+const getActor = async (id: number): Promise<Response> => {
+    return fetch(`${ENDPOINT}/search/persons/${id}`, {
+        headers: {
+            "Authorization": `Bearer ${storageService.getJwt()}`
+        }
+    });
+}
+
 const getCharacters = async (id: number): Promise<Response> => {
     return fetch(`${ENDPOINT}/search/shows/${id}/characters`, {
         headers: {
@@ -52,6 +60,7 @@ const getSimilarsSeries = async (id: number): Promise<Response> => {
 }
 
 export default {
+    getActor,
     getCharacters,
     getSeasonsBySerieId,
     getSerie,

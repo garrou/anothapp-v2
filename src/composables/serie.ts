@@ -7,7 +7,7 @@ import { useRouter } from "vue-router";
 
 export function useSerie() {
 
-    const snackBar = useSnackbar();
+    const { showSuccess } = useSnackbar();
     const router = useRouter();
 
     const addSerie = async (serie: Serie): Promise<boolean> => {
@@ -17,7 +17,7 @@ export function useSerie() {
         if (isError(resp.status))
             throw new Error(data.message);
 
-        snackBar.showSuccess(`Série "${serie.title} ajoutée`);
+        showSuccess(`Série "${serie.title} ajoutée`);
         router.push(`/series/${serie.id}`);
         return true;
     }
@@ -29,7 +29,7 @@ export function useSerie() {
         if (isError(resp.status))
             throw new Error(data.message);
 
-        snackBar.showSuccess(`Série "${serie.title}" supprimée`);
+        showSuccess(`Série "${serie.title}" supprimée`);
         return true;
     }
 
@@ -97,7 +97,7 @@ export function useSerie() {
         if (isError(resp.status))
             throw new Error(data.message);
 
-        snackBar.showSuccess(data.favorite
+        showSuccess(data.favorite
             ? `"${serie.title}" ajoutée aux favoris`
             : `"${serie.title}" supprimée des favoris`);
         return data.result;

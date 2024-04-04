@@ -8,7 +8,7 @@ import seasonService from "@/services/seasonService";
 
 export function useSeason() {
 
-    const snackbar = useSnackbar();
+    const { showSuccess } = useSnackbar();
 
     const deleteSeason = async (id: number): Promise<void> => {
         const resp = await seasonService.deleteSeasonById(id);
@@ -17,7 +17,7 @@ export function useSeason() {
         if (isError(resp.status))
             throw new Error(data.message);
 
-        snackbar.showSuccess("Visionnage supprimé");
+        showSuccess("Visionnage supprimé");
     }
 
     const getSeasonsTimeline = async (month: number): Promise<SeasonTimeline[]> => {
@@ -62,7 +62,7 @@ export function useSeason() {
         if (isError(resp.status))
             throw new Error(data.message);
 
-        snackbar.showSuccess(`"${serie.title}" saison ${season.number} ajoutée`);
+        showSuccess(`"${serie.title}" saison ${season.number} ajoutée`);
         return data;
     }
 

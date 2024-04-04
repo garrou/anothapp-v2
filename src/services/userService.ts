@@ -45,6 +45,19 @@ const login = async (identifier: string, password: string): Promise<Response> =>
     });
 }
 
+const updateImage = async (image: string): Promise<Response> => {
+    return fetch(`${ENDPOINT}/${PREFIX}/me`, {
+        body: JSON.stringify({
+            image
+        }),
+        headers: {
+            "Authorization": `Bearer ${storageService.getJwt()}`,
+            "Content-Type": "application/json",
+        },
+        method: "PATCH",
+    })
+}
+
 const register = async (email: string, password: string, confirm: string, username: string): Promise<Response> => {
     return fetch(`${ENDPOINT}/${PREFIX}/register`, {
         body: JSON.stringify({
@@ -65,5 +78,6 @@ export default {
     getUser,
     getProfile,
     login,
+    updateImage,
     register,
 }

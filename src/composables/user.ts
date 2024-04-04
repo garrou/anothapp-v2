@@ -10,6 +10,16 @@ export function useUser() {
     const router = useRouter();
     const { showSuccess } = useSnackbar();
 
+    const changeImage = async (image: string): Promise<void> => {
+        const resp = await userService.updateImage(image);
+        const data = await resp.json();
+
+        if (isError(resp.status))
+            throw new Error(data.message);
+
+        showSuccess("Image de profil modifiée");
+    }
+
     const checkAuth = async (): Promise<boolean> => {
         const resp = await userService.checkAuth();
         return isSuccess(resp.status);
@@ -64,5 +74,5 @@ export function useUser() {
         router.push("/login");
     }
 
-    return { checkAuth, getUsers, getProfile, login, logout, register }
+    return { changeImage, checkAuth, getUsers, getProfile, login, logout, register }
 }

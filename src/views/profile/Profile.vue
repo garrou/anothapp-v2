@@ -17,19 +17,18 @@
     </v-container>
 
     <base-modal v-model="modal" :max-width="800">
-        <v-card align="center">
-            <v-card-title class="d-flex flex-row-reverse">
-                <v-btn icon="mdi-close" variant="text" @click="modal = false" />
-            </v-card-title>
-            <v-expansion-panels>
-                <v-expansion-panel v-for="serie in series" :key="serie.id" @group:selected="getImages(serie.id)">
-                    <v-expansion-panel-title>{{ serie.title }}</v-expansion-panel-title>
-                    <v-expansion-panel-text>
-                        <images-row :images="images" :loading="loading" />
-                    </v-expansion-panel-text>
-                </v-expansion-panel>
-            </v-expansion-panels>
-        </v-card>
+        <template #title>
+            <span>Images</span>
+            <v-btn icon="mdi-close" variant="text" @click="modal = false" />
+        </template>
+        <v-expansion-panels variant="accordion">
+            <v-expansion-panel v-for="serie in series" :key="serie.id" @group:selected="(open) => getImages(open.value, serie.id)">
+                <v-expansion-panel-title>{{ serie.title }}</v-expansion-panel-title>
+                <v-expansion-panel-text>
+                    <images-row :images="images" :loading="loading" @refresh="refresh" />
+                </v-expansion-panel-text>
+            </v-expansion-panel>
+        </v-expansion-panels>
     </base-modal>
 </template>
 
@@ -60,9 +59,17 @@ const imagesModal = async () => {
     series.value = await getSeries();
 }
 
-const getImages = async (id: number) => {
+const getImages = async (open: boolean, id: number) => {
+    if (!open) return;
     loading.value = true;
     images.value = await getSerieImages(id);
+    loading.value = false;
+}
+
+const refresh = async () => {
+    loading.value = true;
+    modal.value = false;
+    profile.value = await getProfile();
     loading.value = false;
 }
 

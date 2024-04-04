@@ -12,6 +12,6 @@ import type { PropType } from 'vue';
 
 defineProps({
     loading: { type: Boolean, required: true },
-    type: { type: String as PropType<"card" | "table">, required: true }
+    type: { type: String as PropType<"card" | "table-tbody">, required: true }
 });
 </script>

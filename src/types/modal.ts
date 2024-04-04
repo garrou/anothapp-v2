@@ -1,0 +1,1 @@
+export type ProfileModal = "images" | "email" | "password";

@@ -45,10 +45,39 @@ const login = async (identifier: string, password: string): Promise<Response> =>
     });
 }
 
+const updateLogin = async (email: string, newEmail: string): Promise<Response> => {
+    return fetch(`${ENDPOINT}/${PREFIX}/me`, {
+        body: JSON.stringify({
+            email,
+            newEmail
+        }),
+        headers: {
+            "Authorization": `Bearer ${storageService.getJwt()}`,
+            "Content-Type": "application/json",
+        },
+        method: "PATCH",
+    })
+}
+
 const updateImage = async (image: string): Promise<Response> => {
     return fetch(`${ENDPOINT}/${PREFIX}/me`, {
         body: JSON.stringify({
             image
+        }),
+        headers: {
+            "Authorization": `Bearer ${storageService.getJwt()}`,
+            "Content-Type": "application/json",
+        },
+        method: "PATCH",
+    })
+}
+
+const updatePassword = async (currentPassword: string, newPassword: string, confirmPassword: string): Promise<Response> => {
+    return fetch(`${ENDPOINT}/${PREFIX}/me`, {
+        body: JSON.stringify({
+            currentPassword,
+            newPassword,
+            confirmPassword
         }),
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`,
@@ -79,5 +108,7 @@ export default {
     getProfile,
     login,
     updateImage,
+    updateLogin,
+    updatePassword,
     register,
 }

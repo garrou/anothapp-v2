@@ -1,6 +1,6 @@
 <template>
     <v-container>
-        <v-row v-if="images.length > 0">
+        <v-row>
             <v-col v-for="(image, index) in images" cols="6" md="4" :key="index">
                 <base-skeleton :loading="loading" type="card">
                     <v-card>
@@ -13,7 +13,6 @@
                 </base-skeleton>
             </v-col>
         </v-row>
-        <span v-else>Aucune image</span>
     </v-container>
 </template>
 

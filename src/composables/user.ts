@@ -10,6 +10,16 @@ export function useUser() {
     const router = useRouter();
     const { showSuccess } = useSnackbar();
 
+    const changeEmail = async (oldEmail: string, newEmail: string): Promise<void> => {
+        const resp = await userService.updateLogin(oldEmail, newEmail);
+        const data = await resp.json();
+
+        if (isError(resp.status))
+            throw new Error(data.message);
+
+        showSuccess("Email modifié");
+    }
+
     const changeImage = async (image: string): Promise<void> => {
         const resp = await userService.updateImage(image);
         const data = await resp.json();
@@ -18,6 +28,16 @@ export function useUser() {
             throw new Error(data.message);
 
         showSuccess("Image de profil modifiée");
+    }
+
+    const changePassword = async (currentPass: string, newPass: string, confPass: string): Promise<void> => {
+        const resp = await userService.updatePassword(currentPass, newPass, confPass);
+        const data = await resp.json();
+
+        if (isError(resp.status))
+            throw new Error(data.message);
+
+        showSuccess("Mot de passe modifié");
     }
 
     const checkAuth = async (): Promise<boolean> => {
@@ -74,5 +94,5 @@ export function useUser() {
         router.push("/login");
     }
 
-    return { changeImage, checkAuth, getUsers, getProfile, login, logout, register }
+    return { changeEmail, changeImage, changePassword, checkAuth, getUsers, getProfile, login, logout, register }
 }

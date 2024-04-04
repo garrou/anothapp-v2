@@ -1,6 +1,6 @@
 <template>
     <v-container>
-        <v-row v-if="seasons.length > 0">
+        <v-row>
             <v-col v-for="season in seasons" cols="6" md="4" lg="3" :key="season.number">
                 <base-skeleton :loading="loading" type="card">
                     <season-card v-if="addable" :season="season">
@@ -18,7 +18,6 @@
                 </base-skeleton>
             </v-col>
         </v-row>
-        <span v-else>Aucune saison</span>
     </v-container>
 </template>
 

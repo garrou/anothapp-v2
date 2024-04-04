@@ -9,26 +9,35 @@
             <v-card-subtitle>{{ profile.email }}</v-card-subtitle>
 
             <v-card-actions>
-                <v-btn icon="mdi-image" @click="imagesModal" />
-                <v-btn icon="mdi-email" />
-                <v-btn icon="mdi-account-lock" />
+                <v-btn icon="mdi-image" @click="showModal('images')" />
+                <v-btn icon="mdi-email" @click="showModal('email')" />
+                <v-btn icon="mdi-account-lock" @click="showModal('password')" />
             </v-card-actions>
         </v-card>
     </v-container>
 
     <base-modal v-model="modal" :max-width="800">
         <template #title>
-            <span>Images</span>
+            <span>Modifier</span>
             <v-btn icon="mdi-close" variant="text" @click="modal = false" />
         </template>
-        <v-expansion-panels variant="accordion">
-            <v-expansion-panel v-for="serie in series" :key="serie.id" @group:selected="(open) => getImages(open.value, serie.id)">
-                <v-expansion-panel-title>{{ serie.title }}</v-expansion-panel-title>
-                <v-expansion-panel-text>
-                    <images-row :images="images" :loading="loading" @refresh="refresh" />
-                </v-expansion-panel-text>
-            </v-expansion-panel>
-        </v-expansion-panels>
+        <div v-if="selected === 'images'">
+            <v-expansion-panels variant="accordion">
+                <v-expansion-panel v-for="serie in series" :key="serie.id"
+                    @group:selected="(open) => getImages(open.value, serie.id)">
+                    <v-expansion-panel-title>{{ serie.title }}</v-expansion-panel-title>
+                    <v-expansion-panel-text>
+                        <images-row :images="images" :loading="loading" @refresh="refresh" />
+                    </v-expansion-panel-text>
+                </v-expansion-panel>
+            </v-expansion-panels>
+        </div>
+        <div v-else-if="selected === 'email'">
+            <email @refresh="refresh" />
+        </div>
+        <div v-else>
+            <password @refresh="refresh" />
+        </div>
     </base-modal>
 </template>
 
@@ -36,6 +45,8 @@
 import BaseAppBar from '@/components/BaseAppBar.vue';
 import BaseModal from '@/components/BaseModal.vue';
 import BaseImage from '@/components/BaseImage.vue';
+import Email from './Email.vue';
+import Password from './Password.vue';
 import ImagesRow from '@/components/ImagesRow.vue';
 import { useUser } from '@/composables/user';
 import type { User } from '@/models/user';
@@ -43,6 +54,7 @@ import { onBeforeMount, ref } from 'vue';
 import type { Serie } from '@/models/serie';
 import { useSerie } from '@/composables/serie';
 import { useSearch } from '@/composables/search';
+import type { ProfileModal } from '@/types/modal';
 
 const { getProfile } = useUser();
 const { getSeries } = useSerie();
@@ -52,11 +64,16 @@ const images = ref<string[]>([]);
 const loading = ref(false);
 const modal = ref(false);
 const profile = ref<User>();
+const selected = ref("");
 const series = ref<Serie[]>();
 
-const imagesModal = async () => {
+const showModal = async (select: ProfileModal) => {
     modal.value = true;
-    series.value = await getSeries();
+
+    if (select === "images")
+        series.value = await getSeries();
+
+    selected.value = select;
 }
 
 const getImages = async (open: boolean, id: number) => {

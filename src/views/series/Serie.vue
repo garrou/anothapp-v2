@@ -27,9 +27,9 @@
                 </v-col>
                 <v-col cols="9">
                     <p class="mb-1 text-subtitle-1">Saisons {{ infos.seasons.length }} / {{ seasons.length }}</p>
-                    <v-progress-linear v-model="infos.seasons.length" class="mb-3 text-subtitle-1" :max="seasons.length"
+                    <v-progress-linear v-model="infos.seasons.length" class="mb-2 text-subtitle-1" :max="seasons.length"
                         rounded />
-                    <p class="mb-1 text-subtitle-1">{{ infos.episodes }} épisodes</p>
+                    <p class="mb-1 text-subtitle-1">{{ buildPlural("épisode", infos.episodes) }}</p>
                     <p class="mb-1 text-subtitle-1">{{ time }}</p>
                 </v-col>
             </v-row>
@@ -82,7 +82,7 @@ import { useSearch } from "@/composables/search";
 import { useSerie } from "@/composables/serie";
 import type { Season } from "@/models/season";
 import router from "@/router";
-import { minsToStringHoursDays } from "@/utils/format";
+import { buildPlural, minsToStringHoursDays } from "@/utils/format";
 import { DELETE_ICON, DETAILS_ICON, FAVORITE_ICON } from "@/constants/icons";
 import { useSnackbar } from "@/composables/snackbar";
 

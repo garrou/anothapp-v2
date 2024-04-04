@@ -1,7 +1,7 @@
 <template>
-  <h1 class="text-center">Anothapp V2</h1>
 
-  <div class="text-center ga-3">
-    <router-link text="Se connecter" to="/login" />
+  <div class="text-center">
+    <h1>Anothapp V2</h1>
+    <v-btn class="mt-2" @click="$router.push('/login')">Se connecter</v-btn>
   </div>
 </template>

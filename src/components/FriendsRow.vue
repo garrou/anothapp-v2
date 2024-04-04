@@ -2,23 +2,22 @@
     <v-container>
         <v-form v-if="search" @submit="$emit('search', username)" @submit.prevent>
             <v-text-field v-model="username" :append-inner-icon="SEARCH_ICON" class="mb-4" clearable
-                label="Email utilisateur" required variant="underlined" @click:append-inner="$emit('search', username)" />
+                label="Email utilisateur" required variant="underlined"
+                @click:append-inner="$emit('search', username)" />
         </v-form>
 
         <v-row v-if="friends.length > 0">
             <v-col v-for="(friend, index) in friends" cols="6" md="4" lg="3" :key="index">
                 <base-skeleton :loading="loading" type="card">
-                    <template #content>
-                        <v-card>
-                            <base-image v-if="friend.picture" cover max-height="580" :src="friend.picture" />
+                    <v-card>
+                        <base-image v-if="friend.picture" cover max-height="580" :src="friend.picture" />
 
-                            <v-card-subtitle class="pt-4">{{ friend.username }}</v-card-subtitle>
+                        <v-card-subtitle class="pt-4">{{ friend.username }}</v-card-subtitle>
 
-                            <v-card-actions>
-                                <v-btn variant="text" @click="">Profil</v-btn>
-                            </v-card-actions>
-                        </v-card>
-                    </template>
+                        <v-card-actions>
+                            <v-btn variant="text" @click="">Profil</v-btn>
+                        </v-card-actions>
+                    </v-card>
                 </base-skeleton>
             </v-col>
         </v-row>
@@ -42,6 +41,6 @@ defineProps({
 });
 
 defineEmits<{
-    search: [string|undefined]
+    search: [string | undefined]
 }>();
 </script>

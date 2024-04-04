@@ -25,6 +25,16 @@ export function useUser() {
         return data;
     }
 
+    const getProfile = async (): Promise<User> => {
+        const resp = await userService.getProfile();
+        const data = await resp.json();
+
+        if (isError(resp.status))
+            throw new Error(data.message);
+
+        return data;
+    }
+
     const login = async (identifier: string, password: string): Promise<boolean> => {
         const resp = await userService.login(identifier, password);
         const data = await resp.json();
@@ -54,5 +64,5 @@ export function useUser() {
         router.push("/login");
     }
 
-    return { checkAuth, getUsers, login, logout, register }
+    return { checkAuth, getUsers, getProfile, login, logout, register }
 }

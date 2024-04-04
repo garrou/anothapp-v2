@@ -31,5 +31,5 @@ onBeforeMount(async () => {
 
 watch(favorite.deleted, async () => {
     await fetchSeries();
-}, { immediate: true });
+});
 </script>

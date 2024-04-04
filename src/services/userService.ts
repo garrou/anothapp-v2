@@ -24,6 +24,14 @@ const getUser = async (username: string): Promise<Response> => {
     })
 }
 
+const getProfile = async (): Promise<Response> => {
+    return fetch(`${ENDPOINT}/${PREFIX}/profile`, {
+        headers: {
+            "Authorization": `Bearer ${storageService.getJwt()}`
+        }
+    });
+}
+
 const login = async (identifier: string, password: string): Promise<Response> => {
     return fetch(`${ENDPOINT}/${PREFIX}/login`, {
         body: JSON.stringify({
@@ -55,6 +63,7 @@ const register = async (email: string, password: string, confirm: string, userna
 export default {
     checkAuth,
     getUser,
+    getProfile,
     login,
     register,
 }

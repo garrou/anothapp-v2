@@ -27,18 +27,15 @@
                 <v-row>
                     <v-col v-for="character in characters" cols="6" md="4" lg="3" :key="character.id">
                         <base-skeleton :loading="loading" type="card">
-                            <template #content>
-                                <v-card>
-                                    <base-image v-if="character.picture" cover max-height="580"
-                                        :src="character.picture" />
-                                    <v-card-title>{{ character.actor }}</v-card-title>
-                                    <v-card-subtitle>{{ character.name }}</v-card-subtitle>
+                            <v-card>
+                                <base-image v-if="character.picture" cover max-height="580" :src="character.picture" />
+                                <v-card-title>{{ character.actor }}</v-card-title>
+                                <v-card-subtitle>{{ character.name }}</v-card-subtitle>
 
-                                    <v-card-actions>
-                                        <v-btn :icon="DETAILS_ICON" variant="text" @click="" />
-                                    </v-card-actions>
-                                </v-card>
-                            </template>
+                                <v-card-actions>
+                                    <v-btn :icon="DETAILS_ICON" variant="text" @click="" />
+                                </v-card-actions>
+                            </v-card>
                         </base-skeleton>
                     </v-col>
                 </v-row>
@@ -46,32 +43,20 @@
 
             <v-window-item :value="3" @group:selected="getSimilars">
                 <base-skeleton :loading="loading" type="table-tbody">
-                    <template #content>
-                        <v-table>
-                            <tbody>
-                                <tr v-for="similar in similars" :key="similar.id">
-                                    <td>
-                                        <router-link :text="similar.title" :to="`/discover/${similar.id}`" />
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </v-table>
-                    </template>
+                    <v-table>
+                        <tbody>
+                            <tr v-for="similar in similars" :key="similar.id">
+                                <td>
+                                    <router-link :text="similar.title" :to="`/discover/${similar.id}`" />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </v-table>
                 </base-skeleton>
             </v-window-item>
 
             <v-window-item :value="4" @group:selected="getImages">
-                <v-row>
-                    <v-col v-for="(image, index) in images" cols="6" md="4" lg="3" :key="index">
-                        <base-skeleton :loading="loading" type="card">
-                            <template #content>
-                                <v-card>
-                                    <base-image cover max-height="580" :src="image" />
-                                </v-card>
-                            </template>
-                        </base-skeleton>
-                    </v-col>
-                </v-row>
+                <images-row :images="images" :loading="loading" />
             </v-window-item>
         </v-window>
     </v-container>
@@ -81,6 +66,7 @@
 import BaseImage from '@/components/BaseImage.vue';
 import BaseSkeleton from '@/components/BaseSkeleton.vue';
 import BaseToolbar from '@/components/BaseToolbar.vue';
+import ImagesRow from '@/components/ImagesRow.vue';
 import SerieDetail from '@/components/SerieDetail.vue';
 import { useSearch } from '@/composables/search';
 import { useSerie } from '@/composables/serie';

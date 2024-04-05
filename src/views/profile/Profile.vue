@@ -19,7 +19,7 @@
     <base-modal v-model="modal" :max-width="800">
         <template #title>
             <span>Modifier</span>
-            <v-btn icon="mdi-close" variant="text" @click="modal = false" />
+            <v-btn :icon="CLOSE_ICON" variant="text" @click="modal = false" />
         </template>
         <div v-if="selected === 'images'">
             <v-expansion-panels variant="accordion">
@@ -55,6 +55,7 @@ import type { Serie } from '@/models/serie';
 import { useSerie } from '@/composables/serie';
 import { useSearch } from '@/composables/search';
 import type { ProfileModal } from '@/types/modal';
+import { CLOSE_ICON } from '@/constants/icons';
 
 const { getProfile } = useUser();
 const { getSeries } = useSerie();

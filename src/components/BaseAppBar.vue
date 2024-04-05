@@ -27,7 +27,7 @@
         <base-modal v-if="selected && selected.component" v-model="modal" :max-width="800">
             <template #title>
                 <span>{{ selected.title }}</span>
-                <v-btn icon="mdi-close" variant="text" @click="modal = false" />
+                <v-btn :icon="CLOSE_ICON" variant="text" @click="modal = false" />
             </template>
             <component :is="selected.component" />
         </base-modal>
@@ -40,7 +40,7 @@
 import BaseConfirm from "./BaseConfirm.vue";
 import BaseModal from "./BaseModal.vue";
 import { DENSITY, ELEVATION } from "@/constants/style";
-import { SEARCH_ICON } from "@/constants/icons";
+import { CLOSE_ICON, SEARCH_ICON } from "@/constants/icons";
 import { APP_MENU } from "@/constants/menus";
 import { ref } from "vue";
 import type { AppMenuItem } from "@/types/menu";

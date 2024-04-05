@@ -54,6 +54,7 @@ import { ELEVATION } from '@/constants/style';
 import type { GlobalStat } from '@/models/stat';
 import { minsToStringHoursDays } from '@/utils/format';
 import { computed, onBeforeMount, ref } from 'vue';
+import { PLAY_ICON } from '@/constants/icons';
 
 const props = defineProps({
     userId: { type: String, default: undefined },
@@ -76,17 +77,17 @@ const cardsConfig = computed(() => [
         "value": minsToStringHoursDays(stat.value?.totalTime)
     },
     {
-        "icon": "mdi-play",
+        "icon": PLAY_ICON,
         "title": "Séries",
         "value": stat.value?.nbSeries
     },
     {
-        "icon": "mdi-play",
+        "icon": PLAY_ICON,
         "title": "Saisons",
         "value": stat.value?.nbSeasons
     },
     {
-        "icon": "mdi-play",
+        "icon": PLAY_ICON,
         "title": "Episodes",
         "value": stat.value?.nbEpisodes,
     },

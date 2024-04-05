@@ -6,7 +6,7 @@
     <base-modal v-if="selected" v-model="modal">
         <template #title>
             <v-spacer />
-            <v-btn icon="mdi-close" variant="text" @click="modal = false" />
+            <v-btn :icon="CLOSE_ICON" variant="text" @click="modal = false" />
         </template>
         <serie-detail :serie="selected" />
     </base-modal>
@@ -20,6 +20,7 @@ import SerieDetail from "@/components/SerieDetail.vue";
 import type { Serie } from "@/models/serie";
 import { onBeforeMount, ref } from "vue";
 import { useSearch } from "@/composables/search";
+import { CLOSE_ICON } from "@/constants/icons";
 
 const { getSeries } = useSearch();
 

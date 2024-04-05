@@ -64,7 +64,7 @@
     <base-modal v-if="actor" v-model="modal">
         <template #title>
             <v-spacer />
-            <v-btn icon="mdi-close" variant="text" @click="modal = false" />
+            <v-btn :icon="CLOSE_ICON" variant="text" @click="modal = false" />
         </template>
 
         <v-row align="center" class="pa-2">
@@ -127,7 +127,7 @@ import SeriesRow from '@/components/SeriesRow.vue';
 import { useSearch } from '@/composables/search';
 import { useSerie } from '@/composables/serie';
 import { useSnackbar } from '@/composables/snackbar';
-import { ADD_ICON, DETAILS_ICON } from '@/constants/icons';
+import { ADD_ICON, CLOSE_ICON, DETAILS_ICON } from '@/constants/icons';
 import type { Actor, Character } from '@/models/person';
 import type { Serie, Similar } from '@/models/serie';
 import { buildPlural } from '@/utils/format';

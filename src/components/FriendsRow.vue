@@ -27,7 +27,7 @@
     <base-modal v-if="friend" v-model="modal" :max-width="1600">
         <template #title>
             <span>{{ friend.username }}</span>
-            <v-btn icon="mdi-close" variant="text" @click="modal = false" />
+            <v-btn :icon="CLOSE_ICON" variant="text" @click="modal = false" />
         </template>
         <dashboard :user-id="friend.id" :show-bar="false" />
     </base-modal>
@@ -38,7 +38,7 @@ import BaseImage from "./BaseImage.vue";
 import BaseModal from "./BaseModal.vue";
 import BaseSkeleton from "./BaseSkeleton.vue";
 import Dashboard from "@/views/stats/Dashboard.vue";
-import { SEARCH_ICON } from "@/constants/icons";
+import { CLOSE_ICON, SEARCH_ICON } from "@/constants/icons";
 import type { User } from "@/models/user";
 import { ref, type PropType } from "vue";
 

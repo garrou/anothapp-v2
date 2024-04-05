@@ -59,7 +59,7 @@
     <base-modal v-if="selected" v-model="modal" :max-width="500">
         <template #title>
             <span>Saison {{ selected.number }}</span>
-            <v-btn icon="mdi-close" variant="text" @click="modal = false" />
+            <v-btn :icon="CLOSE_ICON" variant="text" @click="modal = false" />
         </template>
         <season-details :id="id" :season="selected" @refresh="refresh" />
     </base-modal>
@@ -83,7 +83,7 @@ import { useSerie } from "@/composables/serie";
 import type { Season } from "@/models/season";
 import router from "@/router";
 import { buildPlural, minsToStringHoursDays } from "@/utils/format";
-import { DELETE_ICON, DETAILS_ICON, FAVORITE_ICON } from "@/constants/icons";
+import { CLOSE_ICON, DELETE_ICON, DETAILS_ICON, FAVORITE_ICON } from "@/constants/icons";
 import { useSnackbar } from "@/composables/snackbar";
 
 const props = defineProps({

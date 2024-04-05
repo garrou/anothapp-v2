@@ -1,5 +1,5 @@
 <template>
-    <base-pie-chart class="mb-2" :data="data" title="Temps par année" />
+    <base-pie-chart class="mb-2" :data="data" title="Séries les plus chronophages" />
   </template>
   
   <script lang="ts" setup>

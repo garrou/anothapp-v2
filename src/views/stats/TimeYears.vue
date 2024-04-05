@@ -1,5 +1,5 @@
 <template>
-    <base-line-chart class="mb-2" color="#2bccf0" :data="data" title="Séries les plus chronophages" />
+    <base-line-chart class="mb-2" color="#2bccf0" :data="data" title="Temps en heures par années" />
   </template>
   
   <script lang="ts" setup>

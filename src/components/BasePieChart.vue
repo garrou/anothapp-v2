@@ -45,8 +45,7 @@ const option = computed(() => ({
     {
       name: props.title,
       type: 'pie',
-      radius: '55%',
-      center: ['50%', '60%'],
+      radius: '60%',
       data: props.data.map((record) => ({
         name: record.label,
         value: record.value

@@ -4,8 +4,8 @@ import { isError } from "@/utils/response";
 
 export function useStatistic() {
 
-    const getStats = async (): Promise<GlobalStat> => {
-        const resp = await statService.getStats();
+    const getStats = async (userId?: string): Promise<GlobalStat> => {
+        const resp = await statService.getStats(userId);
         const data = await resp.json();
 
         if (isError(resp.status))
@@ -14,8 +14,8 @@ export function useStatistic() {
         return data;
     }
 
-    const getSeasonsMonthCurrYear = async (): Promise<Stat[]> => {
-        const resp = await statService.getGroupedCountByTypeByPeriod("seasons", "year");
+    const getSeasonsMonthCurrYear = async (userId?: string): Promise<Stat[]> => {
+        const resp = await statService.getGroupedCountByTypeByPeriod("seasons", "year", userId);
         const data = await resp.json();
 
         if (isError(resp.status))
@@ -24,8 +24,8 @@ export function useStatistic() {
         return data;
     }
 
-    const getEpisodesMonthCurrYear = async (): Promise<Stat[]> => {
-        const resp = await statService.getGroupedCountByTypeByPeriod("episodes", "year");
+    const getEpisodesMonthCurrYear = async (userId?: string): Promise<Stat[]> => {
+        const resp = await statService.getGroupedCountByTypeByPeriod("episodes", "year", userId);
         const data = await resp.json();
 
         if (isError(resp.status))
@@ -34,8 +34,8 @@ export function useStatistic() {
         return data;
     }
 
-    const getTimeByYears = async (): Promise<Stat[]> => {
-        const resp = await statService.getTimeByType("years");
+    const getTimeByYears = async (userId?: string): Promise<Stat[]> => {
+        const resp = await statService.getTimeByType("years", userId);
         const data = await resp.json();
 
         if (isError(resp.status))
@@ -44,8 +44,8 @@ export function useStatistic() {
         return data;
     }
 
-    const getSeasonsYears = async (): Promise<Stat[]> => {
-        const resp = await statService.getGroupedCountByTypeByPeriod("seasons", "years");
+    const getSeasonsYears = async (userId?: string): Promise<Stat[]> => {
+        const resp = await statService.getGroupedCountByTypeByPeriod("seasons", "years", userId);
         const data = await resp.json();
 
         if (isError(resp.status))
@@ -54,8 +54,8 @@ export function useStatistic() {
         return data;
     }
 
-    const getEpisodesYears = async (): Promise<Stat[]> => {
-        const resp = await statService.getGroupedCountByTypeByPeriod("episodes", "years");
+    const getEpisodesYears = async (userId?: string): Promise<Stat[]> => {
+        const resp = await statService.getGroupedCountByTypeByPeriod("episodes", "years", userId);
         const data = await resp.json();
 
         if (isError(resp.status))
@@ -64,8 +64,8 @@ export function useStatistic() {
         return data;
     }
 
-    const getSeasonsMonths = async (): Promise<Stat[]> => {
-        const resp = await statService.getGroupedCountByTypeByPeriod("seasons", "months");
+    const getSeasonsMonths = async (userId?: string): Promise<Stat[]> => {
+        const resp = await statService.getGroupedCountByTypeByPeriod("seasons", "months", userId);
         const data = await resp.json();
 
         if (isError(resp.status))
@@ -74,8 +74,8 @@ export function useStatistic() {
         return data;
     }
 
-    const getSeriesRanking = async (): Promise<Stat[]> => {
-        const resp = await statService.getTimeByType("rank");
+    const getSeriesRanking = async (userId?: string): Promise<Stat[]> => {
+        const resp = await statService.getTimeByType("rank", userId);
         const data = await resp.json();
 
         if (isError(resp.status))
@@ -84,8 +84,8 @@ export function useStatistic() {
         return data;
     }
 
-    const getSeriesKinds = async (): Promise<Stat[]> => {
-        const resp = await statService.getGroupedCountByTypeByPeriod("kinds", null);
+    const getSeriesKinds = async (userId?: string): Promise<Stat[]> => {
+        const resp = await statService.getGroupedCountByTypeByPeriod("kinds", null, userId);
         const data = await resp.json();
 
         if (isError(resp.status))

@@ -5,8 +5,9 @@ import type { ChartGroupedPeriod, ChartGroupedType, ChartTimeType } from "@/mode
 
 const PREFIX = "stats";
 
-const getStats = async (): Promise<Response> => {
-    return fetch(`${ENDPOINT}/${PREFIX}`, {
+const getStats = async (userId?: string): Promise<Response> => {
+    const url = buildUrl(`${ENDPOINT}/${PREFIX}`, "id", userId, "?");
+    return fetch(url, {
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`
         }

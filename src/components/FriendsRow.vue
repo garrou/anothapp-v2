@@ -15,7 +15,7 @@
                         <v-card-subtitle class="pt-4">{{ friend.username }}</v-card-subtitle>
 
                         <v-card-actions>
-                            <v-btn variant="text" @click="">Profil</v-btn>
+                            <v-btn variant="text" @click="showFriend(friend)">Profil</v-btn>
                         </v-card-actions>
                     </v-card>
                 </base-skeleton>
@@ -23,16 +23,28 @@
         </v-row>
         <span v-else>Aucun résultat</span>
     </v-container>
+
+    <base-modal v-if="friend" v-model="modal" :max-width="1600">
+        <template #title>
+            <span>{{ friend.username }}</span>
+            <v-btn icon="mdi-close" variant="text" @click="modal = false" />
+        </template>
+        <dashboard :user-id="friend.id" :show-bar="false" />
+    </base-modal>
 </template>
 
 <script lang="ts" setup>
-import { SEARCH_ICON } from "@/constants/icons";
 import BaseImage from "./BaseImage.vue";
+import BaseModal from "./BaseModal.vue";
 import BaseSkeleton from "./BaseSkeleton.vue";
+import Dashboard from "@/views/stats/Dashboard.vue";
+import { SEARCH_ICON } from "@/constants/icons";
 import type { User } from "@/models/user";
 import { ref, type PropType } from "vue";
 
-const username = ref<string>();
+const friend = ref<User>();
+const modal = ref(false);
+const username = ref<string>("");
 
 defineProps({
     friends: { type: Array as PropType<User[]>, default: () => [] },
@@ -41,6 +53,11 @@ defineProps({
 });
 
 defineEmits<{
-    search: [string | undefined]
+    search: [string]
 }>();
+
+const showFriend = (user: User) => {
+    friend.value = user;
+    modal.value = true;
+}
 </script>

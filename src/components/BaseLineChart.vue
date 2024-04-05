@@ -53,7 +53,8 @@ const option = computed(() => ({
       itemStyle: {
         color: props.color
       },
-      type: 'line'
+      type: 'line',
+      smooth: true
     }
   ]
 }));

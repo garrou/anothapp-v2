@@ -8,11 +8,15 @@ import type { Stat } from '@/models/stat';
 import { onBeforeMount, ref } from 'vue';
 import { useStatistic } from '@/composables/statistic';
 
+const props = defineProps({
+  userId: { type: String, default: undefined },
+});
+
 const { getSeasonsMonthCurrYear } = useStatistic();
 
 const data = ref<Stat[]>([]);
 
 onBeforeMount(async () => {
-  data.value = await getSeasonsMonthCurrYear();
+  data.value = await getSeasonsMonthCurrYear(props.userId);
 });
 </script>

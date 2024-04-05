@@ -1,5 +1,5 @@
 <template>
-    <base-app-bar />
+    <base-app-bar v-if="showBar" />
     <v-container>
         <v-row v-if="stat" class="mb-2">
             <v-col v-for="(obj, _, index) in cardsConfig" cols="12" md="6" :key="index">
@@ -12,28 +12,28 @@
             </v-col>
 
             <v-col cols="12" md="6">
-                <seasons-month-current-year />
+                <seasons-month-current-year :user-id="userId" />
             </v-col>
             <v-col cols="12" md="6">
-                <episodes-month-current-year />
+                <episodes-month-current-year :user-id="userId" />
             </v-col>
             <v-col cols="12" md="6">
-                <time-years />
+                <time-years :user-id="userId" />
             </v-col>
             <v-col cols="12" md="6">
-                <seasons-years />
+                <seasons-years :user-id="userId" />
             </v-col>
             <v-col cols="12" md="6">
-                <episodes-years />
+                <episodes-years :user-id="userId" />
             </v-col>
             <v-col cols="12" md="6">
-                <seasons-months />
+                <seasons-months :user-id="userId" />
             </v-col>
             <v-col cols="12" md="6">
-                <series-ranking-time />
+                <series-ranking-time :user-id="userId" />
             </v-col>
             <v-col cols="12" md="6">
-                <series-kinds />
+                <series-kinds :user-id="userId" />
             </v-col>
         </v-row>
     </v-container>
@@ -54,6 +54,11 @@ import { ELEVATION } from '@/constants/style';
 import type { GlobalStat } from '@/models/stat';
 import { minsToStringHoursDays } from '@/utils/format';
 import { computed, onBeforeMount, ref } from 'vue';
+
+const props = defineProps({
+    userId: { type: String, default: undefined },
+    showBar: { type: Boolean, default: true }
+});
 
 const { getStats } = useStatistic();
 
@@ -93,6 +98,6 @@ const cardsConfig = computed(() => [
 ]);
 
 onBeforeMount(async () => {
-    stat.value = await getStats();
+    stat.value = await getStats(props.userId);
 });
 </script>

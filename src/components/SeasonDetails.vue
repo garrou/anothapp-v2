@@ -13,7 +13,7 @@
         </v-timeline>
     </v-card-text>
 
-    <base-confirm v-if="selected" v-model="modal" text="Supprimer ce visionnage ?" title="Supprimer" persistent
+    <base-confirm v-model="modal" text="Supprimer ce visionnage ?" title="Supprimer" persistent
         @cancel="modal = false" @confirm="dropSeason(selected)" />
 </template>
 
@@ -40,7 +40,7 @@ const { deleteSeason, getSeasonInfosBySerieIdByNumber } = useSeason();
 
 const modal = ref(false);
 const infos = ref<SeasonInfo>();
-const selected = ref<number>();
+const selected = ref(-1);
 const time = computed(() => minsToStringHoursDays(infos.value?.time));
 
 const selectSeason = (id: number) => {

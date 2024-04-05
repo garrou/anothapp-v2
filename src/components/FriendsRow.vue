@@ -15,7 +15,10 @@
                         <v-card-subtitle class="pt-4">{{ friend.username }}</v-card-subtitle>
 
                         <v-card-actions>
-                            <v-btn variant="text" @click="showFriend(friend)">Profil</v-btn>
+                            <v-btn v-if="consult" variant="text" @click="showFriend(friend)">Profil</v-btn>
+                            <v-btn v-if="addable" variant="text" @click="addFriend(friend)">Ajouter</v-btn>  
+                            <v-btn v-if="accept" variant="text" @click="acceptFriend(friend)">Accepter</v-btn>
+                            <v-btn v-if="remove" variant="text" @click="showConfirm(friend)">Supprimer</v-btn>
                         </v-card-actions>
                     </v-card>
                 </base-skeleton>
@@ -31,9 +34,13 @@
         </template>
         <dashboard :user-id="friend.id" :show-bar="false" />
     </base-modal>
+
+    <base-confirm v-model="confirm" text="Supprimer cet(te) ami(e) ?" title="Supprimer" persistent
+        @cancel="confirm = false" @confirm="removeFriend" />
 </template>
 
 <script lang="ts" setup>
+import BaseConfirm from "./BaseConfirm.vue";
 import BaseImage from "./BaseImage.vue";
 import BaseModal from "./BaseModal.vue";
 import BaseSkeleton from "./BaseSkeleton.vue";
@@ -41,23 +48,60 @@ import Dashboard from "@/views/stats/Dashboard.vue";
 import { CLOSE_ICON, SEARCH_ICON } from "@/constants/icons";
 import type { User } from "@/models/user";
 import { ref, type PropType } from "vue";
-
-const friend = ref<User>();
-const modal = ref(false);
-const username = ref<string>("");
+import { useSnackbar } from "@/composables/snackbar";
+import { useFriend } from "@/composables/friend";
 
 defineProps({
+    accept: { type: Boolean, default: false },
+    addable: { type: Boolean, default: false },
+    consult: { type: Boolean, default: false },
     friends: { type: Array as PropType<User[]>, default: () => [] },
     loading: { type: Boolean, default: false },
-    search: { type: Boolean, default: false }
+    search: { type: Boolean, default: false },
+    remove: { type: Boolean, default: false }
 });
 
-defineEmits<{
+const emit = defineEmits<{
     search: [string]
+    refresh: []
 }>();
+
+const { acceptFriendRequest, deleteFriend, sendFriendRequest } = useFriend();
+const { showError } = useSnackbar();
+
+const confirm = ref(false);
+const friend = ref<User>();
+const modal = ref(false);
+const selected = ref<User>();
+const username = ref<string>("");
 
 const showFriend = (user: User) => {
     friend.value = user;
     modal.value = true;
+}
+
+const acceptFriend = async (user: User) => {
+    await acceptFriendRequest(user);
+    emit("refresh");
+}
+
+const addFriend = async (user: User) => {
+    await sendFriendRequest(user);
+    emit("refresh");
+}
+
+const removeFriend = async () => {
+    if (!selected.value) {
+        showError("Impossible de supprimer cet(te) ami(e).")
+        return;
+    }
+    await deleteFriend(selected.value);
+    confirm.value = false;
+    emit("refresh");
+}
+
+const showConfirm = (user: User) => {
+    selected.value = user;
+    confirm.value = true;
 }
 </script>

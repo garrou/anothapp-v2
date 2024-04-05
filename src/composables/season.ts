@@ -63,7 +63,6 @@ export function useSeason() {
             throw new Error(data.message);
 
         showSuccess(`"${serie.title}" saison ${season.number} ajoutée`);
-        return data;
     }
 
     return { addSeason, deleteSeason, getSeasonsBySerieId, getSeasonsTimeline, getSeasonInfosBySerieIdByNumber }

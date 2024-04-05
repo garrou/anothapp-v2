@@ -3,9 +3,9 @@
     <v-container>
         <v-row v-if="stat" class="mb-2">
             <v-col v-for="(obj, _, index) in cardsConfig" cols="12" md="6" :key="index">
-                <v-card :elevation="ELEVATION" :prepend-icon="obj.icon">
+                <v-card v-if="obj.value !== undefined" :elevation="ELEVATION" :prepend-icon="obj.icon">
                     <template #title>{{ obj.title }}</template>
-                    <v-card-subtitle v-if="obj.value" class="mb-2">
+                    <v-card-subtitle class="mb-2">
                         {{ obj.value }}
                     </v-card-subtitle>
                 </v-card>
@@ -94,7 +94,7 @@ const cardsConfig = computed(() => [
     {
         "icon": "mdi-crown",
         "title": "Record",
-        "value": `${stat.value?.bestMonth.date} : ${minsToStringHoursDays(stat.value?.bestMonth.time)}`
+        "value": stat.value?.bestMonth ? `${stat.value?.bestMonth.date} : ${minsToStringHoursDays(stat.value?.bestMonth.time)}` : 0
     }
 ]);
 

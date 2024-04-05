@@ -11,16 +11,16 @@
 
         <v-window v-model="tab" class="pa-1">
             <v-window-item :value="1">
-                <friends-row :friends="friends?.friend" :loading="loading" />
+                <friends-row consult :friends="friends?.friend" :loading="loading" remove />
             </v-window-item>
             <v-window-item :value="2">
-                <friends-row :friends="searched" search @search="searchUser" />
+                <friends-row addable :friends="searched" search @search="searchUser" @refresh="fetchFriends" />
             </v-window-item>
             <v-window-item :value="3">
-                <friends-row :friends="friends?.receive" :loading="loading" />
+                <friends-row accept :friends="friends?.receive" :loading="loading" remove @refresh="fetchFriends" />
             </v-window-item>
             <v-window-item :value="4">
-                <friends-row :friends="friends?.send" :loading="loading" />
+                <friends-row :friends="friends?.send" :loading="loading" remove @refresh="fetchFriends" />
             </v-window-item>
         </v-window>
     </v-container>
@@ -41,7 +41,7 @@ const { getUsers } = useUser();
 const friends = ref<FriendResponse>();
 const searched = ref<User[]>([]);
 const loading = ref(false);
-const tab = ref(0);
+const tab = ref(1);
 
 const searchUser = async (username: string) => {
     loading.value = true;
@@ -49,9 +49,13 @@ const searchUser = async (username: string) => {
     loading.value = false;
 }
 
-onBeforeMount(async () => {
+const fetchFriends = async () => {
     loading.value = true;
     friends.value = await getFriends();
     loading.value = false;
+}
+
+onBeforeMount(async () => {
+    await fetchFriends();
 });
 </script>

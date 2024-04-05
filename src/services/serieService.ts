@@ -4,8 +4,10 @@ import storageService from "./storageService";
 import type { Season } from "@/models/season";
 import type { Serie } from "@/models/serie";
 
+const PREFIX = "shows";
+
 const addSeason = async (id: number, season: Season): Promise<Response> => {
-    return fetch(`${ENDPOINT}/shows/${id}/seasons`, {
+    return fetch(`${ENDPOINT}/${PREFIX}/${id}/seasons`, {
         body: JSON.stringify(season),
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`,
@@ -16,7 +18,7 @@ const addSeason = async (id: number, season: Season): Promise<Response> => {
 }
 
 const addSerie = async (serie: Serie): Promise<Response> => {
-    return fetch(`${ENDPOINT}/shows`, {
+    return fetch(`${ENDPOINT}/${PREFIX}`, {
         body: JSON.stringify({
             "id": serie.id,
             "title": serie.title,
@@ -33,7 +35,7 @@ const addSerie = async (serie: Serie): Promise<Response> => {
 }
 
 const deleteSerie = async (id: number): Promise<Response> => {
-    return fetch(`${ENDPOINT}/shows/${id}`, {
+    return fetch(`${ENDPOINT}/${PREFIX}/${id}`, {
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`
         },
@@ -42,7 +44,7 @@ const deleteSerie = async (id: number): Promise<Response> => {
 }
 
 const getSeasonsBySerieId = async (id: number): Promise<Response> => {
-    return fetch(`${ENDPOINT}/shows/${id}/seasons`, {
+    return fetch(`${ENDPOINT}/${PREFIX}/${id}/seasons`, {
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`
         }
@@ -50,7 +52,7 @@ const getSeasonsBySerieId = async (id: number): Promise<Response> => {
 }
 
 const getSeasonInfosBySerieIdByNumber = async (id: number, num: number): Promise<Response> => {
-    return fetch(`${ENDPOINT}/shows/${id}/seasons/${num}`, {
+    return fetch(`${ENDPOINT}/${PREFIX}/${id}/seasons/${num}`, {
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`
         }
@@ -58,7 +60,7 @@ const getSeasonInfosBySerieIdByNumber = async (id: number, num: number): Promise
 }
 
 const getSerie = async (id: number): Promise<Response> => {
-    return fetch(`${ENDPOINT}/shows/${id}`, {
+    return fetch(`${ENDPOINT}/${PREFIX}/${id}`, {
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`
         }
@@ -66,7 +68,7 @@ const getSerie = async (id: number): Promise<Response> => {
 }
 
 const getSeries = async (title?: string, kind?: string): Promise<Response> => {
-    const url = buildUrl(`${ENDPOINT}/shows`, "title", title, "?");
+    const url = buildUrl(`${ENDPOINT}/${PREFIX}`, "title", title, "?");
     return fetch(url, {
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`
@@ -75,7 +77,7 @@ const getSeries = async (title?: string, kind?: string): Promise<Response> => {
 }
 
 const getSeriesByStatus = async (status: string): Promise<Response> => {
-    const url = buildUrl(`${ENDPOINT}/shows`, "status", status, "?");
+    const url = buildUrl(`${ENDPOINT}/${PREFIX}`, "status", status, "?");
     return fetch(url, {
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`
@@ -84,7 +86,7 @@ const getSeriesByStatus = async (status: string): Promise<Response> => {
 }
 
 const updateFavoriteBySerieId = async (id: number): Promise<Response> => {
-    return fetch(`${ENDPOINT}/shows/${id}`, {
+    return fetch(`${ENDPOINT}/${PREFIX}/${id}`, {
         body: JSON.stringify({
             "favorite": "update"
         }),

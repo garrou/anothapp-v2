@@ -1,34 +1,35 @@
 <template>
   <v-card>
-    <v-chart class="chart mt-2" :option="option" autoresize />
+    <v-chart class="chart mt-2" color="#f0a12b" :option="option" autoresize />
   </v-card>
 </template>
 
 <script lang="ts" setup>
 import { use } from 'echarts/core';
-import { BarChart } from 'echarts/charts';
+import { CanvasRenderer } from 'echarts/renderers';
+import { PieChart } from 'echarts/charts';
 import {
-  GridComponent,
   TitleComponent,
   TooltipComponent,
+  LegendComponent,
+  GridComponent
 } from 'echarts/components';
-import { CanvasRenderer } from 'echarts/renderers';
 import VChart from 'vue-echarts';
 import { computed, type PropType } from 'vue';
 import type { Stat } from '@/models/stat';
 
 const props = defineProps({
-  color: { type: String, required: true },
   data: { type: Array as PropType<Stat[]>, required: true },
   title: { type: String, required: true },
-});
+})
 
 use([
   GridComponent,
   CanvasRenderer,
-  BarChart,
+  PieChart,
   TitleComponent,
   TooltipComponent,
+  LegendComponent,
 ]);
 
 const option = computed(() => ({
@@ -38,23 +39,19 @@ const option = computed(() => ({
   },
   tooltip: {
     trigger: 'item',
-    formatter: '{b} : {c}',
-  },
-  xAxis: {
-    type: 'category',
-    data: props.data.map((record) => record.label)
-  },
-  yAxis: {
-    type: 'value'
+    formatter: '{a} <br/>{b} : {c} ({d}%)',
   },
   series: [
     {
-      data: props.data.map((record) => record.value),
-      itemStyle: {
-        color: props.color
-      },
-      type: 'bar'
-    }
-  ]
+      name: props.title,
+      type: 'pie',
+      radius: '55%',
+      center: ['50%', '60%'],
+      data: props.data.map((record) => ({
+        name: record.label,
+        value: record.value
+      })),
+    },
+  ],
 }));
 </script>

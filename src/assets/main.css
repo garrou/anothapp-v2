@@ -4,3 +4,7 @@ a {
     text-decoration: none;
     color: #a13d0b;
 }
+
+.chart {
+    height: 100vh;
+}

@@ -1,7 +1,6 @@
 <template>
     <base-app-bar search @search="fetchSeries" />
     <series-row lovable :loading="loading" :series="series" />
-    <!-- preview button -->
 </template>
 
 <script lang="ts" setup>

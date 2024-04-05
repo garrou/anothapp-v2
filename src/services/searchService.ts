@@ -2,8 +2,10 @@ import { buildUrl } from "@/utils/format";
 import { ENDPOINT } from "../constants/services";
 import storageService from "./storageService";
 
+const PREFIX = "search";
+
 const getActor = async (id: number): Promise<Response> => {
-    return fetch(`${ENDPOINT}/search/persons/${id}`, {
+    return fetch(`${ENDPOINT}/${PREFIX}/persons/${id}`, {
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`
         }
@@ -11,7 +13,7 @@ const getActor = async (id: number): Promise<Response> => {
 }
 
 const getCharacters = async (id: number): Promise<Response> => {
-    return fetch(`${ENDPOINT}/search/shows/${id}/characters`, {
+    return fetch(`${ENDPOINT}/${PREFIX}/shows/${id}/characters`, {
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`
         }
@@ -19,7 +21,7 @@ const getCharacters = async (id: number): Promise<Response> => {
 }
 
 const getSerie = async (id: number): Promise<Response> => {
-    return fetch(`${ENDPOINT}/search/shows/${id}`, {
+    return fetch(`${ENDPOINT}/${PREFIX}/shows/${id}`, {
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`
         }
@@ -27,7 +29,7 @@ const getSerie = async (id: number): Promise<Response> => {
 }
 
 const getSerieImages = async (id: number): Promise<Response> => {
-    return fetch(`${ENDPOINT}/search/shows/${id}/images`, {
+    return fetch(`${ENDPOINT}/${PREFIX}/shows/${id}/images`, {
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`
         }
@@ -35,7 +37,7 @@ const getSerieImages = async (id: number): Promise<Response> => {
 }
 
 const getSeries = async (title?: string): Promise<Response> => {
-    const url = buildUrl(`${ENDPOINT}/search/shows`, "title", title, "?");
+    const url = buildUrl(`${ENDPOINT}/${PREFIX}/shows`, "title", title, "?");
     return fetch(url, {
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`
@@ -44,7 +46,7 @@ const getSeries = async (title?: string): Promise<Response> => {
 }
 
 const getSeasonsBySerieId = async (id: number): Promise<Response> => {
-    return fetch(`${ENDPOINT}/search/shows/${id}/seasons`, {
+    return fetch(`${ENDPOINT}/${PREFIX}/shows/${id}/seasons`, {
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`
         }
@@ -52,7 +54,7 @@ const getSeasonsBySerieId = async (id: number): Promise<Response> => {
 }
 
 const getSimilarsSeries = async (id: number): Promise<Response> => {
-    return fetch(`${ENDPOINT}/search/shows/${id}/similars`, {
+    return fetch(`${ENDPOINT}/${PREFIX}/shows/${id}/similars`, {
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`
         }

@@ -6,7 +6,7 @@
 
 <script lang="ts" setup>
 import { use } from 'echarts/core';
-import { BarChart } from 'echarts/charts';
+import { LineChart } from 'echarts/charts';
 import {
   GridComponent,
   TitleComponent,
@@ -21,12 +21,12 @@ const props = defineProps({
   color: { type: String, required: true },
   data: { type: Array as PropType<Stat[]>, required: true },
   title: { type: String, required: true },
-});
+})
 
 use([
   GridComponent,
   CanvasRenderer,
-  BarChart,
+  LineChart,
   TitleComponent,
   TooltipComponent,
 ]);
@@ -53,7 +53,7 @@ const option = computed(() => ({
       itemStyle: {
         color: props.color
       },
-      type: 'bar'
+      type: 'line'
     }
   ]
 }));

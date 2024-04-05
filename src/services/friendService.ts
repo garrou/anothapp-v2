@@ -2,8 +2,10 @@ import { ENDPOINT } from "@/constants/services";
 import storageService from "./storageService";
 import { buildUrl } from "@/utils/format";
 
+const PREFIX = "friends";
+
 const getFriends = async (status?: string): Promise<Response> => {
-    const url = buildUrl(`${ENDPOINT}/friends`, "status", status, "?");
+    const url = buildUrl(`${ENDPOINT}/${PREFIX}`, "status", status, "?");
     return fetch(url, { 
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`
@@ -12,7 +14,7 @@ const getFriends = async (status?: string): Promise<Response> => {
 }
 
 const acceptFriendRequest = async (userId: string): Promise<Response> => {
-    return fetch(`${ENDPOINT}/friends/${userId}`, { 
+    return fetch(`${ENDPOINT}/${PREFIX}/${userId}`, { 
         body: JSON.stringify({
             "userId": userId
         }),
@@ -25,7 +27,7 @@ const acceptFriendRequest = async (userId: string): Promise<Response> => {
 }
 
 const sendFriendRequest = async (userId: string): Promise<Response> => {
-    return fetch(`${ENDPOINT}/friends`, { 
+    return fetch(`${ENDPOINT}/${PREFIX}`, { 
         body: JSON.stringify({
             "userId": userId
         }),
@@ -38,7 +40,7 @@ const sendFriendRequest = async (userId: string): Promise<Response> => {
 }
 
 const deleteFriend = async (userId: string): Promise<Response> => {
-    return fetch(`${ENDPOINT}/friends/${userId}`, { 
+    return fetch(`${ENDPOINT}/${PREFIX}/${userId}`, { 
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`,
         },
@@ -47,7 +49,7 @@ const deleteFriend = async (userId: string): Promise<Response> => {
 }
 
 const getFriendProfile = async (userId: string): Promise<Response> => {
-    return fetch(`${ENDPOINT}/friends/${userId}/profile`, { 
+    return fetch(`${ENDPOINT}/${PREFIX}/${userId}/profile`, { 
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`,
         },

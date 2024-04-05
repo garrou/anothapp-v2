@@ -35,7 +35,7 @@
         <div v-else-if="selected === 'email'">
             <email @refresh="refresh" />
         </div>
-        <div v-else>
+        <div v-else-if="selected === 'password'">
             <password @refresh="refresh" />
         </div>
     </base-modal>

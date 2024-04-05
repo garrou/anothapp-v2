@@ -100,7 +100,7 @@ export function useSerie() {
         showSuccess(data.favorite
             ? `"${serie.title}" ajoutée aux favoris`
             : `"${serie.title}" supprimée des favoris`);
-        return data.result;
+        return data.favorite;
     }
 
     return { addSerie, deleteSerie, getFavoriteSeries, getSerie, getSeries, getSeriesNotStarted, getSeriesToContinue, updateFavorite }

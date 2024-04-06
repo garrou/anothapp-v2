@@ -5,9 +5,7 @@
             <v-timeline-item v-for="season in infos.seasons" size="x-small" :key="season.id">
                 <div class="mb-4">
                     <span class="font-weight-normal">{{ formatDate(season.addedAt) }}</span>
-                    <v-btn class="mb-1" elevation="0" icon @click="selectSeason(season.id)">
-                        <v-icon :icon="DELETE_ICON" />
-                    </v-btn>
+                    <v-btn class="mb-1" elevation="0" :icon="DELETE_ICON" @click="selectSeason(season.id)" />
                 </div>
             </v-timeline-item>
         </v-timeline>

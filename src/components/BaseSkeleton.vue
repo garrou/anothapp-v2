@@ -7,8 +7,8 @@
 </template>
 
 <script lang="ts" setup>
-import { ELEVATION } from '@/constants/style';
-import type { PropType } from 'vue';
+import { ELEVATION } from "@/constants/style";
+import type { PropType } from "vue";
 
 defineProps({
     loading: { type: Boolean, required: true },

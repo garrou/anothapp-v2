@@ -1,23 +1,24 @@
 <template>
     <v-container>
-        <series-row :loading="loading" :series="favorites" />
+        <series-row v-if="series.length > 0" :loading="loading" :series="series" />
+        <span v-else>Aucun série à commencer</span>
     </v-container>
 </template>
 
 <script lang="ts" setup>
-import SeriesRow from '@/components/SeriesRow.vue';
-import { useSerie } from '@/composables/serie';
-import type { Serie } from '@/models/serie';
-import { ref, onBeforeMount } from 'vue';
+import SeriesRow from "@/components/SeriesRow.vue";
+import { useSerie } from "@/composables/serie";
+import type { Serie } from "@/models/serie";
+import { ref, onBeforeMount } from "vue";
 
 const { getSeriesNotStarted } = useSerie();
 
-const favorites = ref<Serie[]>([]);
+const series = ref<Serie[]>([]);
 const loading = ref(false);
 
 const getFavorites = async () => {
     loading.value = true;
-    favorites.value = await getSeriesNotStarted();
+    series.value = await getSeriesNotStarted();
     loading.value = false;
 }
 

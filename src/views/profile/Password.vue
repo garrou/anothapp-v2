@@ -17,9 +17,9 @@
 </template>
 
 <script lang="ts" setup>
-import { useUser } from '@/composables/user';
-import { passwordRules } from '@/utils/validator';
-import { ref } from 'vue';
+import { useUser } from "@/composables/user";
+import { passwordRules } from "@/utils/validator";
+import { ref } from "vue";
 
 const emit = defineEmits<{
     refresh: []

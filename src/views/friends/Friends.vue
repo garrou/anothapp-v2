@@ -27,13 +27,13 @@
 </template>
 
 <script lang="ts" setup>
-import FriendsRow from '@/components/FriendsRow.vue';
-import BaseAppBar from '@/components/BaseAppBar.vue';
-import { onBeforeMount, ref } from 'vue';
-import { useFriend } from '@/composables/friend';
-import type { FriendResponse } from '@/models/friend';
-import type { User } from '@/models/user';
-import { useUser } from '@/composables/user';
+import FriendsRow from "@/components/FriendsRow.vue";
+import BaseAppBar from "@/components/BaseAppBar.vue";
+import { onBeforeMount, ref } from "vue";
+import { useFriend } from "@/composables/friend";
+import type { FriendResponse } from "@/models/friend";
+import type { User } from "@/models/user";
+import { useUser } from "@/composables/user";
 
 const { getFriends } = useFriend();
 const { getUsers } = useUser();

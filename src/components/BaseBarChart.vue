@@ -5,17 +5,17 @@
 </template>
 
 <script lang="ts" setup>
-import { use } from 'echarts/core';
-import { BarChart } from 'echarts/charts';
+import { use } from "echarts/core";
+import { BarChart } from "echarts/charts";
 import {
   GridComponent,
   TitleComponent,
   TooltipComponent,
-} from 'echarts/components';
-import { CanvasRenderer } from 'echarts/renderers';
-import VChart from 'vue-echarts';
-import { computed, type PropType } from 'vue';
-import type { Stat } from '@/models/stat';
+} from "echarts/components";
+import { CanvasRenderer } from "echarts/renderers";
+import VChart from "vue-echarts";
+import { computed, type PropType } from "vue";
+import type { Stat } from "@/models/stat";
 
 const props = defineProps({
   color: { type: String, required: true },
@@ -34,18 +34,18 @@ use([
 const option = computed(() => ({
   title: {
     text: props.title,
-    left: 'center',
+    left: "center",
   },
   tooltip: {
-    trigger: 'item',
-    formatter: '{b} : {c}',
+    trigger: "item",
+    formatter: "{b} : {c}",
   },
   xAxis: {
-    type: 'category',
+    type: "category",
     data: props.data.map((record) => record.label)
   },
   yAxis: {
-    type: 'value'
+    type: "value"
   },
   series: [
     {
@@ -53,7 +53,7 @@ const option = computed(() => ({
       itemStyle: {
         color: props.color
       },
-      type: 'bar'
+      type: "bar"
     }
   ]
 }));

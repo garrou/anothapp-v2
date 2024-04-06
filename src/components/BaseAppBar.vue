@@ -8,7 +8,7 @@
             <template #title>
                 <v-form v-if="search" @submit="$emit('search', title)" @submit.prevent>
                     <v-text-field v-model="title" :append-inner-icon="SEARCH_ICON" class="mb-4" clearable hide-details
-                        label="Title de la série" single-line variant="plain"
+                        label="Titre de la série" single-line variant="plain"
                         @click:append-inner="$emit('search', title)" @click:clear="$emit('search', undefined)" />
                 </v-form>
                 <slot v-else name="title" />

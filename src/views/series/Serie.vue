@@ -2,21 +2,15 @@
     <v-container v-if="infos && seasons">
         <base-toolbar icon="mdi-chevron-left" :title="infos.serie.title">
             <template #firstBtn>
-                <v-btn icon elevation="0" @click="changeFavorite">
-                    <v-icon :color="favoriteColor" :icon="FAVORITE_ICON" />
-                </v-btn>
+                <v-btn :color="favoriteColor" elevation="0" :icon="FAVORITE_ICON" @click="changeFavorite" />
             </template>
 
             <template #secondBtn>
-                <v-btn icon elevation="0" @click="$router.push(`/discover/${id}`)">
-                    <v-icon :icon="DETAILS_ICON" />
-                </v-btn>
+                <v-btn elevation="0" :icon="DETAILS_ICON" @click="$router.push(`/discover/${id}`)" />
             </template>
 
             <template #thirdBtn>
-                <v-btn icon elevation="0" @click="confirm = true">
-                    <v-icon :icon="DELETE_ICON" />
-                </v-btn>
+                <v-btn elevation="0" :icon="DELETE_ICON" @click="confirm = true" />
             </template>
         </base-toolbar>
 
@@ -42,9 +36,7 @@
             </v-tabs>
         </v-card>
 
-        <v-btn v-if="displayOrder" @click="orderSeasons" class="mb-2 ms-1">
-            <v-icon>{{ orderIcon }}</v-icon>
-        </v-btn>
+        <v-btn v-if="displayOrder" class="mb-2 ms-1" :icon="orderIcon" @click="orderSeasons" />
 
         <v-window v-model="tab" class="pa-1">
             <v-window-item :value="1">

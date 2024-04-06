@@ -37,6 +37,6 @@ export const buildUrl = (url: string, query: string, param?: string | number, se
 
 export const buildPlural = (text: string, value?: number, prefix = true): string => {
     const num = value ?? 0;
-    const plural = `${text}${num > 1 ? 's' : ''}`;
+    const plural = `${text}${num > 1 ? "s" : ""}`;
     return prefix ? `${num} ${plural}` : `${plural} ${num}`;
 }

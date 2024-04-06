@@ -42,20 +42,20 @@
 </template>
 
 <script lang="ts" setup>
-import BaseAppBar from '@/components/BaseAppBar.vue';
-import BaseModal from '@/components/BaseModal.vue';
-import BaseImage from '@/components/BaseImage.vue';
-import Email from './Email.vue';
-import Password from './Password.vue';
-import ImagesRow from '@/components/ImagesRow.vue';
-import { useUser } from '@/composables/user';
-import type { User } from '@/models/user';
-import { onBeforeMount, ref } from 'vue';
-import type { Serie } from '@/models/serie';
-import { useSerie } from '@/composables/serie';
-import { useSearch } from '@/composables/search';
-import type { ProfileModal } from '@/types/modal';
-import { CLOSE_ICON } from '@/constants/icons';
+import BaseAppBar from "@/components/BaseAppBar.vue";
+import BaseModal from "@/components/BaseModal.vue";
+import BaseImage from "@/components/BaseImage.vue";
+import Email from "./Email.vue";
+import Password from "./Password.vue";
+import ImagesRow from "@/components/ImagesRow.vue";
+import { useUser } from "@/composables/user";
+import type { User } from "@/models/user";
+import { onBeforeMount, ref } from "vue";
+import type { Serie } from "@/models/serie";
+import { useSerie } from "@/composables/serie";
+import { useSearch } from "@/composables/search";
+import type { ProfileModal } from "@/types/modal";
+import { CLOSE_ICON } from "@/constants/icons";
 
 const { getProfile } = useUser();
 const { getSeries } = useSerie();

@@ -2,9 +2,7 @@
     <v-container v-if="serie">
         <base-toolbar icon="mdi-chevron-left" :title="serie.title">
             <template #firstBtn>
-                <v-btn elevation="0" icon @click="add">
-                    <v-icon :icon="ADD_ICON" />
-                </v-btn>
+                <v-btn elevation="0" :icon="ADD_ICON" @click="add" />
             </template>
         </base-toolbar>
 
@@ -117,22 +115,22 @@
 </template>
 
 <script lang="ts" setup>
-import BaseImage from '@/components/BaseImage.vue';
-import BaseModal from '@/components/BaseModal.vue';
-import BaseSkeleton from '@/components/BaseSkeleton.vue';
-import BaseToolbar from '@/components/BaseToolbar.vue';
-import ImagesRow from '@/components/ImagesRow.vue';
-import SerieDetail from '@/components/SerieDetail.vue';
-import SeriesRow from '@/components/SeriesRow.vue';
-import { useSearch } from '@/composables/search';
-import { useSerie } from '@/composables/serie';
-import { useSnackbar } from '@/composables/snackbar';
-import { ADD_ICON, CLOSE_ICON, DETAILS_ICON } from '@/constants/icons';
-import type { Actor, Character } from '@/models/person';
-import type { Serie, Similar } from '@/models/serie';
-import { buildPlural } from '@/utils/format';
-import { onBeforeMount, ref } from 'vue';
-import { onBeforeRouteUpdate } from 'vue-router';
+import BaseImage from "@/components/BaseImage.vue";
+import BaseModal from "@/components/BaseModal.vue";
+import BaseSkeleton from "@/components/BaseSkeleton.vue";
+import BaseToolbar from "@/components/BaseToolbar.vue";
+import ImagesRow from "@/components/ImagesRow.vue";
+import SerieDetail from "@/components/SerieDetail.vue";
+import SeriesRow from "@/components/SeriesRow.vue";
+import { useSearch } from "@/composables/search";
+import { useSerie } from "@/composables/serie";
+import { useSnackbar } from "@/composables/snackbar";
+import { ADD_ICON, CLOSE_ICON, DETAILS_ICON } from "@/constants/icons";
+import type { Actor, Character } from "@/models/person";
+import type { Serie, Similar } from "@/models/serie";
+import { buildPlural } from "@/utils/format";
+import { onBeforeMount, ref } from "vue";
+import { onBeforeRouteUpdate } from "vue-router";
 
 const props = defineProps({
     id: { type: Number, required: true }

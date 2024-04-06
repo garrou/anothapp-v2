@@ -1,16 +1,17 @@
 <template>
     <v-container>
-        <series-row lovable :loading="loading" :series="favorites" @refresh-favs="refreshFavorites" />
+        <series-row v-if="favorites.length > 0" lovable :loading="loading" :series="favorites" @refresh-favs="refreshFavorites" />
+        <span v-else>Aucun favori</span>
     </v-container>
 </template>
 
 <script lang="ts" setup>
-import SeriesRow from '@/components/SeriesRow.vue';
-import { useFavorite } from '@/composables/favorite';
-import { useSerie } from '@/composables/serie';
-import type { Serie } from '@/models/serie';
-import { onBeforeUnmount } from 'vue';
-import { ref, onBeforeMount } from 'vue';
+import SeriesRow from "@/components/SeriesRow.vue";
+import { useFavorite } from "@/composables/favorite";
+import { useSerie } from "@/composables/serie";
+import type { Serie } from "@/models/serie";
+import { onBeforeUnmount } from "vue";
+import { ref, onBeforeMount } from "vue";
 
 const { getFavoriteSeries } = useSerie();
 const favorite = useFavorite();

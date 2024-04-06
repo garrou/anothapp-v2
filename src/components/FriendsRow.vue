@@ -15,10 +15,10 @@
                         <v-card-subtitle class="pt-4">{{ friend.username }}</v-card-subtitle>
 
                         <v-card-actions>
-                            <v-btn v-if="consult" variant="text" @click="showFriend(friend)">Profil</v-btn>
-                            <v-btn v-if="addable" variant="text" @click="addFriend(friend)">Ajouter</v-btn>  
-                            <v-btn v-if="accept" variant="text" @click="acceptFriend(friend)">Accepter</v-btn>
-                            <v-btn v-if="remove" variant="text" @click="showConfirm(friend)">Supprimer</v-btn>
+                            <v-btn v-if="consult" :icon="DETAILS_ICON" variant="text" @click="showFriend(friend)" />
+                            <v-btn v-if="addable" :icon="ADD_ICON" variant="text" @click="addFriend(friend)" />
+                            <v-btn v-if="accept" icon="mdi-check" variant="text" @click="acceptFriend(friend)" />
+                            <v-btn v-if="remove" :icon="DELETE_ICON" variant="text" @click="showConfirm(friend)" />
                         </v-card-actions>
                     </v-card>
                 </base-skeleton>
@@ -45,7 +45,7 @@ import BaseImage from "./BaseImage.vue";
 import BaseModal from "./BaseModal.vue";
 import BaseSkeleton from "./BaseSkeleton.vue";
 import Dashboard from "@/views/stats/Dashboard.vue";
-import { CLOSE_ICON, SEARCH_ICON } from "@/constants/icons";
+import { ADD_ICON, CLOSE_ICON, DELETE_ICON, DETAILS_ICON, SEARCH_ICON } from "@/constants/icons";
 import type { User } from "@/models/user";
 import { ref, type PropType } from "vue";
 import { useSnackbar } from "@/composables/snackbar";

@@ -25,7 +25,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ELEVATION } from '@/constants/style';
+import { ELEVATION } from "@/constants/style";
 
 defineProps({
     text: { type: String, default: undefined },

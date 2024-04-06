@@ -40,21 +40,21 @@
 </template>
 
 <script lang="ts" setup>
-import BaseAppBar from '@/components/BaseAppBar.vue';
-import EpisodesYears from './EpisodesYears.vue';
-import EpisodesMonthCurrentYear from './EpisodesMonthCurrentYear.vue';
-import SeasonsMonths from './SeasonsMonths.vue';
-import SeasonsMonthCurrentYear from './SeasonsMonthCurrentYear.vue';
-import SeasonsYears from './SeasonsYears.vue';
-import SeriesKinds from './SeriesKinds.vue';
-import SeriesRankingTime from './SeriesRankingTime.vue';
-import TimeYears from './TimeYears.vue';
-import { useStatistic } from '@/composables/statistic';
-import { ELEVATION } from '@/constants/style';
-import type { GlobalStat } from '@/models/stat';
-import { minsToStringHoursDays } from '@/utils/format';
-import { computed, onBeforeMount, ref } from 'vue';
-import { PLAY_ICON } from '@/constants/icons';
+import BaseAppBar from "@/components/BaseAppBar.vue";
+import EpisodesYears from "./EpisodesYears.vue";
+import EpisodesMonthCurrentYear from "./EpisodesMonthCurrentYear.vue";
+import SeasonsMonths from "./SeasonsMonths.vue";
+import SeasonsMonthCurrentYear from "./SeasonsMonthCurrentYear.vue";
+import SeasonsYears from "./SeasonsYears.vue";
+import SeriesKinds from "./SeriesKinds.vue";
+import SeriesRankingTime from "./SeriesRankingTime.vue";
+import TimeYears from "./TimeYears.vue";
+import { useStatistic } from "@/composables/statistic";
+import { ELEVATION } from "@/constants/style";
+import type { GlobalStat } from "@/models/stat";
+import { minsToStringHoursDays } from "@/utils/format";
+import { computed, onBeforeMount, ref } from "vue";
+import { PLAY_ICON } from "@/constants/icons";
 
 const props = defineProps({
     userId: { type: String, default: undefined },

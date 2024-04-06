@@ -3,10 +3,10 @@
 </template>
 
 <script lang="ts" setup>
-import BasePieChart from '@/components/BasePieChart.vue';
-import type { Stat } from '@/models/stat';
-import { onBeforeMount, ref } from 'vue';
-import { useStatistic } from '@/composables/statistic';
+import BasePieChart from "@/components/BasePieChart.vue";
+import type { Stat } from "@/models/stat";
+import { onBeforeMount, ref } from "vue";
+import { useStatistic } from "@/composables/statistic";
 
 const props = defineProps({
   userId: { type: String, default: undefined },

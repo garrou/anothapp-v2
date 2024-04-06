@@ -27,7 +27,7 @@
 </template>
 
 <script lang="ts" setup>
-import { useSlots } from 'vue';
+import { useSlots } from "vue";
 
 defineProps({
     icon: { type: String, required: true },

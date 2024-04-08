@@ -8,7 +8,7 @@
                     {{ cancelText }}
                 </v-btn>
 
-                <v-btn @click="$emit('confirm')">
+                <v-btn color="red" variant="flat" @click="$emit('confirm')">
                     {{ confirmText }}
                 </v-btn>
             </template>

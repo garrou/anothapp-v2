@@ -10,31 +10,40 @@
                     </v-card-subtitle>
                 </v-card>
             </v-col>
+        </v-row>
 
-            <v-col cols="12" md="6">
-                <seasons-month-current-year :user-id="userId" />
-            </v-col>
-            <v-col cols="12" md="6">
-                <episodes-month-current-year :user-id="userId" />
-            </v-col>
-            <v-col cols="12" md="6">
-                <time-years :user-id="userId" />
-            </v-col>
-            <v-col cols="12" md="6">
-                <seasons-years :user-id="userId" />
-            </v-col>
-            <v-col cols="12" md="6">
-                <episodes-years :user-id="userId" />
-            </v-col>
-            <v-col cols="12" md="6">
-                <seasons-months :user-id="userId" />
-            </v-col>
-            <v-col cols="12" md="6">
-                <series-ranking-time :user-id="userId" />
-            </v-col>
-            <v-col cols="12" md="6">
-                <series-kinds :user-id="userId" />
-            </v-col>
+        <v-row>
+            <v-switch v-model="displayChart" color="black" label="Afficher les graphiques"
+                    @change="changeDisplayChart" />
+        </v-row>
+
+        <v-row>
+            <template v-if="displayChart">
+                <v-col cols="12" md="6">
+                    <seasons-month-current-year :user-id="userId" />
+                </v-col>
+                <v-col cols="12" md="6">
+                    <episodes-month-current-year :user-id="userId" />
+                </v-col>
+                <v-col cols="12" md="6">
+                    <time-years :user-id="userId" />
+                </v-col>
+                <v-col cols="12" md="6">
+                    <seasons-years :user-id="userId" />
+                </v-col>
+                <v-col cols="12" md="6">
+                    <episodes-years :user-id="userId" />
+                </v-col>
+                <v-col cols="12" md="6">
+                    <seasons-months :user-id="userId" />
+                </v-col>
+                <v-col cols="12" md="6">
+                    <series-ranking-time :user-id="userId" />
+                </v-col>
+                <v-col cols="12" md="6">
+                    <series-kinds :user-id="userId" />
+                </v-col>
+            </template>
         </v-row>
     </v-container>
 </template>
@@ -55,6 +64,7 @@ import type { GlobalStat } from "@/models/stat";
 import { minsToStringHoursDays } from "@/utils/format";
 import { computed, onBeforeMount, ref } from "vue";
 import { PLAY_ICON } from "@/constants/icons";
+import storageService from "@/services/storageService";
 
 const props = defineProps({
     userId: { type: String, default: undefined },
@@ -63,6 +73,7 @@ const props = defineProps({
 
 const { getStats } = useStatistic();
 
+const displayChart = ref(false);
 const stat = ref<GlobalStat>();
 
 const cardsConfig = computed(() => [
@@ -98,7 +109,12 @@ const cardsConfig = computed(() => [
     }
 ]);
 
+const changeDisplayChart = () => {
+    storageService.storeDisplayChart(displayChart.value);
+}
+
 onBeforeMount(async () => {
+    displayChart.value = storageService.getDisplayChart();
     stat.value = await getStats(props.userId);
 });
 </script>

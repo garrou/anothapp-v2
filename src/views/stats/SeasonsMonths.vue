@@ -1,5 +1,5 @@
 <template>
-  <base-bar-chart class="mb-2" color="#e81ac2" :data="data" title="Saisons par mois" />
+  <base-bar-chart class="mb-2" :color="color" :data="data" :id="CHART_ID" title="Saisons par mois" />
 </template>
 
 <script lang="ts" setup>
@@ -7,6 +7,10 @@ import BaseBarChart from "@/components/BaseBarChart.vue";
 import type { Stat } from "@/models/stat";
 import { onBeforeMount, ref } from "vue";
 import { useStatistic } from "@/composables/statistic";
+import storageService from "@/services/storageService";
+
+const CHART_ID = "seasons-months";
+const DEFAULT_COLOR = "#e81ac2";
 
 const props = defineProps({
   userId: { type: String, default: undefined },
@@ -14,9 +18,11 @@ const props = defineProps({
 
 const { getSeasonsMonths } = useStatistic();
 
+const color = ref(DEFAULT_COLOR);
 const data = ref<Stat[]>([]);
 
 onBeforeMount(async () => {
+  color.value = storageService.getColorChart(CHART_ID, DEFAULT_COLOR);
   data.value = await getSeasonsMonths(props.userId);
 });
 </script>

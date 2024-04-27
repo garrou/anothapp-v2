@@ -1,5 +1,6 @@
 <template>
   <v-card>
+    <base-color :default="colorRef" :id="id" @change="changeColor" />
     <v-chart class="chart mt-2" :option="option" autoresize />
   </v-card>
 </template>
@@ -14,12 +15,15 @@ import {
 } from "echarts/components";
 import { CanvasRenderer } from "echarts/renderers";
 import VChart from "vue-echarts";
-import { computed, type PropType } from "vue";
+import { computed, ref, type PropType } from "vue";
 import type { Stat } from "@/models/stat";
+import BaseColor from "./BaseColor.vue";
+import storageService from "@/services/storageService";
 
 const props = defineProps({
   color: { type: String, required: true },
   data: { type: Array as PropType<Stat[]>, required: true },
+  id: { type: String, required: true },
   title: { type: String, required: true },
 });
 
@@ -30,6 +34,8 @@ use([
   TitleComponent,
   TooltipComponent,
 ]);
+
+const colorRef = ref(props.color);
 
 const option = computed(() => ({
   title: {
@@ -51,10 +57,14 @@ const option = computed(() => ({
     {
       data: props.data.map((record) => record.value),
       itemStyle: {
-        color: props.color
+        color: colorRef.value
       },
       type: "bar"
     }
   ]
 }));
+
+const changeColor = () => {
+  colorRef.value = storageService.getColorChart(props.id, props.color);
+}
 </script>

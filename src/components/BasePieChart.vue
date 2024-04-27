@@ -41,6 +41,11 @@ const option = computed(() => ({
     trigger: "item",
     formatter: "{b} : {c} ({d}%)",
   },
+  legend: {
+    orient: 'vertical',
+    top: '25px',
+    left: 'left'
+  },
   series: [
     {
       name: props.title,
@@ -50,6 +55,14 @@ const option = computed(() => ({
         name: record.label,
         value: record.value
       })),
+      padAngle: 3,
+      label: {
+        show: false,
+        position: 'center'
+      },
+      itemStyle: {
+        borderRadius: 10
+      },
     },
   ],
 }));

@@ -12,6 +12,8 @@ export interface Season {
     image: string;
 
     number: number;
+
+    interval: string;
 }
 
 export interface SeasonInfo {

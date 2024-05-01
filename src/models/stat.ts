@@ -10,7 +10,7 @@ export interface GlobalStat {
 
     nbEpisodes: number;
 
-    bestMonth?: { date: string, time: number };
+    bestMonth?: { label: string, value: number }[];
 }
 
 export interface Stat {
@@ -20,10 +20,10 @@ export interface Stat {
     value: number;
 }
 
-export type ChartGroupedType = "seasons" | "episodes" | "kinds";
+export type ChartGroupedType = "seasons" | "episodes" | "kinds" | "best-months";
 
 export type ChartGroupedPeriod = "years" | "year" | "months";
 
-export type ChartTimeType = "total" | "years" | "month" | "best-month" | "rank";
+export type ChartTimeType = "total" | "years" | "month" | "rank";
 
 export type ChartCountType = "shows" | "episodes" | "seasons";

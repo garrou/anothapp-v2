@@ -22,6 +22,8 @@ export const formatDate = (toFormat: string): string => {
     return `${dd < 10 ? "0" + dd : dd}/${mm < 10 ? "0" + mm : mm}/${yyyy}`;
 }
 
+export const minsToHours = (mins: number): number => Math.floor(mins / 60);
+
 export const minsToStringHoursDays = (mins: number = 0): string => {
     if (!mins || mins === 0)
         return "0 h";

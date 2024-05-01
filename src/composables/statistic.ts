@@ -94,7 +94,18 @@ export function useStatistic() {
         return data;
     }
 
+    const getBestMonths = async (userId?: string): Promise<Stat[]> => {
+        const resp = await statService.getGroupedCountByTypeByPeriod("best-months", null, userId);
+        const data = await resp.json();
+
+        if (isError(resp.status))
+            throw new Error(data.message);
+
+        return data;
+    }
+
     return { 
+        getBestMonths,
         getEpisodesMonthCurrYear, 
         getEpisodesYears, 
         getSeasonsMonths,

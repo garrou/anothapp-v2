@@ -38,6 +38,9 @@
                     <seasons-months :user-id="userId" />
                 </v-col>
                 <v-col cols="12" md="6">
+                    <best-months :user-id="userId" />
+                </v-col>
+                <v-col cols="12" md="6">
                     <series-ranking-time :user-id="userId" />
                 </v-col>
                 <v-col cols="12" md="6">
@@ -65,6 +68,7 @@ import { minsToStringHoursDays } from "@/utils/format";
 import { computed, onBeforeMount, ref } from "vue";
 import { PLAY_ICON } from "@/constants/icons";
 import storageService from "@/services/storageService";
+import BestMonths from "./BestMonths.vue";
 
 const props = defineProps({
     userId: { type: String, default: undefined },
@@ -105,7 +109,7 @@ const cardsConfig = computed(() => [
     {
         "icon": "mdi-crown",
         "title": "Record",
-        "value": stat.value?.bestMonth ? `${stat.value?.bestMonth.date} : ${minsToStringHoursDays(stat.value?.bestMonth.time)}` : 0
+        "value": stat.value?.bestMonth ? `${stat.value?.bestMonth[0].label} : ${minsToStringHoursDays(stat.value?.bestMonth[0].value)}` : 0
     }
 ]);
 

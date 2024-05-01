@@ -1,5 +1,5 @@
 <template>
-  <base-bar-chart class="mb-2" :color="DEFAULT_COLOR" :data="data" :id="CHART_ID" title="Episodes par années" />
+  <base-bar-chart class="mb-2" :color="color" :data="data" :id="CHART_ID" title="Episodes par années" />
 </template>
 
 <script lang="ts" setup>

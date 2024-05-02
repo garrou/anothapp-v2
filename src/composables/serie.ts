@@ -17,7 +17,7 @@ export function useSerie() {
         if (isError(resp.status))
             throw new Error(data.message);
 
-        showSuccess(`Série "${serie.title} ajoutée`);
+        showSuccess(`Série "${serie.title}" ajoutée`);
         router.push(`/series/${serie.id}`);
         return true;
     }

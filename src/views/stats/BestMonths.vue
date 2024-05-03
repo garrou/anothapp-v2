@@ -28,6 +28,6 @@ onBeforeMount(async () => {
     data.value = (await getBestMonths(props.userId)).map((obj) => ({
         label: obj.label,
         value: minsToHours(obj.value) 
-    }));
+    })).reverse();
 });
 </script>

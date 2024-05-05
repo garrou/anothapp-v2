@@ -1,5 +1,4 @@
 const MINS_IN_HOUR = 60;
-
 const MINS_IN_DAY = 1440;
 
 const minsToStringDays = (mins: number): string => {
@@ -25,12 +24,14 @@ export const formatDate = (toFormat: string): string => {
 export const minsToHours = (mins: number): number => Math.floor(mins / 60);
 
 export const minsToStringHoursDays = (mins: number = 0): string => {
-    if (!mins || mins === 0)
+    if (mins === 0)
         return "0 h";
 
-    const hours = minsToStringHours(mins);
-    const days = minsToStringDays(mins);
-    return `${hours} • ${days}`;
+    const days = Math.floor(mins / MINS_IN_DAY);
+
+    return days === 0 
+        ? minsToStringHours(mins)
+        : minsToStringDays(mins);
 }
 
 export const buildUrl = (url: string, query: string, param?: string | number, separator: string = "&"): string => {

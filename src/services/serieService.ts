@@ -6,9 +6,12 @@ import type { Serie } from "@/models/serie";
 
 const PREFIX = "shows";
 
-const addSeason = async (id: number, season: Season): Promise<Response> => {
-    return fetch(`${ENDPOINT}/${PREFIX}/${id}/seasons`, {
-        body: JSON.stringify(season),
+const addSeason = async (serie: Serie, season: Season): Promise<Response> => {
+    return fetch(`${ENDPOINT}/${PREFIX}/${serie.id}/seasons`, {
+        body: JSON.stringify({
+            "season": season,
+            "show": serie,
+        }),
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`,
             "Content-Type": "application/json",

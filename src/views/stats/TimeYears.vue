@@ -1,5 +1,5 @@
 <template>
-  <base-line-chart class="mb-2" :color="color" :data="data" :id="CHART_ID" title="Temps en heures par années" />
+  <base-line-chart class="mb-2" :color="color" :data="data" :id="CHART_ID" :title="TITLE" />
 </template>
 
 <script lang="ts" setup>
@@ -11,6 +11,7 @@ import storageService from "@/services/storageService";
 
 const CHART_ID = "time-hours-years";
 const DEFAULT_COLOR = "#2bccf0";
+const TITLE = "Temps en heures par années";
 
 const props = defineProps({
   userId: { type: String, default: undefined },

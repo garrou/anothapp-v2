@@ -1,5 +1,5 @@
 <template>
-  <base-bar-chart class="mb-2" :color="color" :data="data" :id="CHART_ID" title="Episodes par mois cette année" />
+  <base-bar-chart class="mb-2" :color="color" :data="data" :id="CHART_ID" :title="TITLE" />
 </template>
 
 <script lang="ts" setup>
@@ -11,6 +11,7 @@ import storageService from "@/services/storageService";
 
 const CHART_ID = "episodes-months-curr-year";
 const DEFAULT_COLOR = "#1ae86c";
+const TITLE = "Episodes par mois cette année";
 
 const props = defineProps({
   userId: { type: String, default: undefined },

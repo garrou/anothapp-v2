@@ -1,6 +1,5 @@
 <template>
-    <base-bar-chart class="mb-2" :color="color" :data="data" :id="CHART_ID"
-        title="Mois records en heures" />
+    <base-bar-chart class="mb-2" :color="color" :data="data" :id="CHART_ID" :title="TITLE" />
 </template>
 
 <script lang="ts" setup>
@@ -13,6 +12,7 @@ import { minsToHours } from "@/utils/format";
 
 const CHART_ID = "best-months";
 const DEFAULT_COLOR = "#03fccf";
+const TITLE = "Mois records en heures";
 
 const props = defineProps({
     userId: { type: String, default: undefined },

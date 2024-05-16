@@ -65,6 +65,6 @@ const option = computed(() => ({
 }));
 
 const changeColor = () => {
-  colorRef.value = storageService.getColorChart(props.id, props.color);
+  colorRef.value = storageService.getColorChart(props.id) ?? props.color;
 }
 </script>

@@ -3,7 +3,7 @@ const JWT = "jwt";
 
 const deleteJwt = (): void => localStorage.removeItem(JWT);
 
-const getColorChart = (id: string, defaultColor: string): string => localStorage.getItem(id) ?? defaultColor;
+const getColorChart = (id: string): string | null => localStorage.getItem(id);
 
 const getJwt = (): string | null => localStorage.getItem(JWT) ?? "";
 

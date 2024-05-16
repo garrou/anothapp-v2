@@ -22,7 +22,7 @@ const color = ref(DEFAULT_COLOR);
 const data = ref<Stat[]>([]);
 
 onBeforeMount(async () => {
-  color.value = storageService.getColorChart(CHART_ID, DEFAULT_COLOR);
+  color.value = storageService.getColorChart(CHART_ID) ?? DEFAULT_COLOR;
   data.value = await getSeasonsMonths(props.userId);
 });
 </script>

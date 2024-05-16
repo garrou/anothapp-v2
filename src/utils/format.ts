@@ -43,3 +43,5 @@ export const buildPlural = (text: string, value?: number, prefix = true): string
     const plural = `${text}${num > 1 ? "s" : ""}`;
     return prefix ? `${num} ${plural}` : `${plural} ${num}`;
 }
+
+export const buildHexColor = (): string => `#${Math.floor(Math.random() * 16777215).toString(16)}`;

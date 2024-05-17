@@ -10,7 +10,7 @@ const addSeason = async (serie: Serie, season: Season): Promise<Response> => {
     return fetch(`${ENDPOINT}/${PREFIX}/${serie.id}/seasons`, {
         body: JSON.stringify({
             "season": season,
-            "show": serie,
+            "serie": serie,
         }),
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`,

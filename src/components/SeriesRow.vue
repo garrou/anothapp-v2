@@ -4,7 +4,7 @@
         <v-row>
             <v-col v-for="serie in series" cols="6" md="4" lg="3" :key="serie.id">
                 <base-skeleton :loading="loading" type="card">
-                    <serie-card :lovable="lovable" :serie="serie" @show-serie="$emit('showSerie', serie)" @refresh-favs="$emit('refreshFavs')" />
+                    <serie-card :lovable="lovable" :serie="serie" @refresh-favs="$emit('refreshFavs')" />
                 </base-skeleton>
             </v-col>
         </v-row>
@@ -26,7 +26,6 @@ defineProps({
 });
 
 const emit = defineEmits<{
-    showSerie: [Serie]
     refreshFavs: []
 }>();
 </script>

@@ -13,16 +13,26 @@
                 @click="changeFavorite" />
             <div v-else-if="addable">
                 <v-btn :icon="ADD_ICON" variant="text" @click="add" />
-                <v-btn :icon="DETAILS_ICON" variant="text" @click="$emit('showSerie', serie)" />
+                <v-btn :icon="DETAILS_ICON" variant="text" @click="modal = true" />
             </div>
         </v-card-actions>
     </v-card>
+
+    <base-modal v-model="modal">
+        <template #title>
+            <v-spacer />
+            <v-btn :icon="CLOSE_ICON" variant="text" @click="modal = false" />
+        </template>
+        <serie-detail :serie="serie" />
+    </base-modal>
 </template>
 
 <script lang="ts" setup>
 import BaseImage from "./BaseImage.vue";
+import BaseModal from "./BaseModal.vue";
+import SerieDetail from "./SerieDetail.vue";
 import { useSerie } from "@/composables/serie";
-import { FAVORITE_ICON, ADD_ICON, DETAILS_ICON } from "@/constants/icons";
+import { ADD_ICON, CLOSE_ICON, DETAILS_ICON, FAVORITE_ICON } from "@/constants/icons";
 import type { Serie } from "@/models/serie";
 import { computed, ref, type PropType } from "vue";
 
@@ -32,7 +42,6 @@ const props = defineProps({
 });
 
 const emit = defineEmits<{
-    showSerie: [Serie]
     refreshFavs: []
 }>();
 
@@ -42,6 +51,7 @@ const link = addable ? `/discover/${props.serie.id}` : `/series/${props.serie.id
 const { addSerie, updateFavorite } = useSerie();
 
 const isFavorite = ref(props.serie.favorite);
+const modal = ref(false);
 
 const favoriteColor = computed(() => isFavorite.value ? "red" : "surface-variant");
 

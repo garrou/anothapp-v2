@@ -69,12 +69,11 @@ const selected = ref("");
 const series = ref<Serie[]>();
 
 const showModal = async (select: ProfileModal) => {
-    modal.value = true;
-
     if (select === "images")
         series.value = await getSeries();
 
     selected.value = select;
+    modal.value = true;
 }
 
 const getImages = async (open: boolean, id: number) => {

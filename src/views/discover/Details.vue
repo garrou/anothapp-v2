@@ -128,7 +128,6 @@ import { useSnackbar } from "@/composables/snackbar";
 import { ADD_ICON, CLOSE_ICON, DETAILS_ICON } from "@/constants/icons";
 import type { Actor, Character } from "@/models/person";
 import type { Serie, Similar } from "@/models/serie";
-import { buildPlural } from "@/utils/format";
 import { onBeforeMount, ref } from "vue";
 import { onBeforeRouteUpdate } from "vue-router";
 
@@ -179,8 +178,8 @@ const getImages = async () => {
 }
 
 const showModal = async (id: number) => {
-    modal.value = true;
     actor.value = await getActor(id);
+    modal.value = true;
 }
 
 onBeforeMount(async () => {

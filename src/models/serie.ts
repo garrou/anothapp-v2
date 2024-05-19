@@ -46,3 +46,10 @@ export interface SerieInfo {
 }
 
 export interface Similar extends BaseSerie {}
+
+export interface Kind {
+
+    name: string;
+
+    value: string;
+}

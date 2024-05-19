@@ -1,7 +1,7 @@
 import type { FriendResponse } from "@/models/friend";
 import type { User } from "@/models/user";
 import friendService from "@/services/friendService"
-import type { FriendStatus } from "@/types/friend";
+import type { FriendStatus } from "@/types/types";
 import { isError } from "@/utils/response";
 import { useSnackbar } from "./snackbar";
 

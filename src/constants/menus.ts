@@ -1,4 +1,4 @@
-import type { AppMenuItem, BottomNavMenuItem } from "@/types/menu";
+import type { AppMenuItem, BottomNavMenuItem } from "@/models/menu";
 import { ADD_ICON, FAVORITE_ICON } from "./icons";
 
 export const PAGE_WITHOUT_BOTTOM_NAVBAR = ["home", "login", "register"]

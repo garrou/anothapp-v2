@@ -20,6 +20,14 @@ const getCharacters = async (id: number): Promise<Response> => {
     });
 }
 
+const getKinds = async (): Promise<Response> => {
+    return fetch(`${ENDPOINT}/${PREFIX}/kinds`, {
+        headers: {
+            "Authorization": `Bearer ${storageService.getJwt()}`
+        }
+    });
+}
+
 const getSerie = async (id: number): Promise<Response> => {
     return fetch(`${ENDPOINT}/${PREFIX}/shows/${id}`, {
         headers: {
@@ -36,8 +44,8 @@ const getSerieImages = async (id: number): Promise<Response> => {
     });
 }
 
-const getSeries = async (title?: string): Promise<Response> => {
-    const url = buildUrl(`${ENDPOINT}/${PREFIX}/shows`, "title", title, "?");
+const getSeries = async (title?: string, kind?: string): Promise<Response> => {
+    const url = buildUrl(buildUrl(`${ENDPOINT}/${PREFIX}/shows`, "title", title, "?"), "kind", kind, "?");
     return fetch(url, {
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`
@@ -64,6 +72,7 @@ const getSimilarsSeries = async (id: number): Promise<Response> => {
 export default {
     getActor,
     getCharacters,
+    getKinds,
     getSeasonsBySerieId,
     getSerie,
     getSerieImages,

@@ -1,6 +1,6 @@
 import type { Serie, SerieInfo } from "@/models/serie";
 import serieService from "@/services/serieService";
-import type { SerieSearchOptions } from "@/types/search";
+import type { SerieSearchOptions } from "@/models/search";
 import { isError } from "@/utils/response";
 import { useSnackbar } from "./snackbar";
 import { useRouter } from "vue-router";

@@ -71,7 +71,7 @@ const getSerie = async (id: number): Promise<Response> => {
 }
 
 const getSeries = async (title?: string, kind?: string): Promise<Response> => {
-    const url = buildUrl(`${ENDPOINT}/${PREFIX}`, "title", title, "?");
+    const url = buildUrl(buildUrl(`${ENDPOINT}/${PREFIX}`, "title", title, "?"), "kind", kind, "?");
     return fetch(url, {
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`

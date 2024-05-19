@@ -1,5 +1,5 @@
 <template>
-    <base-app-bar search @search="fetchSeries" />
+    <base-app-bar search @filter="filterSeries" @search="fetchSeries" />
     <series-row lovable :loading="loading" :series="series" />
 </template>
 
@@ -21,6 +21,12 @@ const series = ref<Serie[]>([]);
 const fetchSeries = async (title?: string): Promise<void> => {
     loading.value = true;
     series.value = await getSeries({ title: title });
+    loading.value = false;
+}
+
+const filterSeries = async (kind: string): Promise<void> => {
+    loading.value = true;
+    series.value = await getSeries({ kind: kind });
     loading.value = false;
 }
 

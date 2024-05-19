@@ -1,7 +1,7 @@
 import type { Season, SeasonInfo, SeasonTimeline } from "@/models/season";
 import type { Serie } from "@/models/serie";
 import serieService from "@/services/serieService";
-import type { SeasonSearchOptions } from "@/types/search";
+import type { SeasonSearchOptions } from "@/models/search";
 import { isError } from "@/utils/response";
 import { useSnackbar } from "./snackbar";
 import seasonService from "@/services/seasonService";

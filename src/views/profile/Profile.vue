@@ -54,7 +54,7 @@ import { onBeforeMount, ref } from "vue";
 import type { Serie } from "@/models/serie";
 import { useSerie } from "@/composables/serie";
 import { useSearch } from "@/composables/search";
-import type { ProfileModal } from "@/types/modal";
+import type { ProfileModal } from "@/types/types";
 import { CLOSE_ICON } from "@/constants/icons";
 
 const { getProfile } = useUser();

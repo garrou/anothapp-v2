@@ -1,8 +1,8 @@
 import type { Actor, Character } from "@/models/person";
 import type { Season } from "@/models/season";
-import type { Serie, Similar } from "@/models/serie";
+import type { Kind, Serie, Similar } from "@/models/serie";
 import searchService from "@/services/searchService";
-import type { SerieSearchOptions } from "@/types/search";
+import type { SerieSearchOptions } from "@/models/search";
 import { isError } from "@/utils/response";
 
 export function useSearch() {
@@ -19,6 +19,16 @@ export function useSearch() {
 
     const getCharacters = async (id: number): Promise<Character[]> => {
         const resp = await searchService.getCharacters(id);
+        const data = await resp.json();
+
+        if (isError(resp.status))
+            throw new Error(data.message);
+
+        return data;
+    }
+    
+    const getKinds = async (): Promise<Kind[]> => {
+        const resp = await searchService.getKinds();
         const data = await resp.json();
 
         if (isError(resp.status))
@@ -48,7 +58,7 @@ export function useSearch() {
     }
 
     const getSeries = async (options: SerieSearchOptions): Promise<Serie[]> => {
-        const resp = await searchService.getSeries(options.title);
+        const resp = await searchService.getSeries(options.title, options.kind);
         const data = await resp.json();
 
         if (isError(resp.status))
@@ -80,6 +90,7 @@ export function useSearch() {
     return { 
         getActor, 
         getCharacters, 
+        getKinds,
         getSeasonsBySerieId, 
         getSerie, 
         getSerieImages, 

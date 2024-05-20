@@ -7,11 +7,10 @@
 
             <template #title>
                 <v-form v-if="search" @submit="$emit('search', title)" @submit.prevent>
-                    <v-text-field v-model="title" :append-inner-icon="SEARCH_ICON" :append-icon="FILTER_ICON" class="mb-4" clearable hide-details
-                        label="Titre de la série" single-line variant="plain"
+                    <v-text-field v-model="title" :append-inner-icon="SEARCH_ICON" :append-icon="FILTER_ICON"
+                        class="mb-4" clearable hide-details label="Titre de la série" single-line variant="plain"
                         @click:append-inner="$emit('search', title)" @click:clear="$emit('search', undefined)"
-                        @click:append="openKindsFilter"
-                    />
+                        @click:append="openKindsFilter" />
                 </v-form>
                 <slot v-else name="title" />
             </template>
@@ -21,13 +20,16 @@
             </template>
         </v-app-bar>
 
-        <v-navigation-drawer v-model="drawer" location="left" temporary>
-            <v-list-item v-for="(item, index) in APP_MENU" :key="index" :prepend-icon="item.icon" :title="item.title"
-                @click="selectMenu(item)" />
+        <v-navigation-drawer v-model="menus" location="left" temporary>
+            <v-list-item v-for="(item, index) in APP_MENU" :key="index" :prepend-icon="item.icon"
+                    :title="item.title" @click="selectMenu(item)" />
         </v-navigation-drawer>
 
-        <v-navigation-drawer v-model="filters" location="right" temporary class="mb-8">
-            <v-list-item v-for="(kind, index) in kinds" :key="index" :title="kind.name" @click="filterKind(kind)" />
+        <v-navigation-drawer v-model="filters" location="right" temporary>
+            <v-list>
+                <v-list-item v-for="(kind, index) in kinds" :key="index" color="#067d5f" :title="kind.name"
+                    :value="kind.value" @click="filterKind(kind)" />
+            </v-list>
         </v-navigation-drawer>
 
         <base-modal v-if="selected && selected.component" v-model="modal" :max-width="800">
@@ -62,14 +64,14 @@ const props = defineProps({
 
 const emit = defineEmits<{
     filter: [string]
-    search: [string|undefined]
+    search: [string | undefined]
 }>();
 
 const { getKinds } = useSearch();
 const { logout } = useUser();
 
 const filters = ref(false);
-const drawer = ref(false);
+const menus = ref(false);
 const modal = ref(false);
 const selected = ref<AppMenuItem>();
 const kinds = ref<Kind[]>([]);
@@ -81,13 +83,14 @@ const filterKind = (item: Kind) => {
 
 const openDrawer = () => {
     filters.value = false;
-    drawer.value = true;
+    menus.value = !menus.value;
 }
 
 const openKindsFilter = async () => {
-    kinds.value = await getKinds();
-    drawer.value = false;
-    filters.value = true;
+    if (kinds.value.length === 0)
+        kinds.value = await getKinds();
+    menus.value = false;
+    filters.value = !filters.value;
 }
 
 const selectMenu = (item: AppMenuItem) => {
@@ -95,3 +98,9 @@ const selectMenu = (item: AppMenuItem) => {
     modal.value = true;
 }
 </script>
+
+<style scoped>
+.v-list-item:nth-last-child(1) {
+    margin-bottom: 75px;
+}
+</style>

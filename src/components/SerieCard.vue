@@ -9,9 +9,9 @@
         </v-card-subtitle>
 
         <v-card-actions>
-            <v-btn v-if="!addable && lovable" :color="favoriteColor" :icon="FAVORITE_ICON" variant="text"
+            <v-btn v-if="lovable" :color="favoriteColor" :icon="FAVORITE_ICON" variant="text"
                 @click="changeFavorite" />
-            <div v-else-if="addable">
+            <div v-else>
                 <v-btn :icon="ADD_ICON" variant="text" @click="add" />
                 <v-btn :icon="DETAILS_ICON" variant="text" @click="modal = true" />
             </div>
@@ -45,8 +45,7 @@ const emit = defineEmits<{
     refreshFavs: []
 }>();
 
-const addable = !!props.serie.creation;
-const link = addable ? `/discover/${props.serie.id}` : `/series/${props.serie.id}`;
+const link = lovable ? `/series/${props.serie.id}` : `/discover/${props.serie.id}`;
 
 const { addSerie, updateFavorite } = useSerie();
 

@@ -45,7 +45,7 @@ const emit = defineEmits<{
     refreshFavs: []
 }>();
 
-const link = lovable ? `/series/${props.serie.id}` : `/discover/${props.serie.id}`;
+const link = props.lovable ? `/series/${props.serie.id}` : `/discover/${props.serie.id}`;
 
 const { addSerie, updateFavorite } = useSerie();
 

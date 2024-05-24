@@ -57,8 +57,9 @@ export function useSearch() {
         return data;
     }
 
-    const getSeries = async (options: SerieSearchOptions): Promise<Serie[]> => {
-        const resp = await searchService.getSeries(options.title, options.kind);
+    const getSeries = async (options: SerieSearchOptions = {}): Promise<Serie[]> => {
+        const { kind, title } = options;
+        const resp = await searchService.getSeries(title, kind);
         const data = await resp.json();
 
         if (isError(resp.status))

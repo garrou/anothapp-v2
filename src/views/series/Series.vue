@@ -1,5 +1,5 @@
 <template>
-    <base-app-bar search @filter="filterSeries" @search="fetchSeries" />
+    <base-app-bar search @filter="(kind) => fetchSeries({ kind })" @search="(title) => fetchSeries({ title })" />
     <series-row lovable :loading="loading" :series="series" />
 </template>
 
@@ -11,22 +11,19 @@ import { onBeforeMount, ref } from "vue";
 import { useSerie } from "@/composables/serie";
 import { watch } from "vue";
 import { useFavorite } from "@/composables/favorite";
+import { useRoute } from "vue-router";
+import type { SerieSearchOptions } from "@/models/search";
 
 const { getSeries } = useSerie();
 const favorite = useFavorite();
+const route = useRoute();
 
 const loading = ref(false);
 const series = ref<Serie[]>([]);
 
-const fetchSeries = async (title?: string): Promise<void> => {
+const fetchSeries = async (options?: SerieSearchOptions): Promise<void> => {
     loading.value = true;
-    series.value = await getSeries({ title: title });
-    loading.value = false;
-}
-
-const filterSeries = async (kind: string): Promise<void> => {
-    loading.value = true;
-    series.value = await getSeries({ kind: kind });
+    series.value = await getSeries(options);
     loading.value = false;
 }
 

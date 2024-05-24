@@ -1,5 +1,5 @@
 <template>
-    <base-app-bar discover search @filter="filterSeries" @search="fetchSeries" />
+    <base-app-bar discover search @filter="(kind) => fetchSeries({ kind })" @search="(title) => fetchSeries({ title })" />
     <series-row :loading="loading" :series="series" />
 </template>
 
@@ -9,21 +9,16 @@ import SeriesRow from "@/components/SeriesRow.vue";
 import type { Serie } from "@/models/serie";
 import { onBeforeMount, ref } from "vue";
 import { useSearch } from "@/composables/search";
+import type { SerieSearchOptions } from "@/models/search";
 
 const { getSeries } = useSearch();
 
 const loading = ref(false);
 const series = ref<Serie[]>([]);
 
-const fetchSeries = async (title?: string): Promise<void> => {
+const fetchSeries = async (options?: SerieSearchOptions): Promise<void> => {
     loading.value = true;
-    series.value = await getSeries({ title: title });
-    loading.value = false;
-}
-
-const filterSeries = async (kind: string): Promise<void> => {
-    loading.value = true;
-    series.value = await getSeries({ kind: kind });
+    series.value = await getSeries(options);
     loading.value = false;
 }
 

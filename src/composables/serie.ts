@@ -60,7 +60,6 @@ export function useSerie() {
 
     const getSeries = async (options: SerieSearchOptions = {}): Promise<Serie[]> => {
         const { kind, title } = options;
-
         const resp = await serieService.getSeries(title, kind);
         const data = await resp.json();
 

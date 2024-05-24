@@ -1,6 +1,6 @@
 <template>
     <v-toolbar color="white">
-        <v-app-bar-nav-icon v-if="icon" @click="$router.back()">
+        <v-app-bar-nav-icon v-if="icon" @click="$router.push('/series')">
             <v-icon>{{ icon }}</v-icon>
         </v-app-bar-nav-icon>
 

@@ -10,7 +10,7 @@ export interface GlobalStat {
 
     nbEpisodes: number;
 
-    bestMonth?: { label: string, value: number }[];
+    bestMonth?: { label: string, value: number };
 }
 
 export interface Stat {

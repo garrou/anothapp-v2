@@ -1,12 +1,12 @@
-import type { LayoutFieldFormat } from "@/types/types";
+export interface Layout {
 
-export interface SerieDetailsLayout {
+    display?: boolean;
+    
+    format?: "text";
+
+    icon?: string;
 
     name: string;
 
-    field: string;
-
-    format: LayoutFieldFormat;
-
-    limit?: number;
+    value: any;
 }

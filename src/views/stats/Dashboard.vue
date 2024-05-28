@@ -3,8 +3,8 @@
     <v-container>
         <v-row v-if="stat" class="mb-2">
             <v-col v-for="(obj, _, index) in cardsConfig" cols="12" md="6" :key="index">
-                <v-card v-if="obj.value !== undefined" :elevation="ELEVATION" :prepend-icon="obj.icon">
-                    <template #title>{{ obj.title }}</template>
+                <v-card v-if="obj.display !== false" :elevation="ELEVATION" :prepend-icon="obj.icon">
+                    <template #title>{{ obj.name }}</template>
                     <v-card-subtitle class="mb-2">
                         {{ obj.value }}
                     </v-card-subtitle>
@@ -14,7 +14,7 @@
 
         <v-row>
             <v-switch v-model="displayChart" color="black" label="Afficher les graphiques"
-                    @change="changeDisplayChart" />
+                @change="changeDisplayChart" />
         </v-row>
 
         <v-row>
@@ -64,11 +64,10 @@ import TimeYears from "./TimeYears.vue";
 import { useStatistic } from "@/composables/statistic";
 import { ELEVATION } from "@/constants/style";
 import type { GlobalStat } from "@/models/stat";
-import { minsToStringHoursDays } from "@/utils/format";
 import { computed, onBeforeMount, ref } from "vue";
-import { PLAY_ICON } from "@/constants/icons";
 import storageService from "@/services/storageService";
 import BestMonths from "./BestMonths.vue";
+import { DashboardLayout } from "@/layouts/dashboard-layout";
 
 const props = defineProps({
     userId: { type: String, default: undefined },
@@ -80,38 +79,7 @@ const { getStats } = useStatistic();
 const displayChart = ref(false);
 const stat = ref<GlobalStat>();
 
-const cardsConfig = computed(() => [
-    {
-        "icon": "mdi-timer-sand",
-        "title": "Ce mois",
-        "value": minsToStringHoursDays(stat.value?.monthTime)
-    },
-    {
-        "icon": "mdi-timer-sand-complete",
-        "title": "Temps total",
-        "value": minsToStringHoursDays(stat.value?.totalTime)
-    },
-    {
-        "icon": PLAY_ICON,
-        "title": "Séries",
-        "value": stat.value?.nbSeries
-    },
-    {
-        "icon": PLAY_ICON,
-        "title": "Saisons",
-        "value": stat.value?.nbSeasons
-    },
-    {
-        "icon": PLAY_ICON,
-        "title": "Episodes",
-        "value": stat.value?.nbEpisodes,
-    },
-    {
-        "icon": "mdi-crown",
-        "title": "Record",
-        "value": stat.value?.bestMonth ? `${stat.value?.bestMonth[0].label} : ${minsToStringHoursDays(stat.value?.bestMonth[0].value)}` : 0
-    }
-]);
+const cardsConfig = computed(() => stat.value ? DashboardLayout(stat.value) : undefined);
 
 const changeDisplayChart = () => {
     storageService.storeDisplayChart(displayChart.value);

@@ -11,12 +11,10 @@ import { onBeforeMount, ref } from "vue";
 import { useSerie } from "@/composables/serie";
 import { watch } from "vue";
 import { useFavorite } from "@/composables/favorite";
-import { useRoute } from "vue-router";
 import type { SerieSearchOptions } from "@/models/search";
 
 const { getSeries } = useSerie();
 const favorite = useFavorite();
-const route = useRoute();
 
 const loading = ref(false);
 const series = ref<Serie[]>([]);

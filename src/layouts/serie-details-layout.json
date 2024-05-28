@@ -1,0 +1,28 @@
+[
+    {
+        "name": "Durée",
+        "field": "duration|duration",
+        "format": "custom"
+    },
+    {
+        "name": "Création",
+        "field": "creation",
+        "format": "number"
+    },
+    {
+        "name": "Note",
+        "field": "note",
+        "format": "number",
+        "limit": 5
+    },
+    {
+        "name": "Synopsis",
+        "field": "description",
+        "format": "text"
+    },
+    {
+        "name": "Genres",
+        "field": "kinds",
+        "format": "array"
+    }
+]

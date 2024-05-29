@@ -1,6 +1,6 @@
 <template>
     <v-container>
-        <base-skeleton v-if="series.length > 0" :loading="loading" type="table-tbody">
+        <base-skeleton v-if="series.length" :loading="loading" type="table-tbody">
             <v-table>
                 <tbody>
                     <tr v-for="serie in series" :key="serie.id">
@@ -13,7 +13,7 @@
                 </tbody>
             </v-table>
         </base-skeleton>
-        <span v-else>Aucune série à continuer</span>
+        <div v-else class="text-center">Aucune série à continuer</div>
     </v-container>
 </template>
 

@@ -1,13 +1,14 @@
 <template>
     <v-container>
         <span v-if="total">{{ buildPlural("série", series.length) }}</span>
-        <v-row>
+        <v-row v-if="series.length || loading">
             <v-col v-for="serie in series" cols="6" md="4" lg="3" :key="serie.id">
                 <base-skeleton :loading="loading" type="card">
                     <serie-card :lovable="lovable" :serie="serie" @refresh-favs="$emit('refreshFavs')" />
                 </base-skeleton>
             </v-col>
         </v-row>
+        <div v-else class="text-center">Aucune série</div>
     </v-container>
 </template>
 

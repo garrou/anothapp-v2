@@ -8,7 +8,7 @@ export function useFavorite() {
     const { deleted } = storeToRefs(favoriteStore);
 
     const increment = () => {
-        favoriteStore.increment();
+        deleted.value++;
     }
 
     return { deleted, increment }

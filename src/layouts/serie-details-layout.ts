@@ -28,5 +28,11 @@ export const SerieDetailsLayout = (serie: Serie): Layout[] => [
         value: serie.kinds.join(" • "),
         display: !!serie.kinds.length,
         format: "text"
+    },
+    {
+        name: "Plateformes",
+        value: serie.platforms,
+        display: !!serie.platforms,
+        format: "array"
     }
 ]

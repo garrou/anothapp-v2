@@ -129,7 +129,6 @@ import { ADD_ICON, CLOSE_ICON, DETAILS_ICON } from "@/constants/icons";
 import type { Actor, Character } from "@/models/person";
 import type { Serie, Similar } from "@/models/serie";
 import { onBeforeMount, ref } from "vue";
-import { onBeforeRouteUpdate, useRouter } from "vue-router";
 
 const props = defineProps({
     id: { type: Number, required: true }

@@ -2,7 +2,7 @@ export interface Layout {
 
     display?: boolean;
     
-    format?: "text";
+    format?: "text" | "array";
 
     icon?: string;
 

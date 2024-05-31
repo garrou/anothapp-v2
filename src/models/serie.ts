@@ -32,6 +32,15 @@ export interface Serie extends BaseSerie {
     status?: string;
         
     creation?: number;
+
+    platforms?: Platform[];
+}
+
+export interface Platform {
+
+    name: string;
+
+    logo?: string;
 }
 
 export interface SerieInfo {

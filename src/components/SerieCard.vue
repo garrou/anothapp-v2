@@ -13,8 +13,8 @@
                 @click="changeFavorite" />
             <div v-else>
                 <v-btn :icon="ADD_ICON" variant="text" @click="add" />
-                <v-btn :icon="DETAILS_ICON" variant="text" @click="modal = true" />
             </div>
+            <v-btn v-if="serie.description" :icon="DETAILS_ICON" variant="text" @click="modal = true" />
         </v-card-actions>
     </v-card>
 

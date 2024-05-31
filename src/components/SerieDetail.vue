@@ -14,6 +14,12 @@
                     <v-card-item>
                         <v-card-title>{{ obj.name }}</v-card-title>
                         <v-card-text v-if="obj.format === 'text'">{{ obj.value }}</v-card-text>
+                        <v-row v-else-if="obj.format === 'array'">
+                            <v-col v-for="v in obj.value" :key="v.name" cols="6" md="4" lg="3">
+                                <base-image v-if="v.logo" :src="v.logo" />
+                                <div class="text-center">{{ v.name }}</div>
+                            </v-col>
+                        </v-row>  
                         <v-card-subtitle v-else>{{ obj.value }}</v-card-subtitle>
                     </v-card-item>
                 </v-card>

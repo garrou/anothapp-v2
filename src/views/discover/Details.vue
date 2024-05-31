@@ -129,7 +129,7 @@ import { ADD_ICON, CLOSE_ICON, DETAILS_ICON } from "@/constants/icons";
 import type { Actor, Character } from "@/models/person";
 import type { Serie, Similar } from "@/models/serie";
 import { onBeforeMount, ref } from "vue";
-import { onBeforeRouteUpdate } from "vue-router";
+import { onBeforeRouteUpdate, useRouter } from "vue-router";
 
 const props = defineProps({
     id: { type: Number, required: true }
@@ -186,13 +186,5 @@ onBeforeMount(async () => {
     loading.value = true;
     serie.value = await getSerie(props.id);
     loading.value = false;
-});
-
-onBeforeRouteUpdate(async (to, from) => {
-    if (to.params.id !== from.params.id) {
-        loading.value = true;
-        serie.value = await getSerie(to.params.id as unknown as number);
-        loading.value = false;
-    }
 });
 </script>

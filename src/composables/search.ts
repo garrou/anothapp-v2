@@ -88,9 +88,20 @@ export function useSearch() {
         return data;
     }
 
+    const getImages = async (): Promise<string[]> => {
+        const resp = await searchService.getImages();
+        const data = await resp.json();
+
+        if (isError(resp.status))
+            throw new Error(data.message);
+
+        return data;
+    }
+
     return { 
         getActor, 
         getCharacters, 
+        getImages,
         getKinds,
         getSeasonsBySerieId, 
         getSerie, 

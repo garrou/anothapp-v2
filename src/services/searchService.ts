@@ -69,9 +69,18 @@ const getSimilarsSeries = async (id: number): Promise<Response> => {
     });
 }
 
+const getImages = async (): Promise<Response> => {
+    return fetch(`${ENDPOINT}/${PREFIX}/images`, {
+        headers: {
+            "Authorization": `Bearer ${storageService.getJwt()}`
+        }
+    });
+} 
+
 export default {
     getActor,
     getCharacters,
+    getImages,
     getKinds,
     getSeasonsBySerieId,
     getSerie,

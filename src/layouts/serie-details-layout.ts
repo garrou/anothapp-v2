@@ -10,12 +10,12 @@ export const SerieDetailsLayout = (serie: Serie): Layout[] => [
     {
         name: "Création",
         value: serie.creation,
-        display: serie.creation !== undefined
+        display: !!serie.creation
     },
     {
         name: "Note",
         value: serie.note ? `${serie.note.toFixed(2)} / 5` : "",
-        display: serie.note !== undefined
+        display: !!serie.note
     },
     {
         name: "Synopsis",
@@ -32,7 +32,7 @@ export const SerieDetailsLayout = (serie: Serie): Layout[] => [
     {
         name: "Plateformes",
         value: serie.platforms,
-        display: !!serie.platforms,
+        display: !!serie.platforms?.length,
         format: "array"
     }
 ]

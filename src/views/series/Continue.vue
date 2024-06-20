@@ -4,11 +4,13 @@
             <v-table>
                 <tbody>
                     <tr v-for="serie in series" :key="serie.id">
-                        <td><base-image :src="serie.poster" /></td>
-                        <td>
-                            <router-link :text="serie.title" :to="`/series/${serie.id}`" />
-                        </td>
-                        <td>{{ buildPlural("saison", serie.missing) }}</td>
+                        <template v-if="serie.missing">
+                            <td><base-image :src="serie.poster" /></td>
+                            <td>
+                                <router-link :text="serie.title" :to="`/series/${serie.id}`" />
+                            </td>
+                            <td>{{ buildPlural("saison", serie.missing) }}</td>
+                        </template>
                     </tr>
                 </tbody>
             </v-table>

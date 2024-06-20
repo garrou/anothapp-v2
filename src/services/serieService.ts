@@ -27,7 +27,8 @@ const addSerie = async (serie: Serie): Promise<Response> => {
             "title": serie.title,
             "poster": serie.poster,
             "kinds": serie.kinds,
-            "duration": serie.duration
+            "duration": serie.duration,
+            "seasons": serie.seasons,
         }),
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`,

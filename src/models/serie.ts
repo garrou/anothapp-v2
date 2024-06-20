@@ -17,7 +17,7 @@ export interface Serie extends BaseSerie {
 
     duration: number;
 
-    missing: number;
+    missing?: number;
 
     description?: string;
         

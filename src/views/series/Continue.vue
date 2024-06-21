@@ -5,7 +5,6 @@
                 <tbody>
                     <tr v-for="serie in series" :key="serie.id">
                         <template v-if="serie.missing">
-                            <td><base-image :src="serie.poster" /></td>
                             <td>
                                 <router-link :text="serie.title" :to="`/series/${serie.id}`" />
                             </td>

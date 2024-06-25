@@ -102,7 +102,7 @@
                 <v-card class="mb-2">
                     <v-card-item>
                         <v-card-title>Description</v-card-title>
-                        <v-card-subtitle>{{ actor.description }}</v-card-subtitle>
+                        <v-card-text>{{ actor.description }}</v-card-text>
                     </v-card-item>
                 </v-card>
             </v-col>

@@ -38,5 +38,5 @@ onBeforeMount(async () => {
 onBeforeUnmount(() => {
     if (deleted.value > 0) 
         favorite.increment();
-})
+});
 </script>

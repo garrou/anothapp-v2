@@ -12,9 +12,13 @@ import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
 import { useSnackbar } from "@/composables/snackbar";
 import { views } from "./views";
+import { VCalendar } from 'vuetify/labs/VCalendar'
 
 const vuetify = createVuetify({
-  components,
+  components: {
+    ...components,
+    VCalendar,
+  },
   directives,
 });
 const app = createApp(App);

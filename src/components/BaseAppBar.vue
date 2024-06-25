@@ -32,7 +32,7 @@
             </v-list>
         </v-navigation-drawer>
 
-        <base-modal v-if="selected && selected.component" v-model="modal" :max-width="800">
+        <base-modal v-if="selected && selected.component" v-model="modal">
             <template #title>
                 <span>{{ selected.title }}</span>
                 <v-btn :icon="CLOSE_ICON" variant="text" @click="modal = false" />

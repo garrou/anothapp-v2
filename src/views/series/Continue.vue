@@ -19,7 +19,6 @@
 </template>
 
 <script lang="ts" setup>
-import BaseImage from "@/components/BaseImage.vue";
 import BaseSkeleton from "@/components/BaseSkeleton.vue";
 import { useSerie } from "@/composables/serie";
 import type { Serie } from "@/models/serie";

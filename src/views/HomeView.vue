@@ -7,7 +7,7 @@
   </div>
 
   <v-container>
-        <v-row class="mt-sm">
+        <v-row class="mt-1">
           <v-col v-for="(image, index) in images" cols="6" md="4" lg="3" :key="index">
             <base-image :src="image" />
           </v-col>

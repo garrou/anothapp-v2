@@ -8,6 +8,10 @@ export const SerieDetailsLayout = (serie: Serie): Layout[] => [
         value: minsToStringHoursDays(serie.duration * (serie.episodes ?? 0)),
     },
     {
+        name: "Episodes",
+        value: serie.episodes
+    },
+    {
         name: "Création",
         value: serie.creation,
         display: !!serie.creation

@@ -65,56 +65,13 @@
             <v-btn :icon="CLOSE_ICON" variant="text" @click="modal = false" />
         </template>
 
-        <v-row align="center" class="pa-2">
-            <v-col v-if="actor.poster" cols="12" md="6">
-                <base-image max-height="580" :src="actor.poster" />
-            </v-col>
-
-            <v-col cols="12" md="6">
-                <v-card class="mb-2">
-                    <v-card-item>
-                        <v-card-title>Nom</v-card-title>
-                        <v-card-subtitle>{{ actor.name }}</v-card-subtitle>
-                    </v-card-item>
-                </v-card>
-
-                <v-card class="mb-2">
-                    <v-card-item>
-                        <v-card-title>Naissance</v-card-title>
-                        <v-card-subtitle>{{ actor.birthday }}</v-card-subtitle>
-                    </v-card-item>
-                </v-card>
-
-                <v-card v-if="actor.deathday" class="mb-2">
-                    <v-card-item>
-                        <v-card-title>Mort</v-card-title>
-                        <v-card-subtitle>{{ actor.deathday }}</v-card-subtitle>
-                    </v-card-item>
-                </v-card>
-
-                <v-card class="mb-2">
-                    <v-card-item>
-                        <v-card-title>Nationalité</v-card-title>
-                        <v-card-subtitle>{{ actor.nationality }}</v-card-subtitle>
-                    </v-card-item>
-                </v-card>
-
-                <v-card class="mb-2">
-                    <v-card-item>
-                        <v-card-title>Description</v-card-title>
-                        <v-card-text>{{ actor.description }}</v-card-text>
-                    </v-card-item>
-                </v-card>
-            </v-col>
-        </v-row>
-
+        <actor-details :actor="actor" />
         <series-row :loading="loading" :series="actor.series" total />
-
-        <!-- <series-row :loading="loading" :series="actor.movies" total /> -->
     </base-modal>
 </template>
 
 <script lang="ts" setup>
+import ActorDetails from "@/components/ActorDetails.vue";
 import BaseImage from "@/components/BaseImage.vue";
 import BaseModal from "@/components/BaseModal.vue";
 import BaseSkeleton from "@/components/BaseSkeleton.vue";

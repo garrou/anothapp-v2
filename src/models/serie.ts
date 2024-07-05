@@ -34,6 +34,8 @@ export interface Serie extends BaseSerie {
     creation?: number;
 
     platforms?: Platform[];
+
+    addedAt?: string;
 }
 
 export interface Platform {

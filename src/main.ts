@@ -12,7 +12,8 @@ import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
 import { useSnackbar } from "@/composables/snackbar";
 import { views } from "./views";
-import { VCalendar } from 'vuetify/labs/VCalendar'
+import { VCalendar } from "vuetify/labs/VCalendar";
+import cache from "./cache";
 
 const vuetify = createVuetify({
   components: {
@@ -29,9 +30,9 @@ app.use(vuetify);
 
 const snackbar = useSnackbar();
 
-app.config.errorHandler = (err: unknown) => {
-  snackbar.showError(err as Error);
-}
+app.config.errorHandler = (err: unknown) => snackbar.showError(err as Error);
+
+cache.initialize().catch((err) => snackbar.showError(err));
 
 Object
   .entries(views)

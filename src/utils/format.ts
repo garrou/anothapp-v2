@@ -34,7 +34,7 @@ export const minsToStringHoursDays = (mins: number = 0): string => {
         : minsToStringDays(mins);
 }
 
-export const buildUrl = (url: string, query: string, param?: string | number, separator: string = "&"): string =>
+export const buildUrl = (url: string, query: string, param?: string | number | boolean, separator: string = "&"): string =>
     param === undefined ? url : url.concat(`${separator}${query}=${param}`);
 
 export const buildPlural = (text: string, value?: number, prefix = true): string => {

@@ -4,6 +4,7 @@ import type { Kind, Serie, Similar } from "@/models/serie";
 import searchService from "@/services/searchService";
 import type { SerieSearchOptions } from "@/models/search";
 import { isError } from "@/utils/response";
+import cache from "@/cache";
 
 export function useSearch() {
 
@@ -38,13 +39,7 @@ export function useSearch() {
     }
 
     const getSerie = async (id: number): Promise<Serie> => {
-        const resp = await searchService.getSerie(id);
-        const data = await resp.json();
-
-        if (isError(resp.status))
-            throw new Error(data.message);
-
-        return data;
+        return cache.series.getSerieById(id);
     }
 
     const getSerieImages = async (id: number): Promise<string[]> => {
@@ -58,14 +53,17 @@ export function useSearch() {
     }
 
     const getSeries = async (options: SerieSearchOptions = {}): Promise<Serie[]> => {
-        const { kind, title } = options;
-        const resp = await searchService.getSeries(title, kind);
-        const data = await resp.json();
+        const { title, kind } = options;
 
-        if (isError(resp.status))
-            throw new Error(data.message);
-
-        return data;
+        if (title || kind) {
+            const resp = await searchService.getSeries(title, kind);
+            const data = await resp.json();
+            if (isError(resp.status)) {
+                throw new Error(data.message);
+            }
+            return data;
+        }
+        return cache.series.getSeries();
     }
 
     const getSeasonsBySerieId = async (id: number): Promise<Season[]> => {

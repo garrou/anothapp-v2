@@ -1,6 +1,6 @@
 <template>
     <v-container>
-        <series-row v-if="favorites.length" lovable :loading="loading" :series="favorites" @refresh-favs="refreshFavorites" />
+        <series-row v-if="favorites.length" :loading="loading" :series="favorites" @refresh-favs="refreshFavorites" />
         <div v-else class="text-center">Aucun favori</div>
     </v-container>
 </template>

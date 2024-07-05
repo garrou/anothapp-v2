@@ -4,6 +4,7 @@ import type { SerieSearchOptions } from "@/models/search";
 import { isError } from "@/utils/response";
 import { useSnackbar } from "./snackbar";
 import { useRouter } from "vue-router";
+import cache from "@/cache";
 
 export function useSerie() {
 
@@ -17,18 +18,14 @@ export function useSerie() {
         if (isError(resp.status))
             throw new Error(data.message);
 
+        await getSerie({ id: serie.id });
         showSuccess(`Série "${serie.title}" ajoutée`);
         router.push(`/series/${serie.id}`);
         return true;
     }
 
     const deleteSerie = async (serie: Serie): Promise<boolean> => {
-        const resp = await serieService.deleteSerie(serie.id);
-        const data = await resp.json();
-
-        if (isError(resp.status))
-            throw new Error(data.message);
-
+        await cache.userSeries.deleteSerie(serie.id);
         showSuccess(`Série "${serie.title}" supprimée`);
         return true;
     }
@@ -43,7 +40,16 @@ export function useSerie() {
         return data;
     }
 
-    const getSerie = async (options: SerieSearchOptions): Promise<SerieInfo> => {
+    const getSerie = async (options: SerieSearchOptions): Promise<Serie> => {
+        const { id } = options;
+
+        if (!id)
+            throw new Error("Impossible de récupérer les données");
+
+        return cache.userSeries.getSerieById(id);
+    }
+
+    const getSerieInfos = async (options: SerieSearchOptions): Promise<SerieInfo> => {
         const { id } = options;
 
         if (!id)
@@ -59,14 +65,7 @@ export function useSerie() {
     }
 
     const getSeries = async (options: SerieSearchOptions = {}): Promise<Serie[]> => {
-        const { kind, title } = options;
-        const resp = await serieService.getSeries(title, kind);
-        const data = await resp.json();
-
-        if (isError(resp.status))
-            throw new Error(data.message);
-
-        return data;
+        return cache.userSeries.getSeries(options);
     }
 
     const getSeriesNotStarted = async (): Promise<Serie[]> => {
@@ -102,5 +101,5 @@ export function useSerie() {
         return data.favorite;
     }
 
-    return { addSerie, deleteSerie, getFavoriteSeries, getSerie, getSeries, getSeriesNotStarted, getSeriesToContinue, updateFavorite }
+    return { addSerie, deleteSerie, getFavoriteSeries, getSerie, getSerieInfos, getSeries, getSeriesNotStarted, getSeriesToContinue, updateFavorite }
 }

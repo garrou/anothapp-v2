@@ -1,6 +1,6 @@
 <template>
     <base-app-bar search @filter="(kind) => fetchSeries({ kind })" @search="(title) => fetchSeries({ title })" />
-    <series-row lovable :loading="loading" :series="series" />
+    <series-row :loading="loading" :series="series" />
 </template>
 
 <script lang="ts" setup>

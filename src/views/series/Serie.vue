@@ -89,7 +89,7 @@ const props = defineProps({
 });
 
 const { addSeason } = useSeason();
-const { deleteSerie, getSerie, updateFavorite } = useSerie();
+const { deleteSerie, getSerieInfos, updateFavorite } = useSerie();
 const { getSeasonsBySerieId } = useSearch();
 const { showError } = useSnackbar();
 
@@ -115,7 +115,7 @@ const refresh = async () => {
 
 const load = async (): Promise<void> => {
     loading.value = true;
-    infos.value = await getSerie({ id: props.id });
+    infos.value = await getSerieInfos({ id: props.id });
     seasons.value = await getSeasonsBySerieId(props.id);
     isFavorite.value = infos.value?.serie.favorite;
     loading.value = false;
@@ -133,7 +133,7 @@ const newSeason = async (season: Season): Promise<void> => {
         return;
     }
     await addSeason(infos.value.serie, season);
-    infos.value = await getSerie({ id: props.id });
+    infos.value = await getSerieInfos({ id: props.id });
 }
 
 const changeFavorite = async (): Promise<void> => {

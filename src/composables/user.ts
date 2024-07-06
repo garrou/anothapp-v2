@@ -4,6 +4,7 @@ import { isError, isSuccess } from "@/utils/response";
 import { useRouter } from "vue-router";
 import { useSnackbar } from "./snackbar";
 import type { User } from "@/models/user";
+import cache from "@/cache";
 
 export function useUser() {
 
@@ -56,28 +57,23 @@ export function useUser() {
     }
 
     const getProfile = async (): Promise<User> => {
-        const resp = await userService.getProfile();
-        const data = await resp.json();
-
-        if (isError(resp.status))
-            throw new Error(data.message);
-
-        return data;
+        return cache.users.getProfile();
     }
 
-    const login = async (identifier: string, password: string): Promise<boolean> => {
+    const login = async (identifier: string, password: string): Promise<void> => {
         const resp = await userService.login(identifier, password);
         const data = await resp.json();
 
-        if (isError(resp.status))
+        if (isError(resp.status) || !data.token)
             throw new Error(data.message);
 
         storageService.storeJwt(data.token);
+        delete data.token;
+        await cache.users.addUser(data);
         router.replace("/series");
-        return true;
     }
 
-    const logout = () => {
+    const logout = (): void => {
         storageService.deleteJwt();
         router.replace("/login");
     }
@@ -90,7 +86,7 @@ export function useUser() {
         if (isError(resp.status))
             throw new Error(data.message);
 
-        showSuccess("Compte crée");
+        showSuccess("Compte créé");
         router.push("/login");
     }
 

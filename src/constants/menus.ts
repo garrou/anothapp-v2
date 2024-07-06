@@ -23,11 +23,6 @@ export const NAV_MENU: BottomNavMenuItem[] = [
         title: "Dashboard",
         icon: "mdi-chart-bar",
         link: "/dashboard"
-    },
-    {
-        title: "Profil",
-        icon: "mdi-account",
-        link: "/profile"
     }
 ];
 

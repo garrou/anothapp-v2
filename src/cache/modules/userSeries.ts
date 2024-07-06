@@ -17,6 +17,15 @@ export default class UserSeriesCache extends CacheModule<SeriesCacheItem> {
         db.createObjectStore(this.NAME);
     }
 
+    async addSerie(serie: Serie): Promise<void> {
+        const cacheValue: SeriesCacheItem = {
+            expires: Date.now() + (60 * 60 * 1000),
+            ...JSON.parse(JSON.stringify(serie)),
+            addedAt: new Date().toISOString()
+        }
+        await this.putToCache(cacheValue, `${serie.id}`);
+    }
+
     async deleteSerie(id: number): Promise<void> {
         const resp = await serieService.deleteSerie(id);
         const data = await resp.json();

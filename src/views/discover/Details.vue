@@ -113,21 +113,21 @@ const add = async () => {
 }
 
 const getChars = async () => {
-    if (characters.value.length > 0) return;
+    if (characters.value.length) return;
     loading.value = true;
     characters.value = await getCharacters(props.id);
     loading.value = false;
 }
 
 const getSimilars = async () => {
-    if (similars.value.length > 0) return;
+    if (similars.value.length) return;
     loading.value = true;
     similars.value = await getSimilarsSeries(props.id);
     loading.value = false;
 }
 
 const getImages = async () => {
-    if (images.value.length > 0) return;
+    if (images.value.length) return;
     loading.value = true;
     images.value = await getSerieImages(props.id);
     loading.value = false;

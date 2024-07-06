@@ -18,7 +18,7 @@ export function useSerie() {
         if (isError(resp.status))
             throw new Error(data.message);
 
-        await getSerie({ id: serie.id });
+        await cache.userSeries.addSerie(serie);
         showSuccess(`Série "${serie.title}" ajoutée`);
         router.push(`/series/${serie.id}`);
         return true;

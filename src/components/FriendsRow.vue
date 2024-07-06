@@ -6,7 +6,7 @@
                 @click:append-inner="$emit('search', username)" />
         </v-form>
 
-        <v-row v-if="friends.length > 0">
+        <v-row v-if="friends.length">
             <v-col v-for="(friend, index) in friends" cols="6" md="4" lg="3" :key="index">
                 <base-skeleton :loading="loading" type="card">
                     <v-card>

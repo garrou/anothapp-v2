@@ -1,18 +1,22 @@
 <template>
     <base-app-bar />
 
-    <v-container>
-        <v-card v-if="profile" class="mb-2 pa-2">
-            <base-image v-if="profile.picture" :src="profile.picture" max-height="350" />
+    <v-container v-if="profile">
+        <v-card>
+            <v-row>
+                <v-col cols="12" md="6">
+                    <base-image v-if="profile.picture" :src="profile.picture" max-height="350" />
+                </v-col>
+                <v-col cols="12" md="6">
+                    <v-card-title>{{ profile.username }}</v-card-title>
+                    <v-card-subtitle>{{ profile.email }}</v-card-subtitle>
 
-            <v-card-title>{{ profile.username }}</v-card-title>
-            <v-card-subtitle>{{ profile.email }}</v-card-subtitle>
-
-            <v-card-actions>
-                <v-btn icon="mdi-image" @click="showModal('images')" />
-                <v-btn icon="mdi-email" @click="showModal('email')" />
-                <v-btn icon="mdi-account-lock" @click="showModal('password')" />
-            </v-card-actions>
+                    <v-list class="mt-2">
+                        <v-list-item v-for="(item, i) in ProfileLayout" :key="i" :prepend-icon="item.icon"
+                            :title="item.name" @click="showModal(item.value)" />
+                    </v-list>
+                </v-col>
+            </v-row>
         </v-card>
     </v-container>
 
@@ -56,6 +60,7 @@ import { useSerie } from "@/composables/serie";
 import { useSearch } from "@/composables/search";
 import type { ProfileModal } from "@/types/types";
 import { CLOSE_ICON } from "@/constants/icons";
+import { ProfileLayout } from "@/layouts/profile-layout";
 
 const { getProfile } = useUser();
 const { getSeries } = useSerie();

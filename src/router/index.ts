@@ -1,10 +1,10 @@
 import { createRouter, createWebHistory } from "vue-router";
+import { useUser } from "@/composables/user";
 import HomeView from "../views/HomeView.vue";
 import LoginView from "@/views/auth/LoginView.vue";
 import RegisterView from "@/views/auth/RegisterView.vue";
 import Series from "@/views/series/Series.vue";
 import Serie from "@/views/series/Serie.vue";
-import { useUser } from "@/composables/user";
 import Discover from "@/views/discover/Discover.vue";
 import Dashboard from "@/views/stats/Dashboard.vue";
 import Profile from "@/views/profile/Profile.vue";

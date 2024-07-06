@@ -10,14 +10,14 @@ export const NAV_MENU: BottomNavMenuItem[] = [
         link: "/series"
     },
     {
-        title: "Amis",
-        icon: "mdi-account-heart",
-        link: "/friends"
-    },
-    {
         title: "Ajouter",
         icon: ADD_ICON,
         link: "/discover"
+    },
+    {
+        title: "Amis",
+        icon: "mdi-account-heart",
+        link: "/friends"
     },
     {
         title: "Dashboard",

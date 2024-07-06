@@ -8,7 +8,7 @@
             <template #title>
                 <v-form v-if="search" @submit="$emit('search', title)" @submit.prevent>
                     <v-text-field v-model="title" :append-inner-icon="SEARCH_ICON" :append-icon="FILTER_ICON"
-                        class="mb-4" clearable hide-details label="Titre de la série" single-line variant="plain"
+                        class="mb-4" clearable hide-details :label="label" single-line variant="plain"
                         @input="onChange" @click:append-inner="$emit('search', title)"
                         @click:clear="$emit('search', undefined)" @click:append="openKindsFilter" />
                 </v-form>
@@ -67,8 +67,10 @@ import type { Kind } from "@/models/serie";
 import type { User } from "@/models/user";
 
 const props = defineProps({
+    autoSearch: { type: Boolean, default: false },
     discover: { type: Boolean, default: false },
-    search: { type: Boolean, default: false }
+    label: { type: String, default: "Titre de la série" },
+    search: { type: Boolean, default: false },
 });
 
 const emit = defineEmits<{
@@ -89,7 +91,7 @@ const title = ref<string>();
 const user = ref<User>();
 
 const onChange = () => {
-    if ((title.value?.length ?? 0) > 2)
+    if (props.autoSearch && (title.value?.length ?? 0) > 2)
         emit('search', title.value);
 }
 

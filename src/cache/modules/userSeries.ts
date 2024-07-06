@@ -82,7 +82,7 @@ export default class UserSeriesCache extends CacheModule<SeriesCacheItem> {
         const { title, kind } = options;
 
         if (title) {
-            return series.filter((serie) => serie.title.toLowerCase().includes(title.toLowerCase()));
+            return series.filter((serie) => serie.title.toLowerCase().includes(title.trim().toLowerCase()));
         } else if (kind) {
             return series.filter((serie) => serie.kinds.includes(kind));
         }

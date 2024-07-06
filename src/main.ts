@@ -32,7 +32,7 @@ const snackbar = useSnackbar();
 
 app.config.errorHandler = (err: unknown) => snackbar.showError(err as Error);
 
-cache.initialize().catch((err) => snackbar.showError(err));
+cache.initialize().catch(() => snackbar.showError("Erreur durant l'initialisation de l'application"));
 
 Object
   .entries(views)

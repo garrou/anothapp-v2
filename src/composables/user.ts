@@ -18,6 +18,11 @@ export function useUser() {
         if (isError(resp.status))
             throw new Error(data.message);
 
+        const user = await cache.users.getProfile();
+        await cache.users.addUser({
+            ...user,
+            email: newEmail
+        });
         showSuccess("Email modifié");
     }
 

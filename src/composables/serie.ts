@@ -11,17 +11,19 @@ export function useSerie() {
     const { showSuccess } = useSnackbar();
     const router = useRouter();
 
-    const addSerie = async (serie: Serie): Promise<boolean> => {
+    const addSerie = async (serie: Serie): Promise<void> => {
         const resp = await serieService.addSerie(serie);
         const data = await resp.json();
 
         if (isError(resp.status))
             throw new Error(data.message);
 
-        await cache.userSeries.addSerie(serie);
+        await cache.userSeries.addSerie({
+            ...serie,
+            addedAt: new Date().toISOString()
+        });
         showSuccess(`Série "${serie.title}" ajoutée`);
         router.push(`/series/${serie.id}`);
-        return true;
     }
 
     const deleteSerie = async (serie: Serie): Promise<boolean> => {

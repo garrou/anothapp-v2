@@ -22,7 +22,7 @@
 
         <v-navigation-drawer v-model="menus" location="left" temporary>
       
-            <v-list-item v-if="user" :prepend-avatar="user.picture" :subtitle="user.email" :title="user.username"
+            <v-list-item v-if="user" :prepend-avatar="user.picture" :title="user.username"
                     @click="$router.push('/profile')" />
 
             <v-divider />

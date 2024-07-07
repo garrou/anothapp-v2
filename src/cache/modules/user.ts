@@ -18,8 +18,8 @@ export default class UserCache extends CacheModule<UserCacheItem> {
 
     async addUser(user: User): Promise<void> {
         const cacheValue: UserCacheItem = {
+            ...JSON.parse(JSON.stringify(user)),
             expires: Date.now() + (60 * 60 * 1000),
-            ...JSON.parse(JSON.stringify(user))
         }
         await this.putToCache(cacheValue, `${user.id}`);
     }

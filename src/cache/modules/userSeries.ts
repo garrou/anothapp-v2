@@ -19,9 +19,8 @@ export default class UserSeriesCache extends CacheModule<SeriesCacheItem> {
 
     async addSerie(serie: Serie): Promise<void> {
         const cacheValue: SeriesCacheItem = {
-            expires: Date.now() + (60 * 60 * 1000),
             ...JSON.parse(JSON.stringify(serie)),
-            addedAt: new Date().toISOString()
+            expires: Date.now() + (60 * 60 * 1000),
         }
         await this.putToCache(cacheValue, `${serie.id}`);
     }

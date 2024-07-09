@@ -33,13 +33,7 @@ export function useSerie() {
     }
 
     const getFavoriteSeries = async (): Promise<Serie[]> => {
-        const resp = await serieService.getSeriesByStatus("favorite");
-        const data = await resp.json();
-
-        if (isError(resp.status))
-            throw new Error(data.message);
-
-        return data;
+        return cache.userSeries.getFavorites();
     }
 
     const getSerie = async (options: SerieSearchOptions): Promise<Serie> => {
@@ -97,6 +91,10 @@ export function useSerie() {
         if (isError(resp.status))
             throw new Error(data.message);
 
+        await cache.userSeries.addSerie({
+            ...serie,
+            favorite: data.favorite
+        });
         showSuccess(data.favorite
             ? `"${serie.title}" ajoutée aux favoris`
             : `"${serie.title}" supprimée des favoris`);

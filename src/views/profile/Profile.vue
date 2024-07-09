@@ -28,7 +28,7 @@
         <div v-if="selected === 'images'">
             <v-expansion-panels variant="accordion">
                 <v-expansion-panel v-for="serie in series" :key="serie.id"
-                    @group:selected="(open) => getImages(open.value, serie.id)">
+                    @group:selected="(open: any) => getImages(open.value, serie.id)">
                     <v-expansion-panel-title>{{ serie.title }}</v-expansion-panel-title>
                     <v-expansion-panel-text>
                         <images-row :images="images" :loading="loading" @refresh="refresh" />

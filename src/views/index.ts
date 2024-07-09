@@ -1,13 +1,15 @@
-import Calendar from "./series/Calendar.vue";
-import Continue from "./series/Continue.vue";
-import Favorites from "./series/Favorites.vue";
-import History from "./series/History.vue";
-import List from "./series/List.vue";
+import Calendar from "./navigation/Calendar.vue";
+import Continue from "./navigation/Continue.vue";
+import Favorites from "./navigation/Favorites.vue";
+import History from "./navigation/History.vue";
+import List from "./navigation/List.vue";
+import Settings from "./navigation/Settings.vue";
 
 export const views = {
     Calendar,
     Continue,
     Favorites,
     History,
-    List
+    List,
+    Settings
 }

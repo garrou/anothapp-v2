@@ -26,7 +26,6 @@ export const NAV_MENU: BottomNavMenuItem[] = [
     }
 ];
 
-
 export const APP_MENU: AppMenuItem[] = [
     {
         title: "Ma liste",
@@ -52,6 +51,11 @@ export const APP_MENU: AppMenuItem[] = [
         title: "Calendrier",
         icon: "mdi-calendar",
         component: "Calendar"
+    },
+    {
+        title: "Paramètres",
+        icon: "mdi-wrench",
+        component: "Settings"
     },
     { 
         title: "Se déconnecter",

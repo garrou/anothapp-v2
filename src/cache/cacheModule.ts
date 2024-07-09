@@ -28,4 +28,8 @@ export default abstract class CacheModule<V extends CacheRecordValue, K extends 
     protected putToCache(value: V, key?: K): Promise<IDBValidKey> {
         return this.db.put(this.storeName, value, key);
     }
+
+    public clearCache(): Promise<void> {
+        return this.db.clear(this.storeName);
+    }
 }

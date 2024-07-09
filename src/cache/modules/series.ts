@@ -31,7 +31,7 @@ export default class SeriesCache extends CacheModule<SeriesCacheItem> {
         const series: Serie[] = data;
         series.forEach(async (serie) => {
             const cacheValue: SeriesCacheItem = {
-                expires: Date.now() + (60 * 60 * 1000),
+                expires: Date.now() + this.expires,
                 ...serie
             }
             storedSeries.push(cacheValue);
@@ -53,7 +53,7 @@ export default class SeriesCache extends CacheModule<SeriesCacheItem> {
         }
 
         const cacheValue: SeriesCacheItem = {
-            expires: Date.now() + (60 * 60 * 1000),
+            expires: Date.now() + this.expires,
             ...data
         }
         await this.putToCache(cacheValue, `${data.id}`);

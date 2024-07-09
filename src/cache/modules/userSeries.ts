@@ -20,7 +20,7 @@ export default class UserSeriesCache extends CacheModule<SeriesCacheItem> {
     async addSerie(serie: Serie): Promise<void> {
         const cacheValue: SeriesCacheItem = {
             ...JSON.parse(JSON.stringify(serie)),
-            expires: Date.now() + (60 * 60 * 1000),
+            expires: Date.now() + this.expires,
         }
         await this.putToCache(cacheValue, `${serie.id}`);
     }
@@ -49,7 +49,7 @@ export default class UserSeriesCache extends CacheModule<SeriesCacheItem> {
         const series: Serie[] = data;
         series.forEach(async (serie) => {
             const cacheValue: SeriesCacheItem = {
-                expires: Date.now() + (60 * 60 * 1000),
+                expires: Date.now() + this.expires,
                 ...serie
             }
             storedSeries.push(cacheValue);
@@ -70,7 +70,7 @@ export default class UserSeriesCache extends CacheModule<SeriesCacheItem> {
             throw new Error(data.message);
 
         const cacheValue: SeriesCacheItem = {
-            expires: Date.now() + (60 * 60 * 1000),
+            expires: Date.now() + this.expires,
             ...data
         }
         await this.putToCache(cacheValue, `${data.id}`);
@@ -93,7 +93,7 @@ export default class UserSeriesCache extends CacheModule<SeriesCacheItem> {
         return data;
     }
 
-    private filterSeries = (series: SeriesCacheItem[], options: SerieSearchOptions): SeriesCacheItem[] => {
+    private filterSeries(series: SeriesCacheItem[], options: SerieSearchOptions): SeriesCacheItem[] {
         const { title, kind } = options;
 
         if (title) {

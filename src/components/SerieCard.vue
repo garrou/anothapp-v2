@@ -4,8 +4,9 @@
             <base-image cover max-height="580" :src="serie.poster" />
         </router-link>
 
-        <v-card-subtitle class="pt-4">
+        <v-card-subtitle class="pt-4 d-flex justify-space-between">
             <router-link :text="serie.title" :to="link" />
+            <v-badge v-if="serie.missing" color="black" :content="serie.missing" inline />
         </v-card-subtitle>
 
         <v-card-actions>

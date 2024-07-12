@@ -5,6 +5,7 @@ import { isError } from "@/utils/response";
 import { useSnackbar } from "./snackbar";
 import { useRouter } from "vue-router";
 import cache from "@/cache";
+import type { SerieStatus } from "@/types/types";
 
 export function useSerie() {
 
@@ -32,10 +33,6 @@ export function useSerie() {
         return true;
     }
 
-    const getFavoriteSeries = async (): Promise<Serie[]> => {
-        return cache.userSeries.getFavorites();
-    }
-
     const getSerie = async (options: SerieSearchOptions): Promise<Serie> => {
         const { id } = options;
 
@@ -57,25 +54,22 @@ export function useSerie() {
         if (isError(resp.status))
             throw new Error(data.message);
 
-        return data;
+        return {
+            ...data,
+            serie: await cache.userSeries.getSerieById(id)
+        };
     }
 
     const getSeries = async (options: SerieSearchOptions = {}): Promise<Serie[]> => {
         return cache.userSeries.getSeries(options);
     }
 
-    const getSeriesNotStarted = async (): Promise<Serie[]> => {
-        const resp = await serieService.getSeriesByStatus("not-started");
-        const data = await resp.json();
+    const getSeriesByStatus = async (status: SerieStatus): Promise<Serie[]> => {
 
-        if (isError(resp.status))
-            throw new Error(data.message);
-
-        return data;
-    }
-
-    const getSeriesToContinue = async (): Promise<Serie[]> => {
-        const resp = await serieService.getSeriesByStatus("continue");
+        if (status === "favorite") {
+            return cache.userSeries.getFavorites();
+        }
+        const resp = await serieService.getSeriesByStatus(status);
         const data = await resp.json();
 
         if (isError(resp.status))
@@ -101,5 +95,13 @@ export function useSerie() {
         return data.favorite;
     }
 
-    return { addSerie, deleteSerie, getFavoriteSeries, getSerie, getSerieInfos, getSeries, getSeriesNotStarted, getSeriesToContinue, updateFavorite }
+    return { 
+        addSerie, 
+        deleteSerie, 
+        getSerie, 
+        getSerieInfos, 
+        getSeries, 
+        getSeriesByStatus,
+        updateFavorite 
+    }
 }

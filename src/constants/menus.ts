@@ -33,9 +33,14 @@ export const APP_MENU: AppMenuItem[] = [
         component: "List"
     },
     {
-        title: "Continuer",
+        title: "Séries à continuer",
         icon: "mdi-play",
         component: "Continue"
+    },
+    {
+        title: "Séries arrêtées",
+        icon: "mdi-close-circle",
+        component: "Resume"
     },
     {
         title: "Historique",

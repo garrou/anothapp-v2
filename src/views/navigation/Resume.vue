@@ -4,17 +4,14 @@
             <v-table>
                 <tbody>
                     <tr v-for="serie in series" :key="serie.id">
-                        <template v-if="serie.missing">
-                            <td>
-                                <router-link :text="serie.title" :to="`/series/${serie.id}`" />
-                            </td>
-                            <td>{{ buildPlural("saison", serie.missing) }}</td>
-                        </template>
+                        <td>
+                            <router-link :text="serie.title" :to="`/series/${serie.id}`" />
+                        </td>
                     </tr>
                 </tbody>
             </v-table>
         </base-skeleton>
-        <div v-else class="text-center">Aucune série à continuer</div>
+        <div v-else class="text-center">Aucune série à reprendre</div>
     </v-container>
 </template>
 
@@ -22,7 +19,6 @@
 import BaseSkeleton from "@/components/BaseSkeleton.vue";
 import { useSerie } from "@/composables/serie";
 import type { Serie } from "@/models/serie";
-import { buildPlural } from "@/utils/format";
 import { onBeforeMount } from "vue";
 import { ref } from "vue";
 
@@ -33,7 +29,7 @@ const series = ref<Serie[]>([]);
 
 onBeforeMount(async () => {
     loading.value = true;
-    series.value = await getSeriesByStatus("continue");
+    series.value = await getSeriesByStatus("resume");
     loading.value = false;
 });
 </script>

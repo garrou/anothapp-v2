@@ -150,7 +150,7 @@ const removeSerie = async (): Promise<void> => {
         showError("Impossible de supprimer la série");
         return
     }
-    confirm.value = !await deleteSerie(infos.value?.serie);
+    confirm.value = !await deleteSerie(infos.value.serie);
     router.replace("/series");
 }
 

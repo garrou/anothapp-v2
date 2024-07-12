@@ -3,6 +3,7 @@ import { ENDPOINT } from "../constants/services";
 import storageService from "./storageService";
 import type { Season } from "@/models/season";
 import type { Serie } from "@/models/serie";
+import type { SerieStatus } from "@/types/types";
 
 const PREFIX = "shows";
 
@@ -82,7 +83,7 @@ const getSeries = async (title?: string, kind?: string): Promise<Response> => {
     });
 }
 
-const getSeriesByStatus = async (status: string): Promise<Response> => {
+const getSeriesByStatus = async (status: SerieStatus): Promise<Response> => {
     const url = buildUrl(`${ENDPOINT}/${PREFIX}`, "status", status, "?");
     return fetch(url, {
         headers: {

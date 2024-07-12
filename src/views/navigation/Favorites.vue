@@ -13,7 +13,7 @@ import type { Serie } from "@/models/serie";
 import { onBeforeUnmount } from "vue";
 import { ref, onBeforeMount } from "vue";
 
-const { getFavoriteSeries } = useSerie();
+const { getSeriesByStatus } = useSerie();
 const favorite = useFavorite();
 
 const deleted = ref(0);
@@ -22,7 +22,7 @@ const loading = ref(false);
 
 const getFavorites = async () => {
     loading.value = true;
-    favorites.value = await getFavoriteSeries();
+    favorites.value = await getSeriesByStatus("favorite");
     loading.value = false;
 }
 

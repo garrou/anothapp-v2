@@ -11,14 +11,14 @@ import { useSerie } from "@/composables/serie";
 import type { Serie } from "@/models/serie";
 import { ref, onBeforeMount } from "vue";
 
-const { getSeriesNotStarted } = useSerie();
+const { getSeriesByStatus } = useSerie();
 
 const series = ref<Serie[]>([]);
 const loading = ref(false);
 
 const getFavorites = async () => {
     loading.value = true;
-    series.value = await getSeriesNotStarted();
+    series.value = await getSeriesByStatus("not-started");
     loading.value = false;
 }
 

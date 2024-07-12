@@ -1,7 +1,7 @@
 import { ENDPOINT } from "@/constants/services";
 import storageService from "./storageService";
 import { buildUrl } from "@/utils/format";
-import type { ChartGroupedPeriod, ChartGroupedType, ChartTimeType } from "@/models/stat";
+import type { ChartGroupedPeriod, ChartGroupedType, ChartTimeType } from "@/types/types";
 
 const PREFIX = "stats";
 

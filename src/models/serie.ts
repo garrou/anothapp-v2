@@ -11,7 +11,7 @@ export interface Serie extends BaseSerie {
 
     poster: string;
 
-    favorite: boolean;
+    favorite?: boolean;
         
     kinds: string[];
 
@@ -39,7 +39,7 @@ export interface Serie extends BaseSerie {
 
     addedAt?: string;
 
-    continue?: boolean;
+    watch?: boolean;
 }
 
 export interface Platform {

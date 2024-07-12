@@ -2,18 +2,24 @@
     <v-container v-if="infos && seasons">
         <base-toolbar icon="mdi-chevron-left" :title="infos.serie.title">
             <template #firstBtn>
-                <v-btn elevation="0" @click="changeFavorite">
-                    <v-icon :color="favoriteColor" :icon="FAVORITE_ICON" />
-                </v-btn>
-            </template>
-
-            <template #secondBtn>
                 <v-btn elevation="0" @click="$router.push(`/discover/${id}`)">
                     <v-icon :icon="DETAILS_ICON" />
                 </v-btn>
             </template>
 
+            <template #secondBtn>
+                <v-btn elevation="0" @click="changeFavorite">
+                    <v-icon :color="favoriteColor" :icon="FAVORITE_ICON" />
+                </v-btn>
+            </template>
+
             <template #thirdBtn>
+                <v-btn elevation="0" @click="changeContinue">
+                    <v-icon :color="watchColor" :icon="watchIcon" />
+                </v-btn>
+            </template>
+
+            <template #fourthBtn>
                 <v-btn elevation="0" @click="confirm = true">
                     <v-icon :icon="DELETE_ICON" />
                 </v-btn>
@@ -89,13 +95,14 @@ const props = defineProps({
 });
 
 const { addSeason } = useSeason();
-const { deleteSerie, getSerieInfos, updateFavorite } = useSerie();
+const { deleteSerie, getSerieInfos, updateField } = useSerie();
 const { getSeasonsBySerieId } = useSearch();
-const { showError } = useSnackbar();
+const { showError, showSuccess } = useSnackbar();
 
 const confirm = ref(false);
 const infos = ref<SerieInfo>();
 const isFavorite = ref(false);
+const isWatching = ref(false);
 const loading = ref(false);
 const modal = ref(false);
 const order = ref(false);
@@ -105,6 +112,8 @@ const tab = ref(1);
 
 const displayOrder = computed(() => [1, 2].includes(tab.value));
 const favoriteColor = computed(() => isFavorite.value ? "red" : "surface-variant");
+const watchColor = computed(() => isWatching.value ? "red" : "green");
+const watchIcon = computed(() => isWatching.value ? "mdi-close-circle" : "mdi-play");
 const orderIcon = computed(() => order.value ? "mdi-sort-numeric-descending" : "mdi-sort-numeric-ascending");
 const time = computed(() => minsToStringHoursDays(infos.value?.time));
 
@@ -117,7 +126,8 @@ const load = async (): Promise<void> => {
     loading.value = true;
     infos.value = await getSerieInfos({ id: props.id });
     seasons.value = await getSeasonsBySerieId(props.id);
-    isFavorite.value = infos.value?.serie.favorite;
+    isFavorite.value = infos.value?.serie.favorite ?? false;
+    isWatching.value = infos.value?.serie.watch ?? false;
     loading.value = false;
 }
 
@@ -141,8 +151,23 @@ const changeFavorite = async (): Promise<void> => {
         showError("Impossible d'ajouter en favoris");
         return
     }
-    await updateFavorite(infos.value?.serie);
+    await updateField(infos.value.serie, "favorite");
     isFavorite.value = !isFavorite.value;
+    showSuccess(isFavorite.value
+            ? `"${infos.value.serie.title}" ajoutée aux favoris`
+            : `"${infos.value.serie.title}" supprimée des favoris`);
+}
+
+const changeContinue = async (): Promise<void> => {
+    if (!infos.value?.serie) {
+        showError("Impossible de modifier le status");
+        return
+    }
+    await updateField(infos.value?.serie, "watch");
+    isWatching.value = !isWatching.value;
+    showSuccess(isWatching.value
+            ? `Visionnage en cours pour "${infos.value.serie.title}"`
+            : `Visionnage arrêté pour "${infos.value.serie.title}"`);
 }
 
 const removeSerie = async (): Promise<void> => {

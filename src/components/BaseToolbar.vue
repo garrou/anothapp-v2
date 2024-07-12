@@ -21,6 +21,9 @@
               <v-list-item v-if="slots.thirdBtn">
                 <slot name="thirdBtn" />
               </v-list-item>
+              <v-list-item v-if="slots.fourthBtn">
+                <slot name="fourthBtn" />
+              </v-list-item>
             </v-list>
         </v-menu>
     </v-toolbar>

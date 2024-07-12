@@ -92,10 +92,10 @@ const getSeriesByStatus = async (status: SerieStatus): Promise<Response> => {
     });
 }
 
-const updateFavoriteBySerieId = async (id: number): Promise<Response> => {
+const updateFieldBySerieId = async (id: number, field: string): Promise<Response> => {
     return fetch(`${ENDPOINT}/${PREFIX}/${id}`, {
         body: JSON.stringify({
-            "favorite": "update"
+            [field]: "update"
         }),
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`,
@@ -114,5 +114,5 @@ export default {
     getSerie,
     getSeries,
     getSeriesByStatus,
-    updateFavoriteBySerieId
+    updateFieldBySerieId
 }

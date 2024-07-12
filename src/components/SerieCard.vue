@@ -12,7 +12,7 @@
             <v-btn v-if="serie.addedAt" :color="favoriteColor" :icon="FAVORITE_ICON" variant="text"
                 @click="changeFavorite" />
             <div v-else>
-                <v-btn :icon="ADD_ICON" variant="text" @click="add" />
+                <v-btn :icon="ADD_ICON" variant="text" @click="addSerie(serie)" />
             </div>
             <v-btn v-if="serie.description" :icon="DETAILS_ICON" variant="text" @click="modal = true" />
         </v-card-actions>
@@ -32,6 +32,7 @@ import BaseImage from "./BaseImage.vue";
 import BaseModal from "./BaseModal.vue";
 import SerieDetail from "./SerieDetail.vue";
 import { useSerie } from "@/composables/serie";
+import { useSnackbar } from "@/composables/snackbar";
 import { ADD_ICON, CLOSE_ICON, DETAILS_ICON, FAVORITE_ICON } from "@/constants/icons";
 import type { Serie } from "@/models/serie";
 import { computed, ref, type PropType } from "vue";
@@ -46,19 +47,19 @@ const emit = defineEmits<{
 
 const link = props.serie.addedAt ? `/series/${props.serie.id}` : `/discover/${props.serie.id}`;
 
-const { addSerie, updateFavorite } = useSerie();
+const { addSerie, updateField } = useSerie();
+const { showSuccess } = useSnackbar();
 
 const isFavorite = ref(props.serie.favorite);
 const modal = ref(false);
 
 const favoriteColor = computed(() => isFavorite.value ? "red" : "surface-variant");
 
-const add = async () => {
-    await addSerie(props.serie);
-}
-
 const changeFavorite = async (): Promise<void> => {
-    isFavorite.value = await updateFavorite(props.serie);
+    isFavorite.value = await updateField(props.serie, "favorite");
+    showSuccess(isFavorite.value
+            ? `"${props.serie.title}" ajoutée aux favoris`
+            : `"${props.serie.title}" supprimée des favoris`);
     emit("refreshFavs");
 }
 </script>

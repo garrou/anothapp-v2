@@ -78,8 +78,8 @@ export function useSerie() {
         return data;
     }
 
-    const updateFavorite = async (serie: Serie): Promise<boolean> => {
-        const resp = await serieService.updateFavoriteBySerieId(serie.id);
+    const updateField = async (serie: Serie, field: string): Promise<boolean> => {
+        const resp = await serieService.updateFieldBySerieId(serie.id, field);
         const data = await resp.json();
 
         if (isError(resp.status))
@@ -87,12 +87,9 @@ export function useSerie() {
 
         await cache.userSeries.addSerie({
             ...serie,
-            favorite: data.favorite
+            [field]: data[field]
         });
-        showSuccess(data.favorite
-            ? `"${serie.title}" ajoutée aux favoris`
-            : `"${serie.title}" supprimée des favoris`);
-        return data.favorite;
+        return data[field];
     }
 
     return { 
@@ -102,6 +99,6 @@ export function useSerie() {
         getSerieInfos, 
         getSeries, 
         getSeriesByStatus,
-        updateFavorite 
+        updateField 
     }
 }

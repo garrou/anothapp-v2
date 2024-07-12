@@ -17,6 +17,10 @@ export const SerieDetailsLayout = (serie: Serie): Layout[] => [
         display: !!serie.creation
     },
     {
+        name: "Pays",
+        value: serie.country,
+    },
+    {
         name: "Note",
         value: serie.note ? `${serie.note.toFixed(2)} / 5` : "",
         display: !!serie.note

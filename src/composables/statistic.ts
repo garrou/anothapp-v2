@@ -94,6 +94,16 @@ export function useStatistic() {
         return data;
     }
 
+    const getSeriesCountries = async (userId?: string): Promise<Stat[]> => {
+        const resp = await statService.getGroupedCountByTypeByPeriod("countries", null, userId);
+        const data = await resp.json();
+
+        if (isError(resp.status))
+            throw new Error(data.message);
+
+        return data;
+    }
+
     const getBestMonths = async (userId?: string): Promise<Stat[]> => {
         const resp = await statService.getGroupedCountByTypeByPeriod("best-months", null, userId);
         const data = await resp.json();
@@ -111,6 +121,7 @@ export function useStatistic() {
         getSeasonsMonths,
         getSeasonsMonthCurrYear, 
         getSeasonsYears, 
+        getSeriesCountries,
         getSeriesKinds,
         getSeriesRanking,
         getStats, 

@@ -20,7 +20,7 @@ export interface Stat {
     value: number;
 }
 
-export type ChartGroupedType = "seasons" | "episodes" | "kinds" | "best-months";
+export type ChartGroupedType = "seasons" | "episodes" | "kinds" | "best-months" | "countries";
 
 export type ChartGroupedPeriod = "years" | "year" | "months";
 

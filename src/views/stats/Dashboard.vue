@@ -46,6 +46,9 @@
                 <v-col cols="12" md="6">
                     <series-kinds :user-id="userId" />
                 </v-col>
+                <v-col cols="12" md="6">
+                    <series-countries :user-id="userId" />
+                </v-col>
             </template>
         </v-row>
     </v-container>
@@ -58,6 +61,7 @@ import EpisodesMonthCurrentYear from "./EpisodesMonthCurrentYear.vue";
 import SeasonsMonths from "./SeasonsMonths.vue";
 import SeasonsMonthCurrentYear from "./SeasonsMonthCurrentYear.vue";
 import SeasonsYears from "./SeasonsYears.vue";
+import SeriesCountries from "./SeriesCountries.vue";
 import SeriesKinds from "./SeriesKinds.vue";
 import SeriesRankingTime from "./SeriesRankingTime.vue";
 import TimeYears from "./TimeYears.vue";

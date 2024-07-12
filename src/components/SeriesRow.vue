@@ -1,10 +1,10 @@
 <template>
-    <v-container>
+    <v-container class="pt-0">
         <span v-if="total">{{ buildPlural("série", series.length) }}</span>
         <v-row v-if="series.length || loading" class="mt-1">
             <v-col v-for="serie in series" cols="6" md="4" lg="3" :key="serie.id">
                 <base-skeleton :loading="loading" type="card">
-                    <serie-card :serie="serie" @refresh-favs="$emit('refreshFavs')" />
+                    <serie-card :serie="serie" :watch-status="watchStatus" @refresh="$emit('refresh')" />
                 </base-skeleton>
             </v-col>
         </v-row>
@@ -22,10 +22,11 @@ import type { PropType } from "vue";
 defineProps({
     loading: { type: Boolean, required: true },
     series: { type: Array as PropType<Serie[]>, required: true },
-    total: { type: Boolean, default: false }
+    total: { type: Boolean, default: false },
+    watchStatus: { type: Boolean, default: false }
 });
 
 const emit = defineEmits<{
-    refreshFavs: []
+    refresh: []
 }>();
 </script>

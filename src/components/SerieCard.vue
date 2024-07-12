@@ -9,11 +9,14 @@
         </v-card-subtitle>
 
         <v-card-actions>
-            <v-btn v-if="serie.addedAt" :color="favoriteColor" :icon="FAVORITE_ICON" variant="text"
-                @click="changeFavorite" />
-            <div v-else>
+            <template v-if="serie.addedAt">
+                <v-btn :color="favoriteColor" :icon="FAVORITE_ICON" variant="text"
+                    @click="changeFavorite" />
+                <v-btn v-if="watchStatus" :color="watchColor" :icon="watchIcon" variant="text" @click="changeWatch" />
+            </template>
+            <template v-else>
                 <v-btn :icon="ADD_ICON" variant="text" @click="addSerie(serie)" />
-            </div>
+            </template>
             <v-btn v-if="serie.description" :icon="DETAILS_ICON" variant="text" @click="modal = true" />
         </v-card-actions>
     </v-card>
@@ -38,11 +41,12 @@ import type { Serie } from "@/models/serie";
 import { computed, ref, type PropType } from "vue";
 
 const props = defineProps({
-    serie: { type: Object as PropType<Serie>, required: true }
+    serie: { type: Object as PropType<Serie>, required: true },
+    watchStatus: { type: Boolean, default: false }
 });
 
 const emit = defineEmits<{
-    refreshFavs: []
+    refresh: []
 }>();
 
 const link = props.serie.addedAt ? `/series/${props.serie.id}` : `/discover/${props.serie.id}`;
@@ -50,7 +54,10 @@ const link = props.serie.addedAt ? `/series/${props.serie.id}` : `/discover/${pr
 const { addSerie, updateField } = useSerie();
 const { showSuccess } = useSnackbar();
 
-const isFavorite = ref(props.serie.favorite);
+const isFavorite = ref(props.serie.favorite ?? false);
+const isWatching = ref(props.serie.watch ?? false);
+const watchColor = computed(() => isWatching.value ? "red" : "green");
+const watchIcon = computed(() => isWatching.value ? "mdi-close-circle" : "mdi-play");
 const modal = ref(false);
 
 const favoriteColor = computed(() => isFavorite.value ? "red" : "surface-variant");
@@ -60,6 +67,14 @@ const changeFavorite = async (): Promise<void> => {
     showSuccess(isFavorite.value
             ? `"${props.serie.title}" ajoutée aux favoris`
             : `"${props.serie.title}" supprimée des favoris`);
-    emit("refreshFavs");
+    emit("refresh");
+}
+
+const changeWatch = async (): Promise<void> => {
+    isWatching.value = await updateField(props.serie, "watch");
+    showSuccess(isWatching.value
+            ? `Visionnage en cours pour "${props.serie.title}"`
+            : `Visionnage arrêté pour "${props.serie.title}"`);
+    emit("refresh");
 }
 </script>

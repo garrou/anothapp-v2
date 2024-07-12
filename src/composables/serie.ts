@@ -87,9 +87,9 @@ export function useSerie() {
 
         await cache.userSeries.addSerie({
             ...serie,
-            [field]: data[field]
+            [field]: data.value
         });
-        return data[field];
+        return data.value;
     }
 
     return { 

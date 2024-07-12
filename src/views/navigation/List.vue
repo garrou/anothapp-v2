@@ -1,7 +1,6 @@
 <template>
     <v-container>
-        <series-row v-if="series.length" :loading="loading" :series="series" />
-        <div v-else class="text-center">Aucun série à commencer</div>
+        <series-row :loading="loading" :series="series" />
     </v-container>
 </template>
 

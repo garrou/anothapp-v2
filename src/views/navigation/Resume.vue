@@ -1,5 +1,5 @@
 <template>
-    <series-row :loading="loading" :series="series" watch-status @refresh="getToResume" />
+    <series-row :loading="loading" :series="series" small watch-status @refresh="getToResume" />
 </template>
 
 <script lang="ts" setup>

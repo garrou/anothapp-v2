@@ -6,13 +6,11 @@
 
         <v-card-subtitle class="pt-4 d-flex justify-space-between">
             <router-link :text="serie.title" :to="link" />
-            <v-badge v-if="serie.missing" color="black" :content="serie.missing" inline />
         </v-card-subtitle>
 
         <v-card-actions>
             <template v-if="serie.addedAt">
-                <v-btn :color="favoriteColor" :icon="FAVORITE_ICON" variant="text"
-                    @click="changeFavorite" />
+                <v-btn :color="favoriteColor" :icon="FAVORITE_ICON" variant="text" @click="changeFavorite" />
                 <v-btn v-if="watchStatus" :color="watchColor" :icon="watchIcon" variant="text" @click="changeWatch" />
             </template>
             <template v-else>
@@ -66,16 +64,16 @@ const favoriteColor = computed(() => isFavorite.value ? "red" : "surface-variant
 const changeFavorite = async (): Promise<void> => {
     isFavorite.value = await updateField(props.serie, "favorite");
     showSuccess(isFavorite.value
-            ? `"${props.serie.title}" ajoutée aux favoris`
-            : `"${props.serie.title}" supprimée des favoris`);
+        ? `"${props.serie.title}" ajoutée aux favoris`
+        : `"${props.serie.title}" supprimée des favoris`);
     emit("refresh");
 }
 
 const changeWatch = async (): Promise<void> => {
     isWatching.value = await updateField(props.serie, "watch");
     showSuccess(isWatching.value
-            ? `Visionnage en cours pour "${props.serie.title}"`
-            : `Visionnage arrêté pour "${props.serie.title}"`);
+        ? `Visionnage en cours pour "${props.serie.title}"`
+        : `Visionnage arrêté pour "${props.serie.title}"`);
     emit("refresh");
 }
 </script>

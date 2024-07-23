@@ -4,7 +4,7 @@
     <v-container>
         <v-tabs v-model="tab" align-tabs="title">
             <v-tab :value="1">Amis</v-tab>
-            <v-tab :value="2">Chercher</v-tab>
+            <v-tab :value="2">Ajouter</v-tab>
             <v-tab :value="3">Reçues</v-tab>
             <v-tab :value="4">Envoyées</v-tab>
         </v-tabs>

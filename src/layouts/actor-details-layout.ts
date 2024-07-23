@@ -19,6 +19,7 @@ export const ActorDetailsLayout = (actor: Actor): Layout[] => [
     {
         name: "Nationalité",
         value: actor.nationality,
+        display: !!actor.nationality
     },
     {
         name: "Description",

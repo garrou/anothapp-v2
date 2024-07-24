@@ -7,4 +7,6 @@ export interface FriendResponse {
     receive: User[];
 
     friend: User[];
+
+    viewed: User[];
 }

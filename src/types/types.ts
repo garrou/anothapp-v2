@@ -1,4 +1,4 @@
-export type FriendStatus = "friend" | "send" | "receive";
+export type FriendStatus = "friend" | "send" | "receive" | "viewed";
 
 export type ProfileModal = "images" | "email" | "password";
 

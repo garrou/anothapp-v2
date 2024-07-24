@@ -29,8 +29,8 @@ export function useFriend() {
         showSuccess(`Demande d"ami envoyé à ${user.username}`);
     }
 
-    const getFriends = async (status?: FriendStatus): Promise<FriendResponse> => {
-        const resp = await friendService.getFriends(status);
+    const getFriends = async (status?: FriendStatus, serieId?: number): Promise<FriendResponse> => {
+        const resp = await friendService.getFriends(status, serieId);
         const data = await resp.json();
         
         if (isError(resp.status))

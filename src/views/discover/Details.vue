@@ -9,6 +9,7 @@
         <v-card class="mb-2">
             <v-tabs v-model="tab" align-tabs="title">
                 <v-tab :value="1">Informations</v-tab>
+                <v-tab :value="5">Vue par</v-tab>
                 <v-tab :value="2">Acteurs</v-tab>
                 <v-tab :value="3">Séries similaires</v-tab>
                 <v-tab :value="4">Images</v-tab>
@@ -56,6 +57,10 @@
             <v-window-item :value="4" @group:selected="getImages">
                 <images-row :images="images" :loading="loading" />
             </v-window-item>
+
+            <v-window-item :value="5" @group:selected="getFriendsWhoWatch">
+                <friends-row consult :friends="friends" :loading="loading" />
+            </v-window-item>
         </v-window>
     </v-container>
 
@@ -76,27 +81,32 @@ import BaseImage from "@/components/BaseImage.vue";
 import BaseModal from "@/components/BaseModal.vue";
 import BaseSkeleton from "@/components/BaseSkeleton.vue";
 import BaseToolbar from "@/components/BaseToolbar.vue";
+import FriendsRow from "@/components/FriendsRow.vue";
 import ImagesRow from "@/components/ImagesRow.vue";
 import SerieDetail from "@/components/SerieDetail.vue";
 import SeriesRow from "@/components/SeriesRow.vue";
+import { useFriend } from "@/composables/friend";
 import { useSearch } from "@/composables/search";
 import { useSerie } from "@/composables/serie";
 import { useSnackbar } from "@/composables/snackbar";
 import { ADD_ICON, CLOSE_ICON, DETAILS_ICON } from "@/constants/icons";
 import type { Actor, Character } from "@/models/person";
 import type { Serie, Similar } from "@/models/serie";
+import type { User } from "@/models/user";
 import { onBeforeMount, ref } from "vue";
 
 const props = defineProps({
     id: { type: Number, required: true }
 })
 
+const { getFriends } = useFriend();
 const { getActor, getCharacters, getSerie, getSerieImages, getSimilarsSeries } = useSearch();
 const { addSerie } = useSerie();
 const { showError } = useSnackbar();
 
 const actor = ref<Actor>();
 const characters = ref<Character[]>([]);
+const friends = ref<User[]>([]);
 const images = ref<string[]>([]);
 const loading = ref(false);
 const modal = ref(false);
@@ -130,6 +140,13 @@ const getImages = async () => {
     if (images.value.length) return;
     loading.value = true;
     images.value = await getSerieImages(props.id);
+    loading.value = false;
+}
+
+const getFriendsWhoWatch = async (): Promise<void> => {
+    if (friends.value.length) return;
+    loading.value = true;
+    friends.value = (await getFriends("viewed", props.id)).viewed;
     loading.value = false;
 }
 

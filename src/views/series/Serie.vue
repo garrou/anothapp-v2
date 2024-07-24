@@ -45,6 +45,7 @@
             <v-tabs v-model="tab" align-tabs="title">
                 <v-tab :value="1">Mes saisons</v-tab>
                 <v-tab :value="2">Ajouter</v-tab>
+                <v-tab :value="3">Vue par</v-tab>
             </v-tabs>
         </v-card>
 
@@ -56,6 +57,9 @@
             </v-window-item>
             <v-window-item :value="2">
                 <seasons-row addable :loading="loading" :seasons="seasons" @add-season="newSeason" />
+            </v-window-item>
+            <v-window-item :value="3" @group:selected="getFriendsWhoWatch">
+                <friends-row consult :friends="friends" />
             </v-window-item>
         </v-window>
     </v-container>
@@ -79,6 +83,7 @@ import BaseImage from "@/components/BaseImage.vue";
 import BaseToolbar from "@/components/BaseToolbar.vue";
 import SeasonDetails from "@/components/SeasonDetails.vue";
 import SeasonsRow from "@/components/SeasonsRow.vue";
+import FriendsRow from "@/components/FriendsRow.vue";
 import type { SerieInfo } from "@/models/serie";
 import { computed, onBeforeMount, ref } from "vue";
 import { useSeason } from "@/composables/season";
@@ -89,17 +94,21 @@ import router from "@/router";
 import { buildPlural, minsToStringHoursDays } from "@/utils/format";
 import { CLOSE_ICON, DELETE_ICON, DETAILS_ICON, FAVORITE_ICON } from "@/constants/icons";
 import { useSnackbar } from "@/composables/snackbar";
+import type { User } from "@/models/user";
+import { useFriend } from "@/composables/friend";
 
 const props = defineProps({
     id: { type: Number, required: true }
 });
 
+const { getFriends } = useFriend();
 const { addSeason } = useSeason();
 const { deleteSerie, getSerieInfos, updateField } = useSerie();
 const { getSeasonsBySerieId } = useSearch();
 const { showError, showSuccess } = useSnackbar();
 
 const confirm = ref(false);
+const friends = ref<User[]>([]);
 const infos = ref<SerieInfo>();
 const isFavorite = ref(false);
 const isWatching = ref(false);
@@ -182,6 +191,13 @@ const removeSerie = async (): Promise<void> => {
 const showSeason = (season: Season): void => {
     selected.value = season;
     modal.value = true;
+}
+
+const getFriendsWhoWatch = async (): Promise<void> => {
+    if (friends.value.length) return;
+    loading.value = true;
+    friends.value = (await getFriends("viewed", props.id)).viewed;
+    loading.value = false;
 }
 
 onBeforeMount(async () => {

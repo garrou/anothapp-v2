@@ -64,12 +64,12 @@ export function useSerie() {
         return cache.userSeries.getSeries(options);
     }
 
-    const getSeriesByStatus = async (status: SerieStatus): Promise<Serie[]> => {
+    const getSeriesByStatus = async (status: SerieStatus, friendId?: string): Promise<Serie[]> => {
 
         if (status === "favorite") {
             return cache.userSeries.getFavorites();
         }
-        const resp = await serieService.getSeriesByStatus(status);
+        const resp = await serieService.getSeriesByStatus(status, friendId);
         const data = await resp.json();
 
         if (isError(resp.status))

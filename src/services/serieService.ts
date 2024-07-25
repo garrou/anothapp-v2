@@ -83,8 +83,8 @@ const getSeries = async (title?: string, kind?: string): Promise<Response> => {
     });
 }
 
-const getSeriesByStatus = async (status: SerieStatus): Promise<Response> => {
-    const url = buildUrl(`${ENDPOINT}/${PREFIX}`, "status", status, "?");
+const getSeriesByStatus = async (status: SerieStatus, friendId?: string): Promise<Response> => {
+    const url = buildUrl(buildUrl(`${ENDPOINT}/${PREFIX}`, "status", status, "?"), "friendId", friendId);
     return fetch(url, {
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`

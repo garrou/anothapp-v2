@@ -2,7 +2,7 @@ export type FriendStatus = "friend" | "send" | "receive" | "viewed";
 
 export type ProfileModal = "images" | "email" | "password";
 
-export type SerieStatus = "continue" | "resume" | "favorite" | "not-started";
+export type SerieStatus = "continue" | "resume" | "favorite" | "not-started" | "shared";
 
 export type ChartGroupedType = "seasons" | "episodes" | "kinds" | "best-months" | "countries";
 

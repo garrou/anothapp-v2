@@ -20,6 +20,7 @@ const clearCaches = async (): Promise<void> => {
     await cache.userSeries.clearCache();
     await cache.series.clearCache();
     await cache.users.clearCache();
+    await cache.platforms.clearCache();
 
     showSuccess("Cache supprimé avec succès");
 }

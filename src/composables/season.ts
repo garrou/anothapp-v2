@@ -1,4 +1,4 @@
-import type { Season, SeasonInfo, SeasonTimeline } from "@/models/season";
+import type { Season, SeasonDetail, SeasonTimeline } from "@/models/season";
 import type { Serie } from "@/models/serie";
 import serieService from "@/services/serieService";
 import type { SeasonSearchOptions } from "@/models/search";
@@ -45,7 +45,7 @@ export function useSeason() {
         return data;
     }
 
-    const getSeasonInfosBySerieIdByNumber = async (id: number, num: number): Promise<SeasonInfo> => {
+    const getSeasonInfosBySerieIdByNumber = async (id: number, num: number): Promise<SeasonDetail[]> => {
         const resp = await serieService.getSeasonInfosBySerieIdByNumber(id, num);
         const data = await resp.json();
 
@@ -65,5 +65,22 @@ export function useSeason() {
         showSuccess(`"${serie.title}" saison ${season.number} ajoutée`);
     }
 
-    return { addSeason, deleteSeason, getSeasonsBySerieId, getSeasonsTimeline, getSeasonInfosBySerieIdByNumber }
+    const updateSeason = async (id: number, platformId: number): Promise<void> => {
+        const resp = await seasonService.updateSeason(id, platformId);
+        const data = await resp.json();
+
+        if (isError(resp.status))
+            throw new Error(data.message);
+
+        showSuccess("Saison modifiée");
+    }
+
+    return { 
+        addSeason, 
+        deleteSeason, 
+        getSeasonsBySerieId, 
+        getSeasonsTimeline, 
+        getSeasonInfosBySerieIdByNumber,
+        updateSeason
+    }
 }

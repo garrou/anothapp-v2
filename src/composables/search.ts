@@ -1,6 +1,6 @@
 import type { Actor, Character } from "@/models/person";
 import type { Season } from "@/models/season";
-import type { Kind, Serie, Similar } from "@/models/serie";
+import type { Kind, Platform, Serie, Similar } from "@/models/serie";
 import searchService from "@/services/searchService";
 import type { SerieSearchOptions } from "@/models/search";
 import { isError } from "@/utils/response";
@@ -36,6 +36,10 @@ export function useSearch() {
             throw new Error(data.message);
 
         return data;
+    }
+
+    const getPlatforms = async (): Promise<Platform[]> => {
+        return await cache.platforms.getPlatforms();
     }
 
     const getSerie = async (id: number): Promise<Serie> => {
@@ -101,6 +105,7 @@ export function useSearch() {
         getCharacters, 
         getImages,
         getKinds,
+        getPlatforms,
         getSeasonsBySerieId, 
         getSerie, 
         getSerieImages, 

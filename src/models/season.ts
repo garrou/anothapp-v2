@@ -1,8 +1,12 @@
-interface SeasonDetail {
+import type { Platform } from "./serie";
+
+export interface SeasonDetail {
 
     addedAt: string;
 
     id: number;
+
+    platform: Platform;
 }
 
 export interface Season {
@@ -14,13 +18,6 @@ export interface Season {
     number: number;
 
     interval: string;
-}
-
-export interface SeasonInfo {
-
-    seasons: SeasonDetail[];
-
-    time: number;
 }
 
 export interface SeasonTimeline {

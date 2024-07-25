@@ -104,7 +104,7 @@ const props = defineProps({
 const { getFriends } = useFriend();
 const { addSeason } = useSeason();
 const { deleteSerie, getSerieInfos, updateField } = useSerie();
-const { getSeasonsBySerieId } = useSearch();
+const { getSeasonsBySerieId, getPlatforms } = useSearch();
 const { showError, showSuccess } = useSnackbar();
 
 const confirm = ref(false);
@@ -202,5 +202,6 @@ const getFriendsWhoWatch = async (): Promise<void> => {
 
 onBeforeMount(async () => {
     await load();
+    await getPlatforms();
 });
 </script>

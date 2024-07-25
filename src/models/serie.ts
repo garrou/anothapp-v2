@@ -44,6 +44,8 @@ export interface Serie extends BaseSerie {
 
 export interface Platform {
 
+    id: number;
+
     name: string;
 
     logo?: string;

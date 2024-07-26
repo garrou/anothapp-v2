@@ -6,7 +6,7 @@
                 <v-card :subtitle="season.platform.name">
                     <template #prepend>
                         <v-avatar v-if="season.platform.logo" :image="season.platform.logo" />
-                        <v-avatar v-else color="grey">
+                        <v-avatar v-else-if="season.platform.name" color="grey">
                             <v-icon color="white" :icon="PLATFORM_ICON" />
                         </v-avatar>
                     </template>

@@ -3,7 +3,13 @@
         <div class="font-weight-bold ms-1 mb-2">{{ minsToStringHoursDays(time) }}</div>
         <v-timeline align="start" :density="DENSITY">
             <v-timeline-item v-for="season in seasons" size="x-small" :key="season.id">
-                <v-card :prepend-avatar="season.platform.logo" :subtitle="season.platform.name">
+                <v-card :subtitle="season.platform.name">
+                    <template #prepend>
+                        <v-avatar v-if="season.platform.logo" :image="season.platform.logo" />
+                        <v-avatar v-else color="grey">
+                            <v-icon color="white">mdi-movie-open-play</v-icon>
+                        </v-avatar>
+                    </template>
                     <template #title>
                         <span class="text-subtitle-1">{{ formatDate(season.addedAt) }}</span>
                     </template>
@@ -17,7 +23,8 @@
                         <v-card>
                             <v-card-item class="py-0">
                                 <v-label>Plateformes</v-label>
-                                <v-select v-model="platform" :density="DENSITY" :items="platforms" item-title="name" item-value="id" />
+                                <v-select v-model="platform" :density="DENSITY" :items="platforms" item-title="name"
+                                    item-value="id" />
                                 <v-card-actions>
                                     <v-btn elevation="0" icon="mdi-content-save" @click="update(season)" />
                                 </v-card-actions>
@@ -66,7 +73,7 @@ const seasons = ref<SeasonDetail[]>([]);
 const selected = ref(-1);
 const time = ref(0);
 const toEdit = ref(-1);
-const platforms = ref<Platform[]>([]); 
+const platforms = ref<Platform[]>([]);
 const platform = ref<number>();
 
 const isEdited = (id: number): boolean => toEdit.value === id;

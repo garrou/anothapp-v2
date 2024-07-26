@@ -47,8 +47,15 @@
                 </v-window-item>
                 <v-window-item v-if="!discover" :value="2" @group:selected="getPlatformsFilter">
                     <v-list>
-                        <v-list-item v-for="plt in platforms" :key="plt.id" :prepend-avatar="plt.logo" color="#067d5f"
-                            :title="plt.name" :value="plt.id" @click="filterPlatform(plt)" />
+                        <v-list-item v-for="plt in platforms" :key="plt.id" color="#067d5f" :title="plt.name"
+                            :value="plt.id" @click="filterPlatform(plt)">
+                            <template #prepend>
+                                <v-avatar v-if="plt.logo" :image="plt.logo" />
+                                <v-avatar v-else color="grey">
+                                    <v-icon color="white">mdi-movie-open-play</v-icon>
+                                </v-avatar>
+                            </template>
+                        </v-list-item>
                     </v-list>
                 </v-window-item>
             </v-window>

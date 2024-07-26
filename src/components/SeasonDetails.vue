@@ -7,7 +7,7 @@
                     <template #prepend>
                         <v-avatar v-if="season.platform.logo" :image="season.platform.logo" />
                         <v-avatar v-else color="grey">
-                            <v-icon color="white">mdi-movie-open-play</v-icon>
+                            <v-icon color="white" :icon="PLATFORM_ICON" />
                         </v-avatar>
                     </template>
                     <template #title>
@@ -48,7 +48,7 @@ import type { Season, SeasonDetail } from "@/models/season";
 import { useSeason } from "@/composables/season";
 import { formatDate, minsToStringHoursDays } from "@/utils/format";
 import { DENSITY } from "@/constants/style";
-import { DELETE_ICON } from "@/constants/icons";
+import { DELETE_ICON, PLATFORM_ICON } from "@/constants/icons";
 import { useSerie } from "@/composables/serie";
 import type { Platform } from "@/models/serie";
 import { useSearch } from "@/composables/search";

@@ -27,7 +27,7 @@
 
             <v-divider />
 
-            <v-list density="compact" nav>
+            <v-list :density="DENSITY" nav>
                 <v-list-item v-for="(item, index) in APP_MENU" :key="index" :prepend-icon="item.icon"
                     :title="item.title" @click="selectMenu(item)" />
             </v-list>
@@ -52,7 +52,7 @@
                             <template #prepend>
                                 <v-avatar v-if="plt.logo" :image="plt.logo" />
                                 <v-avatar v-else color="grey">
-                                    <v-icon color="white">mdi-movie-open-play</v-icon>
+                                    <v-icon color="white" :icon="PLATFORM_ICON" />
                                 </v-avatar>
                             </template>
                         </v-list-item>
@@ -78,7 +78,7 @@
 import BaseConfirm from "./BaseConfirm.vue";
 import BaseModal from "./BaseModal.vue";
 import { DENSITY, ELEVATION } from "@/constants/style";
-import { CLOSE_ICON, FILTER_ICON, SEARCH_ICON } from "@/constants/icons";
+import { CLOSE_ICON, FILTER_ICON, PLATFORM_ICON, SEARCH_ICON } from "@/constants/icons";
 import { APP_MENU } from "@/constants/menus";
 import { onBeforeMount, ref } from "vue";
 import type { AppMenuItem } from "@/models/menu";
@@ -161,5 +161,9 @@ onBeforeMount(async () => {
 <style scoped>
 .v-list-item:nth-last-child(1) {
     margin-bottom: 75px;
+}
+
+.v-navigation-drawer__scrim {
+    display: none;
 }
 </style>

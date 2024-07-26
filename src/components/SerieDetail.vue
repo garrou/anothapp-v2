@@ -4,9 +4,12 @@
             <base-image max-height="580" :src="serie.poster" />
         </v-col>
         <v-col cols="12" md="6">
-            <v-card-title>{{ serie.title }}</v-card-title>
-            <v-card-subtitle>{{ seasons }} • {{ serie.network }}</v-card-subtitle>
-
+						<v-card>
+								<v-card-item>
+		            		<v-card-title>{{ serie.title }}</v-card-title>
+		            		<v-card-subtitle>{{ seasons }} • {{ serie.network }}</v-card-subtitle>
+								</v-card-item>
+						</v-card>
             <v-alert class="my-2" :color="status" :density="DENSITY" :icon="icon" :title="serie.status" />
 
             <template v-for="(obj, _, index) in cards">

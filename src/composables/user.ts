@@ -83,8 +83,10 @@ export function useUser() {
         router.replace("/series");
     }
 
-    const logout = (): void => {
+    const logout = async () => {
         storageService.deleteJwt();
+        await cache.userSeries.clearCache();
+        await cache.users.clearCache();
         router.replace("/login");
     }
 

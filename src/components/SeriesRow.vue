@@ -1,5 +1,5 @@
 <template>
-    <v-container class="pt-0">
+    <v-container>
         <span v-if="total">{{ buildPlural("série", series.length) }}</span>
         <v-row v-if="series.length || loading" class="mt-1">
             <v-col v-for="serie in series" :cols="small ? 12 : 6" :md="small ? 6 : 4" :lg="small ? 4 : 3" :key="serie.id">

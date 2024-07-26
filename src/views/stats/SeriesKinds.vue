@@ -19,6 +19,6 @@ const { getSeriesKinds } = useStatistic();
 const data = ref<Stat[]>([]);
 
 onBeforeMount(async () => {
-  data.value = (await getSeriesKinds(props.userId)).reverse();
+  data.value = await getSeriesKinds(props.userId);
 });
 </script>

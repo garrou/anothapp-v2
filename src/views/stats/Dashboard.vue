@@ -65,6 +65,9 @@
                 <v-col cols="12" md="6">
                     <series-countries :user-id="userId" />
                 </v-col>
+                <v-col cols="12" md="6">
+                    <seasons-platforms :user-id="userId" />
+                </v-col>
             </template>
         </v-row>
     </v-container>
@@ -81,7 +84,7 @@ import SeriesCountries from "./SeriesCountries.vue";
 import SeriesKinds from "./SeriesKinds.vue";
 import SeriesRankingTime from "./SeriesRankingTime.vue";
 import TimeYears from "./TimeYears.vue";
-import SeriesRow from "@/components/SeriesRow.vue";
+import SeasonsPlatforms from "./SeasonsPlatforms.vue";
 import { useStatistic } from "@/composables/statistic";
 import { ELEVATION } from "@/constants/style";
 import type { GlobalStat } from "@/models/stat";

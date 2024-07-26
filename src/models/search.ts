@@ -3,6 +3,8 @@ export interface  SerieSearchOptions {
     title?: string,
     
     kind?: string,
+
+    platform?: string,
     
     id?: number
 }

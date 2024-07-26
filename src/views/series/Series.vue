@@ -1,5 +1,5 @@
 <template>
-    <base-app-bar auto-search label="Chercher une série" search @filter="(kind) => fetchSeries({ kind })"
+    <base-app-bar auto-search label="Chercher une série" search @filter="(type, value) => filterSeries(type, value)"
         @search="(title) => fetchSeries({ title })" />
     <series-row :loading="loading" :series="series" />
 </template>
@@ -13,12 +13,24 @@ import { useSerie } from "@/composables/serie";
 import { watch } from "vue";
 import { useFavorite } from "@/composables/favorite";
 import type { SerieSearchOptions } from "@/models/search";
+import type { FilterType } from "@/types/types";
 
 const { getSeries } = useSerie();
 const favorite = useFavorite();
 
 const loading = ref(false);
 const series = ref<Serie[]>([]);
+
+const filterSeries = async (type: FilterType, value: string): Promise<void> => {
+    switch (type) {
+        case "kind":
+            await fetchSeries({ kind: value });
+            break;
+        case "platform":
+            await fetchSeries({ platform: value });
+            break;
+    }
+}  
 
 const fetchSeries = async (options?: SerieSearchOptions): Promise<void> => {
     loading.value = true;

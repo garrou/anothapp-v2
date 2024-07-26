@@ -8,9 +8,9 @@
             <template #title>
                 <v-form v-if="search" @submit="$emit('search', title)" @submit.prevent>
                     <v-text-field v-model="title" :append-inner-icon="SEARCH_ICON" :append-icon="FILTER_ICON"
-                        class="mb-4" clearable hide-details :label="label" single-line variant="plain"
+                        class="mb-4 me-2" clearable hide-details :label="label" single-line variant="plain"
                         @input="onChange" @click:append-inner="$emit('search', title)"
-                        @click:clear="$emit('search', undefined)" @click:append="openKindsFilter" />
+                        @click:clear="$emit('search', undefined)" @click:append="openFilterDrawer" />
                 </v-form>
                 <slot v-else name="title" />
             </template>
@@ -21,9 +21,9 @@
         </v-app-bar>
 
         <v-navigation-drawer v-model="menus" location="left" temporary>
-      
+
             <v-list-item v-if="user" :prepend-avatar="user.picture" :title="user.username"
-                    @click="$router.push('/profile')" />
+                @click="$router.push('/profile')" />
 
             <v-divider />
 
@@ -34,10 +34,24 @@
         </v-navigation-drawer>
 
         <v-navigation-drawer v-model="filters" location="right" temporary>
-            <v-list>
-                <v-list-item v-for="(kind, index) in kinds" :key="index" color="#067d5f" :title="kind.name"
-                    :value="kind.value" @click="filterKind(kind)" />
-            </v-list>
+            <v-tabs v-model="tab" align-tabs="title">
+                <v-tab :value="1">Genres</v-tab>
+                <v-tab v-if="!discover" :value="2">Plateformes</v-tab>
+            </v-tabs>
+            <v-window v-model="tab">
+                <v-window-item :value="1" @group:selected="getKindsFilter">
+                    <v-list>
+                        <v-list-item v-for="(kind, index) in kinds" :key="index" color="#067d5f" :title="kind.name"
+                            :value="kind.value" @click="filterKind(kind)" />
+                    </v-list>
+                </v-window-item>
+                <v-window-item v-if="!discover" :value="2" @group:selected="getPlatformsFilter">
+                    <v-list>
+                        <v-list-item v-for="plt in platforms" :key="plt.id" :prepend-avatar="plt.logo" color="#067d5f"
+                            :title="plt.name" :value="plt.id" @click="filterPlatform(plt)" />
+                    </v-list>
+                </v-window-item>
+            </v-window>
         </v-navigation-drawer>
 
         <base-modal v-if="selected && selected.component" v-model="modal">
@@ -63,8 +77,9 @@ import { onBeforeMount, ref } from "vue";
 import type { AppMenuItem } from "@/models/menu";
 import { useUser } from "@/composables/user";
 import { useSearch } from "@/composables/search";
-import type { Kind } from "@/models/serie";
+import type { Platform, Kind } from "@/models/serie";
 import type { User } from "@/models/user";
+import type { FilterType } from "@/types/types";
 
 const props = defineProps({
     autoSearch: { type: Boolean, default: false },
@@ -74,11 +89,11 @@ const props = defineProps({
 });
 
 const emit = defineEmits<{
-    filter: [string]
+    filter: [FilterType, string]
     search: [string | undefined]
 }>();
 
-const { getKinds } = useSearch();
+const { getKinds, getPlatforms } = useSearch();
 const { getProfile } = useUser();
 const { logout } = useUser();
 
@@ -87,6 +102,8 @@ const menus = ref(false);
 const modal = ref(false);
 const selected = ref<AppMenuItem>();
 const kinds = ref<Kind[]>([]);
+const platforms = ref<Platform[]>([]);
+const tab = ref(1);
 const title = ref<string>();
 const user = ref<User>();
 
@@ -96,7 +113,11 @@ const onChange = () => {
 }
 
 const filterKind = (item: Kind) => {
-    emit('filter', props.discover ? item.value : item.name);
+    emit('filter', 'kind', props.discover ? item.value : item.name);
+}
+
+const filterPlatform = (item: Platform) => {
+    emit('filter', 'platform', `${item.id}`);
 }
 
 const openDrawer = () => {
@@ -104,11 +125,20 @@ const openDrawer = () => {
     menus.value = !menus.value;
 }
 
-const openKindsFilter = async () => {
-    if (kinds.value.length === 0)
-        kinds.value = await getKinds();
+const openFilterDrawer = async () => {
+    await getKindsFilter();
     menus.value = false;
     filters.value = !filters.value;
+}
+
+const getPlatformsFilter = async () => {
+    if (!platforms.value.length)
+        platforms.value = await getPlatforms();
+}
+
+const getKindsFilter = async () => {
+    if (!kinds.value.length)
+        kinds.value = await getKinds();
 }
 
 const selectMenu = (item: AppMenuItem) => {

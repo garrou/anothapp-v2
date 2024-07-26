@@ -61,7 +61,16 @@ export function useSerie() {
     }
 
     const getSeries = async (options: SerieSearchOptions = {}): Promise<Serie[]> => {
-        return cache.userSeries.getSeries(options);
+        if (!options.platform) {
+            return cache.userSeries.getSeries(options);
+        }
+        const resp = await serieService.getSeries(undefined, undefined, options.platform);
+        const data = await resp.json();
+
+        if (isError(resp.status))
+            throw new Error(data.message);
+
+        return data;
     }
 
     const getSeriesByStatus = async (status: SerieStatus, friendId?: string): Promise<Serie[]> => {
@@ -92,13 +101,13 @@ export function useSerie() {
         return data.value;
     }
 
-    return { 
-        addSerie, 
-        deleteSerie, 
-        getSerie, 
-        getSerieInfos, 
-        getSeries, 
+    return {
+        addSerie,
+        deleteSerie,
+        getSerie,
+        getSerieInfos,
+        getSeries,
         getSeriesByStatus,
-        updateField 
+        updateField
     }
 }

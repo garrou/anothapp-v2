@@ -1,76 +1,75 @@
 <template>
     <base-app-bar v-if="showBar" />
-    <v-container>
-        <v-row v-if="stat" class="mb-2">
-            <v-col v-for="(obj, _, index) in cardsConfig" cols="12" md="6" :key="index">
-                <v-card v-if="obj.display !== false" :elevation="ELEVATION" :prepend-icon="obj.icon">
-                    <template #title>{{ obj.name }}</template>
-                    <v-card-subtitle class="mb-2">
-                        {{ obj.value }}
-                    </v-card-subtitle>
-                </v-card>
-            </v-col>
-        </v-row>
 
-        <v-expansion-panels v-if="userId" :elevation="ELEVATION" class="mb-2">
-            <v-expansion-panel>
-                <template #title>
-                    <span class="v-card-title pa-0">{{ sharedSeriesLabel }}</span>
-                </template>
-                <template #text>
-                    <v-table>
-                        <tbody>
-                            <tr v-for="serie in series" :key="serie.id">
-                                <td><router-link :text="serie.title" :to="`/series/${serie.id}`" /></td>
-                            </tr>
-                        </tbody>
-                    </v-table>
-                </template>
-            </v-expansion-panel>
-        </v-expansion-panels>
+    <v-row v-if="stat" class="mb-2">
+        <v-col v-for="(obj, _, index) in cardsConfig" cols="12" md="6" :key="index">
+            <v-card v-if="obj.display !== false" :elevation="ELEVATION" :prepend-icon="obj.icon">
+                <template #title>{{ obj.name }}</template>
+                <v-card-subtitle class="mb-2">
+                    {{ obj.value }}
+                </v-card-subtitle>
+            </v-card>
+        </v-col>
+    </v-row>
 
-
-        <v-switch v-model="displayChart" color="black" label="Afficher les graphiques" @change="changeDisplayChart" />
-
-
-        <v-row>
-            <template v-if="displayChart">
-                <v-col cols="12" md="6">
-                    <seasons-month-current-year :user-id="userId" />
-                </v-col>
-                <v-col cols="12" md="6">
-                    <episodes-month-current-year :user-id="userId" />
-                </v-col>
-                <v-col cols="12" md="6">
-                    <time-years :user-id="userId" />
-                </v-col>
-                <v-col cols="12" md="6">
-                    <seasons-years :user-id="userId" />
-                </v-col>
-                <v-col cols="12" md="6">
-                    <episodes-years :user-id="userId" />
-                </v-col>
-                <v-col cols="12" md="6">
-                    <seasons-months :user-id="userId" />
-                </v-col>
-                <v-col cols="12" md="6">
-                    <best-months :user-id="userId" />
-                </v-col>
-                <v-col cols="12" md="6">
-                    <series-ranking-time :user-id="userId" />
-                </v-col>
-                <v-col cols="12" md="6">
-                    <series-kinds :user-id="userId" />
-                </v-col>
-                <v-col cols="12" md="6">
-                    <series-countries :user-id="userId" />
-                </v-col>
-                <v-col cols="12" md="6">
-                    <seasons-platforms :user-id="userId" />
-                </v-col>
+    <v-expansion-panels v-if="userId" :elevation="ELEVATION" class="mb-2">
+        <v-expansion-panel>
+            <template #title>
+                <span class="v-card-title pa-0">{{ sharedSeriesLabel }}</span>
             </template>
-        </v-row>
-    </v-container>
+            <template #text>
+                <v-table>
+                    <tbody>
+                        <tr v-for="serie in series" :key="serie.id">
+                            <td><router-link :text="serie.title" :to="`/series/${serie.id}`" /></td>
+                        </tr>
+                    </tbody>
+                </v-table>
+            </template>
+        </v-expansion-panel>
+    </v-expansion-panels>
+
+
+    <v-switch v-model="displayChart" color="black" label="Afficher les graphiques" @change="changeDisplayChart" />
+
+
+    <v-row>
+        <template v-if="displayChart">
+            <v-col cols="12" md="6">
+                <seasons-month-current-year :user-id="userId" />
+            </v-col>
+            <v-col cols="12" md="6">
+                <episodes-month-current-year :user-id="userId" />
+            </v-col>
+            <v-col cols="12" md="6">
+                <time-years :user-id="userId" />
+            </v-col>
+            <v-col cols="12" md="6">
+                <seasons-years :user-id="userId" />
+            </v-col>
+            <v-col cols="12" md="6">
+                <episodes-years :user-id="userId" />
+            </v-col>
+            <v-col cols="12" md="6">
+                <seasons-months :user-id="userId" />
+            </v-col>
+            <v-col cols="12" md="6">
+                <best-months :user-id="userId" />
+            </v-col>
+            <v-col cols="12" md="6">
+                <series-ranking-time :user-id="userId" />
+            </v-col>
+            <v-col cols="12" md="6">
+                <series-kinds :user-id="userId" />
+            </v-col>
+            <v-col cols="12" md="6">
+                <series-countries :user-id="userId" />
+            </v-col>
+            <v-col cols="12" md="6">
+                <seasons-platforms :user-id="userId" />
+            </v-col>
+        </template>
+    </v-row>
 </template>
 
 <script lang="ts" setup>

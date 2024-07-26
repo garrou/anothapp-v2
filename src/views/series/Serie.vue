@@ -42,7 +42,7 @@
         </v-card>
 
         <v-card class="mb-2">
-            <v-tabs v-model="tab" align-tabs="title">
+            <v-tabs v-model="tab">
                 <v-tab :value="1">Mes saisons</v-tab>
                 <v-tab :value="2">Ajouter</v-tab>
                 <v-tab :value="3">Vue par</v-tab>

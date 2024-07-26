@@ -1,29 +1,27 @@
 <template>
     <base-app-bar />
 
-    <v-container>
-        <v-tabs v-model="tab" align-tabs="title">
-            <v-tab :value="1">Amis</v-tab>
-            <v-tab :value="2">Ajouter</v-tab>
-            <v-tab :value="3">Reçues</v-tab>
-            <v-tab :value="4">Envoyées</v-tab>
-        </v-tabs>
+    <v-tabs v-model="tab">
+        <v-tab :value="1">Amis</v-tab>
+        <v-tab :value="2">Ajouter</v-tab>
+        <v-tab :value="3">Reçues</v-tab>
+        <v-tab :value="4">Envoyées</v-tab>
+    </v-tabs>
 
-        <v-window v-model="tab" class="pa-1">
-            <v-window-item :value="1">
-                <friends-row consult :friends="friends?.friend" :loading="loading" remove />
-            </v-window-item>
-            <v-window-item :value="2">
-                <friends-row addable :friends="searched" search @search="searchUser" @refresh="fetchFriends" />
-            </v-window-item>
-            <v-window-item :value="3">
-                <friends-row accept :friends="friends?.receive" :loading="loading" remove @refresh="fetchFriends" />
-            </v-window-item>
-            <v-window-item :value="4">
-                <friends-row :friends="friends?.send" :loading="loading" remove @refresh="fetchFriends" />
-            </v-window-item>
-        </v-window>
-    </v-container>
+    <v-window v-model="tab" class="pa-1">
+        <v-window-item :value="1">
+            <friends-row consult :friends="friends?.friend" :loading="loading" remove />
+        </v-window-item>
+        <v-window-item :value="2">
+            <friends-row addable :friends="searched" search @search="searchUser" @refresh="fetchFriends" />
+        </v-window-item>
+        <v-window-item :value="3">
+            <friends-row accept :friends="friends?.receive" :loading="loading" remove @refresh="fetchFriends" />
+        </v-window-item>
+        <v-window-item :value="4">
+            <friends-row :friends="friends?.send" :loading="loading" remove @refresh="fetchFriends" />
+        </v-window-item>
+    </v-window>
 </template>
 
 <script lang="ts" setup>

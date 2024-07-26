@@ -8,7 +8,7 @@
             <template #title>
                 <v-form v-if="search" @submit="$emit('search', title)" @submit.prevent>
                     <v-text-field v-model="title" :append-inner-icon="SEARCH_ICON" :append-icon="FILTER_ICON"
-                        class="mb-4 me-2" clearable hide-details :label="label" single-line variant="plain"
+                        class="mb-4 me-4" clearable hide-details :label="label" single-line variant="plain"
                         @input="onChange" @click:append-inner="$emit('search', title)"
                         @click:clear="$emit('search', undefined)" @click:append="openFilterDrawer" />
                 </v-form>
@@ -34,7 +34,7 @@
         </v-navigation-drawer>
 
         <v-navigation-drawer v-model="filters" location="right" temporary>
-            <v-tabs v-model="tab" align-tabs="title">
+            <v-tabs v-model="tab">
                 <v-tab :value="1">Genres</v-tab>
                 <v-tab v-if="!discover" :value="2">Plateformes</v-tab>
             </v-tabs>

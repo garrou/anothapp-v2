@@ -7,7 +7,7 @@
         </base-toolbar>
 
         <v-card class="mb-2">
-            <v-tabs v-model="tab" align-tabs="title">
+            <v-tabs v-model="tab">
                 <v-tab :value="1">Informations</v-tab>
                 <v-tab :value="5">Vue par</v-tab>
                 <v-tab :value="2">Acteurs</v-tab>

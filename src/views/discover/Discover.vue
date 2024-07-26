@@ -1,6 +1,7 @@
 <template>
     <base-app-bar discover label="Ajouter une série" search @filter="(_, kind) => fetchSeries({ kind })"
         @search="(title) => fetchSeries({ title })" />
+
     <series-row :loading="loading" :series="series" />
 </template>
 

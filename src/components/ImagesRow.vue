@@ -1,5 +1,4 @@
 <template>
-    <v-container>
         <v-row>
             <v-col v-for="(image, index) in images" cols="6" md="4" :key="index">
                 <base-skeleton :loading="loading" type="card">
@@ -13,7 +12,6 @@
                 </base-skeleton>
             </v-col>
         </v-row>
-    </v-container>
 </template>
 
 <script lang="ts" setup>

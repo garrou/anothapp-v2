@@ -164,6 +164,6 @@ onBeforeMount(async () => {
 }
 
 .v-navigation-drawer__scrim {
-    display: none;
+    background-color: transparent;
 }
 </style>

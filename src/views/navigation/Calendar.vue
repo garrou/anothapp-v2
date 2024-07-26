@@ -1,16 +1,14 @@
 <template>
-    <v-container>
-        <v-sheet>
-            <v-calendar ref="calendar" v-model="value" :events="seasons" view-mode="month" :weekdays="weekdays">
-                <template v-slot:event="{ event }">
-                    <v-card class="ma-2" :color="event.color as string" @click="$router.push(`/series/${event.id}`)">
-                        <v-card-text class="py-1">{{ event.title }}</v-card-text>
-                        <v-card-subtitle class="mb-1">{{ event.season }}</v-card-subtitle>
-                    </v-card>
-                </template>
-            </v-calendar>
-        </v-sheet>
-    </v-container>
+    <v-sheet>
+        <v-calendar ref="calendar" v-model="value" :events="seasons" view-mode="month" :weekdays="weekdays">
+            <template v-slot:event="{ event }">
+                <v-card class="ma-2" :color="event.color as string" @click="$router.push(`/series/${event.id}`)">
+                    <v-card-text class="py-1">{{ event.title }}</v-card-text>
+                    <v-card-subtitle class="mb-1">{{ event.season }}</v-card-subtitle>
+                </v-card>
+            </template>
+        </v-calendar>
+    </v-sheet>
 </template>
 
 <script lang="ts" setup>

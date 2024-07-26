@@ -1,31 +1,28 @@
 <template>
-    <v-container>
-        <v-form v-if="search" @submit="$emit('search', username)" @submit.prevent>
-            <v-text-field v-model="username" :append-inner-icon="SEARCH_ICON" class="mb-4" clearable
-                label="Email utilisateur" required variant="underlined"
-                @click:append-inner="$emit('search', username)" />
-        </v-form>
+    <v-form v-if="search" @submit="$emit('search', username)" @submit.prevent>
+        <v-text-field v-model="username" :append-inner-icon="SEARCH_ICON" class="mb-4" clearable
+            label="Email utilisateur" required variant="underlined" @click:append-inner="$emit('search', username)" />
+    </v-form>
 
-        <v-row v-if="friends.length">
-            <v-col v-for="(friend, index) in friends" cols="6" md="4" lg="3" :key="index">
-                <base-skeleton :loading="loading" type="card">
-                    <v-card>
-                        <base-image v-if="friend.picture" cover max-height="580" :src="friend.picture" />
+    <v-row v-if="friends.length">
+        <v-col v-for="(friend, index) in friends" cols="6" md="4" lg="3" :key="index">
+            <base-skeleton :loading="loading" type="card">
+                <v-card>
+                    <base-image v-if="friend.picture" cover max-height="580" :src="friend.picture" />
 
-                        <v-card-subtitle class="pt-4">{{ friend.username }}</v-card-subtitle>
+                    <v-card-subtitle class="pt-4">{{ friend.username }}</v-card-subtitle>
 
-                        <v-card-actions>
-                            <v-btn v-if="consult" :icon="DETAILS_ICON" variant="text" @click="showFriend(friend)" />
-                            <v-btn v-if="addable" :icon="ADD_ICON" variant="text" @click="addFriend(friend)" />
-                            <v-btn v-if="accept" icon="mdi-check" variant="text" @click="acceptFriend(friend)" />
-                            <v-btn v-if="remove" :icon="DELETE_ICON" variant="text" @click="showConfirm(friend)" />
-                        </v-card-actions>
-                    </v-card>
-                </base-skeleton>
-            </v-col>
-        </v-row>
-        <span v-else>Aucun résultat</span>
-    </v-container>
+                    <v-card-actions>
+                        <v-btn v-if="consult" :icon="DETAILS_ICON" variant="text" @click="showFriend(friend)" />
+                        <v-btn v-if="addable" :icon="ADD_ICON" variant="text" @click="addFriend(friend)" />
+                        <v-btn v-if="accept" icon="mdi-check" variant="text" @click="acceptFriend(friend)" />
+                        <v-btn v-if="remove" :icon="DELETE_ICON" variant="text" @click="showConfirm(friend)" />
+                    </v-card-actions>
+                </v-card>
+            </base-skeleton>
+        </v-col>
+    </v-row>
+    <span v-else>Aucun résultat</span>
 
     <base-modal v-if="friend" v-model="modal" :max-width="1600">
         <template #title>

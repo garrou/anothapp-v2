@@ -1,12 +1,9 @@
 <template>
-    <v-container>
-        <v-card>
-            <v-list>
-                <v-list-item :prepend-icon="DELETE_ICON" title="Vider le cache"
-                    @click="clearCaches()" />
-            </v-list>
-        </v-card>
-    </v-container>
+    <v-card>
+        <v-list>
+            <v-list-item :prepend-icon="DELETE_ICON" title="Vider le cache" @click="clearCaches()" />
+        </v-list>
+    </v-card>
 </template>
 
 <script lang="ts" setup>

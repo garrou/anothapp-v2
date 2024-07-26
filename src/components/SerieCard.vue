@@ -4,7 +4,7 @@
             <base-image cover max-height="580" :src="serie.poster" />
         </router-link>
 
-        <v-card-subtitle class="pt-4 d-flex justify-space-between">
+        <v-card-subtitle class="pt-4">
             <router-link :text="serie.title" :to="link" />
         </v-card-subtitle>
 

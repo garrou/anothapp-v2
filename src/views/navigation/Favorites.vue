@@ -1,7 +1,5 @@
 <template>
-    <v-container>
-        <series-row :loading="loading" :series="favorites" @refresh="refreshFavorites" />
-    </v-container>
+    <series-row :loading="loading" :series="favorites" @refresh="refreshFavorites" />
 </template>
 
 <script lang="ts" setup>

@@ -1,7 +1,5 @@
 <template>
-    <v-container>
-        <series-row :loading="loading" :series="series" />
-    </v-container>
+    <series-row :loading="loading" :series="series" />
 </template>
 
 <script lang="ts" setup>

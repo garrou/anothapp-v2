@@ -4,7 +4,7 @@
             <base-image max-height="580" :src="serie.poster" />
         </v-col>
         <v-col cols="12" md="6">
-						<v-card>
+						<v-card :elevation="ELEVATION">
 								<v-card-item>
 		            		<v-card-title>{{ serie.title }}</v-card-title>
 		            		<v-card-subtitle>{{ seasons }} • {{ serie.network }}</v-card-subtitle>

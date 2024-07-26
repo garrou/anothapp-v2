@@ -8,7 +8,7 @@
   import { onBeforeMount, ref } from "vue";
   import { useStatistic } from "@/composables/statistic";
   
-  const TITLE = "Plateformes de visionnage";
+  const TITLE = "Saisons par plateformes";
   
   const props = defineProps({
     userId: { type: String, default: undefined },

@@ -7,7 +7,7 @@ export const nameRules = [
     },
     (value: string) => {
         if (USERNAME_PATTERN.test(value)) return true;
-        return `Le username doit être valide (${MIN_USERNAME} - ${MAX_USERNAME}) sans "@"`;
+        return `Le username doit être valide (${MIN_USERNAME} - ${MAX_USERNAME})`;
     }
 ]
 

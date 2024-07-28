@@ -4,4 +4,4 @@ export const MIN_PASSWORD = 8;
 export const MAX_USERNAME = 25;
 export const MIN_USERNAME = 3;
 export const PASSWORD_PATTERN = /^.{8,50}$/;
-export const USERNAME_PATTERN = /^[^@]{3,25}$/;
+export const USERNAME_PATTERN = /^.{3,25}$/;

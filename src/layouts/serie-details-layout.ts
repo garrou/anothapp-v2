@@ -1,8 +1,12 @@
 import type { Layout } from "@/models/layout";
 import type { Serie } from "@/models/serie";
-import { minsToStringHoursDays } from "@/utils/format";
+import { buildPlural, minsToStringHoursDays } from "@/utils/format";
 
 export const SerieDetailsLayout = (serie: Serie): Layout[] => [
+    {
+        name: "Saisons",
+        value: `${buildPlural("saison", serie.seasons)} • ${serie.network}`
+    },
     {
         name: "Durée",
         value: minsToStringHoursDays(serie.duration * (serie.episodes ?? 0)),

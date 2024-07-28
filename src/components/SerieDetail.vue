@@ -4,14 +4,7 @@
             <base-image max-height="580" :src="serie.poster" />
         </v-col>
         <v-col cols="12" md="6">
-						<v-card :elevation="ELEVATION">
-								<v-card-item>
-		            		<v-card-title>{{ serie.title }}</v-card-title>
-		            		<v-card-subtitle>{{ seasons }} • {{ serie.network }}</v-card-subtitle>
-								</v-card-item>
-						</v-card>
             <v-alert class="my-2" :color="status" :density="DENSITY" :icon="icon" :title="serie.status" />
-
             <template v-for="(obj, _, index) in cards">
                 <v-card v-if="obj.display !== false" class="mb-2" :elevation="ELEVATION" :key="index">
                     <v-card-item>
@@ -22,7 +15,7 @@
                                 <base-image v-if="v.logo" :src="v.logo" />
                                 <div class="text-center">{{ v.name }}</div>
                             </v-col>
-                        </v-row>  
+                        </v-row>
                         <v-card-subtitle v-else>{{ obj.value }}</v-card-subtitle>
                     </v-card-item>
                 </v-card>
@@ -35,7 +28,6 @@
 import BaseImage from "./BaseImage.vue";
 import { type PropType } from "vue";
 import type { Serie } from "@/models/serie";
-import { buildPlural } from "@/utils/format";
 import { DENSITY, ELEVATION } from "@/constants/style";
 import { SerieDetailsLayout } from "@/layouts/serie-details-layout";
 
@@ -44,7 +36,6 @@ const props = defineProps({
 });
 
 const cards = SerieDetailsLayout(props.serie);
-const seasons = buildPlural("saison", props.serie.seasons);
 const status = props.serie.status === "En cours" ? "info" : "success";
 const icon = `\$${status}`;
 </script>

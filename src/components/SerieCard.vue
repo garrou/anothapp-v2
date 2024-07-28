@@ -22,7 +22,7 @@
 
     <base-modal v-model="modal">
         <template #title>
-            <v-spacer />
+            <span>{{ serie.title }}</span>
             <v-btn :icon="CLOSE_ICON" variant="text" @click="modal = false" />
         </template>
         <serie-detail :serie="serie" />

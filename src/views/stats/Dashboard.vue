@@ -1,7 +1,7 @@
 <template>
     <base-app-bar v-if="showBar" />
 
-    <v-row v-if="stat" class="mb-2">
+    <v-row v-if="stat" class="my-1">
         <v-col v-for="(obj, _, index) in cardsConfig" cols="12" md="6" :key="index">
             <v-card v-if="obj.display !== false" :elevation="ELEVATION" :prepend-icon="obj.icon">
                 <template #title>{{ obj.name }}</template>

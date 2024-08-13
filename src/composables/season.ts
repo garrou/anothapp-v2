@@ -65,7 +65,10 @@ export function useSeason() {
         showSuccess(`"${serie.title}" saison ${season.number} ajoutée`);
     }
 
-    const updateSeason = async (id: number, platformId: number): Promise<void> => {
+    const updateSeason = async (id: number, platformId?: number): Promise<void> => {
+        if (!platformId)
+            throw new Error("Impossible de modifier la plateforme");
+
         const resp = await seasonService.updateSeason(id, platformId);
         const data = await resp.json();
 

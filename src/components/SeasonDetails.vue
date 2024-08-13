@@ -24,11 +24,12 @@
                             <v-card-item class="py-0">
                                 <v-label>Plateformes</v-label>
                                 <v-select 
+                                    v-model="platform"
                                     :density="DENSITY" 
                                     :items="platforms" 
                                     item-title="name" 
                                     item-value="id" 
-                                    v-on:change="(platform: Platform) => updatePlatform(season.id, platform.id)" 
+                                    @update:modelValue="updatePlatform" 
                                 />
                             </v-card-item>
                         </v-card>
@@ -45,7 +46,7 @@
 <script lang="ts" setup>
 import BaseConfirm from "./BaseConfirm.vue";
 import type { PropType } from "vue";
-import { onBeforeMount, ref } from "vue";
+import { onBeforeMount, ref, watch } from "vue";
 import type { Season, SeasonDetail } from "@/models/season";
 import { useSeason } from "@/composables/season";
 import { formatDate, minsToStringHoursDays } from "@/utils/format";
@@ -54,7 +55,6 @@ import { DELETE_ICON, PLATFORM_ICON } from "@/constants/icons";
 import { useSerie } from "@/composables/serie";
 import type { Platform } from "@/models/serie";
 import { useSearch } from "@/composables/search";
-import { useSnackbar } from "@/composables/snackbar";
 
 const props = defineProps({
     id: { type: Number, required: true },
@@ -65,7 +65,6 @@ const emit = defineEmits<{
     refresh: []
 }>();
 
-const { showError } = useSnackbar();
 const { getPlatforms } = useSearch();
 const { getSerie } = useSerie();
 const { deleteSeason, getSeasonInfosBySerieIdByNumber, updateSeason } = useSeason();
@@ -76,6 +75,7 @@ const selected = ref(-1);
 const time = ref(0);
 const toEdit = ref(-1);
 const platforms = ref<Platform[]>([]);
+const platform = ref<number>();
 
 const isEdited = (id: number): boolean => toEdit.value === id;
 
@@ -94,9 +94,13 @@ const dropSeason = async (id: number) => {
     emit("refresh");
 }
 
-const updatePlatform = async (seasonId: number, platformId: number) => {
-    await updateSeason(seasonId, platformId);
+const updatePlatform = async () => {
+    await updateSeason(toEdit.value, platform.value);
 }
+
+watch(toEdit, () => {
+    platform.value = seasons.value.find((s) => s.id === toEdit.value)?.platform.id;
+})
 
 onBeforeMount(async () => {
     platforms.value = await getPlatforms();

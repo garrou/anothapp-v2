@@ -23,8 +23,13 @@
                         <v-card>
                             <v-card-item class="py-0">
                                 <v-label>Plateformes</v-label>
-                                <v-select v-model="platform" :density="DENSITY" :items="platforms" item-title="name"
-                                    item-value="id" @input="(val) => updatePlatform(season.id, val.id)" />
+                                <v-select 
+                                    :density="DENSITY" 
+                                    :items="platforms" 
+                                    item-title="name" 
+                                    item-value="id" 
+                                    @input="(val) => updatePlatform(season.id, val.id)" 
+                                />
                             </v-card-item>
                         </v-card>
                     </div>

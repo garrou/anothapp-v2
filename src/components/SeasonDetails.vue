@@ -24,10 +24,7 @@
                             <v-card-item class="py-0">
                                 <v-label>Plateformes</v-label>
                                 <v-select v-model="platform" :density="DENSITY" :items="platforms" item-title="name"
-                                    item-value="id" />
-                                <v-card-actions>
-                                    <v-btn elevation="0" icon="mdi-content-save" @click="update(season)" />
-                                </v-card-actions>
+                                    item-value="id" @input="(val) => updatePlatform(season.id, val.id)" />
                             </v-card-item>
                         </v-card>
                     </div>
@@ -74,7 +71,6 @@ const selected = ref(-1);
 const time = ref(0);
 const toEdit = ref(-1);
 const platforms = ref<Platform[]>([]);
-const platform = ref<number>();
 
 const isEdited = (id: number): boolean => toEdit.value === id;
 
@@ -93,12 +89,8 @@ const dropSeason = async (id: number) => {
     emit("refresh");
 }
 
-const update = async (season: SeasonDetail) => {
-    if (!platform.value) {
-        showError("Impossible de modifier la saison");
-        return;
-    }
-    await updateSeason(season.id, platform.value);
+const updatePlatform = async (seasonId: number, platformId: number) => {
+    await updateSeason(seasonId, platformId);
 }
 
 onBeforeMount(async () => {

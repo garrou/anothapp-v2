@@ -28,7 +28,7 @@
                                     :items="platforms" 
                                     item-title="name" 
                                     item-value="id" 
-                                    @input="(val) => updatePlatform(season.id, val.id)" 
+                                    @input="(platformId: number) => updatePlatform(season.id, platformId)" 
                                 />
                             </v-card-item>
                         </v-card>

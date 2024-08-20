@@ -1,7 +1,7 @@
 <template>
     <base-app-bar />
 
-    <v-tabs v-model="tab">
+    <v-tabs v-model="tab" class="m-top">
         <v-tab :value="1">Amis</v-tab>
         <v-tab :value="2">Ajouter</v-tab>
         <v-tab :value="3">Reçues</v-tab>
@@ -57,3 +57,10 @@ onBeforeMount(async () => {
     await fetchFriends();
 });
 </script>
+
+
+<style scoped>
+.m-top {
+    margin-top: 50px;
+}
+</style>

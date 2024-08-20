@@ -7,7 +7,7 @@
                 <router-link :text="season.showTitle" :to="`/series/${season.showId}`" />
                 <p v-if="season.addedAt">{{ formatDate(season.addedAt) }}</p>
             </template>
-            <season-card :season="season.season" />
+            <season-card :serieLink="`/series/${season.showId}`" :season="season.season" />
         </v-timeline-item>
     </v-timeline>
 </template>

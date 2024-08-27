@@ -3,12 +3,14 @@ import SeriesCache from "./modules/series";
 import UserSeriesCache from "./modules/userSeries";
 import UserCache from "./modules/user";
 import PlatformsCache from "./modules/platforms";
+import KindsCache from "./modules/kinds";
 
 export default new (class CacheManager {
     userSeries!: UserSeriesCache;
     series!: SeriesCache;
     users!: UserCache;
     platforms!: PlatformsCache;
+    kinds!: KindsCache;
 
     readonly #name = "cache";
     readonly #version = 1;
@@ -21,6 +23,7 @@ export default new (class CacheManager {
                     SeriesCache.createStructure(database);
                     UserCache.createStructure(database);
                     PlatformsCache.createStructure(database);
+                    KindsCache.createStructure(database);
                 }
             }
         });
@@ -28,5 +31,6 @@ export default new (class CacheManager {
         this.series = new SeriesCache(db);
         this.users = new UserCache(db);
         this.platforms = new PlatformsCache(db);
+        this.kinds = new KindsCache(db);
     }
 });

@@ -29,13 +29,7 @@ export function useSearch() {
     }
     
     const getKinds = async (): Promise<Kind[]> => {
-        const resp = await searchService.getKinds();
-        const data = await resp.json();
-
-        if (isError(resp.status))
-            throw new Error(data.message);
-
-        return data;
+        return await cache.kinds.getPlatforms();
     }
 
     const getPlatforms = async (): Promise<Platform[]> => {

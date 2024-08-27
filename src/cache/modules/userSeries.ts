@@ -1,4 +1,4 @@
-import type { SeriesCacheItem } from "@/types/cache";
+import type { SerieCacheItem } from "@/types/cache";
 import type { IDBPDatabase } from "idb";
 import CacheModule from "../cacheModule";
 import serieService from "@/services/serieService";
@@ -6,7 +6,7 @@ import { isError } from "@/utils/response";
 import type { Serie } from "@/models/serie";
 import type { SerieSearchOptions } from "@/models/search";
 
-export default class UserSeriesCache extends CacheModule<SeriesCacheItem> {
+export default class UserSeriesCache extends CacheModule<SerieCacheItem> {
     static readonly NAME = "userseries";
 
     constructor(db: IDBPDatabase) {
@@ -18,7 +18,7 @@ export default class UserSeriesCache extends CacheModule<SeriesCacheItem> {
     }
 
     async addSerie(serie: Serie): Promise<void> {
-        const cacheValue: SeriesCacheItem = {
+        const cacheValue: SerieCacheItem = {
             ...JSON.parse(JSON.stringify(serie)),
             expires: Date.now() + this.expires,
         }
@@ -34,7 +34,7 @@ export default class UserSeriesCache extends CacheModule<SeriesCacheItem> {
         await this.deleteFromCache(`${id}`);
     }
 
-    async getSeries(options: SerieSearchOptions): Promise<SeriesCacheItem[]> {
+    async getSeries(options: SerieSearchOptions): Promise<SerieCacheItem[]> {
         const storedSeries = await this.getAll();
         if (storedSeries.length) {
             return this.filterSeries(storedSeries, options);
@@ -48,7 +48,7 @@ export default class UserSeriesCache extends CacheModule<SeriesCacheItem> {
 
         const series: Serie[] = data;
         series.forEach(async (serie) => {
-            const cacheValue: SeriesCacheItem = {
+            const cacheValue: SerieCacheItem = {
                 expires: Date.now() + this.expires,
                 ...serie
             }
@@ -58,7 +58,7 @@ export default class UserSeriesCache extends CacheModule<SeriesCacheItem> {
         return this.filterSeries(storedSeries, options);
     }
 
-    async getSerieById(id: number): Promise<SeriesCacheItem> {
+    async getSerieById(id: number): Promise<SerieCacheItem> {
         let storedSerie = await this.getFromCache(`${id}`);
         if (storedSerie) {
             return storedSerie;
@@ -69,7 +69,7 @@ export default class UserSeriesCache extends CacheModule<SeriesCacheItem> {
         if (isError(resp.status))
             throw new Error(data.message);
 
-        const cacheValue: SeriesCacheItem = {
+        const cacheValue: SerieCacheItem = {
             expires: Date.now() + this.expires,
             ...data
         }
@@ -77,7 +77,7 @@ export default class UserSeriesCache extends CacheModule<SeriesCacheItem> {
         return cacheValue;
     }
 
-    async getFavorites(): Promise<SeriesCacheItem[]> {
+    async getFavorites(): Promise<SerieCacheItem[]> {
         const storedSeries = await this.getAll();
         if (storedSeries.length) {
             return storedSeries
@@ -93,7 +93,7 @@ export default class UserSeriesCache extends CacheModule<SeriesCacheItem> {
         return data;
     }
 
-    private filterSeries(series: SeriesCacheItem[], options: SerieSearchOptions): SeriesCacheItem[] {
+    private filterSeries(series: SerieCacheItem[], options: SerieSearchOptions): SerieCacheItem[] {
         const { title, kind } = options;
 
         if (title) {

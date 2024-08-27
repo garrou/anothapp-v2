@@ -1,11 +1,11 @@
-import type { PlatformsCacheItem, SeriesCacheItem } from "@/types/cache";
+import type { PlatformCacheItem } from "@/types/cache";
 import type { IDBPDatabase } from "idb";
 import CacheModule from "../cacheModule";
 import { isError } from "@/utils/response";
 import type { Platform, Serie } from "@/models/serie";
 import searchService from "@/services/searchService";
 
-export default class PlatformsCache extends CacheModule<PlatformsCacheItem> {
+export default class PlatformsCache extends CacheModule<PlatformCacheItem> {
     static readonly NAME = "platforms";
 
     constructor(db: IDBPDatabase) {
@@ -16,7 +16,7 @@ export default class PlatformsCache extends CacheModule<PlatformsCacheItem> {
         db.createObjectStore(this.NAME);
     }
 
-    async getPlatforms(): Promise<PlatformsCacheItem[]> {
+    async getPlatforms(): Promise<PlatformCacheItem[]> {
         const storedPlatforms = await this.getAll();
         if (storedPlatforms.length) {
             return storedPlatforms.sort((a, b) => a.name.localeCompare(b.name));
@@ -30,8 +30,8 @@ export default class PlatformsCache extends CacheModule<PlatformsCacheItem> {
 
         const platforms: Platform[] = data;
         platforms.forEach(async (platform) => {
-            const cacheValue: PlatformsCacheItem = {
-                expires: Date.now() + this.expires,
+            const cacheValue: PlatformCacheItem = {
+                expires: Date.now() + this.bigExpires,
                 ...platform
             }
             storedPlatforms.push(cacheValue);

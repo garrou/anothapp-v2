@@ -5,6 +5,7 @@ export default abstract class CacheModule<V extends CacheRecordValue, K extends 
     protected readonly storeName: string;
     private db: IDBPDatabase;
     protected readonly expires = 24 * 60 * 60 * 1000;
+    protected readonly bigExpires = this.expires * 31;
 
     protected constructor(db: IDBPDatabase, storeName: string) {
         this.db = db;

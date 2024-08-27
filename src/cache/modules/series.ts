@@ -1,11 +1,11 @@
-import type { SeriesCacheItem } from "@/types/cache";
+import type { SerieCacheItem } from "@/types/cache";
 import type { IDBPDatabase } from "idb";
 import CacheModule from "../cacheModule";
 import { isError } from "@/utils/response";
 import type { Serie } from "@/models/serie";
 import searchService from "@/services/searchService";
 
-export default class SeriesCache extends CacheModule<SeriesCacheItem> {
+export default class SeriesCache extends CacheModule<SerieCacheItem> {
     static readonly NAME = "series";
 
     constructor(db: IDBPDatabase) {
@@ -16,7 +16,7 @@ export default class SeriesCache extends CacheModule<SeriesCacheItem> {
         db.createObjectStore(this.NAME);
     }
 
-    async getSeries(): Promise<SeriesCacheItem[]> {
+    async getSeries(): Promise<SerieCacheItem[]> {
         const storedSeries = await this.getAll();
         if (storedSeries.length) {
             return storedSeries;
@@ -30,7 +30,7 @@ export default class SeriesCache extends CacheModule<SeriesCacheItem> {
 
         const series: Serie[] = data;
         series.forEach(async (serie) => {
-            const cacheValue: SeriesCacheItem = {
+            const cacheValue: SerieCacheItem = {
                 expires: Date.now() + this.expires,
                 ...serie
             }
@@ -40,7 +40,7 @@ export default class SeriesCache extends CacheModule<SeriesCacheItem> {
         return storedSeries;
     }
 
-    async getSerieById(id: number): Promise<SeriesCacheItem> {
+    async getSerieById(id: number): Promise<SerieCacheItem> {
         let storedSerie = await this.getFromCache(`${id}`);
         if (storedSerie) {
             return storedSerie;
@@ -52,7 +52,7 @@ export default class SeriesCache extends CacheModule<SeriesCacheItem> {
             throw new Error(data.message);
         }
 
-        const cacheValue: SeriesCacheItem = {
+        const cacheValue: SerieCacheItem = {
             expires: Date.now() + this.expires,
             ...data
         }

@@ -14,11 +14,8 @@ import { DELETE_ICON } from '@/constants/icons';
 const { showSuccess } = useSnackbar();
 
 const clearCaches = async (): Promise<void> => {
-    await cache.userSeries.clearCache();
-    await cache.series.clearCache();
-    await cache.users.clearCache();
-    await cache.platforms.clearCache();
-
+    await cache.reset();
     showSuccess("Cache supprimé avec succès");
+    location.reload();
 }
 </script>

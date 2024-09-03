@@ -1,4 +1,4 @@
-import { openDB } from "idb";
+import { deleteDB, openDB } from "idb";
 import SeriesCache from "./modules/series";
 import UserSeriesCache from "./modules/userSeries";
 import UserCache from "./modules/user";
@@ -25,6 +25,12 @@ export default new (class CacheManager {
                     PlatformsCache.createStructure(database);
                     KindsCache.createStructure(database);
                 }
+            },
+            blocking() {
+                db.close();
+            },
+            blocked() {
+                db.close();
             }
         });
         this.userSeries = new UserSeriesCache(db);
@@ -32,5 +38,9 @@ export default new (class CacheManager {
         this.users = new UserCache(db);
         this.platforms = new PlatformsCache(db);
         this.kinds = new KindsCache(db);
+    }
+
+    async reset() {
+        await deleteDB(this.#name);
     }
 });

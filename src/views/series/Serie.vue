@@ -8,15 +8,11 @@
             </template>
 
             <template #secondBtn>
-                <v-btn elevation="0" @click="changeFavorite">
-                    <v-icon :color="favoriteColor" :icon="FAVORITE_ICON" />
-                </v-btn>
+                <button-favorite-serie :serie-id="infos.serie.id" />
             </template>
 
             <template #thirdBtn>
-                <v-btn elevation="0" @click="changeContinue">
-                    <v-icon :color="watchColor" :icon="watchIcon" />
-                </v-btn>
+                <button-watch-serie :serie-id="infos.serie.id" />
             </template>
 
             <template #fourthBtn>
@@ -77,6 +73,8 @@
 </template>
 
 <script lang="ts" setup>
+import ButtonWatchSerie from "@/components/ButtonWatchSerie.vue";
+import ButtonFavoriteSerie from "@/components/ButtonFavoriteSerie.vue";
 import BaseConfirm from "@/components/BaseConfirm.vue";
 import BaseModal from "@/components/BaseModal.vue";
 import BaseImage from "@/components/BaseImage.vue";
@@ -92,8 +90,7 @@ import { useSerie } from "@/composables/serie";
 import type { Season } from "@/models/season";
 import router from "@/router";
 import { buildPlural, minsToStringHoursDays } from "@/utils/format";
-import { CLOSE_ICON, DELETE_ICON, DETAILS_ICON, FAVORITE_ICON } from "@/constants/icons";
-import { useSnackbar } from "@/composables/snackbar";
+import { CLOSE_ICON, DELETE_ICON, DETAILS_ICON } from "@/constants/icons";
 import type { User } from "@/models/user";
 import { useFriend } from "@/composables/friend";
 
@@ -103,9 +100,8 @@ const props = defineProps({
 
 const { getFriends } = useFriend();
 const { addSeason } = useSeason();
-const { deleteSerie, getSerieInfos, updateField } = useSerie();
+const { deleteSerie, getSerieInfos } = useSerie();
 const { getSeasonsBySerieId, getPlatforms } = useSearch();
-const { showError, showSuccess } = useSnackbar();
 
 const confirm = ref(false);
 const friends = ref<User[]>([]);
@@ -120,9 +116,6 @@ const selected = ref<Season>();
 const tab = ref(1);
 
 const displayOrder = computed(() => [1, 2].includes(tab.value));
-const favoriteColor = computed(() => isFavorite.value ? "red" : "surface-variant");
-const watchColor = computed(() => isWatching.value ? "red" : "green");
-const watchIcon = computed(() => isWatching.value ? "mdi-close-circle" : "mdi-play");
 const orderIcon = computed(() => order.value ? "mdi-sort-numeric-descending" : "mdi-sort-numeric-ascending");
 const time = computed(() => minsToStringHoursDays(infos.value?.time));
 
@@ -147,43 +140,13 @@ const orderSeasons = (): void => {
 }
 
 const newSeason = async (season: Season): Promise<void> => {
-    if (!infos.value?.serie) {
-        showError("Impossible d'ajouter une saison");
-        return;
-    }
+    if (!infos.value?.serie) throw new Error("Impossible d'ajouter une saison");
     await addSeason(infos.value.serie, season);
     infos.value = await getSerieInfos({ id: props.id });
 }
 
-const changeFavorite = async (): Promise<void> => {
-    if (!infos.value?.serie) {
-        showError("Impossible d'ajouter en favoris");
-        return
-    }
-    await updateField(infos.value.serie, "favorite");
-    isFavorite.value = !isFavorite.value;
-    showSuccess(isFavorite.value
-            ? `"${infos.value.serie.title}" ajoutée aux favoris`
-            : `"${infos.value.serie.title}" supprimée des favoris`);
-}
-
-const changeContinue = async (): Promise<void> => {
-    if (!infos.value?.serie) {
-        showError("Impossible de modifier le status");
-        return
-    }
-    await updateField(infos.value?.serie, "watch");
-    isWatching.value = !isWatching.value;
-    showSuccess(isWatching.value
-            ? `Visionnage en cours pour "${infos.value.serie.title}"`
-            : `Visionnage arrêté pour "${infos.value.serie.title}"`);
-}
-
 const removeSerie = async (): Promise<void> => {
-    if (!infos.value?.serie) {
-        showError("Impossible de supprimer la série");
-        return
-    }
+    if (!infos.value?.serie) throw new Error("Impossible de supprimer la série");
     confirm.value = !await deleteSerie(infos.value.serie);
     router.replace("/series");
 }

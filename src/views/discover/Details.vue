@@ -2,7 +2,15 @@
     <v-container v-if="serie">
         <base-toolbar icon="mdi-chevron-left" :title="serie.title">
             <template #firstBtn>
-                <v-btn elevation="0" :icon="ADD_ICON" @click="add" />
+                <button-add-serie :serie="serie" />
+            </template>
+
+            <template #secondBtn>
+                <button-favorite-serie :serie-id="serie.id" />
+            </template>
+            
+            <template #thirdBtn>
+                <button-watch-serie :serie-id="serie.id" />
             </template>
         </base-toolbar>
 
@@ -85,11 +93,12 @@ import FriendsRow from "@/components/FriendsRow.vue";
 import ImagesRow from "@/components/ImagesRow.vue";
 import SerieDetail from "@/components/SerieDetail.vue";
 import SeriesRow from "@/components/SeriesRow.vue";
+import ButtonAddSerie from "@/components/ButtonAddSerie.vue";
+import ButtonFavoriteSerie from "@/components/ButtonFavoriteSerie.vue";
+import ButtonWatchSerie from "@/components/ButtonWatchSerie.vue";
 import { useFriend } from "@/composables/friend";
 import { useSearch } from "@/composables/search";
-import { useSerie } from "@/composables/serie";
-import { useSnackbar } from "@/composables/snackbar";
-import { ADD_ICON, CLOSE_ICON, DETAILS_ICON } from "@/constants/icons";
+import { CLOSE_ICON, DETAILS_ICON } from "@/constants/icons";
 import type { Actor, Character } from "@/models/person";
 import type { Serie, Similar } from "@/models/serie";
 import type { User } from "@/models/user";
@@ -101,8 +110,6 @@ const props = defineProps({
 
 const { getFriends } = useFriend();
 const { getActor, getCharacters, getSerie, getSerieImages, getSimilarsSeries } = useSearch();
-const { addSerie } = useSerie();
-const { showError } = useSnackbar();
 
 const actor = ref<Actor>();
 const characters = ref<Character[]>([]);
@@ -113,14 +120,6 @@ const modal = ref(false);
 const serie = ref<Serie>();
 const similars = ref<Similar[]>([]);
 const tab = ref(1);
-
-const add = async () => {
-    if (!serie.value) {
-        showError("Impossible d'ajouter la série");
-        return;
-    }
-    await addSerie(serie.value);
-}
 
 const getChars = async () => {
     if (characters.value.length) return;

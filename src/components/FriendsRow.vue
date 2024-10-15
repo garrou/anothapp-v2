@@ -64,7 +64,6 @@ const emit = defineEmits<{
 }>();
 
 const { acceptFriendRequest, deleteFriend, sendFriendRequest } = useFriend();
-const { showError } = useSnackbar();
 
 const confirm = ref(false);
 const friend = ref<User>();
@@ -88,10 +87,7 @@ const addFriend = async (user: User) => {
 }
 
 const removeFriend = async () => {
-    if (!selected.value) {
-        showError("Impossible de supprimer cet(te) ami(e).")
-        return;
-    }
+    if (!selected.value) throw new Error("Impossible de supprimer cet(te) ami(e).");
     await deleteFriend(selected.value);
     confirm.value = false;
     emit("refresh");

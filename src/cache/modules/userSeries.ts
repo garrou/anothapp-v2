@@ -17,6 +17,10 @@ export default class UserSeriesCache extends CacheModule<SerieCacheItem> {
         db.createObjectStore(this.NAME);
     }
 
+    async getSerieFromCache(id: number): Promise<SerieCacheItem|undefined> {
+        return this.getFromCache(`${id}`);
+    }
+
     async addSerie(serie: Serie): Promise<void> {
         const cacheValue: SerieCacheItem = {
             ...JSON.parse(JSON.stringify(serie)),
@@ -59,7 +63,7 @@ export default class UserSeriesCache extends CacheModule<SerieCacheItem> {
     }
 
     async getSerieById(id: number): Promise<SerieCacheItem> {
-        let storedSerie = await this.getFromCache(`${id}`);
+        const storedSerie = await this.getFromCache(`${id}`);
         if (storedSerie) {
             return storedSerie;
         }

@@ -4,6 +4,7 @@ import storageService from "./storageService";
 import type { Season } from "@/models/season";
 import type { Serie } from "@/models/serie";
 import type { SerieStatus } from "@/types/types";
+import type { SerieSearchOptions } from "@/models/search";
 
 const PREFIX = "shows";
 
@@ -74,10 +75,10 @@ const getSerie = async (id: number, simplified?: boolean): Promise<Response> => 
     });
 }
 
-const getSeries = async (title?: string, kind?: string, platform?: string): Promise<Response> => {
-    const url = buildUrl(buildUrl(buildUrl(`${ENDPOINT}/${PREFIX}`, "title", title, "?"), 
-            "kind", kind, "?"), 
-            "platform", platform, "?"
+const getSeries = async (options?: SerieSearchOptions): Promise<Response> => {
+    const url = buildUrl(buildUrl(buildUrl(`${ENDPOINT}/${PREFIX}`, "title", options?.title, "?"), 
+            "kind", options?.kind, "?"), 
+            "platform", options?.platform, "?"
     );
     return fetch(url, {
         headers: {

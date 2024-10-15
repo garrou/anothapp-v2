@@ -64,7 +64,7 @@ export function useSerie() {
         if (!options.platform) {
             return cache.userSeries.getSeries(options);
         }
-        const resp = await serieService.getSeries(undefined, undefined, options.platform);
+        const resp = await serieService.getSeries(options);
         const data = await resp.json();
 
         if (isError(resp.status))
@@ -101,10 +101,15 @@ export function useSerie() {
         return data.value;
     }
 
+    const getSerieFromCache = async (id: number): Promise<Serie|undefined> => {
+        return cache.userSeries.getSerieFromCache(id);
+    }
+
     return {
         addSerie,
         deleteSerie,
         getSerie,
+        getSerieFromCache,
         getSerieInfos,
         getSeries,
         getSeriesByStatus,

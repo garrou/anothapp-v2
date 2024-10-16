@@ -68,7 +68,7 @@ export default class UserSeriesCache extends CacheModule<SerieCacheItem> {
             return storedSerie;
         }
         
-        const resp = await serieService.getSerie(id, true);
+        const resp = await serieService.getSerie(id);
         const data = await resp.json();
         if (isError(resp.status))
             throw new Error(data.message);

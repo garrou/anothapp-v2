@@ -66,9 +66,8 @@ const getSeasonInfosBySerieIdByNumber = async (id: number, num: number): Promise
     });
 }
 
-const getSerie = async (id: number, simplified?: boolean): Promise<Response> => {
-    const url = buildUrl(`${ENDPOINT}/${PREFIX}/${id}`, "simplified", simplified, "?");
-    return fetch(url, {
+const getSerie = async (id: number): Promise<Response> => {
+    return fetch(`${ENDPOINT}/${PREFIX}/${id}`, {
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`
         }

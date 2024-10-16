@@ -11,19 +11,8 @@
               <v-btn icon="mdi-dots-vertical" v-bind="props"></v-btn>
             </template>
 
-            <v-list>
-              <v-list-item v-if="slots.firstBtn">
-                <slot name="firstBtn" />
-              </v-list-item>
-              <v-list-item v-if="slots.secondBtn">
-                <slot name="secondBtn" />
-              </v-list-item>
-              <v-list-item v-if="slots.thirdBtn">
-                <slot name="thirdBtn" />
-              </v-list-item>
-              <v-list-item v-if="slots.fourthBtn">
-                <slot name="fourthBtn" />
-              </v-list-item>
+            <v-list v-if="slots.listItems">
+              <slot name="listItems" />
             </v-list>
         </v-menu>
     </v-toolbar>

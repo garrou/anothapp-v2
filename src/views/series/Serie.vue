@@ -1,24 +1,22 @@
 <template>
     <v-container v-if="infos && seasons">
         <base-toolbar icon="mdi-chevron-left" :title="infos.serie.title">
-            <template #firstBtn>
-                <v-btn elevation="0" @click="$router.push(`/discover/${id}`)">
-                    <v-icon :icon="DETAILS_ICON" />
-                </v-btn>
-            </template>
+            <template #listItems>
+                <v-list-item>
+                    <v-btn elevation="0" :icon="DETAILS_ICON" @click="$router.push(`/discover/${id}`)" />
+                </v-list-item>
 
-            <template #secondBtn>
-                <button-favorite-serie :serie-id="infos.serie.id" />
-            </template>
-
-            <template #thirdBtn>
-                <button-watch-serie :serie-id="infos.serie.id" />
-            </template>
-
-            <template #fourthBtn>
-                <v-btn elevation="0" @click="confirm = true">
-                    <v-icon :icon="DELETE_ICON" />
-                </v-btn>
+                <v-list-item>
+                    <button-favorite-serie :serie-id="infos.serie.id" />
+                </v-list-item>
+                
+                <v-list-item>
+                    <button-watch-serie :serie-id="infos.serie.id" />
+                </v-list-item>
+                
+                <v-list-item>
+                    <v-btn elevation="0" :icon="DELETE_ICON" @click="confirm = true" />
+                </v-list-item>
             </template>
         </base-toolbar>
 

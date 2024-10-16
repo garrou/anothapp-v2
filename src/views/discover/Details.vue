@@ -1,16 +1,18 @@
 <template>
     <v-container v-if="serie">
         <base-toolbar icon="mdi-chevron-left" :title="serie.title">
-            <template #firstBtn>
-                <button-add-serie :serie="serie" />
-            </template>
+            <template #listItems>
+                <v-list-item>
+                    <button-add-serie :serie="serie" />
+                </v-list-item>
 
-            <template #secondBtn>
-                <button-favorite-serie :serie-id="serie.id" />
-            </template>
-            
-            <template #thirdBtn>
-                <button-watch-serie :serie-id="serie.id" />
+                <v-list-item>
+                    <button-favorite-serie :serie-id="serie.id" />
+                </v-list-item>
+                
+                <v-list-item>
+                    <button-watch-serie :serie-id="serie.id" />
+                </v-list-item>
             </template>
         </base-toolbar>
 

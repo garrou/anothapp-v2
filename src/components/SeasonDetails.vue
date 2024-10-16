@@ -1,33 +1,29 @@
 <template>
-    <v-card-text v-if="seasons.length">
-        <div class="font-weight-bold ms-1 mb-2">{{ minsToStringHoursDays(time) }}</div>
-        <v-timeline align="start" :density="DENSITY">
-            <v-timeline-item v-for="subSeason in seasons" size="large" :key="subSeason.id">
-                <v-card :subtitle="subSeason.platform.name">
-                    <template #prepend>
-                        <v-avatar v-if="subSeason.platform.logo" :image="subSeason.platform.logo" />
-                        <v-avatar v-else-if="subSeason.platform.name" color="grey">
-                            <v-icon color="white" :icon="PLATFORM_ICON" />
-                        </v-avatar>
-                    </template>
-                    <template #title>
-                        <span class="text-subtitle-1">{{ formatDate(subSeason.addedAt) }}</span>
-                    </template>
-                    <template #append>
-                        <v-btn elevation="0" :icon="isEdited(subSeason.id) ? 'mdi-close' : 'mdi-pencil'"
-                            @click="editSeason(subSeason.id)" />
-                        <v-btn elevation="0" :icon="DELETE_ICON" @click="selectSeason(subSeason.id)" />
-                    </template>
+    <template v-if="seasons.length">
+        <div class="font-weight-bold mb-2">{{ minsToStringHoursDays(time) }}</div>
+        <v-card v-for="subSeason in seasons" class="mb-2" :key="subSeason.id" :subtitle="subSeason.platform.name">
+            <template #prepend>
+                <v-avatar v-if="subSeason.platform.logo" :image="subSeason.platform.logo" />
+                <v-avatar v-else-if="subSeason.platform.name" color="grey">
+                    <v-icon color="white" :icon="PLATFORM_ICON" />
+                </v-avatar>
+            </template>
+            <template #title>
+                <span class="text-subtitle-1">{{ formatDate(subSeason.addedAt) }}</span>
+            </template>
+            <template #append>
+                <v-btn elevation="0" :icon="isEdited(subSeason.id) ? 'mdi-close' : 'mdi-pencil'"
+                    @click="editSeason(subSeason.id)" />
+                <v-btn elevation="0" :icon="DELETE_ICON" @click="selectSeason(subSeason.id)" />
+            </template>
 
-                    <div v-if="isEdited(subSeason.id)" class="px-4">
-                        <v-label>Plateformes</v-label>
-                        <v-select v-model="platform" :density="DENSITY" :items="platforms" item-title="name"
-                            item-value="id" @update:modelValue="updatePlatform" />
-                    </div>
-                </v-card>
-            </v-timeline-item>
-        </v-timeline>
-    </v-card-text>
+            <div v-if="isEdited(subSeason.id)" class="px-4">
+                <v-label>Plateformes</v-label>
+                <v-select v-model="platform" :density="DENSITY" :items="platforms" item-title="name" item-value="id"
+                    @update:modelValue="updatePlatform" />
+            </div>
+        </v-card>
+    </template>
 
     <base-confirm v-model="modal" text="Supprimer ce visionnage ?" title="Supprimer" persistent @cancel="modal = false"
         @confirm="dropSeason(selected)" />
@@ -70,7 +66,7 @@ const platform = ref<number>();
 const isEdited = (id: number): boolean => toEdit.value === id;
 
 const editSeason = (id: number) => {
-    toEdit.value = id;
+    toEdit.value = isEdited(id) ? -1 : id;
 }
 
 const selectSeason = (id: number) => {

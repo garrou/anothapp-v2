@@ -29,7 +29,7 @@ export const minsToStringHoursDays = (mins: number = 0): string => {
 
     const days = Math.floor(mins / MINS_IN_DAY);
 
-    return days === 0 
+    return days === 0
         ? minsToStringHours(mins)
         : minsToStringDays(mins);
 }
@@ -37,10 +37,13 @@ export const minsToStringHoursDays = (mins: number = 0): string => {
 export const buildUrl = (url: string, query: string, param?: string | number | boolean, separator: string = "&"): string =>
     param === undefined ? url : url.concat(`${separator}${query}=${param}`);
 
-export const buildPlural = (text: string, value?: number, prefix = true): string => {
+export const buildPlural = (text: string, value?: number, prefix = true, displayValue = true): string => {
     const num = value ?? 0;
     const plural = `${text}${num > 1 ? "s" : ""}`;
-    return prefix ? `${num} ${plural}` : `${plural} ${num}`;
+
+    return displayValue
+        ? prefix ? `${num} ${plural}` : `${plural} ${num}`
+        : plural;
 }
 
 export const buildHexColor = (): string => `#${Math.floor(Math.random() * 16777215).toString(16)}`;

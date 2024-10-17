@@ -18,5 +18,5 @@ onBeforeMount(async () => {
   if (await checkAuth()) {
     await getSeries();
   }
-})
+});
 </script>

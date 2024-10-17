@@ -30,6 +30,7 @@ export function useSerie() {
     const deleteSerie = async (serie: Serie): Promise<boolean> => {
         await cache.userSeries.deleteSerie(serie.id);
         showSuccess(`Série "${serie.title}" supprimée`);
+        router.replace("/series");
         return true;
     }
 
@@ -101,7 +102,7 @@ export function useSerie() {
         return data.value;
     }
 
-    const getSerieFromCache = async (id: number): Promise<Serie|undefined> => {
+    const getSerieFromCache = async (id: number): Promise<Serie | undefined> => {
         return cache.userSeries.getSerieFromCache(id);
     }
 

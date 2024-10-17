@@ -1,17 +1,16 @@
 <template>
     <v-container v-if="serie">
         <base-toolbar icon="mdi-chevron-left" :title="serie.title">
-            <template #listItems>
+            <template #buttons>
                 <v-list-item>
-                    <button-add-serie :serie="serie" />
+                    <button-details-serie :serie-id="id" tooltip-location="left" />
                 </v-list-item>
 
                 <v-list-item>
-                    <button-favorite-serie :serie-id="serie.id" />
-                </v-list-item>
-                
-                <v-list-item>
-                    <button-watch-serie :serie-id="serie.id" />
+                    <div>
+                        <button-add-serie :serie="serie" tooltip-location="left" />
+                        <button-remove-serie :serie="serie" tooltip-location="left" />
+                    </div>
                 </v-list-item>
             </template>
         </base-toolbar>
@@ -96,8 +95,8 @@ import ImagesRow from "@/components/ImagesRow.vue";
 import SerieDetail from "@/components/SerieDetail.vue";
 import SeriesRow from "@/components/SeriesRow.vue";
 import ButtonAddSerie from "@/components/ButtonAddSerie.vue";
-import ButtonFavoriteSerie from "@/components/ButtonFavoriteSerie.vue";
-import ButtonWatchSerie from "@/components/ButtonWatchSerie.vue";
+import ButtonRemoveSerie from "@/components/ButtonRemoveSerie.vue";
+import ButtonDetailsSerie from "@/components/ButtonDetailsSerie.vue";
 import { useFriend } from "@/composables/friend";
 import { useSearch } from "@/composables/search";
 import { CLOSE_ICON, DETAILS_ICON } from "@/constants/icons";

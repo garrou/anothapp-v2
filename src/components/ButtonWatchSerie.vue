@@ -1,15 +1,21 @@
 <template>
-    <v-btn v-if="!!serie" :color="watchColor" :icon="watchIcon" variant="text" @click="changeWatch" />
+    <v-tooltip v-if="!!serie" :text="watchText" :location="tooltipLocation">
+        <template v-slot:activator="{ props }">
+            <v-btn v-bind="props" :color="watchColor" :icon="watchIcon" variant="text" @click="changeWatch" />
+        </template>
+    </v-tooltip>
 </template>
 
 <script lang="ts" setup>
 import { useSerie } from '@/composables/serie';
 import { useSnackbar } from '@/composables/snackbar';
+import { TOOLTIP_LOCATION } from '@/constants/style';
 import type { Serie } from '@/models/serie';
-import { computed, onBeforeMount, ref } from 'vue';
+import { computed, onBeforeMount, ref, type PropType } from 'vue';
 
 const props = defineProps({
-    serieId: { type: Number, required: true }
+    serieId: { type: Number, required: true },
+    tooltipLocation: { type: String as PropType<"left" | "bottom">, default: TOOLTIP_LOCATION }
 });
 
 const emit = defineEmits<{
@@ -22,6 +28,7 @@ const { showSuccess } = useSnackbar();
 const serie = ref<Serie>();
 const isWatching = ref(false);
 
+const watchText = computed(() => isWatching.value ? "Arrêter le visionnage" : "Reprendre le visionnage");
 const watchColor = computed(() => isWatching.value ? "red" : "green");
 const watchIcon = computed(() => isWatching.value ? "mdi-close-circle" : "mdi-play");
 

@@ -1,6 +1,6 @@
 <template>
-    <v-row align="center">
-        <v-col cols="12" md="6" class="preview-img">
+    <v-row>
+        <v-col cols="12" md="6" class="preview-img my-2">
             <base-image max-height="580" :src="serie.poster" />
         </v-col>
         <v-col cols="12" md="6">

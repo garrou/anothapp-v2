@@ -6,10 +6,12 @@ import { useSnackbar } from "./snackbar";
 import { useRouter } from "vue-router";
 import cache from "@/cache";
 import type { SerieStatus } from "@/types/types";
+import { useState } from "./state";
 
 export function useSerie() {
 
     const { showSuccess } = useSnackbar();
+    const { setConfirmModal } = useState();
     const router = useRouter();
 
     const addSerie = async (serie: Serie): Promise<void> => {
@@ -27,11 +29,11 @@ export function useSerie() {
         router.push(`/series/${serie.id}`);
     }
 
-    const deleteSerie = async (serie: Serie): Promise<boolean> => {
+    const deleteSerie = async (serie: Serie): Promise<void> => {
         await cache.userSeries.deleteSerie(serie.id);
         showSuccess(`Série "${serie.title}" supprimée`);
         router.replace("/series");
-        return true;
+        setConfirmModal(false);
     }
 
     const getSerie = async (options: SerieSearchOptions): Promise<Serie> => {

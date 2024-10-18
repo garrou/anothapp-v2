@@ -3,13 +3,8 @@
         <base-toolbar icon="mdi-chevron-left" :title="serie.title">
             <template #buttons>
                 <v-list-item>
-                    <button-details-serie :serie-id="id" tooltip-location="left" />
-                </v-list-item>
-
-                <v-list-item>
                     <div>
                         <button-add-serie :serie="serie" tooltip-location="left" />
-                        <button-remove-serie :serie="serie" tooltip-location="left" />
                     </div>
                 </v-list-item>
             </template>
@@ -95,8 +90,6 @@ import ImagesRow from "@/components/ImagesRow.vue";
 import SerieDetail from "@/components/SerieDetail.vue";
 import SeriesRow from "@/components/SeriesRow.vue";
 import ButtonAddSerie from "@/components/ButtonAddSerie.vue";
-import ButtonRemoveSerie from "@/components/ButtonRemoveSerie.vue";
-import ButtonDetailsSerie from "@/components/ButtonDetailsSerie.vue";
 import { useFriend } from "@/composables/friend";
 import { useSearch } from "@/composables/search";
 import { CLOSE_ICON, DETAILS_ICON } from "@/constants/icons";
@@ -104,12 +97,15 @@ import type { Actor, Character } from "@/models/person";
 import type { Serie, Similar } from "@/models/serie";
 import type { User } from "@/models/user";
 import { onBeforeMount, ref } from "vue";
+import { useSerie } from "@/composables/serie";
+import { useState } from "@/composables/state";
 
 const props = defineProps({
     id: { type: Number, required: true }
 })
 
 const { getFriends } = useFriend();
+const { deleteSerie } = useSerie();
 const { getActor, getCharacters, getSerie, getSerieImages, getSimilarsSeries } = useSearch();
 
 const actor = ref<Actor>();
@@ -121,6 +117,11 @@ const modal = ref(false);
 const serie = ref<Serie>();
 const similars = ref<Similar[]>([]);
 const tab = ref(1);
+
+const removeSerie = async () => {
+    if (!serie.value) throw new Error("Impossible de supprimer la série")
+    await deleteSerie(serie.value);
+}
 
 const getChars = async () => {
     if (characters.value.length) return;

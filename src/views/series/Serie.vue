@@ -6,6 +6,12 @@
                     <button-details-serie :serie-id="id" tooltip-location="left" />
                 </v-list-item>
                 <v-list-item>
+                    <button-favorite-serie :serie-id="id" />
+                </v-list-item>
+                <v-list-item>
+                    <button-watch-serie :serie-id="id" />
+                </v-list-item>
+                <v-list-item>
                     <button-remove-serie :serie="infos.serie" tooltip-location="left" />
                 </v-list-item>
             </template>
@@ -35,11 +41,6 @@
                             <span class="font-weight-bold">{{ time }}</span>
                         </div>
                     </v-card-text>
-
-                    <v-card-actions>
-                        <button-favorite-serie :serie-id="id" />
-                        <button-watch-serie :serie-id="id" />
-                    </v-card-actions>
                 </v-card>
             </v-col>
         </v-row>
@@ -65,6 +66,10 @@
         </v-window>
     </v-container>
 
+    <base-confirm v-if="infos?.serie" v-model="confirmModal" title="Supprimer"
+        text="Confirmez-vous la suppression de la série ?" @cancel="confirmModal = false"
+        @confirm="deleteSerie(infos.serie)" />
+
     <base-modal v-if="selected" v-model="modal" :max-width="500">
         <template #title>
             <span>Saison {{ selected.number }}</span>
@@ -75,6 +80,7 @@
 </template>
 
 <script lang="ts" setup>
+import BaseConfirm from "@/components/BaseConfirm.vue";
 import ButtonWatchSerie from "@/components/ButtonWatchSerie.vue";
 import ButtonFavoriteSerie from "@/components/ButtonFavoriteSerie.vue";
 import ButtonRemoveSerie from "@/components/ButtonRemoveSerie.vue";
@@ -95,14 +101,16 @@ import { buildPlural, minsToStringHoursDays } from "@/utils/format";
 import { CLOSE_ICON } from "@/constants/icons";
 import type { User } from "@/models/user";
 import { useFriend } from "@/composables/friend";
+import { useState } from "@/composables/state";
 
 const props = defineProps({
     id: { type: Number, required: true }
 });
 
+const { confirmModal } = useState();
 const { getFriends } = useFriend();
 const { addSeason } = useSeason();
-const { getSerieInfos } = useSerie();
+const { deleteSerie, getSerieInfos } = useSerie();
 const { getSeasonsBySerieId, getPlatforms } = useSearch();
 
 const friends = ref<User[]>([]);

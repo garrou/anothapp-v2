@@ -1,5 +1,5 @@
 <template>
-    <series-row :loading="loading" :series="series" watch-status @refresh="getToContinue" />
+    <series-row :loading="loading" :series="series" watch-status @refresh="(id) => refreshContinue(id)" />
 </template>
 
 <script lang="ts" setup>
@@ -14,13 +14,13 @@ const { getSeriesByStatus } = useSerie();
 const loading = ref(false);
 const series = ref<Serie[]>([]);
 
-const getToContinue = async () => {
-    loading.value = true;
-    series.value = await getSeriesByStatus("continue");
-    loading.value = false;
+const refreshContinue = (id: number) => {
+    series.value = series.value.filter((serie) => serie.id !== id);
 }
 
 onBeforeMount(async () => {
-    await getToContinue();
+    loading.value = true;
+    series.value = await getSeriesByStatus("continue");
+    loading.value = false;
 });
 </script>

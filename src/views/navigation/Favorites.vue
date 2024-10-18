@@ -1,39 +1,33 @@
 <template>
-    <series-row :loading="loading" :series="favorites" @refresh="refreshFavorites" />
+    <series-row :loading="loading" :series="favorites" @refresh="(id) => refreshFavorites(id)" />
 </template>
 
 <script lang="ts" setup>
 import SeriesRow from "@/components/SeriesRow.vue";
-import { useFavorite } from "@/composables/favorite";
 import { useSerie } from "@/composables/serie";
+import { useState } from "@/composables/state";
 import type { Serie } from "@/models/serie";
-import { onBeforeUnmount } from "vue";
-import { ref, onBeforeMount } from "vue";
+import { ref, onBeforeMount, onBeforeUnmount } from "vue";
 
 const { getSeriesByStatus } = useSerie();
-const favorite = useFavorite();
-
-const deleted = ref(0);
+const state = useState();
 const favorites = ref<Serie[]>([]);
 const loading = ref(false);
+const changes = ref(0);
 
-const getFavorites = async () => {
-    loading.value = true;
-    favorites.value = await getSeriesByStatus("favorite");
-    loading.value = false;
-}
-
-const refreshFavorites = async () => {
-    deleted.value++;
-    getFavorites();
+const refreshFavorites = (id: number) => {
+    favorites.value = favorites.value.filter((serie) => serie.id !== id);
+    changes.value++;
 }
 
 onBeforeMount(async () => {
-    await getFavorites();
+    loading.value = true;
+    favorites.value = await getSeriesByStatus("favorite");
+    loading.value = false;
 });
 
 onBeforeUnmount(() => {
-    if (deleted.value > 0) 
-        favorite.increment();
+    if (changes.value)
+        state.increment();
 });
 </script>

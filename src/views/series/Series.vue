@@ -11,12 +11,12 @@ import type { Serie } from "@/models/serie";
 import { onBeforeMount, ref } from "vue";
 import { useSerie } from "@/composables/serie";
 import { watch } from "vue";
-import { useFavorite } from "@/composables/favorite";
+import { useState } from "@/composables/state";
 import type { SerieSearchOptions } from "@/models/search";
 import type { FilterType } from "@/types/types";
 
 const { getSeries } = useSerie();
-const favorite = useFavorite();
+const state = useState();
 
 const loading = ref(false);
 const series = ref<Serie[]>([]);
@@ -42,7 +42,7 @@ onBeforeMount(async () => {
     await fetchSeries();
 });
 
-watch(favorite.deleted, async () => {
+watch(state.counter, async () => {
     await fetchSeries();
 });
 </script>

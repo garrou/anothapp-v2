@@ -3,7 +3,7 @@
     <v-row v-if="series.length || loading" class="mt-1">
         <v-col v-for="serie in series" :cols="6" :md="3" :key="serie.id">
             <base-skeleton :loading="loading" type="card">
-                <serie-card :serie="serie" :watch-status="watchStatus" @refresh="$emit('refresh')" />
+                <serie-card :serie="serie" :watch-status="watchStatus" @refresh="$emit('refresh', serie.id)" />
             </base-skeleton>
         </v-col>
     </v-row>
@@ -25,6 +25,6 @@ defineProps({
 });
 
 const emit = defineEmits<{
-    refresh: []
+    refresh: [number]
 }>();
 </script>

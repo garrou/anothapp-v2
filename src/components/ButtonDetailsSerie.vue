@@ -1,8 +1,8 @@
 <template>
-    <v-tooltip :text="content.text" :location="tooltipLocation">
+    <v-tooltip v-if="exists" text="Page des détails" :location="tooltipLocation">
         <template v-slot:activator="{ props }">
             <v-btn v-bind="props" color="surface-variant" elevation="0" icon="mdi-information" variant="text"
-                @click="$router.push(content.path)" />
+                @click="$router.push(`/discover/${serieId}`)" />
         </template>
     </v-tooltip>
 </template>
@@ -10,7 +10,7 @@
 <script lang="ts" setup>
 import { useSerie } from '@/composables/serie';
 import { TOOLTIP_LOCATION } from '@/constants/style';
-import { computed, onBeforeMount, ref, type PropType } from 'vue';
+import { onBeforeMount, ref, type PropType } from 'vue';
 
 const props = defineProps({
     serieId: { type: Number, required: true },
@@ -20,10 +20,6 @@ const props = defineProps({
 const { getSerieFromCache } = useSerie();
 
 const exists = ref(false);
-
-const content = computed(() => exists.value && window.location.pathname.includes("/series")
-    ? { text: "Page des détails", path: `/discover/${props.serieId}` }
-    : { text: "Page de ma série", path: `/series/${props.serieId}` });
 
 onBeforeMount(async () => {
     exists.value = !!(await getSerieFromCache(props.serieId));

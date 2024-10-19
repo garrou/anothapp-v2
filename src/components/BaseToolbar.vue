@@ -12,7 +12,11 @@
       </template>
 
       <v-list>
-        <slot name="buttons" />
+        <v-list-item>
+          <div>
+            <slot name="buttons" />
+          </div>
+        </v-list-item>
       </v-list>
     </v-menu>
   </v-toolbar>

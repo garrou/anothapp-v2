@@ -3,7 +3,7 @@
     <v-row v-if="series.length || loading" class="mt-1">
         <v-col v-for="serie in series" :cols="6" :md="3" :key="serie.id">
             <base-skeleton :loading="loading" type="card">
-                <serie-card :serie="serie" :watch-status="watchStatus" @refresh="$emit('refresh', serie.id)" />
+                <serie-card :serie="serie" :watch-status="watchStatus" @refresh="(id, kind) => $emit('refresh', id, kind)" />
             </base-skeleton>
         </v-col>
     </v-row>
@@ -16,6 +16,7 @@ import SerieCard from "@/components/SerieCard.vue";
 import type { Serie } from "@/models/serie";
 import { buildPlural } from "@/utils/format";
 import type { PropType } from "vue";
+import { id } from "vuetify/locale";
 
 defineProps({
     loading: { type: Boolean, required: true },
@@ -25,6 +26,6 @@ defineProps({
 });
 
 const emit = defineEmits<{
-    refresh: [number]
+    refresh: [number, string]
 }>();
 </script>

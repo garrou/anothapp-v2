@@ -9,11 +9,13 @@
 import BaseAppBar from "@/components/BaseAppBar.vue";
 import SeriesRow from "@/components/SeriesRow.vue";
 import type { Serie } from "@/models/serie";
-import { onBeforeMount, ref } from "vue";
+import { onBeforeMount, ref, watch } from "vue";
 import { useSearch } from "@/composables/search";
 import type { SerieSearchOptions } from "@/models/search";
+import { useState } from "@/composables/state";
 
 const { getSeries } = useSearch();
+const state = useState();
 
 const loading = ref(false);
 const series = ref<Serie[]>([]);
@@ -23,6 +25,10 @@ const fetchSeries = async (options?: SerieSearchOptions): Promise<void> => {
     series.value = await getSeries(options);
     loading.value = false;
 }
+
+watch(state.counter, async () => {
+    await fetchSeries();
+});
 
 onBeforeMount(async () => {
     await fetchSeries();

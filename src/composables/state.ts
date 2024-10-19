@@ -3,9 +3,7 @@ import { storeToRefs } from "pinia";
 
 export function useState() {
 
-    const stateStore = useStateStore();
-
-    const { confirmModal, counter } = storeToRefs(stateStore);
+    const { confirmModal, counter } = storeToRefs(useStateStore());
 
     const setConfirmModal = (value: boolean) => {
         confirmModal.value = value;

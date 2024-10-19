@@ -4,6 +4,7 @@ import UserSeriesCache from "./modules/userSeries";
 import UserCache from "./modules/user";
 import PlatformsCache from "./modules/platforms";
 import KindsCache from "./modules/kinds";
+import UserListCache from "./modules/userList";
 
 export default new (class CacheManager {
     userSeries!: UserSeriesCache;
@@ -11,6 +12,7 @@ export default new (class CacheManager {
     users!: UserCache;
     platforms!: PlatformsCache;
     kinds!: KindsCache;
+    userList!: UserListCache;
 
     readonly #name = "cache";
     readonly #version = 1;
@@ -24,6 +26,7 @@ export default new (class CacheManager {
                     UserCache.createStructure(database);
                     PlatformsCache.createStructure(database);
                     KindsCache.createStructure(database);
+                    UserListCache.createStructure(database);
                 }
             },
             blocking() {
@@ -38,6 +41,7 @@ export default new (class CacheManager {
         this.users = new UserCache(db);
         this.platforms = new PlatformsCache(db);
         this.kinds = new KindsCache(db);
+        this.userList = new UserListCache(db);
     }
 
     async reset() {

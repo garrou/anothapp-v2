@@ -2,18 +2,10 @@
     <v-container v-if="infos">
         <base-toolbar icon="mdi-chevron-left" :title="infos.serie.title">
             <template #buttons>
-                <v-list-item>
-                    <button-details-serie :serie-id="id" tooltip-location="left" />
-                </v-list-item>
-                <v-list-item>
-                    <button-favorite-serie :serie-id="id" />
-                </v-list-item>
-                <v-list-item>
-                    <button-watch-serie :serie-id="id" />
-                </v-list-item>
-                <v-list-item>
-                    <button-remove-serie :serie="infos.serie" tooltip-location="left" />
-                </v-list-item>
+                <button-details-serie :serie-id="id" />
+                <button-favorite-serie :serie-id="id" />
+                <button-watch-serie :serie-id="id" />
+                <button-remove-serie :serie="infos.serie" />
             </template>
         </base-toolbar>
         <v-row>

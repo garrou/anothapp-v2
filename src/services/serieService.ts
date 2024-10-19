@@ -31,7 +31,8 @@ const addSerie = async (serie: Serie): Promise<Response> => {
             "kinds": serie.kinds,
             "duration": serie.duration,
             "seasons": serie.seasons,
-            "country": serie.country
+            "country": serie.country,
+            "list": serie.list
         }),
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`,
@@ -41,8 +42,9 @@ const addSerie = async (serie: Serie): Promise<Response> => {
     });
 }
 
-const deleteSerie = async (id: number): Promise<Response> => {
-    return fetch(`${ENDPOINT}/${PREFIX}/${id}`, {
+const deleteSerie = async (id: number, list = false): Promise<Response> => {
+    const url = buildUrl(`${ENDPOINT}/${PREFIX}/${id}`, "list", list, "?");
+    return fetch(url, {
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`
         },

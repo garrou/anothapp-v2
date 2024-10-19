@@ -1,6 +1,6 @@
 import type { Serie, SerieInfo } from "@/models/serie";
 import serieService from "@/services/serieService";
-import type { SerieSearchOptions } from "@/models/search";
+import type { CacheSearchOptions, SerieSearchOptions } from "@/models/search";
 import { isError } from "@/utils/response";
 import { useSnackbar } from "./snackbar";
 import { useRouter } from "vue-router";
@@ -21,12 +21,20 @@ export function useSerie() {
         if (isError(resp.status))
             throw new Error(data.message);
 
-        await cache.userSeries.addSerie({
-            ...serie,
-            addedAt: new Date().toISOString()
-        });
-        showSuccess(`Série "${serie.title}" ajoutée`);
-        router.push(`/series/${serie.id}`);
+        if (serie.list) {
+            await cache.userList.addSerie({
+                ...serie,
+                addedAt: new Date().toISOString()
+            });
+        } else {
+            await cache.userSeries.addSerie({
+                ...serie,
+                addedAt: new Date().toISOString()
+            });
+        }
+        showSuccess(`Série "${serie.title}" ajoutée ${serie.list ? "dans votre liste" : ""}`);
+        if (!serie.list)
+            router.push(`/series/${serie.id}`);
     }
 
     const deleteSerie = async (serie: Serie): Promise<void> => {
@@ -34,6 +42,11 @@ export function useSerie() {
         showSuccess(`Série "${serie.title}" supprimée`);
         router.replace("/series");
         setConfirmModal(false);
+    }
+
+    const deleteSerieInList = async (serie: Serie): Promise<void> => {
+        await cache.userList.deleteSerie(serie.id);
+        showSuccess(`Série "${serie.title}" supprimée de votre liste`);
     }
 
     const getSerie = async (options: SerieSearchOptions): Promise<Serie> => {
@@ -80,6 +93,8 @@ export function useSerie() {
 
         if (status === "favorite") {
             return cache.userSeries.getFavorites();
+        } else if (status === "not-started") {
+            return cache.userList.getSeriesInList();
         }
         const resp = await serieService.getSeriesByStatus(status, friendId);
         const data = await resp.json();
@@ -104,13 +119,23 @@ export function useSerie() {
         return data.value;
     }
 
-    const getSerieFromCache = async (id: number): Promise<Serie | undefined> => {
-        return cache.userSeries.getSerieFromCache(id);
+    const getSerieFromCache = async (id: number, cacheOptions: CacheSearchOptions = { type: "userseries" }): Promise<Serie | undefined> => {
+        const { type } = cacheOptions;
+
+        switch (type) {
+            case "userlist":
+                return cache.userList.getSerieFromCache(id);
+            case "series":
+                return cache.series.getSerieFromCache(id);
+            default:
+                return cache.userSeries.getSerieFromCache(id);
+        }
     }
 
     return {
         addSerie,
         deleteSerie,
+        deleteSerieInList,
         getSerie,
         getSerieFromCache,
         getSerieInfos,

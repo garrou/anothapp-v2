@@ -1,5 +1,5 @@
 <template>
-    <series-row :loading="loading" :series="favorites" @refresh="(id) => refreshFavorites(id)" />
+    <series-row :loading="loading" :series="favorites" @refresh="(id, kind) => refreshFavorites(id, kind)" />
 </template>
 
 <script lang="ts" setup>
@@ -15,9 +15,11 @@ const favorites = ref<Serie[]>([]);
 const loading = ref(false);
 const changes = ref(0);
 
-const refreshFavorites = (id: number) => {
-    favorites.value = favorites.value.filter((serie) => serie.id !== id);
-    changes.value++;
+const refreshFavorites = (id: number, kind: string) => {
+    if (kind === "favorite") {
+        favorites.value = favorites.value.filter((serie) => serie.id !== id);
+        changes.value++;
+    }
 }
 
 onBeforeMount(async () => {

@@ -28,7 +28,7 @@ export const NAV_MENU: BottomNavMenuItem[] = [
 
 export const APP_MENU: AppMenuItem[] = [
     {
-        title: "Séries à voir",
+        title: "Ma liste",
         icon: "mdi-format-list-bulleted-square",
         component: "List"
     },

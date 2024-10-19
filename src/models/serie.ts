@@ -40,6 +40,8 @@ export interface Serie extends BaseSerie {
     addedAt?: string;
 
     watch?: boolean;
+
+    list?: boolean;
 }
 
 export interface Platform {

@@ -1,4 +1,4 @@
-<template>
+    <template>
     <v-tooltip v-if="!!serie" :text="favoriteText" :location="tooltipLocation">
         <template v-slot:activator="{ props }">
             <v-btn v-bind="props" :color="favoriteColor" :icon="FAVORITE_ICON" variant="text" @click="changeFavorite" />

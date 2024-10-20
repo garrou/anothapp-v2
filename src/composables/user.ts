@@ -87,6 +87,7 @@ export function useUser() {
         storageService.deleteJwt();
         await cache.userSeries.clearCache();
         await cache.users.clearCache();
+        await cache.userList.clearCache();
         router.replace("/login");
     }
 

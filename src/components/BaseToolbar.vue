@@ -6,23 +6,14 @@
 
     <v-toolbar-title>{{ title }}</v-toolbar-title>
 
-    <v-menu v-if="slots.buttons" open-on-click open-on-hover>
-      <template v-slot:activator="{ props }">
-        <v-btn icon="mdi-dots-vertical" v-bind="props"></v-btn>
-      </template>
-
-      <v-list>
-        <v-list-item>
-          <div>
-            <slot name="buttons" />
-          </div>
-        </v-list-item>
-      </v-list>
-    </v-menu>
+    <base-menu v-if="slots.buttons" open-on-click open-on-hover>
+      <slot name="buttons" />
+    </base-menu>
   </v-toolbar>
 </template>
 
 <script lang="ts" setup>
+import BaseMenu from "./BaseMenu.vue";
 import { useSlots } from "vue";
 import { useRouter } from "vue-router";
 

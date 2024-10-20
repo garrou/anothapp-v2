@@ -9,31 +9,21 @@
         </v-card-subtitle>
 
         <v-card-actions>
-            <v-menu>
-                <template v-slot:activator="{ props }">
-                    <v-btn icon="mdi-dots-vertical" v-bind="props"></v-btn>
-                </template>
-
-                <v-list>
-                    <v-list-item>
-                        <div>
-                            <button-favorite-serie :serie-id="serie.id"
-                                @refresh="$emit('refresh', serie.id, 'favorite')" />
-                            <button-watch-serie v-if="watchStatus" :serie-id="serie.id"
-                                @refresh="$emit('refresh', serie.id, 'watch')" />
-                            <button-add-serie :serie="serie" />
-                            <button-list-serie :serie="serie" @refresh="$emit('refresh', serie.id, 'list')" />
-                            <button-modal-serie-details :serie="serie" />
-                        </div>
-                    </v-list-item>
-                </v-list>
-            </v-menu>
+            <base-menu open-on-click open-on-hover>
+                <button-favorite-serie :serie-id="serie.id" @refresh="$emit('refresh', serie.id, 'favorite')" />
+                <button-watch-serie v-if="watchStatus" :serie-id="serie.id"
+                    @refresh="$emit('refresh', serie.id, 'watch')" />
+                <button-add-serie :serie="serie" />
+                <button-list-serie :serie="serie" @refresh="$emit('refresh', serie.id, 'list')" />
+                <button-modal-serie-details :serie="serie" />
+            </base-menu>
         </v-card-actions>
     </v-card>
 </template>
 
 <script lang="ts" setup>
 import BaseImage from "./BaseImage.vue";
+import BaseMenu from "./BaseMenu.vue";
 import ButtonAddSerie from "./ButtonAddSerie.vue";
 import ButtonFavoriteSerie from "./ButtonFavoriteSerie.vue";
 import ButtonWatchSerie from "./ButtonWatchSerie.vue";

@@ -12,6 +12,10 @@ export const SerieDetailsLayout = (serie: Serie): Layout[] => [
         value: minsToStringHoursDays(serie.duration * (serie.episodes ?? 0)),
     },
     {
+        name: "Durée par épisode",
+        value: buildPlural("minute", serie.duration)
+    },
+    {
         name: "Episodes",
         value: serie.episodes
     },

@@ -10,6 +10,7 @@ import { useState } from "./state";
 import UserSeriesCache from "@/cache/modules/userSeries";
 import UserListCache from "@/cache/modules/userList";
 import SeriesCache from "@/cache/modules/series";
+import type { SerieCacheItem } from "@/types/cache";
 
 export function useSerie() {
 
@@ -122,7 +123,7 @@ export function useSerie() {
         return data.value;
     }
 
-    const getSerieFromCache = async (id: number, cacheOptions: CacheSearchOptions = { type: UserSeriesCache.NAME }): Promise<Serie | undefined> => {
+    const getSerieFromCache = async (id: number, cacheOptions: CacheSearchOptions = { type: UserSeriesCache.NAME }): Promise<SerieCacheItem | undefined> => {
         const { type } = cacheOptions;
 
         switch (type) {

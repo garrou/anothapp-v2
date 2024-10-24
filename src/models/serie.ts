@@ -64,7 +64,7 @@ export interface SerieInfo {
     episodes: number;
 }
 
-export interface Similar extends BaseSerie {}
+export type Similar = Required<BaseSerie>;
 
 export interface Kind {
 

@@ -16,7 +16,6 @@ import SerieCard from "@/components/SerieCard.vue";
 import type { Serie } from "@/models/serie";
 import { buildPlural } from "@/utils/format";
 import type { PropType } from "vue";
-import { id } from "vuetify/locale";
 
 defineProps({
     loading: { type: Boolean, required: true },

@@ -17,7 +17,7 @@ export default class UserSeriesCache extends CacheModule<SerieCacheItem> {
         db.createObjectStore(this.NAME);
     }
 
-    async getSerieFromCache(id: number): Promise<SerieCacheItem|undefined> {
+    async getSerieFromCache(id: number): Promise<SerieCacheItem | undefined> {
         return this.getFromCache(`${id}`);
     }
 

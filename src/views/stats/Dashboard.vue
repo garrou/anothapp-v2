@@ -108,7 +108,7 @@ const loading = ref(false);
 const series = ref<Serie[]>([]);
 const stat = ref<GlobalStat>();
 
-const sharedSeriesLabel = computed(() => `${buildPlural("série", series.value.length, true)} communes`);
+const sharedSeriesLabel = computed(() => `${buildPlural("série", series.value.length)} communes`);
 const cardsConfig = computed(() => stat.value ? DashboardLayout(stat.value) : undefined);
 
 const changeDisplayChart = () => {

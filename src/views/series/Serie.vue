@@ -28,7 +28,7 @@
 
                         <div class="d-flex flex-column py-3">
                             <span class="font-weight-bold mb-2">
-                                {{ buildPlural("épisode", infos.episodes) }}
+                                {{ buildPlural("épisode", infos.episodes) }} - {{ buildPlural("minute", infos.serie.duration) }}
                             </span>
                             <span class="font-weight-bold">{{ time }}</span>
                         </div>

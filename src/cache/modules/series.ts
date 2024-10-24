@@ -1,9 +1,9 @@
-import type { SerieCacheItem } from "@/types/cache";
 import type { IDBPDatabase } from "idb";
 import CacheModule from "../cacheModule";
 import { isError } from "@/utils/response";
 import type { Serie } from "@/models/serie";
 import searchService from "@/services/searchService";
+import type { SerieCacheItem } from "@/types/cache";
 
 export default class SeriesCache extends CacheModule<SerieCacheItem> {
     static readonly NAME = "series";
@@ -16,7 +16,7 @@ export default class SeriesCache extends CacheModule<SerieCacheItem> {
         db.createObjectStore(this.NAME);
     }
 
-    async getSerieFromCache(id: number): Promise<Serie | undefined> {
+    async getSerieFromCache(id: number): Promise<SerieCacheItem | undefined> {
         return this.getFromCache(`${id}`);
     }
 

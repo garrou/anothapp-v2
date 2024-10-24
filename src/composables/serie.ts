@@ -7,6 +7,9 @@ import { useRouter } from "vue-router";
 import cache from "@/cache";
 import type { SerieStatus } from "@/types/types";
 import { useState } from "./state";
+import UserSeriesCache from "@/cache/modules/userSeries";
+import UserListCache from "@/cache/modules/userList";
+import SeriesCache from "@/cache/modules/series";
 
 export function useSerie() {
 
@@ -105,7 +108,7 @@ export function useSerie() {
         return data;
     }
 
-    const updateField = async (serie: Serie, field: string): Promise<boolean> => {
+    const updateField = async (serie: Serie, field: keyof Serie): Promise<boolean> => {
         const resp = await serieService.updateFieldBySerieId(serie.id, field);
         const data = await resp.json();
 
@@ -119,13 +122,13 @@ export function useSerie() {
         return data.value;
     }
 
-    const getSerieFromCache = async (id: number, cacheOptions: CacheSearchOptions = { type: "userseries" }): Promise<Serie | undefined> => {
+    const getSerieFromCache = async (id: number, cacheOptions: CacheSearchOptions = { type: UserSeriesCache.NAME }): Promise<Serie | undefined> => {
         const { type } = cacheOptions;
 
         switch (type) {
-            case "userlist":
+            case UserListCache.NAME:
                 return cache.userList.getSerieFromCache(id);
-            case "series":
+            case SeriesCache.NAME:
                 return cache.series.getSerieFromCache(id);
             default:
                 return cache.userSeries.getSerieFromCache(id);

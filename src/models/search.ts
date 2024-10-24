@@ -2,7 +2,7 @@ import type SeriesCache from "@/cache/modules/series"
 import type UserListCache from "@/cache/modules/userList"
 import type UserSeriesCache from "@/cache/modules/userSeries"
 
-export interface  SerieSearchOptions {
+export interface SerieSearchOptions {
 
     title?: string,
     

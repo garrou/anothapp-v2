@@ -116,7 +116,7 @@ const selected = ref<Season>();
 const tab = ref(1);
 
 const time = computed(() => minsToStringHoursDays(infos.value?.time));
-const viewingPercent = computed(() => ((infos.value?.seasons.length ?? 0) / seasons.value.length) * 100);
+const viewingPercent = computed(() => ((infos.value?.seasons.length ?? 0) / seasons.value.length * 100).toFixed(0));
 
 const refresh = async () => {
     modal.value = false;

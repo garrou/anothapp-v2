@@ -12,11 +12,12 @@ import { useUser } from "./composables/user";
 import { useSerie } from "./composables/serie";
 
 const { checkAuth } = useUser();
-const { getSeries } = useSerie();
+const { getSeries, getSeriesByStatus } = useSerie();
 
 onBeforeMount(async () => {
   if (await checkAuth()) {
     await getSeries();
+    await getSeriesByStatus("not-started");
   }
 });
 </script>

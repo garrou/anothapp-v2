@@ -10,7 +10,7 @@
                         <tr v-for="serie in series" :key="serie.id">
                             <td>
                                 <router-link :text="serie.title"
-                                    :to="type === 'favorite' ? `/series/${serie.id}` : `/discover/${serie.id}`" />
+                                    :to="type === 'shared' ? `/series/${serie.id}` : `/discover/${serie.id}`" />
                             </td>
                         </tr>
                     </tbody>

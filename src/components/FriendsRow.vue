@@ -45,7 +45,6 @@ import Dashboard from "@/views/stats/Dashboard.vue";
 import { ADD_ICON, CLOSE_ICON, DELETE_ICON, DETAILS_ICON, SEARCH_ICON } from "@/constants/icons";
 import type { User } from "@/models/user";
 import { ref, type PropType } from "vue";
-import { useSnackbar } from "@/composables/snackbar";
 import { useFriend } from "@/composables/friend";
 
 defineProps({

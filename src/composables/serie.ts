@@ -94,8 +94,7 @@ export function useSerie() {
     }
 
     const getSeriesByStatus = async (status: SerieStatus, friendId?: string): Promise<Serie[]> => {
-
-        if (status === "favorite") {
+        if (status === "favorite" && !friendId) {
             return cache.userSeries.getFavorites();
         } else if (status === "not-started") {
             return cache.userList.getSeriesInList();

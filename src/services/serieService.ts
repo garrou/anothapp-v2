@@ -78,8 +78,8 @@ const getSerie = async (id: number): Promise<Response> => {
 
 const getSeries = async (options?: SerieSearchOptions): Promise<Response> => {
     const url = buildUrl(buildUrl(buildUrl(`${ENDPOINT}/${PREFIX}`, "title", options?.title, "?"), 
-            "kind", options?.kind, "?"), 
-            "platform", options?.platform, "?"
+            "kind", options?.kinds?.[0], "?"), 
+            "platform", options?.platforms?.[0], "?"
     );
     return fetch(url, {
         headers: {

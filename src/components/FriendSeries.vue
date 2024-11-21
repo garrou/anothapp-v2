@@ -8,7 +8,10 @@
                 <v-table>
                     <tbody>
                         <tr v-for="serie in series" :key="serie.id">
-                            <td><router-link :text="serie.title" :to="`/series/${serie.id}`" /></td>
+                            <td>
+                                <router-link :text="serie.title"
+                                    :to="type === 'favorite' ? `/series/${serie.id}` : `/discover/${serie.id}`" />
+                            </td>
                         </tr>
                     </tbody>
                 </v-table>
@@ -31,7 +34,7 @@ const props = defineProps({
 
 const { getSeriesByStatus } = useSerie();
 
-const sharedSeriesLabel = computed(() => props.type === "shared" 
+const sharedSeriesLabel = computed(() => props.type === "shared"
     ? `${buildPlural("série", series.value.length)} ${buildPlural("commune", series.value.length, false, false)}`
     : `${buildPlural("série", series.value.length)} ${buildPlural("favorite", series.value.length, false, false)}`);
 

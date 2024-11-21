@@ -21,13 +21,13 @@ const state = useState();
 const loading = ref(false);
 const series = ref<Serie[]>([]);
 
-const filterSeries = async (type: FilterType, value: string): Promise<void> => {
+const filterSeries = async (type: FilterType, value: string[]): Promise<void> => {
     switch (type) {
-        case "kind":
-            await fetchSeries({ kind: value });
+        case "kinds":
+            await fetchSeries({ kinds: value });
             break;
-        case "platform":
-            await fetchSeries({ platform: value });
+        case "platforms":
+            await fetchSeries({ platforms: value });
             break;
     }
 }  

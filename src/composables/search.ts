@@ -51,10 +51,10 @@ export function useSearch() {
     }
 
     const getSeries = async (options: SerieSearchOptions = {}): Promise<Serie[]> => {
-        const { title, kind } = options;
+        const { title, kinds } = options;
 
-        if (title || kind) {
-            const resp = await searchService.getSeries(title, kind);
+        if (title || kinds) {
+            const resp = await searchService.getSeries(title, kinds?.join(","));
             const data = await resp.json();
             if (isError(resp.status)) {
                 throw new Error(data.message);

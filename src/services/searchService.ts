@@ -52,8 +52,8 @@ const getSerieImages = async (id: number): Promise<Response> => {
     });
 }
 
-const getSeries = async (title?: string, kind?: string): Promise<Response> => {
-    const url = buildUrl(buildUrl(`${ENDPOINT}/${PREFIX}/shows`, "title", title, "?"), "kind", kind, "?");
+const getSeries = async (title?: string, kinds?: string): Promise<Response> => {
+    const url = buildUrl(buildUrl(`${ENDPOINT}/${PREFIX}/shows`, "title", title, "?"), "kinds", kinds, "?");
     return fetch(url, {
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`

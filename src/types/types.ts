@@ -12,4 +12,4 @@ export type ChartTimeType = "total" | "years" | "month" | "rank";
 
 export type ChartCountType = "shows" | "episodes" | "seasons";
 
-export type FilterType = "kind" | "platform";
+export type FilterType = "kinds" | "platforms";

@@ -81,7 +81,7 @@ export function useSerie() {
     }
 
     const getSeries = async (options: SerieSearchOptions = {}): Promise<Serie[]> => {
-        if (!options.platform) {
+        if (!options.platforms) {
             return cache.userSeries.getSeries(options);
         }
         const resp = await serieService.getSeries(options);

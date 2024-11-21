@@ -39,13 +39,14 @@
                 <v-tab v-if="!discover" :value="2">Plateformes</v-tab>
             </v-tabs>
             <v-window v-model="tab">
-                <v-window-item :value="1" @group:selected="getKindsFilter">
+                <v-window-item :value="1">
                     <v-list>
-                        <v-list-item v-for="(kind, index) in kinds" :key="index" color="#067d5f" :title="kind.name"
-                            :value="kind.value" @click="filterKind(kind)" />
+                        <v-list-item v-if="selectedKinds.length" title="Effacer les filtres" @click="filterKinds([])" />
+                        <v-checkbox v-for="(kind, index) in kinds" :key="index" v-model="selectedKinds" color="#067d5f" hide-details
+                            :label="kind.name" :value="kind" @update:model-value="filterKinds(selectedKinds)" />
                     </v-list>
                 </v-window-item>
-                <v-window-item v-if="!discover" :value="2" @group:selected="getPlatformsFilter">
+                <v-window-item v-if="!discover" :value="2">
                     <v-list>
                         <v-list-item v-for="plt in platforms" :key="plt.id" color="#067d5f" :title="plt.name"
                             :value="plt.id" @click="filterPlatform(plt)">
@@ -61,12 +62,12 @@
             </v-window>
         </v-navigation-drawer>
 
-        <base-modal v-if="selected && selected.component" v-model="modal">
+        <base-modal v-if="selectedMenu && selectedMenu.component" v-model="modal">
             <template #title>
-                <span>{{ selected.title }}</span>
+                <span>{{ selectedMenu.title }}</span>
                 <v-btn :icon="CLOSE_ICON" variant="text" @click="modal = false" />
             </template>
-            <component :is="selected.component" />
+            <component :is="selectedMenu.component" />
         </base-modal>
 
         <base-confirm v-else v-model="modal" text="Confirmez-vous la déconnexion ?" title="Se déconnecter" persistent
@@ -96,7 +97,7 @@ const props = defineProps({
 });
 
 const emit = defineEmits<{
-    filter: [FilterType, string]
+    filter: [FilterType, string[]]
     search: [string | undefined]
 }>();
 
@@ -107,7 +108,8 @@ const { logout } = useUser();
 const filters = ref(false);
 const menus = ref(false);
 const modal = ref(false);
-const selected = ref<AppMenuItem>();
+const selectedKinds = ref<Kind[]>([]);
+const selectedMenu = ref<AppMenuItem>();
 const kinds = ref<Kind[]>([]);
 const platforms = ref<Platform[]>([]);
 const tab = ref(1);
@@ -115,16 +117,16 @@ const title = ref<string>();
 const user = ref<User>();
 
 const onChange = () => {
-    if (props.autoSearch && (title.value?.length ?? 0) > 2)
-        emit('search', title.value);
+    if (props.autoSearch) emit('search', title.value);
 }
 
-const filterKind = (item: Kind) => {
-    emit('filter', 'kind', props.discover ? item.value : item.name);
+const filterKinds = (kinds: Kind[]) => {
+    selectedKinds.value = kinds;
+    emit('filter', 'kinds', kinds.map((kind) => props.discover ? kind.value : kind.name));
 }
 
 const filterPlatform = (item: Platform) => {
-    emit('filter', 'platform', `${item.id}`);
+    emit('filter', 'platforms', [`${item.id}`]);
 }
 
 const openDrawer = () => {
@@ -133,28 +135,19 @@ const openDrawer = () => {
 }
 
 const openFilterDrawer = async () => {
-    await getKindsFilter();
     menus.value = false;
     filters.value = !filters.value;
 }
 
-const getPlatformsFilter = async () => {
-    if (!platforms.value.length)
-        platforms.value = await getPlatforms();
-}
-
-const getKindsFilter = async () => {
-    if (!kinds.value.length)
-        kinds.value = await getKinds();
-}
-
 const selectMenu = (item: AppMenuItem) => {
-    selected.value = item;
+    selectedMenu.value = item;
     modal.value = true;
 }
 
 onBeforeMount(async () => {
     user.value = await getProfile();
+    kinds.value = await getKinds();
+    platforms.value = await getPlatforms();
 });
 </script>
 

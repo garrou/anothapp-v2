@@ -20,7 +20,7 @@
             <div v-if="isEdited(subSeason.id)" class="px-4">
                 <v-label>Plateformes</v-label>
                 <v-select v-model="platform" :density="DENSITY" :items="platforms" item-title="name" item-value="id"
-                    @update:modelValue="updatePlatform" />
+                    @update:modelValue="updateSeason(toEdit, platform)" />
             </div>
         </v-card>
     </template>
@@ -80,13 +80,9 @@ const dropSeason = async (id: number) => {
     emit("refresh");
 }
 
-const updatePlatform = async () => {
-    await updateSeason(toEdit.value, platform.value);
-}
-
 watch(toEdit, () => {
     platform.value = seasons.value.find((s) => s.id === toEdit.value)?.platform.id;
-})
+});
 
 onBeforeMount(async () => {
     platforms.value = await getPlatforms();

@@ -9,7 +9,7 @@
         </v-card-subtitle>
 
         <v-card-actions>
-            <base-menu open-on-click open-on-hover>
+            <base-menu v-if="canAddSerie(serie)" open-on-click open-on-hover>
                 <button-favorite-serie :serie-id="serie.id" @refresh="$emit('refresh', serie.id, 'favorite')" />
                 <button-watch-serie v-if="watchStatus" :serie-id="serie.id"
                     @refresh="$emit('refresh', serie.id, 'watch')" />
@@ -31,15 +31,14 @@ import ButtonListSerie from "./ButtonListSerie.vue";
 import ButtonModalSerieDetails from "./ButtonModalSerieDetails.vue";
 import type { Serie } from "@/models/serie";
 import type { PropType } from "vue";
+import { useSerie } from "@/composables/serie";
 
 const props = defineProps({
     serie: { type: Object as PropType<Serie>, required: true },
     watchStatus: { type: Boolean, default: false }
 });
 
-const emit = defineEmits<{
-    refresh: [number, string]
-}>();
+const { canAddSerie } = useSerie();
 
 const link = props.serie.addedAt ? `/series/${props.serie.id}` : `/discover/${props.serie.id}`;
 </script>

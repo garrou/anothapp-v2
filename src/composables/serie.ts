@@ -18,6 +18,16 @@ export function useSerie() {
     const { setConfirmModal } = useState();
     const router = useRouter();
 
+    const canAddSerie = (serie: Serie): boolean => {
+        return [serie.id,
+            serie.title, 
+            serie.poster,
+            serie.kinds, 
+            serie.duration,
+            serie.seasons,
+            serie.country].every((item) => item !== undefined);
+    }
+
     const addSerie = async (serie: Serie): Promise<void> => {
         const resp = await serieService.addSerie(serie);
         const data = await resp.json();
@@ -137,6 +147,7 @@ export function useSerie() {
 
     return {
         addSerie,
+        canAddSerie,
         deleteSerie,
         deleteSerieInList,
         getSerie,

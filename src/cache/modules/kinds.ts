@@ -16,7 +16,7 @@ export default class KindsCache extends CacheModule<KindCacheItem> {
         db.createObjectStore(this.NAME);
     }
 
-    async getPlatforms(): Promise<KindCacheItem[]> {
+    async getKinds(): Promise<KindCacheItem[]> {
         const storedKinds = await this.getAll();
         if (storedKinds.length) {
             return storedKinds.sort((a, b) => a.name.localeCompare(b.name));

@@ -43,7 +43,7 @@ const addSerie = async (serie: Serie): Promise<Response> => {
 }
 
 const deleteSerie = async (id: number, list = false): Promise<Response> => {
-    const url = buildUrl(`${ENDPOINT}/${PREFIX}/${id}`, "list", list, "?");
+    const url = buildUrl(`${ENDPOINT}/${PREFIX}/${id}`, "list", list);
     return fetch(url, {
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`
@@ -77,9 +77,9 @@ const getSerie = async (id: number): Promise<Response> => {
 }
 
 const getSeries = async (options?: SerieSearchOptions): Promise<Response> => {
-    const url = buildUrl(buildUrl(buildUrl(`${ENDPOINT}/${PREFIX}`, "title", options?.title, "?"), 
-            "kind", options?.kinds?.[0], "?"), 
-            "platform", options?.platforms?.[0], "?"
+    const url = buildUrl(buildUrl(buildUrl(`${ENDPOINT}/${PREFIX}`, "title", options?.title), 
+            "kind", options?.kinds?.[0]), 
+            "platforms", options?.platforms?.join(",")
     );
     return fetch(url, {
         headers: {
@@ -89,7 +89,7 @@ const getSeries = async (options?: SerieSearchOptions): Promise<Response> => {
 }
 
 const getSeriesByStatus = async (status: SerieStatus, friendId?: string): Promise<Response> => {
-    const url = buildUrl(buildUrl(`${ENDPOINT}/${PREFIX}`, "status", status, "?"), "friendId", friendId);
+    const url = buildUrl(buildUrl(`${ENDPOINT}/${PREFIX}`, "status", status), "friendId", friendId);
     return fetch(url, {
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`

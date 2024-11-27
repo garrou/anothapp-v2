@@ -36,27 +36,30 @@
         <v-navigation-drawer v-model="filters" location="right" temporary>
             <v-tabs v-model="tab">
                 <v-tab :value="1">Genres</v-tab>
-                <v-tab v-if="!discover" :value="2">Plateformes</v-tab>
+                <v-tab :value="2">Plateformes</v-tab>
             </v-tabs>
             <v-window v-model="tab">
                 <v-window-item :value="1">
                     <v-list>
                         <v-list-item v-if="selectedKinds.length" title="Effacer les filtres" @click="filterKinds([])" />
-                        <v-checkbox v-for="(kind, index) in kinds" :key="index" v-model="selectedKinds" color="#067d5f" hide-details
+                        <v-checkbox v-for="(kind, index) in kinds" :key="index" v-model="selectedKinds" hide-details
                             :label="kind.name" :value="kind" @update:model-value="filterKinds(selectedKinds)" />
                     </v-list>
                 </v-window-item>
-                <v-window-item v-if="!discover" :value="2">
+                <v-window-item :value="2">
                     <v-list>
-                        <v-list-item v-for="plt in platforms" :key="plt.id" color="#067d5f" :title="plt.name"
-                            :value="plt.id" @click="filterPlatform(plt)">
-                            <template #prepend>
+                        <v-list-item v-if="selectedPlatforms.length" title="Effacer les filtres"
+                            @click="filterPlatforms([])" />
+                        <v-checkbox v-for="plt in platforms" :key="plt.id" v-model="selectedPlatforms" hide-details
+                            :value="plt" @update:model-value="filterPlatforms(selectedPlatforms)">
+                            <template #label>
                                 <v-avatar v-if="plt.logo" :image="plt.logo" />
                                 <v-avatar v-else color="grey">
                                     <v-icon color="white" :icon="PLATFORM_ICON" />
                                 </v-avatar>
+                                <span class="ms-2">{{ plt.name }}</span>
                             </template>
-                        </v-list-item>
+                        </v-checkbox>
                     </v-list>
                 </v-window-item>
             </v-window>
@@ -109,6 +112,7 @@ const filters = ref(false);
 const menus = ref(false);
 const modal = ref(false);
 const selectedKinds = ref<Kind[]>([]);
+const selectedPlatforms = ref<Platform[]>([]);
 const selectedMenu = ref<AppMenuItem>();
 const kinds = ref<Kind[]>([]);
 const platforms = ref<Platform[]>([]);
@@ -120,13 +124,14 @@ const onChange = () => {
     if (props.autoSearch) emit('search', title.value);
 }
 
-const filterKinds = (kinds: Kind[]) => {
-    selectedKinds.value = kinds;
-    emit('filter', 'kinds', kinds.map((kind) => props.discover ? kind.value : kind.name));
+const filterKinds = (toFilter: Kind[]) => {
+    selectedKinds.value = toFilter;
+    emit('filter', 'kinds', toFilter.map((kind) => props.discover ? kind.value : kind.name));
 }
 
-const filterPlatform = (item: Platform) => {
-    emit('filter', 'platforms', [`${item.id}`]);
+const filterPlatforms = (toFilter: Platform[]) => {
+    selectedPlatforms.value = toFilter;
+    emit('filter', 'platforms', toFilter.map((platform) => `${platform.id}`));
 }
 
 const openDrawer = () => {

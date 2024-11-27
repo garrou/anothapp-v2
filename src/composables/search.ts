@@ -29,11 +29,11 @@ export function useSearch() {
     }
     
     const getKinds = async (): Promise<Kind[]> => {
-        return await cache.kinds.getPlatforms();
+        return cache.kinds.getKinds();
     }
 
     const getPlatforms = async (): Promise<Platform[]> => {
-        return await cache.platforms.getPlatforms();
+        return cache.platforms.getPlatforms();
     }
 
     const getSerie = async (id: number): Promise<Serie> => {
@@ -51,10 +51,10 @@ export function useSearch() {
     }
 
     const getSeries = async (options: SerieSearchOptions = {}): Promise<Serie[]> => {
-        const { title, kinds } = options;
+        const { title, kinds, platforms } = options;
 
-        if (title || kinds) {
-            const resp = await searchService.getSeries(title, kinds?.join(","));
+        if (title || kinds || platforms) {
+            const resp = await searchService.getSeries(title, kinds?.join(","), platforms?.join(","));
             const data = await resp.json();
             if (isError(resp.status)) {
                 throw new Error(data.message);

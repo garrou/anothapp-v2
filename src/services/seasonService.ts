@@ -28,7 +28,7 @@ const updateSeason = async (id: number, platformId: number): Promise<Response> =
 
 const getSeasons = async (year?: number, month?: number): Promise<Response> => {
     const query = year ? "year" : "month";
-    const url = buildUrl(`${ENDPOINT}/${PREFIX}`, query, year ?? month, "?");
+    const url = buildUrl(`${ENDPOINT}/${PREFIX}`, query, year ?? month);
     return fetch(url, {
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`

@@ -52,11 +52,13 @@ const getSerieImages = async (id: number): Promise<Response> => {
     });
 }
 
-const getSeries = async (title?: string, kinds?: string, platforms?: string): Promise<Response> => {
-    const url = buildUrl(buildUrl(buildUrl(
+const getSeries = async (title?: string, kinds?: string, platforms?: string, limit?: number, year?: number): Promise<Response> => {
+    const url = buildUrl(buildUrl(buildUrl(buildUrl(buildUrl(
         `${ENDPOINT}/${PREFIX}/shows`, "title", title), 
-        "kinds", kinds,), 
-        "platforms", platforms
+        "kinds", kinds), 
+        "platforms", platforms),
+        "limit", limit),
+        "year", year
     );
     return fetch(url, {
         headers: {

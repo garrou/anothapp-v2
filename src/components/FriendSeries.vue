@@ -41,7 +41,6 @@ const sharedSeriesLabel = computed(() => props.type === "shared"
 const series = ref<Serie[]>([]);
 
 onBeforeMount(async () => {
-    console.log(props.userId)
     series.value = props.type === "shared"
         ? await getSeriesByStatus("shared", props.userId)
         : await getSeriesByStatus("favorite", props.userId);

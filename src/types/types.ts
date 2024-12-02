@@ -11,5 +11,3 @@ export type ChartGroupedPeriod = "years" | "year" | "months";
 export type ChartTimeType = "total" | "years" | "month" | "rank";
 
 export type ChartCountType = "shows" | "episodes" | "seasons";
-
-export type FilterType = "kinds" | "platforms";

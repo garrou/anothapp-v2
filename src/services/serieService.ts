@@ -4,7 +4,6 @@ import storageService from "./storageService";
 import type { Season } from "@/models/season";
 import type { Serie } from "@/models/serie";
 import type { SerieStatus } from "@/types/types";
-import type { SerieSearchOptions } from "@/models/search";
 
 const PREFIX = "shows";
 
@@ -76,11 +75,8 @@ const getSerie = async (id: number): Promise<Response> => {
     });
 }
 
-const getSeries = async (options?: SerieSearchOptions): Promise<Response> => {
-    const url = buildUrl(buildUrl(buildUrl(`${ENDPOINT}/${PREFIX}`, "title", options?.title), 
-            "kind", options?.kinds?.[0]), 
-            "platforms", options?.platforms?.join(",")
-    );
+const getSeries = async (platforms?: string): Promise<Response> => {
+    const url = buildUrl(`${ENDPOINT}/${PREFIX}`, "platforms", platforms);
     return fetch(url, {
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`
@@ -89,7 +85,10 @@ const getSeries = async (options?: SerieSearchOptions): Promise<Response> => {
 }
 
 const getSeriesByStatus = async (status: SerieStatus, friendId?: string): Promise<Response> => {
-    const url = buildUrl(buildUrl(`${ENDPOINT}/${PREFIX}`, "status", status), "friendId", friendId);
+    const url = buildUrl(buildUrl(
+        `${ENDPOINT}/${PREFIX}`, "status", status), 
+        "friendId", friendId
+    );
     return fetch(url, {
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`

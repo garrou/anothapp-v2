@@ -1,6 +1,5 @@
 <template>
-    <base-app-bar auto-search label="Chercher une série" search @filter="(type, value) => filterSeries(type, value)"
-        @search="(title) => fetchSeries({ title })" />
+    <base-app-bar auto-search label="Chercher une série" search />
     <series-row :loading="loading" :series="series" />
 </template>
 
@@ -13,24 +12,15 @@ import { useSerie } from "@/composables/serie";
 import { watch } from "vue";
 import { useState } from "@/composables/state";
 import type { SerieSearchOptions } from "@/models/search";
-import type { FilterType } from "@/types/types";
+import { storeToRefs } from "pinia";
+import { useSerieStore } from "@/stores/serie";
 
 const { getSeries } = useSerie();
 const state = useState();
+const { filterKinds, filterPlatforms, filterTitle } = storeToRefs(useSerieStore());
 
 const loading = ref(false);
 const series = ref<Serie[]>([]);
-
-const filterSeries = async (type: FilterType, value: string[]): Promise<void> => {
-    switch (type) {
-        case "kinds":
-            await fetchSeries({ kinds: value });
-            break;
-        case "platforms":
-            await fetchSeries({ platforms: value });
-            break;
-    }
-}  
 
 const fetchSeries = async (options?: SerieSearchOptions): Promise<void> => {
     loading.value = true;
@@ -38,11 +28,15 @@ const fetchSeries = async (options?: SerieSearchOptions): Promise<void> => {
     loading.value = false;
 }
 
-onBeforeMount(async () => {
-    await fetchSeries();
-});
+onBeforeMount(() => fetchSeries().then());
 
-watch(state.counter, async () => {
-    await fetchSeries();
+watch(state.counter, () => fetchSeries().then());
+
+watch([filterTitle, filterKinds, filterPlatforms], () => {
+    fetchSeries({
+        title: filterTitle.value,
+        kinds: filterKinds.value,
+        platforms: filterPlatforms.value
+    }).then();
 });
 </script>

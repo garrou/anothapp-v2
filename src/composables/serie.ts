@@ -91,10 +91,14 @@ export function useSerie() {
     }
 
     const getSeries = async (options: SerieSearchOptions = {}): Promise<Serie[]> => {
-        if (!options.platforms) {
+        const { platforms } = options;
+
+        if (!platforms?.length) {
             return cache.userSeries.getSeries(options);
         }
-        const resp = await serieService.getSeries(options);
+        const resp = await serieService.getSeries(
+            platforms?.length ? platforms.join(",") : undefined
+        );
         const data = await resp.json();
 
         if (isError(resp.status))

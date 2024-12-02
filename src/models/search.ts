@@ -10,7 +10,11 @@ export interface SerieSearchOptions {
 
     platforms?: string[],
     
-    id?: number
+    id?: number,
+
+    limit?: number,
+
+    year?: number
 }
 
 export interface SeasonSearchOptions {

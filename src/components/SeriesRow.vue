@@ -3,7 +3,8 @@
     <v-row v-if="series.length || loading" class="mt-1">
         <v-col v-for="serie in series" :cols="6" :md="3" :key="serie.id">
             <base-skeleton :loading="loading" type="card">
-                <serie-card :serie="serie" :watch-status="watchStatus" @refresh="(id, kind) => $emit('refresh', id, kind)" />
+                <serie-card :serie="serie" :watch-status="watchStatus"
+                    @refresh="(id, kind) => $emit('refresh', id, kind)" />
             </base-skeleton>
         </v-col>
     </v-row>
@@ -24,7 +25,7 @@ defineProps({
     watchStatus: { type: Boolean, default: false }
 });
 
-const emit = defineEmits<{
+defineEmits<{
     refresh: [number, string]
 }>();
 </script>

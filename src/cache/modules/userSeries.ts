@@ -99,13 +99,14 @@ export default class UserSeriesCache extends CacheModule<SerieCacheItem> {
 
     private filterSeries(series: SerieCacheItem[], options: SerieSearchOptions): SerieCacheItem[] {
         const { title, kinds } = options;
+        let filteredSeries = series;
 
         if (title) {
-            return series.filter((serie) => serie.title.toLowerCase().includes(title.trim().toLowerCase()));
+            filteredSeries = series.filter((serie) => serie.title.toLowerCase().includes(title.trim().toLowerCase()));
         } else if (kinds) {
-            return series.filter((serie) => kinds.every((kind) => serie.kinds.includes(kind)));
+            filteredSeries = series.filter((serie) => kinds.every((kind) => serie.kinds.includes(kind)));
         }
-        return series.sort((a, b) => {
+        return filteredSeries.sort((a, b) => {
             const ad = a.addedAt ? new Date(a.addedAt).getTime() : 1;
             const bd = b.addedAt ? new Date(b.addedAt).getTime() : 2;
             return bd - ad;

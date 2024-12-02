@@ -6,11 +6,11 @@
             </template>
 
             <template #title>
-                <v-form v-if="search" @submit="$emit('search', title)" @submit.prevent>
+                <v-form v-if="search" @submit="filterTitle(title)" @submit.prevent>
                     <v-text-field v-model="title" :append-inner-icon="SEARCH_ICON" :append-icon="FILTER_ICON"
                         class="mb-4 me-4" clearable hide-details :label="label" single-line variant="plain"
-                        @input="onChange" @click:append-inner="$emit('search', title)"
-                        @click:clear="$emit('search', undefined)" @click:append="openFilterDrawer" />
+                        @input="onChange" @click:append-inner="filterTitle(title)" @click:clear="filterTitle(undefined)"
+                        @click:append="openFilterDrawer" />
                 </v-form>
                 <slot v-else name="title" />
             </template>
@@ -37,21 +37,22 @@
             <v-tabs v-model="tab">
                 <v-tab :value="1">Genres</v-tab>
                 <v-tab :value="2">Plateformes</v-tab>
+                <v-tab v-if="discover" :value="3">Autres</v-tab>
             </v-tabs>
             <v-window v-model="tab">
                 <v-window-item :value="1">
                     <v-list>
-                        <v-list-item v-if="selectedKinds.length" title="Effacer les filtres" @click="filterKinds([])" />
+                        <v-list-item v-if="selectedKinds.length" title="Effacer les filtres" @click="updateKinds([])" />
                         <v-checkbox v-for="(kind, index) in kinds" :key="index" v-model="selectedKinds" hide-details
-                            :label="kind.name" :value="kind" @update:model-value="filterKinds(selectedKinds)" />
+                            :label="kind.name" :value="kind" @update:model-value="updateKinds(selectedKinds)" />
                     </v-list>
                 </v-window-item>
                 <v-window-item :value="2">
                     <v-list>
                         <v-list-item v-if="selectedPlatforms.length" title="Effacer les filtres"
-                            @click="filterPlatforms([])" />
+                            @click="updatePlatforms([])" />
                         <v-checkbox v-for="plt in platforms" :key="plt.id" v-model="selectedPlatforms" hide-details
-                            :value="plt" @update:model-value="filterPlatforms(selectedPlatforms)">
+                            :value="plt" @update:model-value="updatePlatforms(selectedPlatforms)">
                             <template #label>
                                 <v-avatar v-if="plt.logo" :image="plt.logo" />
                                 <v-avatar v-else color="grey">
@@ -62,10 +63,18 @@
                         </v-checkbox>
                     </v-list>
                 </v-window-item>
+                <v-window-item class="px-3" :value="3">
+                    <v-text-field v-model="selectedLimit" label="Limite" min="0" size="x-small" type="number"
+                        variant="underlined" />
+                    <v-text-field v-model="selectedYear" min="1900" label="Année" size="x-small" type="number"
+                        variant="underlined" />
+                    <v-btn block class="mb-2" @click="assignFilters">Filtrer</v-btn>
+                    <v-btn block class="mb-2" @click="resetFilters">Effacer les filtres</v-btn>
+                </v-window-item>
             </v-window>
         </v-navigation-drawer>
 
-        <base-modal v-if="selectedMenu && selectedMenu.component" v-model="modal">
+        <base-modal v-if="selectedMenu?.component" v-model="modal">
             <template #title>
                 <span>{{ selectedMenu.title }}</span>
                 <v-btn :icon="CLOSE_ICON" variant="text" @click="modal = false" />
@@ -90,7 +99,9 @@ import { useUser } from "@/composables/user";
 import { useSearch } from "@/composables/search";
 import type { Platform, Kind } from "@/models/serie";
 import type { User } from "@/models/user";
-import type { FilterType } from "@/types/types";
+import { useSearchStore } from "@/stores/search";
+import { useSerieStore } from "@/stores/serie";
+import { DEFAULT_LIMIT } from "@/constants/utils";
 
 const props = defineProps({
     autoSearch: { type: Boolean, default: false },
@@ -98,21 +109,19 @@ const props = defineProps({
     label: { type: String, default: "Titre de la série" },
     search: { type: Boolean, default: false },
 });
-
-const emit = defineEmits<{
-    filter: [FilterType, string[]]
-    search: [string | undefined]
-}>();
-
 const { getKinds, getPlatforms } = useSearch();
 const { getProfile } = useUser();
 const { logout } = useUser();
+const searchStore = useSearchStore();
+const serieStore = useSerieStore();
 
 const filters = ref(false);
 const menus = ref(false);
 const modal = ref(false);
 const selectedKinds = ref<Kind[]>([]);
 const selectedPlatforms = ref<Platform[]>([]);
+const selectedYear = ref(props.discover ? searchStore.filterYear : 0);
+const selectedLimit = ref(props.discover ? searchStore.filterLimit : serieStore.filterLimit);
 const selectedMenu = ref<AppMenuItem>();
 const kinds = ref<Kind[]>([]);
 const platforms = ref<Platform[]>([]);
@@ -121,17 +130,59 @@ const title = ref<string>();
 const user = ref<User>();
 
 const onChange = () => {
-    if (props.autoSearch) emit('search', title.value);
+    if (!props.autoSearch) return;
+    if (props.discover)
+        searchStore.filterTitle = title.value;
+    else
+        serieStore.filterTitle = title.value;
 }
 
-const filterKinds = (toFilter: Kind[]) => {
+const filterTitle = (title?: string) => {
+    if (props.discover)
+        searchStore.filterTitle = title;
+    else
+        serieStore.filterTitle = title;
+}
+
+const assignFilters = () => {
+    if (props.discover) {
+        if (selectedLimit.value)
+            searchStore.filterLimit = selectedLimit.value;
+        if (selectedYear.value)
+            searchStore.filterYear = selectedYear.value;
+    } else {
+        if (selectedLimit.value)
+            serieStore.filterLimit = selectedLimit.value;
+    }
+}
+
+const resetFilters = () => {
+    if (props.discover) {
+        searchStore.filterLimit = DEFAULT_LIMIT;
+        searchStore.filterYear = undefined;
+    } else {
+        serieStore.filterLimit = DEFAULT_LIMIT;
+    }
+    selectedLimit.value = DEFAULT_LIMIT;
+    selectedYear.value = undefined;
+}
+
+const updateKinds = (toFilter: Kind[]) => {
     selectedKinds.value = toFilter;
-    emit('filter', 'kinds', toFilter.map((kind) => props.discover ? kind.value : kind.name));
+
+    if (props.discover)
+        searchStore.filterKinds = toFilter.map((kind) => kind.value);
+    else
+        serieStore.filterKinds = toFilter.map((kind) => kind.name);
 }
 
-const filterPlatforms = (toFilter: Platform[]) => {
+const updatePlatforms = (toFilter: Platform[]) => {
     selectedPlatforms.value = toFilter;
-    emit('filter', 'platforms', toFilter.map((platform) => `${platform.id}`));
+
+    if (props.discover)
+        searchStore.filterPlatforms = toFilter.map((platform) => `${platform.id}`);
+    else
+        serieStore.filterPlatforms = toFilter.map((platform) => `${platform.id}`);
 }
 
 const openDrawer = () => {

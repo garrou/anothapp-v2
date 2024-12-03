@@ -5,7 +5,7 @@ import searchService from "@/services/searchService";
 import type { SerieSearchOptions } from "@/models/search";
 import { isError } from "@/utils/response";
 import cache from "@/cache";
-import { DEFAULT_LIMIT } from "@/constants/utils";
+import { DEFAULT_LIMIT, MAX_YEAR, MIN_YEAR } from "@/constants/utils";
 
 export function useSearch() {
 
@@ -54,13 +54,13 @@ export function useSearch() {
     const getSeries = async (options: SerieSearchOptions = {}): Promise<Serie[]> => {
         const { title, kinds, platforms, limit, year } = options;
 
-        if (title || kinds || platforms || year) {
+        if (title || kinds?.length || platforms?.length || year) {
             const resp = await searchService.getSeries(
                 title, 
                 kinds?.length ? kinds.join(",") : undefined, 
                 platforms?.length ? platforms.join(",") : undefined,
                 limit && (limit < 1 || limit > 100) ? DEFAULT_LIMIT : limit,
-                year && (year < 1900 || year > (new Date().getFullYear())) ? undefined : year
+                year && (year < MIN_YEAR || year > MAX_YEAR) ? undefined : year
             );
             const data = await resp.json();
             if (isError(resp.status)) {

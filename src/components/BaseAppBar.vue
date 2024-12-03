@@ -66,8 +66,8 @@
                 <v-window-item class="px-3" :value="3">
                     <v-text-field v-model="selectedLimit" label="Limite" min="0" size="x-small" type="number"
                         variant="underlined" />
-                    <v-text-field v-model="selectedYear" min="1900" label="Année" size="x-small" type="number"
-                        variant="underlined" />
+                    <v-text-field v-model="selectedYear" :min="MIN_YEAR" :max="MAX_YEAR" label="Année" size="x-small"
+                        type="number" variant="underlined" />
                     <v-btn block class="mb-2" @click="assignFilters">Filtrer</v-btn>
                     <v-btn block class="mb-2" @click="resetFilters">Effacer les filtres</v-btn>
                 </v-window-item>
@@ -101,7 +101,7 @@ import type { Platform, Kind } from "@/models/serie";
 import type { User } from "@/models/user";
 import { useSearchStore } from "@/stores/search";
 import { useSerieStore } from "@/stores/serie";
-import { DEFAULT_LIMIT } from "@/constants/utils";
+import { DEFAULT_LIMIT, MAX_YEAR, MIN_YEAR } from "@/constants/utils";
 
 const props = defineProps({
     autoSearch: { type: Boolean, default: false },

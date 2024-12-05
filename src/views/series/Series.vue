@@ -11,7 +11,6 @@ import { onBeforeMount, ref } from "vue";
 import { useSerie } from "@/composables/serie";
 import { watch } from "vue";
 import { useState } from "@/composables/state";
-import type { SerieSearchOptions } from "@/models/search";
 import { storeToRefs } from "pinia";
 import { useSerieStore } from "@/stores/serie";
 
@@ -22,21 +21,15 @@ const { filterKinds, filterPlatforms, filterTitle } = storeToRefs(useSerieStore(
 const loading = ref(false);
 const series = ref<Serie[]>([]);
 
-const fetchSeries = async (options?: SerieSearchOptions): Promise<void> => {
+const fetchSeries = async (): Promise<void> => {
     loading.value = true;
-    series.value = await getSeries(options);
+    series.value = await getSeries();
     loading.value = false;
 }
 
-onBeforeMount(() => fetchSeries().then());
-
-watch(state.counter, () => fetchSeries().then());
-
-watch([filterTitle, filterKinds, filterPlatforms], () => {
-    fetchSeries({
-        title: filterTitle.value,
-        kinds: filterKinds.value,
-        platforms: filterPlatforms.value
-    }).then();
+watch([state.counter, filterTitle, filterKinds, filterPlatforms], () => {
+    fetchSeries().then();
 });
+
+onBeforeMount(() => fetchSeries().then());
 </script>

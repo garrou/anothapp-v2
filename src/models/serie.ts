@@ -9,7 +9,7 @@ interface BaseSerie {
 
 export interface Serie extends BaseSerie {
 
-    poster: string;
+    poster?: string;
 
     favorite?: boolean;
         

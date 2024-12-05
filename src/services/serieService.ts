@@ -1,4 +1,4 @@
-import { buildUrl } from "@/utils/format";
+import { buildUrlWithParams } from "@/utils/format";
 import { ENDPOINT } from "../constants/services";
 import storageService from "./storageService";
 import type { Season } from "@/models/season";
@@ -42,7 +42,9 @@ const addSerie = async (serie: Serie): Promise<Response> => {
 }
 
 const deleteSerie = async (id: number, list = false): Promise<Response> => {
-    const url = buildUrl(`${ENDPOINT}/${PREFIX}/${id}`, "list", list);
+    const url = buildUrlWithParams(`${ENDPOINT}/${PREFIX}/${id}`, [
+        { name: "list", value: list }
+    ]);
     return fetch(url, {
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`
@@ -76,7 +78,9 @@ const getSerie = async (id: number): Promise<Response> => {
 }
 
 const getSeries = async (platforms?: string): Promise<Response> => {
-    const url = buildUrl(`${ENDPOINT}/${PREFIX}`, "platforms", platforms);
+    const url = buildUrlWithParams(`${ENDPOINT}/${PREFIX}`, [
+        { name: "platforms", value: platforms }
+    ]);
     return fetch(url, {
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`
@@ -85,10 +89,10 @@ const getSeries = async (platforms?: string): Promise<Response> => {
 }
 
 const getSeriesByStatus = async (status: SerieStatus, friendId?: string): Promise<Response> => {
-    const url = buildUrl(buildUrl(
-        `${ENDPOINT}/${PREFIX}`, "status", status), 
-        "friendId", friendId
-    );
+    const url = buildUrlWithParams(`${ENDPOINT}/${PREFIX}`, [
+        { name: "status", value: status },
+        { name: "friendId", value: friendId }
+    ]);
     return fetch(url, {
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`

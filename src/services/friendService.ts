@@ -1,11 +1,14 @@
 import { ENDPOINT } from "@/constants/services";
 import storageService from "./storageService";
-import { buildUrl } from "@/utils/format";
+import { buildUrlWithParams } from "@/utils/format";
 
 const PREFIX = "friends";
 
 const getFriends = async (status?: string, serieId?: number): Promise<Response> => {
-    const url = buildUrl(buildUrl(`${ENDPOINT}/${PREFIX}`, "status", status), "serieId", serieId);
+    const url = buildUrlWithParams(`${ENDPOINT}/${PREFIX}`, [
+        { name: "status", value: status },
+        { name: "serieId", value: serieId }
+    ]);
     return fetch(url, { 
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`

@@ -2,12 +2,13 @@ import type { Actor, Character } from "@/models/person";
 import type { Season } from "@/models/season";
 import type { Kind, Platform, Serie, Similar } from "@/models/serie";
 import searchService from "@/services/searchService";
-import type { SerieSearchOptions } from "@/models/search";
 import { isError } from "@/utils/response";
 import cache from "@/cache";
-import { DEFAULT_LIMIT, MAX_YEAR, MIN_YEAR } from "@/constants/utils";
+import { useSearchStore } from "@/stores/search";
 
 export function useSearch() {
+
+    const searchStore = useSearchStore();
 
     const getActor = async (id: number): Promise<Actor> => {
         const resp = await searchService.getActor(id);
@@ -51,21 +52,21 @@ export function useSearch() {
         return data;
     }
 
-    const getSeries = async (options: SerieSearchOptions = {}): Promise<Serie[]> => {
-        const { title, kinds, platforms, limit, year } = options;
+    const getSeries = async (): Promise<Serie[]> => {
+        const { filterTitle, filterKinds, filterLimit, filterPlatforms, filterYear } = searchStore;
 
-        if (title || kinds?.length || platforms?.length || year) {
+        if (filterTitle || filterKinds.length || filterPlatforms.length || filterYear) {
             const resp = await searchService.getSeries(
-                title, 
-                kinds?.length ? kinds.join(",") : undefined, 
-                platforms?.length ? platforms.join(",") : undefined,
-                limit && (limit < 1 || limit > 100) ? DEFAULT_LIMIT : limit,
-                year && (year < MIN_YEAR || year > MAX_YEAR) ? undefined : year
+                filterTitle,
+                filterKinds.length ? filterKinds.join(",") : undefined,
+                filterPlatforms.length ? filterPlatforms.join(",") : undefined,
+                filterLimit,
+                filterYear,
             );
             const data = await resp.json();
-            if (isError(resp.status)) {
+            if (isError(resp.status))
                 throw new Error(data.message);
-            }
+            
             return data;
         }
         return cache.series.getSeries();
@@ -91,8 +92,8 @@ export function useSearch() {
         return data;
     }
 
-    const getImages = async (): Promise<string[]> => {
-        const resp = await searchService.getImages();
+    const getImages = async (limit: number): Promise<string[]> => {
+        const resp = await searchService.getImages(limit);
         const data = await resp.json();
 
         if (isError(resp.status))
@@ -101,16 +102,16 @@ export function useSearch() {
         return data;
     }
 
-    return { 
-        getActor, 
-        getCharacters, 
+    return {
+        getActor,
+        getCharacters,
         getImages,
         getKinds,
         getPlatforms,
-        getSeasonsBySerieId, 
-        getSerie, 
-        getSerieImages, 
-        getSeries, 
-        getSimilarsSeries 
+        getSeasonsBySerieId,
+        getSerie,
+        getSerieImages,
+        getSeries,
+        getSimilarsSeries
     }
 }

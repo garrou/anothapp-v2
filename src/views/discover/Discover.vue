@@ -9,7 +9,6 @@ import SeriesRow from "@/components/SeriesRow.vue";
 import type { Serie } from "@/models/serie";
 import { onBeforeMount, ref, watch } from "vue";
 import { useSearch } from "@/composables/search";
-import type { SerieSearchOptions } from "@/models/search";
 import { useState } from "@/composables/state";
 import { storeToRefs } from "pinia";
 import { useSearchStore } from "@/stores/search";
@@ -21,22 +20,14 @@ const state = useState();
 const loading = ref(false);
 const series = ref<Serie[]>([]);
 
-const fetchSeries = async (options?: SerieSearchOptions): Promise<void> => {
+const fetchSeries = async (): Promise<void> => {
     loading.value = true;
-    series.value = await getSeries(options);
+    series.value = await getSeries();
     loading.value = false;
 }
 
-watch(state.counter, () => fetchSeries().then());
-
-watch([filterTitle, filterKinds, filterPlatforms, filterLimit, filterYear], () => {
-    fetchSeries({ 
-        title: filterTitle.value,
-        kinds: filterKinds.value, 
-        platforms: filterPlatforms.value, 
-        limit: filterLimit.value,
-        year: filterYear.value
-    }).then();
+watch([state.counter, filterTitle, filterKinds, filterPlatforms, filterLimit, filterYear], () => {
+    fetchSeries().then();
 });
 
 onBeforeMount(() => fetchSeries().then());

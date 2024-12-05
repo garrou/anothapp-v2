@@ -85,7 +85,7 @@ export function useStatistic() {
     }
 
     const getSeasonsPlatforms = async (userId?: string): Promise<Stat[]> => {
-        const resp = await statService.getGroupedCountByTypeByPeriod("platforms", null, userId);
+        const resp = await statService.getGroupedCountByTypeByPeriod("platforms", undefined, userId);
         const data = await resp.json();
 
         if (isError(resp.status))
@@ -95,7 +95,7 @@ export function useStatistic() {
     }
 
     const getSeriesKinds = async (userId?: string): Promise<Stat[]> => {
-        const resp = await statService.getGroupedCountByTypeByPeriod("kinds", null, userId);
+        const resp = await statService.getGroupedCountByTypeByPeriod("kinds", undefined, userId);
         const data = await resp.json();
 
         if (isError(resp.status))
@@ -105,7 +105,7 @@ export function useStatistic() {
     }
 
     const getSeriesCountries = async (userId?: string): Promise<Stat[]> => {
-        const resp = await statService.getGroupedCountByTypeByPeriod("countries", null, userId);
+        const resp = await statService.getGroupedCountByTypeByPeriod("countries", undefined, userId);
         const data = await resp.json();
 
         if (isError(resp.status))
@@ -115,7 +115,7 @@ export function useStatistic() {
     }
 
     const getBestMonths = async (userId?: string): Promise<Stat[]> => {
-        const resp = await statService.getGroupedCountByTypeByPeriod("best-months", null, userId);
+        const resp = await statService.getGroupedCountByTypeByPeriod("best-months", undefined, userId);
         const data = await resp.json();
 
         if (isError(resp.status))

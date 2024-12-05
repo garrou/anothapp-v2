@@ -33,45 +33,56 @@
             </v-list>
         </v-navigation-drawer>
 
-        <v-navigation-drawer v-model="filters" location="right" temporary>
-            <v-tabs v-model="tab">
-                <v-tab :value="1">Genres</v-tab>
-                <v-tab :value="2">Plateformes</v-tab>
-                <v-tab v-if="discover" :value="3">Autres</v-tab>
-            </v-tabs>
-            <v-window v-model="tab">
-                <v-window-item :value="1">
-                    <v-list>
-                        <v-list-item v-if="selectedKinds.length" title="Effacer les filtres" @click="updateKinds([])" />
-                        <v-checkbox v-for="(kind, index) in kinds" :key="index" v-model="selectedKinds" hide-details
-                            :label="kind.name" :value="kind" @update:model-value="updateKinds(selectedKinds)" />
-                    </v-list>
-                </v-window-item>
-                <v-window-item :value="2">
-                    <v-list>
-                        <v-list-item v-if="selectedPlatforms.length" title="Effacer les filtres"
-                            @click="updatePlatforms([])" />
-                        <v-checkbox v-for="plt in platforms" :key="plt.id" v-model="selectedPlatforms" hide-details
-                            :value="plt" @update:model-value="updatePlatforms(selectedPlatforms)">
-                            <template #label>
-                                <v-avatar v-if="plt.logo" :image="plt.logo" />
-                                <v-avatar v-else color="grey">
-                                    <v-icon color="white" :icon="PLATFORM_ICON" />
-                                </v-avatar>
-                                <span class="ms-2">{{ plt.name }}</span>
-                            </template>
-                        </v-checkbox>
-                    </v-list>
-                </v-window-item>
-                <v-window-item class="px-3" :value="3">
-                    <v-text-field v-model="selectedLimit" label="Limite" min="0" size="x-small" type="number"
-                        variant="underlined" />
-                    <v-text-field v-model="selectedYear" :min="MIN_YEAR" :max="MAX_YEAR" label="Année" size="x-small"
-                        type="number" variant="underlined" />
-                    <v-btn block class="mb-2" @click="assignFilters">Filtrer</v-btn>
-                    <v-btn block class="mb-2" @click="resetFilters">Effacer les filtres</v-btn>
-                </v-window-item>
-            </v-window>
+        <v-navigation-drawer v-model="filters" location="right" width="320">
+            <div class="d-flex flex-row mt-2">
+                <v-tabs v-model="tab" direction="vertical">
+                    <v-tab min-width="40" :value="1">
+                        <v-icon icon="mdi-drama-masks" />
+                    </v-tab>
+                    <v-tab min-width="40" :value="2">
+                        <v-icon icon="mdi-monitor-multiple" />
+                    </v-tab>
+                    <v-tab v-if="discover" min-width="40" :value="3">
+                        <v-icon icon="mdi-cog" />
+                    </v-tab>
+                </v-tabs>
+                <v-window v-model="tab" class="w-100">
+                    <v-window-item :value="1">
+                        <v-list class="pt-0">
+                            <v-list-item v-if="selectedKinds.length" title="Effacer les filtres"
+                                @click="updateKinds([])" />
+                            <v-checkbox v-for="(kind, index) in kinds" :key="index" v-model="selectedKinds" hide-details
+                                :label="kind.name" :value="kind" @update:model-value="updateKinds(selectedKinds)" />
+                        </v-list>
+                    </v-window-item>
+                    <v-window-item :value="2">
+                        <v-list>
+                            <v-list-item v-if="selectedPlatforms.length" title="Effacer les filtres"
+                                @click="updatePlatforms([])" />
+                            <v-checkbox v-for="plt in platforms" :key="plt.id" v-model="selectedPlatforms" hide-details
+                                :value="plt" @update:model-value="updatePlatforms(selectedPlatforms)">
+                                <template #label>
+                                    <v-avatar v-if="plt.logo" :image="plt.logo" />
+                                    <v-avatar v-else color="grey">
+                                        <v-icon color="white" :icon="PLATFORM_ICON" />
+                                    </v-avatar>
+                                    <span class="ms-2">{{ plt.name }}</span>
+                                </template>
+                            </v-checkbox>
+                        </v-list>
+                    </v-window-item>
+                    <v-window-item class="px-3" :value="3">
+                        <v-text-field v-model="selectedLimit" label="Nombre de résultats" min="0" type="number"
+                            variant="underlined" />
+                        <v-text-field v-model="selectedYear" :min="MIN_YEAR" :max="MAX_YEAR" label="Année" type="number"
+                            variant="underlined" />
+                        <v-btn block class="mb-2" @click="assignFilters">Filtrer</v-btn>
+                        <v-btn v-if="hasChanges" block class="mb-2" @click="resetFilters">
+                            Effacer tous les filtres
+                        </v-btn>
+                    </v-window-item>
+                </v-window>
+            </div>
         </v-navigation-drawer>
 
         <base-modal v-if="selectedMenu?.component" v-model="modal">
@@ -93,7 +104,7 @@ import BaseModal from "./BaseModal.vue";
 import { DENSITY, ELEVATION } from "@/constants/style";
 import { CLOSE_ICON, FILTER_ICON, PLATFORM_ICON, SEARCH_ICON } from "@/constants/icons";
 import { APP_MENU } from "@/constants/menus";
-import { onBeforeMount, ref } from "vue";
+import { computed, onBeforeMount, ref } from "vue";
 import type { AppMenuItem } from "@/models/menu";
 import { useUser } from "@/composables/user";
 import { useSearch } from "@/composables/search";
@@ -129,6 +140,8 @@ const tab = ref(1);
 const title = ref<string>();
 const user = ref<User>();
 
+const hasChanges = computed(() => props.discover ? searchStore.hasChanges() : serieStore.hasChanges());
+
 const onChange = () => {
     if (!props.autoSearch) return;
     if (props.discover)
@@ -158,10 +171,9 @@ const assignFilters = () => {
 
 const resetFilters = () => {
     if (props.discover) {
-        searchStore.filterLimit = DEFAULT_LIMIT;
-        searchStore.filterYear = undefined;
+        searchStore.reset();
     } else {
-        serieStore.filterLimit = DEFAULT_LIMIT;
+        serieStore.reset();
     }
     selectedLimit.value = DEFAULT_LIMIT;
     selectedYear.value = undefined;

@@ -35,7 +35,7 @@ onMounted(() => window.addEventListener('resize', onWidthChange));
 onUnmounted(() => window.removeEventListener('resize', onWidthChange));
 
 onBeforeMount(async () => {
-    const timeline = await getSeasonsTimeline(120);
+    const timeline = await getSeasonsTimeline(60);
     seasons.value = timeline.map((s) => ({
         id: s.showId,
         title: s.showTitle,

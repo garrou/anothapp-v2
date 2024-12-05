@@ -9,7 +9,7 @@
             </template>
         </base-toolbar>
         <v-row>
-            <v-col cols="12" sm="3">
+            <v-col v-if="infos.serie.poster" cols="12" sm="3">
                 <base-image :src="infos.serie.poster" max-height="350" />
             </v-col>
             <v-col cols="12" sm="9">

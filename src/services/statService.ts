@@ -1,12 +1,14 @@
 import { ENDPOINT } from "@/constants/services";
 import storageService from "./storageService";
-import { buildUrl } from "@/utils/format";
+import { buildUrlWithParams } from "@/utils/format";
 import type { ChartGroupedPeriod, ChartGroupedType, ChartTimeType } from "@/types/types";
 
 const PREFIX = "stats";
 
 const getStats = async (userId?: string): Promise<Response> => {
-    const url = buildUrl(`${ENDPOINT}/${PREFIX}`, "id", userId);
+    const url = buildUrlWithParams(`${ENDPOINT}/${PREFIX}`, [
+        { name: "id", value: userId }
+    ]);
     return fetch(url, {
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`
@@ -14,8 +16,12 @@ const getStats = async (userId?: string): Promise<Response> => {
     });
 }
 
-const getGroupedCountByTypeByPeriod = async (type: ChartGroupedType, period: ChartGroupedPeriod | null, userId?: string): Promise<Response> => {
-    const url = buildUrl(buildUrl(`${ENDPOINT}/${PREFIX}/grouped-count?type=${type}`, "period", period ?? ""), "id", userId);
+const getGroupedCountByTypeByPeriod = async (type: ChartGroupedType, period?: ChartGroupedPeriod, userId?: string): Promise<Response> => {
+    const url = buildUrlWithParams(`${ENDPOINT}/${PREFIX}/grouped-count`, [
+        { name: "type", value: type },
+        { name: "period", value: period },
+        { name: "id", value: userId }
+    ]);
     return fetch(url, {
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`
@@ -24,7 +30,10 @@ const getGroupedCountByTypeByPeriod = async (type: ChartGroupedType, period: Cha
 }
 
 const getTimeByType = async (type: ChartTimeType, userId?: string): Promise<Response> => {
-    const url = buildUrl(`${ENDPOINT}/${PREFIX}/time?type=${type}`, "id", userId);
+    const url = buildUrlWithParams(`${ENDPOINT}/${PREFIX}/time`, [
+        { name: "type", value: type },
+        { name: "id", value: userId }
+    ]);
     return fetch(url, {
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`

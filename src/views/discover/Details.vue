@@ -2,7 +2,8 @@
     <v-container v-if="serie">
         <base-toolbar icon="mdi-chevron-left" :title="serie.title">
             <template #buttons>
-                <button-add-serie :serie="serie" />
+                <button-add-serie v-if="canAddSerie(serie)" :serie="serie" />
+                <button-favorite-serie :serie-id="serie.id" />
                 <button-list-serie :serie="serie" />
             </template>
         </base-toolbar>
@@ -87,6 +88,7 @@ import ImagesRow from "@/components/ImagesRow.vue";
 import SerieDetail from "@/components/SerieDetail.vue";
 import SeriesRow from "@/components/SeriesRow.vue";
 import ButtonAddSerie from "@/components/ButtonAddSerie.vue";
+import ButtonFavoriteSerie from "@/components/ButtonFavoriteSerie.vue";
 import ButtonListSerie from "@/components/ButtonListSerie.vue";
 import { useFriend } from "@/composables/friend";
 import { useSearch } from "@/composables/search";
@@ -95,11 +97,13 @@ import type { Actor, Character } from "@/models/person";
 import type { Serie, Similar } from "@/models/serie";
 import type { User } from "@/models/user";
 import { onBeforeMount, ref } from "vue";
+import { useSerie } from "@/composables/serie";
 
 const props = defineProps({
     id: { type: Number, required: true }
 })
 
+const { canAddSerie } = useSerie();
 const { getFriends } = useFriend();
 const { getActor, getCharacters, getSerie, getSerieImages, getSimilarsSeries } = useSearch();
 

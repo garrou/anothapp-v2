@@ -1,6 +1,6 @@
 import { ENDPOINT } from "@/constants/services";
 import storageService from "./storageService";
-import { buildUrl } from "@/utils/format";
+import { buildUrlWithParams } from "@/utils/format";
 
 const PREFIX = "seasons";
 
@@ -27,8 +27,9 @@ const updateSeason = async (id: number, platformId: number): Promise<Response> =
 }
 
 const getSeasons = async (year?: number, month?: number): Promise<Response> => {
-    const query = year ? "year" : "month";
-    const url = buildUrl(`${ENDPOINT}/${PREFIX}`, query, year ?? month);
+    const url = buildUrlWithParams(`${ENDPOINT}/${PREFIX}`, [
+        { name: year ? "year" : "month", value: year ?? month }
+    ]);
     return fetch(url, {
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`

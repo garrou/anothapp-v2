@@ -1,4 +1,4 @@
-import { buildUrl } from "@/utils/format";
+import { buildUrlWithParams } from "@/utils/format";
 import { ENDPOINT } from "../constants/services";
 import storageService from "./storageService";
 
@@ -53,13 +53,13 @@ const getSerieImages = async (id: number): Promise<Response> => {
 }
 
 const getSeries = async (title?: string, kinds?: string, platforms?: string, limit?: number, year?: number): Promise<Response> => {
-    const url = buildUrl(buildUrl(buildUrl(buildUrl(buildUrl(
-        `${ENDPOINT}/${PREFIX}/shows`, "title", title), 
-        "kinds", kinds), 
-        "platforms", platforms),
-        "limit", limit),
-        "year", year
-    );
+    const url = buildUrlWithParams(`${ENDPOINT}/${PREFIX}/shows`, [
+        { name: "title", value: title },
+        { name: "kinds", value: kinds },
+        { name: "platforms", value: platforms },
+        { name: "limit", value: limit },
+        { name: "year", value: year }
+    ]);
     return fetch(url, {
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`
@@ -83,13 +83,16 @@ const getSimilarsSeries = async (id: number): Promise<Response> => {
     });
 }
 
-const getImages = async (): Promise<Response> => {
-    return fetch(`${ENDPOINT}/${PREFIX}/images`, {
+const getImages = async (limit: number): Promise<Response> => {
+    const url = buildUrlWithParams(`${ENDPOINT}/${PREFIX}/images`, [
+        { name: "limit", value: limit }
+    ]);
+    return fetch(url, {
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`
         }
     });
-} 
+}
 
 export default {
     getActor,

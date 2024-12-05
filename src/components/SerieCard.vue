@@ -1,6 +1,6 @@
 <template>
     <v-card>
-        <router-link :to="link">
+        <router-link v-if="serie.poster" :to="link">
             <base-image cover max-height="580" :src="serie.poster" />
         </router-link>
 

@@ -11,17 +11,18 @@ import UserSeriesCache from "@/cache/modules/userSeries";
 import UserListCache from "@/cache/modules/userList";
 import SeriesCache from "@/cache/modules/series";
 import type { SerieCacheItem } from "@/types/cache";
+import { useSerieStore } from "@/stores/serie";
 
 export function useSerie() {
 
     const { showSuccess } = useSnackbar();
     const { setConfirmModal } = useState();
+    const serieStore = useSerieStore();
     const router = useRouter();
 
     const canAddSerie = (serie: Serie): boolean => {
         return [serie.id,
             serie.title, 
-            serie.poster,
             serie.kinds, 
             serie.duration,
             serie.seasons,
@@ -90,14 +91,17 @@ export function useSerie() {
         };
     }
 
-    const getSeries = async (options: SerieSearchOptions = {}): Promise<Serie[]> => {
-        const { platforms } = options;
+    const getSeries = async (): Promise<Serie[]> => {
+        const { filterKinds, filterTitle, filterPlatforms } = serieStore;
 
-        if (!platforms?.length) {
-            return cache.userSeries.getSeries(options);
+        if (!filterPlatforms.length) {
+            return cache.userSeries.getSeries({
+                title: filterTitle,
+                kinds: filterKinds
+            });
         }
         const resp = await serieService.getSeries(
-            platforms?.length ? platforms.join(",") : undefined
+            filterPlatforms.length ? filterPlatforms.join(",") : undefined
         );
         const data = await resp.json();
 

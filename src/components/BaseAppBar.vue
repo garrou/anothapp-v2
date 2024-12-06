@@ -36,7 +36,7 @@
         <v-navigation-drawer v-model="filters" location="right" width="320">
             <div class="d-flex flex-row mt-2">
                 <v-tabs v-model="tab" direction="vertical">
-                    <v-tab min-width="40" :value="1">
+                    <v-tab v-if="!discover" min-width="40" :value="1">
                         <v-icon icon="mdi-drama-masks" />
                     </v-tab>
                     <v-tab min-width="40" :value="2">
@@ -137,7 +137,7 @@ const selectedMenu = ref<AppMenuItem>();
 const kinds = ref<Kind[]>([]);
 const platforms = ref<Platform[]>([]);
 const tab = ref(1);
-const title = ref<string>();
+const title = ref(props.discover ? searchStore.filterTitle : serieStore.filterTitle);
 const user = ref<User>();
 
 const hasChanges = computed(() => props.discover ? searchStore.hasChanges() : serieStore.hasChanges());

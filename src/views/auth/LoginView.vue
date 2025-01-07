@@ -15,12 +15,12 @@
     </v-container>
 </template>
 <script lang="ts" setup>
-import { useUser } from "@/composables/user";
+import { useAuth } from "@/composables/auth";
 import { ref } from "vue";
 
 const TITLE = "Se connecter";
 
-const { login } = useUser();
+const { login } = useAuth();
 
 const valid = ref(false);
 const identifier = ref("");

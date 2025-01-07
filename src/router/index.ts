@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from "vue-router";
-import { useUser } from "@/composables/user";
 import HomeView from "../views/HomeView.vue";
 import LoginView from "@/views/auth/LoginView.vue";
 import RegisterView from "@/views/auth/RegisterView.vue";
@@ -10,6 +9,7 @@ import Dashboard from "@/views/stats/Dashboard.vue";
 import Profile from "@/views/profile/Profile.vue";
 import Friends from "@/views/friends/Friends.vue";
 import Details from "@/views/discover/Details.vue";
+import { useAuth } from "@/composables/auth";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -95,7 +95,7 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from) => {
-  const { checkAuth } = useUser();
+  const { checkAuth } = useAuth();
   const isLoggedIn = await checkAuth();
   
   if (to.meta.requiresAuth && !isLoggedIn) {

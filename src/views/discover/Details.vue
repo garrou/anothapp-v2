@@ -2,7 +2,7 @@
     <v-container v-if="serie">
         <base-toolbar icon="mdi-chevron-left" :title="serie.title">
             <template #buttons>
-                <button-add-serie v-if="canAddSerie(serie)" :serie="serie" />
+                <button-add-serie :serie-id="serie.id" />
                 <button-favorite-serie :serie-id="serie.id" />
                 <button-list-serie :serie="serie" />
             </template>
@@ -97,13 +97,11 @@ import type { Actor, Character } from "@/models/person";
 import type { Serie, Similar } from "@/models/serie";
 import type { User } from "@/models/user";
 import { onBeforeMount, ref } from "vue";
-import { useSerie } from "@/composables/serie";
 
 const props = defineProps({
     id: { type: Number, required: true }
 })
 
-const { canAddSerie } = useSerie();
 const { getFriends } = useFriend();
 const { getActor, getCharacters, getSerie, getSerieImages, getSimilarsSeries } = useSearch();
 

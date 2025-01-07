@@ -29,10 +29,25 @@ export default class UserSeriesCache extends CacheModule<SerieCacheItem> {
         await this.putToCache(cacheValue, `${serie.id}`);
     }
 
+    async addSerieById(id: number): Promise<void> {
+        const resp = await serieService.addSerie(id, false);
+        const data = await resp.json();
+
+        if (isError(resp.status)) {
+            throw new Error(data.message);
+        }
+        const cacheValue: SerieCacheItem = {
+            ...JSON.parse(JSON.stringify(data)),
+            expires: Date.now() + this.expires,
+        }
+        await this.putToCache(cacheValue, `${data.id}`);
+    }
+
     async deleteSerie(id: number): Promise<void> {
         const resp = await serieService.deleteSerie(id);
-        const data = await resp.json();
+
         if (isError(resp.status)) {
+            const data = await resp.json();
             throw new Error(data.message);
         }
         await this.deleteFromCache(`${id}`);
@@ -40,18 +55,17 @@ export default class UserSeriesCache extends CacheModule<SerieCacheItem> {
 
     async getSeries(options: SerieSearchOptions): Promise<SerieCacheItem[]> {
         const storedSeries = await this.getAll();
+
         if (storedSeries.length) {
             return this.filterSeries(storedSeries, options);
         }
-
         const resp = await serieService.getSeries();
         const data = await resp.json();
+
         if (isError(resp.status)) {
             throw new Error(data.message);
         }
-
-        const series: Serie[] = data;
-        series.forEach(async (serie) => {
+        data.forEach(async (serie: Serie) => {
             const cacheValue: SerieCacheItem = {
                 expires: Date.now() + this.expires,
                 ...serie
@@ -64,15 +78,16 @@ export default class UserSeriesCache extends CacheModule<SerieCacheItem> {
 
     async getSerieById(id: number): Promise<SerieCacheItem> {
         const storedSerie = await this.getFromCache(`${id}`);
+        
         if (storedSerie) {
             return storedSerie;
         }
-        
         const resp = await serieService.getSerie(id);
         const data = await resp.json();
-        if (isError(resp.status))
-            throw new Error(data.message);
 
+        if (isError(resp.status)) {
+            throw new Error(data.message);
+        }
         const cacheValue: SerieCacheItem = {
             expires: Date.now() + this.expires,
             ...data
@@ -83,17 +98,18 @@ export default class UserSeriesCache extends CacheModule<SerieCacheItem> {
 
     async getFavorites(): Promise<SerieCacheItem[]> {
         const storedSeries = await this.getAll();
+
         if (storedSeries.length) {
             return storedSeries
                 .filter((serie) => serie.favorite)
                 .sort((a, b) => a.title.localeCompare(b.title))
-        } 
+        }
         const resp = await serieService.getSeriesByStatus("favorite");
         const data = await resp.json();
 
-        if (isError(resp.status))
+        if (isError(resp.status)) {
             throw new Error(data.message);
-
+        }
         return data;
     }
 

@@ -12,11 +12,11 @@ export function useSeason() {
 
     const deleteSeason = async (id: number): Promise<void> => {
         const resp = await seasonService.deleteSeasonById(id);
-        const data = await resp.json();
 
-        if (isError(resp.status))
+        if (isError(resp.status)) {
+            const data = await resp.json();
             throw new Error(data.message);
-
+        }
         showSuccess("Visionnage supprimé");
     }
 
@@ -57,11 +57,11 @@ export function useSeason() {
 
     const addSeason = async (serie: Serie, season: Season): Promise<void> => {
         const resp = await serieService.addSeason(serie, season);
-        const data = await resp.json();
 
-        if (isError(resp.status))
+        if (isError(resp.status)) {
+            const data = await resp.json();
             throw new Error(data.message);
-
+        }
         showSuccess(`"${serie.title}" saison ${season.number} ajoutée`);
     }
 
@@ -70,19 +70,19 @@ export function useSeason() {
             throw new Error("Impossible de modifier la plateforme");
 
         const resp = await seasonService.updateSeason(id, platformId);
-        const data = await resp.json();
 
-        if (isError(resp.status))
+        if (isError(resp.status)) {
+            const data = await resp.json();
             throw new Error(data.message);
-
+        }
         showSuccess("Saison modifiée");
     }
 
-    return { 
-        addSeason, 
-        deleteSeason, 
-        getSeasonsBySerieId, 
-        getSeasonsTimeline, 
+    return {
+        addSeason,
+        deleteSeason,
+        getSeasonsBySerieId,
+        getSeasonsTimeline,
         getSeasonInfosBySerieIdByNumber,
         updateSeason
     }

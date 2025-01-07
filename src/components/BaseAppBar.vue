@@ -36,7 +36,7 @@
         <v-navigation-drawer v-model="filters" location="right" width="320">
             <div class="d-flex flex-row mt-2">
                 <v-tabs v-model="tab" direction="vertical">
-                    <v-tab v-if="!discover" min-width="40" :value="1">
+                    <v-tab v-if="discover" min-width="40" :value="1">
                         <v-icon icon="mdi-drama-masks" />
                     </v-tab>
                     <v-tab min-width="40" :value="2">
@@ -113,6 +113,7 @@ import type { User } from "@/models/user";
 import { useSearchStore } from "@/stores/search";
 import { useSerieStore } from "@/stores/serie";
 import { DEFAULT_LIMIT, MAX_YEAR, MIN_YEAR } from "@/constants/utils";
+import { useAuth } from "@/composables/auth";
 
 const props = defineProps({
     autoSearch: { type: Boolean, default: false },
@@ -122,7 +123,7 @@ const props = defineProps({
 });
 const { getKinds, getPlatforms } = useSearch();
 const { getProfile } = useUser();
-const { logout } = useUser();
+const { logout } = useAuth();
 const searchStore = useSearchStore();
 const serieStore = useSerieStore();
 

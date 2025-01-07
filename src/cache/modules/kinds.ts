@@ -18,18 +18,17 @@ export default class KindsCache extends CacheModule<KindCacheItem> {
 
     async getKinds(): Promise<KindCacheItem[]> {
         const storedKinds = await this.getAll();
+
         if (storedKinds.length) {
             return storedKinds.sort((a, b) => a.name.localeCompare(b.name));
         }
-
         const resp = await searchService.getKinds();
         const data = await resp.json();
+
         if (isError(resp.status)) {
             throw new Error(data.message);
         }
-
-        const kinds: Kind[] = data;
-        kinds.forEach(async (kind, index) => {
+        data.forEach(async (kind: Kind, index: number) => {
             const cacheValue: KindCacheItem = {
                 expires: Date.now() + this.bigExpires,
                 ...kind

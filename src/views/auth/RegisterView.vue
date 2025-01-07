@@ -24,13 +24,13 @@
 </template>
 
 <script lang="ts" setup>
-import { useUser } from "@/composables/user";
+import { useAuth } from "@/composables/auth";
 import { emailRules, nameRules, passwordRules } from "@/utils/validator";
 import { ref } from "vue";
 
 const TITLE = "S'inscrire";
 
-const { register } = useUser();
+const { register } = useAuth();
 
 const valid = ref(false);
 const email = ref("");

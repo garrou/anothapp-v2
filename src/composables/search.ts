@@ -64,6 +64,7 @@ export function useSearch() {
                 filterYear,
             );
             const data = await resp.json();
+        
             if (isError(resp.status))
                 throw new Error(data.message);
             

@@ -18,18 +18,17 @@ export default class PlatformsCache extends CacheModule<PlatformCacheItem> {
 
     async getPlatforms(): Promise<PlatformCacheItem[]> {
         const storedPlatforms = await this.getAll();
+
         if (storedPlatforms.length) {
             return storedPlatforms.sort((a, b) => a.name.localeCompare(b.name));
         }
-
         const resp = await searchService.getPlatforms();
         const data = await resp.json();
+
         if (isError(resp.status)) {
             throw new Error(data.message);
         }
-
-        const platforms: Platform[] = data;
-        platforms.forEach(async (platform) => {
+        data.forEach(async (platform: Platform) => {
             const cacheValue: PlatformCacheItem = {
                 expires: Date.now() + this.bigExpires,
                 ...platform

@@ -20,36 +20,16 @@ export function useSerie() {
     const serieStore = useSerieStore();
     const router = useRouter();
 
-    const canAddSerie = (serie: Serie): boolean => {
-        return [serie.id,
-            serie.title, 
-            serie.kinds, 
-            serie.duration,
-            serie.seasons,
-            serie.country].every((item) => item !== undefined);
-    }
-
-    const addSerie = async (serie: Serie): Promise<void> => {
-        const resp = await serieService.addSerie(serie);
-        const data = await resp.json();
-
-        if (isError(resp.status))
-            throw new Error(data.message);
-
-        if (serie.list) {
-            await cache.userList.addSerie({
-                ...serie,
-                addedAt: new Date().toISOString()
-            });
+    const addSerie = async (id: number, inList: boolean = false): Promise<void> => {
+        if (inList) {
+            await cache.userList.addSerieById(id);
         } else {
-            await cache.userSeries.addSerie({
-                ...serie,
-                addedAt: new Date().toISOString()
-            });
+            await cache.userSeries.addSerieById(id);
         }
-        showSuccess(`Série "${serie.title}" ajoutée ${serie.list ? "dans votre liste" : ""}`);
-        if (!serie.list)
-            router.push(`/series/${serie.id}`);
+        showSuccess(`Série ajoutée ${inList ? "dans votre liste" : ""}`);
+
+        if (!inList)
+            router.push(`/series/${id}`);
     }
 
     const deleteSerie = async (serie: Serie): Promise<void> => {
@@ -67,24 +47,24 @@ export function useSerie() {
     const getSerie = async (options: SerieSearchOptions): Promise<Serie> => {
         const { id } = options;
 
-        if (!id)
+        if (!id) {
             throw new Error("Impossible de récupérer les données");
-
+        }
         return cache.userSeries.getSerieById(id);
     }
 
     const getSerieInfos = async (options: SerieSearchOptions): Promise<SerieInfo> => {
         const { id } = options;
 
-        if (!id)
+        if (!id) {
             throw new Error("Impossible de récupérer les données");
-
+        }
         const resp = await serieService.getSerie(id);
         const data = await resp.json();
 
-        if (isError(resp.status))
+        if (isError(resp.status)) {
             throw new Error(data.message);
-
+        }
         return {
             ...data,
             serie: await cache.userSeries.getSerieById(id)
@@ -130,9 +110,9 @@ export function useSerie() {
         const resp = await serieService.updateFieldBySerieId(serie.id, field);
         const data = await resp.json();
 
-        if (isError(resp.status))
+        if (isError(resp.status)) {
             throw new Error(data.message);
-
+        }
         await cache.userSeries.addSerie({
             ...serie,
             [field]: data.value
@@ -155,7 +135,6 @@ export function useSerie() {
 
     return {
         addSerie,
-        canAddSerie,
         deleteSerie,
         deleteSerieInList,
         getSerie,

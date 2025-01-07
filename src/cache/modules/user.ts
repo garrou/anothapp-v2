@@ -26,16 +26,16 @@ export default class UserCache extends CacheModule<UserCacheItem> {
 
     async getProfile(): Promise<UserCacheItem> {
         const storedUsers = await this.getAll();
+
         if (storedUsers.length) {
             return storedUsers.filter((user) => user.current)?.[0];
         }
-
         const resp = await userService.getProfile();
         const data = await resp.json();
+        
         if (isError(resp.status)) {
             throw new Error(data.message);
         }
-
         const cacheValue: UserCacheItem = {
             expires: Date.now() + this.expires,
             ...data

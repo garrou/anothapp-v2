@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts" setup>
-import { useUser } from "@/composables/user";
+import { useAuth } from "@/composables/auth";
 import { emailRules } from "@/utils/validator";
 import { ref } from "vue";
 
@@ -22,7 +22,7 @@ const emit = defineEmits<{
     refresh: []
 }>();
 
-const { changeEmail } = useUser();
+const { changeEmail } = useAuth();
 
 const valid = ref(false);
 const current = ref("");

@@ -72,17 +72,15 @@ export function useSerie() {
     }
 
     const getSeries = async (): Promise<Serie[]> => {
-        const { filterKinds, filterTitle, filterPlatforms } = serieStore;
+        const { filterKinds, filterTitle, filterPlatforms, formatPlatforms, formatKinds } = serieStore;
 
         if (!filterPlatforms.length) {
-            return cache.userSeries.getSeries({
-                title: filterTitle,
-                kinds: filterKinds
+            return cache.userSeries.getSeries({ 
+                title: filterTitle, 
+                kinds: filterKinds.length ? filterKinds.map((kind) => kind.value) : undefined
             });
         }
-        const resp = await serieService.getSeries(
-            filterPlatforms.length ? filterPlatforms.join(",") : undefined
-        );
+        const resp = await serieService.getSeries(filterTitle, formatPlatforms(), formatKinds());
         const data = await resp.json();
 
         if (isError(resp.status))

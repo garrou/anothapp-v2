@@ -29,14 +29,14 @@
 
             <v-list :density="DENSITY" nav>
                 <v-list-item v-for="(item, index) in APP_MENU" :key="index" :prepend-icon="item.icon"
-                    :title="item.title" @click="selectMenu(item)" />
+                    :title="item.title" @click="updateMenuModal(item)" />
             </v-list>
         </v-navigation-drawer>
 
         <v-navigation-drawer v-model="filters" location="right" width="320">
             <div class="d-flex flex-row mt-2">
                 <v-tabs v-model="tab" direction="vertical">
-                    <v-tab v-if="discover" min-width="40" :value="1">
+                    <v-tab min-width="40" :value="1">
                         <v-icon icon="mdi-drama-masks" />
                     </v-tab>
                     <v-tab min-width="40" :value="2">
@@ -48,7 +48,7 @@
                 </v-tabs>
                 <v-window v-model="tab" class="w-100">
                     <v-window-item :value="1">
-                        <v-list class="pt-0">
+                        <v-list class="pt-0 mb-3">
                             <v-list-item v-if="selectedKinds.length" title="Effacer les filtres"
                                 @click="updateKinds([])" />
                             <v-checkbox v-for="(kind, index) in kinds" :key="index" v-model="selectedKinds" hide-details
@@ -74,8 +74,6 @@
                     <v-window-item class="px-3" :value="3">
                         <v-text-field v-model="selectedLimit" label="Nombre de résultats" min="0" type="number"
                             variant="underlined" />
-                        <v-text-field v-model="selectedYear" :min="MIN_YEAR" :max="MAX_YEAR" label="Année" type="number"
-                            variant="underlined" />
                         <v-btn block class="mb-2" @click="assignFilters">Filtrer</v-btn>
                         <v-btn v-if="hasChanges" block class="mb-2" @click="resetFilters">
                             Effacer tous les filtres
@@ -85,14 +83,13 @@
             </div>
         </v-navigation-drawer>
 
-        <base-modal v-if="selectedMenu?.component" v-model="modal">
+        <base-modal v-if="menuModal?.component" v-model="modal">
             <template #title>
-                <span>{{ selectedMenu.title }}</span>
-                <v-btn :icon="CLOSE_ICON" variant="text" @click="modal = false" />
+                <span>{{ menuModal.title }}</span>
+                <v-btn :icon="CLOSE_ICON" variant="text" @click="updateMenuModal(undefined)" />
             </template>
-            <component :is="selectedMenu.component" />
+            <component :is="menuModal.component" />
         </base-modal>
-
         <base-confirm v-else v-model="modal" text="Confirmez-vous la déconnexion ?" title="Se déconnecter" persistent
             @cancel="modal = false" @confirm="logout" />
     </v-layout>
@@ -105,15 +102,16 @@ import { DENSITY, ELEVATION } from "@/constants/style";
 import { CLOSE_ICON, FILTER_ICON, PLATFORM_ICON, SEARCH_ICON } from "@/constants/icons";
 import { APP_MENU } from "@/constants/menus";
 import { computed, onBeforeMount, ref } from "vue";
-import type { AppMenuItem } from "@/models/menu";
 import { useUser } from "@/composables/user";
 import { useSearch } from "@/composables/search";
 import type { Platform, Kind } from "@/models/serie";
 import type { User } from "@/models/user";
 import { useSearchStore } from "@/stores/search";
 import { useSerieStore } from "@/stores/serie";
-import { DEFAULT_LIMIT, MAX_YEAR, MIN_YEAR } from "@/constants/utils";
 import { useAuth } from "@/composables/auth";
+import { useState } from "@/composables/state";
+import type { AppMenuItem } from "@/models/menu";
+import { DEFAULT_LIMIT } from "@/constants/services";
 
 const props = defineProps({
     autoSearch: { type: Boolean, default: false },
@@ -124,17 +122,16 @@ const props = defineProps({
 const { getKinds, getPlatforms } = useSearch();
 const { getProfile } = useUser();
 const { logout } = useAuth();
+const { setMenuModal, menuModal } = useState();
 const searchStore = useSearchStore();
 const serieStore = useSerieStore();
 
 const filters = ref(false);
 const menus = ref(false);
-const modal = ref(false);
-const selectedKinds = ref<Kind[]>([]);
+const modal = ref(!!menuModal.value);
+const selectedKinds = ref<Kind[]>(props.discover ? searchStore.filterKinds : serieStore.filterKinds);
 const selectedPlatforms = ref<Platform[]>([]);
-const selectedYear = ref(props.discover ? searchStore.filterYear : 0);
-const selectedLimit = ref(props.discover ? searchStore.filterLimit : serieStore.filterLimit);
-const selectedMenu = ref<AppMenuItem>();
+const selectedLimit = ref(props.discover ? searchStore.filterLimit : 0);
 const kinds = ref<Kind[]>([]);
 const platforms = ref<Platform[]>([]);
 const tab = ref(1);
@@ -159,14 +156,12 @@ const filterTitle = (title?: string) => {
 }
 
 const assignFilters = () => {
+    if (selectedLimit.value)
+        searchStore.filterLimit = selectedLimit.value;
+
     if (props.discover) {
-        if (selectedLimit.value)
-            searchStore.filterLimit = selectedLimit.value;
-        if (selectedYear.value)
-            searchStore.filterYear = selectedYear.value;
-    } else {
-        if (selectedLimit.value)
-            serieStore.filterLimit = selectedLimit.value;
+        searchStore.filterKinds = selectedKinds.value;
+        searchStore.filterPlatforms = selectedPlatforms.value;
     }
 }
 
@@ -177,25 +172,20 @@ const resetFilters = () => {
         serieStore.reset();
     }
     selectedLimit.value = DEFAULT_LIMIT;
-    selectedYear.value = undefined;
 }
 
 const updateKinds = (toFilter: Kind[]) => {
     selectedKinds.value = toFilter;
 
-    if (props.discover)
-        searchStore.filterKinds = toFilter.map((kind) => kind.value);
-    else
-        serieStore.filterKinds = toFilter.map((kind) => kind.name);
+    if (!props.discover)
+        serieStore.filterKinds = toFilter;
 }
 
 const updatePlatforms = (toFilter: Platform[]) => {
     selectedPlatforms.value = toFilter;
 
-    if (props.discover)
-        searchStore.filterPlatforms = toFilter.map((platform) => `${platform.id}`);
-    else
-        serieStore.filterPlatforms = toFilter.map((platform) => `${platform.id}`);
+    if (!props.discover)
+        serieStore.filterPlatforms = toFilter;
 }
 
 const openDrawer = () => {
@@ -208,9 +198,9 @@ const openFilterDrawer = async () => {
     filters.value = !filters.value;
 }
 
-const selectMenu = (item: AppMenuItem) => {
-    selectedMenu.value = item;
-    modal.value = true;
+const updateMenuModal = (item?: AppMenuItem) => {
+    setMenuModal(item);
+    modal.value = !!menuModal.value;
 }
 
 onBeforeMount(async () => {

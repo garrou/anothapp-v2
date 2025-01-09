@@ -29,7 +29,7 @@ export function useSearch() {
 
         return data;
     }
-    
+
     const getKinds = async (): Promise<Kind[]> => {
         return cache.kinds.getKinds();
     }
@@ -53,21 +53,17 @@ export function useSearch() {
     }
 
     const getSeries = async (): Promise<Serie[]> => {
-        const { filterTitle, filterKinds, filterLimit, filterPlatforms, filterYear } = searchStore;
+        const { filterTitle, filterLimit, formatKinds, formatPlatforms } = searchStore;
+        const kinds = formatKinds();
+        const platforms = formatPlatforms();
 
-        if (filterTitle || filterKinds.length || filterPlatforms.length || filterYear) {
-            const resp = await searchService.getSeries(
-                filterTitle,
-                filterKinds.length ? filterKinds.join(",") : undefined,
-                filterPlatforms.length ? filterPlatforms.join(",") : undefined,
-                filterLimit,
-                filterYear,
-            );
+        if (filterTitle || kinds || platforms) {
+            const resp = await searchService.getSeries(filterTitle, kinds, platforms, filterLimit);
             const data = await resp.json();
-        
+
             if (isError(resp.status))
                 throw new Error(data.message);
-            
+
             return data;
         }
         return cache.series.getSeries();

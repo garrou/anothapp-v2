@@ -56,7 +56,7 @@ export function useSeason() {
     }
 
     const addSeason = async (serie: Serie, season: Season): Promise<void> => {
-        const resp = await serieService.addSeason(serie, season);
+        const resp = await serieService.addSeason(serie.id, season.number);
 
         if (isError(resp.status)) {
             const data = await resp.json();

@@ -62,7 +62,6 @@ export function useAuth() {
     }
 
     const register = async (email: string, password: string, confirm: string, username: string): Promise<void> => {
-
         const resp = await authService.register(email, password, confirm, username);
 
         if (isError(resp.status)) {

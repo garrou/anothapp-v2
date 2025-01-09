@@ -1,17 +1,15 @@
 import { buildUrlWithParams } from "@/utils/format";
 import { ENDPOINT } from "../constants/services";
 import storageService from "./storageService";
-import type { Season } from "@/models/season";
-import type { Serie } from "@/models/serie";
 import type { SerieStatus } from "@/types/types";
 
 const PREFIX = "shows";
 
-const addSeason = async (serie: Serie, season: Season): Promise<Response> => {
-    return fetch(`${ENDPOINT}/${PREFIX}/${serie.id}/seasons`, {
+const addSeason = async (id: number, num: number): Promise<Response> => {
+    return fetch(`${ENDPOINT}/${PREFIX}/${id}/seasons`, {
         body: JSON.stringify({
-            "season": season,
-            "serie": serie,
+            id,
+            num,
         }),
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`,
@@ -71,9 +69,11 @@ const getSerie = async (id: number): Promise<Response> => {
     });
 }
 
-const getSeries = async (platforms?: string): Promise<Response> => {
+const getSeries = async (title?: string, platforms?: string, kinds?: string): Promise<Response> => {
     const url = buildUrlWithParams(`${ENDPOINT}/${PREFIX}`, [
-        { name: "platforms", value: platforms }
+        { name: "title", value: title },
+        { name: "platforms", value: platforms },
+        { name: "kinds", value: kinds }
     ]);
     return fetch(url, {
         headers: {

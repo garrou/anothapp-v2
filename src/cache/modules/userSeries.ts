@@ -5,6 +5,7 @@ import serieService from "@/services/serieService";
 import { isError } from "@/utils/response";
 import type { Serie } from "@/models/serie";
 import type { SerieSearchOptions } from "@/models/search";
+import { withoutAccentsIgnoreCase } from "@/utils/format";
 
 export default class UserSeriesCache extends CacheModule<SerieCacheItem> {
     static readonly NAME = "userseries";
@@ -117,8 +118,12 @@ export default class UserSeriesCache extends CacheModule<SerieCacheItem> {
         const { title, kinds } = options;
         let filteredSeries = series;
 
-        if (title) {
-            filteredSeries = series.filter((serie) => serie.title.toLowerCase().includes(title.trim().toLowerCase()));
+        if (title && kinds) {
+            filteredSeries = series.filter((serie) => {
+                return withoutAccentsIgnoreCase(serie.title).includes(withoutAccentsIgnoreCase(title)) && kinds.every((kind) => serie.kinds.includes(kind));
+            });
+        } else if (title) {
+            filteredSeries = series.filter((serie) => withoutAccentsIgnoreCase(serie.title).includes(withoutAccentsIgnoreCase(title)));
         } else if (kinds) {
             filteredSeries = series.filter((serie) => kinds.every((kind) => serie.kinds.includes(kind)));
         }

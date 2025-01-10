@@ -17,7 +17,7 @@ export interface Season {
 
     number: number;
 
-    interval: string;
+    interval?: string;
 }
 
 export interface SeasonTimeline {

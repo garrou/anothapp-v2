@@ -12,7 +12,7 @@
             </v-chip>
 
             <v-chip class="ml-2" color="black" size="small">
-                {{ buildPlural("épisode", season.episodes) }} - ({{ season.interval }})
+                {{ text }}
             </v-chip>
         </div>
 
@@ -27,10 +27,15 @@
 import BaseImage from "./BaseImage.vue";
 import type { Season } from "@/models/season";
 import { buildPlural } from "@/utils/format";
-import type { PropType } from "vue";
+import { computed, type PropType } from "vue";
 
-defineProps({
+const props = defineProps({
     season: { type: Object as PropType<Season>, required: true },
     serieLink: { type: String, default: undefined }
+});
+
+const text = computed(() => {
+    const prefix = buildPlural("épisode", props.season.episodes);
+    return props.season.interval ? `${prefix} • (${props.season.interval})` : prefix;
 });
 </script>

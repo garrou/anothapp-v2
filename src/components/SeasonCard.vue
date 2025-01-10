@@ -6,9 +6,15 @@
             </router-link>
             <base-image v-else class="align-end" cover :src="season.image" max-height="580" />
         </template>
-        <v-card-title>Saison {{ season.number }}</v-card-title>
-        <v-card-subtitle v-if="season.episodes">{{ season.episodes }} épisodes</v-card-subtitle>
-        <v-card-subtitle v-if="season.interval">({{ season.interval }})</v-card-subtitle>
+        <div class="d-flex flex-row mt-2">
+            <v-chip class="ml-2" color="black" size="small">
+                Saison {{ season.number }}
+            </v-chip>
+
+            <v-chip class="ml-2" color="black" size="small">
+                {{ buildPlural("épisode", season.episodes) }} - ({{ season.interval }})
+            </v-chip>
+        </div>
 
         <v-card-actions>
             <slot name="add" />
@@ -20,6 +26,7 @@
 <script lang="ts" setup>
 import BaseImage from "./BaseImage.vue";
 import type { Season } from "@/models/season";
+import { buildPlural } from "@/utils/format";
 import type { PropType } from "vue";
 
 defineProps({

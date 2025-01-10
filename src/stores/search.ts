@@ -1,16 +1,15 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
-import { DEFAULT_LIMIT } from "@/constants/utils";
+import { DEFAULT_LIMIT } from "@/constants/services";
+import type { Kind, Platform } from "@/models/serie";
 
 export const useSearchStore = defineStore("search", () => {
 
-  const filterKinds = ref<string[]>([]);
+  const filterKinds = ref<Kind[]>([]);
 
-  const filterPlatforms = ref<string[]>([]);
+  const filterPlatforms = ref<Platform[]>([]);
 
   const filterLimit = ref(DEFAULT_LIMIT);
-
-  const filterYear = ref<number>();
 
   const filterTitle = ref<string>();
 
@@ -18,22 +17,29 @@ export const useSearchStore = defineStore("search", () => {
     filterKinds.value = [];
     filterPlatforms.value = [];
     filterLimit.value = DEFAULT_LIMIT;
-    filterYear.value = undefined;
     filterTitle.value = undefined;
   }
 
-  const hasChanges = (): boolean => !!filterKinds.value.length 
+  const hasChanges = (): boolean => !!filterKinds.value.length
     || !!filterPlatforms.value.length
     || filterLimit.value !== DEFAULT_LIMIT
-    || !!filterYear.value 
     || !!filterTitle.value;
 
-  return { 
-    filterKinds, 
-    filterLimit, 
+  const formatKinds = (): string|undefined => {
+    return filterKinds.value.length ? filterKinds.value.map((kind) => kind.value).join(",") : undefined;
+  }
+
+  const formatPlatforms = (): string|undefined => {
+    return filterPlatforms.value.length ? filterPlatforms.value.map((platform) => `${platform.id}`).join(",") : undefined;
+  }
+
+  return {
+    filterKinds,
+    filterLimit,
     filterPlatforms,
     filterTitle,
-    filterYear,
+    formatKinds,
+    formatPlatforms,
     hasChanges,
     reset
   };

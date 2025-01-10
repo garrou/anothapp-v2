@@ -61,3 +61,7 @@ export const buildPlural = (text: string, value?: number, prefix = true, display
 }
 
 export const buildHexColor = (): string => `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+
+export const withoutAccentsIgnoreCase = (value: string): string => {
+    return value.trim().toLocaleLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '');
+}

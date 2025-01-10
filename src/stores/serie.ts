@@ -1,34 +1,39 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
-import { DEFAULT_LIMIT } from "@/constants/utils";
+import type { Kind, Platform } from "@/models/serie";
 
 export const useSerieStore = defineStore("serie", () => {
 
-    const filterKinds = ref<string[]>([]);
+    const filterKinds = ref<Kind[]>([]);
 
-    const filterPlatforms = ref<string[]>([]);
-
-    const filterLimit = ref(DEFAULT_LIMIT);
+    const filterPlatforms = ref<Platform[]>([]);
 
     const filterTitle = ref<string>();
 
     const reset = () => {
         filterKinds.value = [];
         filterPlatforms.value = [];
-        filterLimit.value = DEFAULT_LIMIT;
         filterTitle.value = undefined;
     }
 
     const hasChanges = (): boolean => !!filterKinds.value.length 
     || !!filterPlatforms.value.length
-    || filterLimit.value !== DEFAULT_LIMIT
     || !!filterTitle.value;
+
+    const formatKinds = (): string|undefined => {
+        return filterKinds.value.length ? filterKinds.value.map((kind) => kind.name).join(",") : undefined;
+    }
+
+    const formatPlatforms = (): string|undefined => {
+        return filterPlatforms.value.length ? filterPlatforms.value.map((platform) => `${platform.id}`).join(",") : undefined;
+    }
 
     return {
         filterKinds,
-        filterLimit,
         filterPlatforms,
         filterTitle,
+        formatKinds,
+        formatPlatforms,
         hasChanges,
         reset
     };

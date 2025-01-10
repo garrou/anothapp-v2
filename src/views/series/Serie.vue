@@ -50,7 +50,7 @@
                 <seasons-row :loading="loading" :seasons="infos.seasons" @show-season="showSeason" />
             </v-window-item>
             <v-window-item :value="2">
-                <seasons-row addable :loading="loading" :seasons="seasons" @add-season="newSeason" />
+                <seasons-row addable :loading="loading" :seasons="seasons" @add-season="newSeason" @show-season="showSeason" />
             </v-window-item>
             <v-window-item :value="3" @group:selected="getFriendsWhoWatch">
                 <friends-row consult :friends="friends" />
@@ -62,12 +62,13 @@
         text="Confirmez-vous la suppression de la série ?" @cancel="confirmModal = false"
         @confirm="deleteSerie(infos.serie)" />
 
-    <base-modal v-if="selected" v-model="modal" :max-width="500">
+    <base-modal v-if="selected" v-model="modal">
         <template #title>
             <span>Saison {{ selected.number }}</span>
             <v-btn :icon="CLOSE_ICON" variant="text" @click="modal = false" />
         </template>
-        <season-details :id="id" :season="selected" @refresh="refresh" />
+        <season-episodes v-if="isAddable" :id="id" :number="selected.number" />
+        <season-details v-else :id="id" :season="selected" @refresh="refresh" />
     </base-modal>
 </template>
 
@@ -81,6 +82,7 @@ import BaseModal from "@/components/BaseModal.vue";
 import BaseImage from "@/components/BaseImage.vue";
 import BaseToolbar from "@/components/BaseToolbar.vue";
 import SeasonDetails from "@/components/SeasonDetails.vue";
+import SeasonEpisodes from "@/components/SeasonEpisodes.vue";
 import SeasonsRow from "@/components/SeasonsRow.vue";
 import FriendsRow from "@/components/FriendsRow.vue";
 import type { SerieInfo } from "@/models/serie";
@@ -114,6 +116,7 @@ const modal = ref(false);
 const seasons = ref<Season[]>([]);
 const selected = ref<Season>();
 const tab = ref(1);
+const isAddable = ref(false);
 
 const time = computed(() => minsToStringHoursDays(infos.value?.time));
 const viewingPercent = computed(() => ((infos.value?.seasons.length ?? 0) / seasons.value.length * 100).toFixed(0));
@@ -135,10 +138,11 @@ const load = async (): Promise<void> => {
 const newSeason = async (season: Season): Promise<void> => {
     await addSeason(infos.value!.serie, season);
     infos.value = await getSerieInfos({ id: props.id });
-    showSeason(season);
+    showSeason(season, true);
 }
 
-const showSeason = (season: Season): void => {
+const showSeason = (season: Season, addable: boolean): void => {
+    isAddable.value = addable;
     selected.value = season;
     modal.value = true;
 }

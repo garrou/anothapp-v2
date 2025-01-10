@@ -1,17 +1,15 @@
 import { buildUrlWithParams } from "@/utils/format";
 import { ENDPOINT } from "../constants/services";
 import storageService from "./storageService";
-import type { Season } from "@/models/season";
-import type { Serie } from "@/models/serie";
 import type { SerieStatus } from "@/types/types";
 
 const PREFIX = "shows";
 
-const addSeason = async (serie: Serie, season: Season): Promise<Response> => {
-    return fetch(`${ENDPOINT}/${PREFIX}/${serie.id}/seasons`, {
+const addSeason = async (id: number, num: number): Promise<Response> => {
+    return fetch(`${ENDPOINT}/${PREFIX}/${id}/seasons`, {
         body: JSON.stringify({
-            "season": season,
-            "serie": serie,
+            id,
+            num,
         }),
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`,
@@ -21,17 +19,11 @@ const addSeason = async (serie: Serie, season: Season): Promise<Response> => {
     });
 }
 
-const addSerie = async (serie: Serie): Promise<Response> => {
+const addSerie = async (id: number, inList: boolean): Promise<Response> => {
     return fetch(`${ENDPOINT}/${PREFIX}`, {
         body: JSON.stringify({
-            "id": serie.id,
-            "title": serie.title,
-            "poster": serie.poster,
-            "kinds": serie.kinds,
-            "duration": serie.duration,
-            "seasons": serie.seasons,
-            "country": serie.country,
-            "list": serie.list
+            "id": id,
+            "list": inList
         }),
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`,
@@ -77,9 +69,11 @@ const getSerie = async (id: number): Promise<Response> => {
     });
 }
 
-const getSeries = async (platforms?: string): Promise<Response> => {
+const getSeries = async (title?: string, platforms?: string, kinds?: string): Promise<Response> => {
     const url = buildUrlWithParams(`${ENDPOINT}/${PREFIX}`, [
-        { name: "platforms", value: platforms }
+        { name: "title", value: title },
+        { name: "platforms", value: platforms },
+        { name: "kinds", value: kinds }
     ]);
     return fetch(url, {
         headers: {

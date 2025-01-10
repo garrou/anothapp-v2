@@ -34,7 +34,7 @@ const updateInList = async () => {
     if (existsInList.value) {
         await deleteSerieInList(props.serie);
     } else { 
-        await addSerie({ ...props.serie, list: true });
+        await addSerie(props.serie.id, true);
     }
     existsInList.value = !existsInList.value;
     emit("refresh");

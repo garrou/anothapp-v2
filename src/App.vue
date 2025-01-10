@@ -8,10 +8,10 @@
 import { onBeforeMount } from "vue";
 import BaseBottomNavbar from "./components/BaseBottomNavbar.vue";
 import BaseSnackbar from "./components/BaseSnackbar.vue";
-import { useUser } from "./composables/user";
 import { useSerie } from "./composables/serie";
+import { useAuth } from "./composables/auth";
 
-const { checkAuth } = useUser();
+const { checkAuth } = useAuth();
 const { getSeries, getSeriesByStatus } = useSerie();
 
 onBeforeMount(async () => {

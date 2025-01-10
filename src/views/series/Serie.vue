@@ -138,7 +138,7 @@ const load = async (): Promise<void> => {
 const newSeason = async (season: Season): Promise<void> => {
     await addSeason(infos.value!.serie, season);
     infos.value = await getSerieInfos({ id: props.id });
-    showSeason(season, true);
+    showSeason(season, false);
 }
 
 const showSeason = (season: Season, addable: boolean): void => {

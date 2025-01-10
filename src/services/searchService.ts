@@ -94,9 +94,18 @@ const getImages = async (limit: number): Promise<Response> => {
     });
 }
 
+const getEpisodesBySerieIdBySeason = async (id: number, season: number) => {
+    return fetch(`${ENDPOINT}/${PREFIX}/shows/${id}/seasons/${season}/episodes`, {
+        headers: {
+            "Authorization": `Bearer ${storageService.getJwt()}`
+        }
+    });
+}
+
 export default {
     getActor,
     getCharacters,
+    getEpisodesBySerieIdBySeason,
     getImages,
     getKinds,
     getPlatforms,

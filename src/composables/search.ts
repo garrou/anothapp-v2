@@ -99,9 +99,20 @@ export function useSearch() {
         return data;
     }
 
+    const getEpisodes = async (id: number, season: number) => {
+        const resp = await searchService.getEpisodesBySerieIdBySeason(id, season);
+        const data = await resp.json();
+
+        if (isError(resp.status))
+            throw new Error(data.message);
+
+        return data;
+    }
+
     return {
         getActor,
         getCharacters,
+        getEpisodes,
         getImages,
         getKinds,
         getPlatforms,

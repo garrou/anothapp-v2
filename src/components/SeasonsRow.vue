@@ -5,16 +5,14 @@
     <v-row>
         <v-col v-for="season in seasons" cols="6" md="4" lg="3" :key="season.number">
             <base-skeleton :loading="loading" type="card">
-                <season-card v-if="addable" :season="season">
-                    <template #add>
+                <season-card :season="season">
+                    <template v-if="addable" #add>
                         <v-btn color="surface-variant" :icon="ADD_ICON" variant="text"
                             @click="$emit('addSeason', season)" />
                     </template>
-                </season-card>
-                <season-card v-else :season="season" @click="$emit('showSeason', season)">
                     <template #show>
                         <v-btn color="surface-variant" :icon="DETAILS_ICON" variant="text"
-                            @click="$emit('showSeason', season)" />
+                            @click="$emit('showSeason', season, addable)" />
                     </template>
                 </season-card>
             </base-skeleton>
@@ -37,7 +35,7 @@ const props = defineProps({
 
 defineEmits<{
     addSeason: [Season]
-    showSeason: [Season]
+    showSeason: [Season, boolean]
 }>();
 
 const order = ref(false);

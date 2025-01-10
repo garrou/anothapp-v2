@@ -6,7 +6,7 @@
             </router-link>
             <base-image v-else class="align-end" cover :src="season.image" max-height="580" />
         </template>
-        <div class="d-flex flex-row mt-2">
+        <div class="mt-2">
             <v-chip class="ml-2" color="black" size="small">
                 Saison {{ season.number }}
             </v-chip>

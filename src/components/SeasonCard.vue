@@ -6,15 +6,12 @@
             </router-link>
             <base-image v-else class="align-end" cover :src="season.image" max-height="580" />
         </template>
-        <div class="mt-2">
-            <v-chip class="ml-2" color="black" size="small">
-                Saison {{ season.number }}
-            </v-chip>
 
-            <v-chip class="ml-2" color="black" size="small">
-                {{ text }}
-            </v-chip>
-        </div>
+        <v-card-title>Saison {{ season.number }}</v-card-title>
+
+        <v-chip class="ml-2" color="black" size="small">
+            {{ text }}
+        </v-chip>
 
         <v-card-actions>
             <slot name="add" />
@@ -36,6 +33,6 @@ const props = defineProps({
 
 const text = computed(() => {
     const prefix = buildPlural("épisode", props.season.episodes);
-    return props.season.interval ? `${prefix} • (${props.season.interval})` : prefix;
+    return props.season.interval ? `${prefix} (${props.season.interval})` : prefix;
 });
 </script>

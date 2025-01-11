@@ -1,21 +1,21 @@
 <template>
-    <v-card v-for="episode in episodes" :key="episode.id" class="mx-auto my-2">
-        <v-card-item>
-            <v-card-title class="text-h5 mb-1">
-                {{ episode.title }}
-                <v-chip class="ml-2" color="black" size="small">
-                    {{ episode.code }}
-                </v-chip>
-            </v-card-title>
-            <v-card-subtitle>
-                #{{ episode.global }} • {{ episode.date }}
-            </v-card-subtitle>
-        </v-card-item>
+    <v-expansion-panels multiple>
+        <v-expansion-panel v-for="episode in episodes" :key="episode.id">
+            <v-expansion-panel-title>
+                <p class="text-subtitle-1 mr-2">#{{ episode.global }}</p>
+                <p>{{ episode.title }}</p>
+          
+            </v-expansion-panel-title>
 
-        <v-card-text>
-            <p class="text-body-1">{{ episode.description }}</p>
-        </v-card-text>
-    </v-card>
+            <v-expansion-panel-text>
+                <v-chip class="mb-2" color="black" size="small">
+                    {{ episode.code }} • {{ episode.date }}
+                </v-chip>
+
+                <p>{{ episode.description }}</p>
+            </v-expansion-panel-text>
+        </v-expansion-panel>
+    </v-expansion-panels>
 </template>
 
 <script lang="ts" setup>

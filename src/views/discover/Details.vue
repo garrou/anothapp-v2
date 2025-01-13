@@ -28,14 +28,10 @@
                 <v-row>
                     <v-col v-for="character in characters" cols="6" md="4" lg="3" :key="character.id">
                         <base-skeleton :loading="loading" type="card">
-                            <v-card>
+                            <v-card @click="showModal(character.id)">
                                 <base-image v-if="character.picture" cover max-height="580" :src="character.picture" />
                                 <v-card-title>{{ character.actor }}</v-card-title>
-                                <v-card-subtitle>{{ character.name }}</v-card-subtitle>
-
-                                <v-card-actions>
-                                    <v-btn :icon="DETAILS_ICON" variant="text" @click="showModal(character.id)" />
-                                </v-card-actions>
+                                <v-card-subtitle class="mb-3">{{ character.name }}</v-card-subtitle>
                             </v-card>
                         </base-skeleton>
                     </v-col>

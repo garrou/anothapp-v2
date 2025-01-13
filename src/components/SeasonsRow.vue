@@ -5,14 +5,10 @@
     <v-row>
         <v-col v-for="season in seasons" cols="6" md="4" lg="3" :key="season.number">
             <base-skeleton :loading="loading" type="card">
-                <season-card :season="season">
+                <season-card :season="season" @show="$emit('showSeason', season, addable)">
                     <template v-if="addable" #add>
                         <v-btn color="surface-variant" :icon="ADD_ICON" variant="text"
                             @click="$emit('addSeason', season)" />
-                    </template>
-                    <template #show>
-                        <v-btn color="surface-variant" :icon="DETAILS_ICON" variant="text"
-                            @click="$emit('showSeason', season, addable)" />
                     </template>
                 </season-card>
             </base-skeleton>
@@ -25,7 +21,7 @@ import BaseSkeleton from "./BaseSkeleton.vue";
 import SeasonCard from "./SeasonCard.vue";
 import { computed, ref, type PropType } from "vue";
 import type { Season } from "@/models/season";
-import { ADD_ICON, DETAILS_ICON } from "@/constants/icons";
+import { ADD_ICON } from "@/constants/icons";
 
 const props = defineProps({
     addable: { type: Boolean, default: false },

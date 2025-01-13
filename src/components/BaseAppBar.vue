@@ -48,7 +48,7 @@
                 </v-tabs>
                 <v-window v-model="tab" class="w-100">
                     <v-window-item :value="1">
-                        <v-list class="pt-0 mb-3">
+                        <v-list class="pt-0 mb-10">
                             <v-list-item v-if="selectedKinds.length" title="Effacer les filtres"
                                 @click="updateKinds([])" />
                             <v-checkbox v-for="(kind, index) in kinds" :key="index" v-model="selectedKinds" hide-details
@@ -56,7 +56,7 @@
                         </v-list>
                     </v-window-item>
                     <v-window-item :value="2">
-                        <v-list>
+                        <v-list class="pt-0 mb-10">
                             <v-list-item v-if="selectedPlatforms.length" title="Effacer les filtres"
                                 @click="updatePlatforms([])" />
                             <v-checkbox v-for="plt in platforms" :key="plt.id" v-model="selectedPlatforms" hide-details
@@ -130,7 +130,7 @@ const filters = ref(false);
 const menus = ref(false);
 const modal = ref(!!menuModal.value);
 const selectedKinds = ref<Kind[]>(props.discover ? searchStore.filterKinds : serieStore.filterKinds);
-const selectedPlatforms = ref<Platform[]>([]);
+const selectedPlatforms = ref<Platform[]>(props.discover ? searchStore.filterPlatforms : serieStore.filterPlatforms);
 const selectedLimit = ref(props.discover ? searchStore.filterLimit : 0);
 const kinds = ref<Kind[]>([]);
 const platforms = ref<Platform[]>([]);

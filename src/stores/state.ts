@@ -8,7 +8,5 @@ export const useStateStore = defineStore("state", () => {
 
   const menuModal = ref<AppMenuItem>();
 
-  const counter = ref(0);
-
-  return { confirmModal, counter, menuModal };
+  return { confirmModal, menuModal };
 });

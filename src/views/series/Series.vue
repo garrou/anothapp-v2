@@ -10,12 +10,10 @@ import type { Serie } from "@/models/serie";
 import { onBeforeMount, ref } from "vue";
 import { useSerie } from "@/composables/serie";
 import { watch } from "vue";
-import { useState } from "@/composables/state";
 import { storeToRefs } from "pinia";
 import { useSerieStore } from "@/stores/serie";
 
 const { getSeries } = useSerie();
-const state = useState();
 const { filterKinds, filterPlatforms, filterTitle } = storeToRefs(useSerieStore());
 
 const loading = ref(false);
@@ -27,7 +25,7 @@ const fetchSeries = async (): Promise<void> => {
     loading.value = false;
 }
 
-watch([state.counter, filterTitle, filterKinds, filterPlatforms], () => {
+watch([filterTitle, filterKinds, filterPlatforms], () => {
     fetchSeries().then();
 });
 

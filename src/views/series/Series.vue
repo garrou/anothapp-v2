@@ -1,5 +1,5 @@
 <template>
-    <base-app-bar auto-search label="Chercher une série" search />
+    <base-app-bar auto-search placeholder="Chercher dans mes séries" search />
     <series-row :loading="loading" :series="series" />
 </template>
 

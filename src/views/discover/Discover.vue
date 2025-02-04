@@ -1,5 +1,5 @@
 <template>
-    <base-app-bar discover label="Ajouter une série" search />
+    <base-app-bar discover placeholder="Ajouter une série" search />
     <series-row :loading="loading" :series="series" />
 </template>
 

@@ -8,7 +8,7 @@
             <template #title>
                 <v-form v-if="search" @submit="filterTitle(title)" @submit.prevent>
                     <v-text-field v-model="title" :append-inner-icon="SEARCH_ICON" :append-icon="FILTER_ICON"
-                        class="mb-4 me-4" clearable hide-details :label="label" single-line variant="plain"
+                        class="mb-4 me-4" clearable hide-details :placeholder="placeholder" single-line variant="plain"
                         @input="onChange" @click:append-inner="filterTitle(title)" @click:clear="filterTitle(undefined)"
                         @click:append="openFilterDrawer" />
                 </v-form>
@@ -116,7 +116,7 @@ import { DEFAULT_LIMIT } from "@/constants/services";
 const props = defineProps({
     autoSearch: { type: Boolean, default: false },
     discover: { type: Boolean, default: false },
-    label: { type: String, default: "Titre de la série" },
+    placeholder: { type: String, default: "Titre de la série" },
     search: { type: Boolean, default: false },
 });
 const { getKinds, getPlatforms } = useSearch();

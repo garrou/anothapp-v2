@@ -95,7 +95,5 @@ const refresh = async () => {
     loading.value = false;
 }
 
-onBeforeMount(async () => {
-    profile.value = await getProfile();
-});
+onBeforeMount(refresh);
 </script>

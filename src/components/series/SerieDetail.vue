@@ -25,7 +25,7 @@
 </template>
 
 <script lang="ts" setup>
-import BaseImage from "./BaseImage.vue";
+import BaseImage from "@/components/BaseImage.vue";
 import { type PropType } from "vue";
 import type { Serie } from "@/models/serie";
 import { DENSITY, ELEVATION } from "@/constants/style";

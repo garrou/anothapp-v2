@@ -15,8 +15,8 @@
 </template>
 
 <script lang="ts" setup>
-import BaseModal from './BaseModal.vue';
-import SerieDetail from './SerieDetail.vue';
+import BaseModal from '@/components/BaseModal.vue';
+import SerieDetail from '@/components/series/SerieDetail.vue';
 import { CLOSE_ICON, DETAILS_ICON } from '@/constants/icons';
 import { TOOLTIP_LOCATION } from '@/constants/style';
 import type { Serie } from '@/models/serie';

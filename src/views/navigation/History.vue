@@ -13,7 +13,7 @@
 </template>
 
 <script lang="ts" setup>
-import SeasonCard from "@/components/SeasonCard.vue";
+import SeasonCard from "@/components/seasons/SeasonCard.vue";
 import { useSeason } from "@/composables/season";
 import { DENSITY } from "@/constants/style";
 import type { SeasonTimeline } from "@/models/season";

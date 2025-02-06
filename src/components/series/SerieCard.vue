@@ -22,13 +22,13 @@
 </template>
 
 <script lang="ts" setup>
-import BaseImage from "./BaseImage.vue";
-import BaseMenu from "./BaseMenu.vue";
-import ButtonAddSerie from "./ButtonAddSerie.vue";
-import ButtonFavoriteSerie from "./ButtonFavoriteSerie.vue";
-import ButtonWatchSerie from "./ButtonWatchSerie.vue";
-import ButtonListSerie from "./ButtonListSerie.vue";
-import ButtonModalSerieDetails from "./ButtonModalSerieDetails.vue";
+import BaseImage from "@/components/BaseImage.vue";
+import BaseMenu from "@/components/BaseMenu.vue";
+import ButtonAddSerie from "@/components/buttons/ButtonAddSerie.vue";
+import ButtonFavoriteSerie from "@/components/buttons/ButtonFavoriteSerie.vue";
+import ButtonWatchSerie from "@/components/buttons/ButtonWatchSerie.vue";
+import ButtonListSerie from "@/components/buttons/ButtonListSerie.vue";
+import ButtonModalSerieDetails from "@/components/buttons/ButtonModalSerieDetails.vue";
 import type { Serie } from "@/models/serie";
 import type { PropType } from "vue";
 

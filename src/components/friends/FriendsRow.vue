@@ -37,10 +37,10 @@
 </template>
 
 <script lang="ts" setup>
-import BaseConfirm from "./BaseConfirm.vue";
-import BaseImage from "./BaseImage.vue";
-import BaseModal from "./BaseModal.vue";
-import BaseSkeleton from "./BaseSkeleton.vue";
+import BaseConfirm from "@/components/BaseConfirm.vue";
+import BaseImage from "@/components/BaseImage.vue";
+import BaseModal from "@/components/BaseModal.vue";
+import BaseSkeleton from "@/components/BaseSkeleton.vue";
 import Dashboard from "@/views/stats/Dashboard.vue";
 import { ADD_ICON, CLOSE_ICON, DELETE_ICON, DETAILS_ICON, SEARCH_ICON } from "@/constants/icons";
 import type { User } from "@/models/user";

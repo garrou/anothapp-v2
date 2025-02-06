@@ -30,7 +30,7 @@
 </template>
 
 <script lang="ts" setup>
-import BaseConfirm from "./BaseConfirm.vue";
+import BaseConfirm from "@/components/BaseConfirm.vue";
 import type { PropType } from "vue";
 import { onBeforeMount, ref, watch } from "vue";
 import type { Season, SeasonDetail } from "@/models/season";

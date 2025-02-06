@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts" setup>
-import SeriesRow from "@/components/SeriesRow.vue";
+import SeriesRow from "@/components/series/SeriesRow.vue";
 import { useSerie } from "@/composables/serie";
 import type { Serie } from "@/models/serie";
 import { ref, onBeforeMount } from "vue";

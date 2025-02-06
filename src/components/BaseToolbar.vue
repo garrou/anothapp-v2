@@ -6,7 +6,7 @@
 
     <v-toolbar-title>{{ title }}</v-toolbar-title>
 
-    <base-menu v-if="slots.buttons" open-on-click open-on-hover>
+    <base-menu v-if="$slots.buttons" open-on-click open-on-hover>
       <slot name="buttons" />
     </base-menu>
   </v-toolbar>
@@ -14,7 +14,6 @@
 
 <script lang="ts" setup>
 import BaseMenu from "./BaseMenu.vue";
-import { useSlots } from "vue";
 import { useRouter } from "vue-router";
 
 defineProps({
@@ -23,7 +22,6 @@ defineProps({
 });
 
 const router = useRouter();
-const slots = useSlots();
 
 const navigate = () => {
   if (router.options.history.state.back)

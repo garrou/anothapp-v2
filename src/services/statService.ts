@@ -16,11 +16,12 @@ const getStats = async (userId?: string): Promise<Response> => {
     });
 }
 
-const getGroupedCountByTypeByPeriod = async (type: ChartGroupedType, period?: ChartGroupedPeriod, userId?: string): Promise<Response> => {
+const getGroupedCountByTypeByPeriod = async (type: ChartGroupedType, period?: ChartGroupedPeriod, userId?: string, limit?: number): Promise<Response> => {
     const url = buildUrlWithParams(`${ENDPOINT}/${PREFIX}/grouped-count`, [
         { name: "type", value: type },
         { name: "period", value: period },
-        { name: "id", value: userId }
+        { name: "id", value: userId },
+        { name: "limit", value: limit }
     ]);
     return fetch(url, {
         headers: {

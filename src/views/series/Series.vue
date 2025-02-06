@@ -5,7 +5,7 @@
 
 <script lang="ts" setup>
 import BaseAppBar from "@/components/BaseAppBar.vue";
-import SeriesRow from "@/components/SeriesRow.vue";
+import SeriesRow from "@/components/series/SeriesRow.vue";
 import type { Serie } from "@/models/serie";
 import { onBeforeMount, ref } from "vue";
 import { useSerie } from "@/composables/serie";

@@ -22,7 +22,7 @@
 </template>
 
 <script lang="ts" setup>
-import BaseImage from "./BaseImage.vue";
+import BaseImage from "@/components/BaseImage.vue";
 import type { Season } from "@/models/season";
 import { buildPlural } from "@/utils/format";
 import { computed, type PropType } from "vue";

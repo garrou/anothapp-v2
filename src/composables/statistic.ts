@@ -104,8 +104,8 @@ export function useStatistic() {
         return data;
     }
 
-    const getSeriesCountries = async (userId?: string): Promise<Stat[]> => {
-        const resp = await statService.getGroupedCountByTypeByPeriod("countries", undefined, userId);
+    const getSeriesCountries = async (limit: number, userId?: string): Promise<Stat[]> => {
+        const resp = await statService.getGroupedCountByTypeByPeriod("countries", undefined, userId, limit);
         const data = await resp.json();
 
         if (isError(resp.status))

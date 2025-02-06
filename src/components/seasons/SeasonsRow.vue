@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts" setup>
-import BaseSkeleton from "./BaseSkeleton.vue";
+import BaseSkeleton from "@/components/BaseSkeleton.vue";
 import SeasonCard from "./SeasonCard.vue";
 import { computed, ref, type PropType } from "vue";
 import type { Season } from "@/models/season";

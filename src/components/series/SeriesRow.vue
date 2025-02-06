@@ -12,8 +12,8 @@
 </template>
 
 <script lang="ts" setup>
-import BaseSkeleton from "./BaseSkeleton.vue";
-import SerieCard from "@/components/SerieCard.vue";
+import BaseSkeleton from "@/components/BaseSkeleton.vue";
+import SerieCard from "@/components/series/SerieCard.vue";
 import type { Serie } from "@/models/serie";
 import { buildPlural } from "@/utils/format";
 import type { PropType } from "vue";

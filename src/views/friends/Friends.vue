@@ -25,7 +25,7 @@
 </template>
 
 <script lang="ts" setup>
-import FriendsRow from "@/components/FriendsRow.vue";
+import FriendsRow from "@/components/friends/FriendsRow.vue";
 import BaseAppBar from "@/components/BaseAppBar.vue";
 import { onBeforeMount, ref } from "vue";
 import { useFriend } from "@/composables/friend";

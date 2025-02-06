@@ -74,17 +74,17 @@
 
 <script lang="ts" setup>
 import BaseConfirm from "@/components/BaseConfirm.vue";
-import ButtonWatchSerie from "@/components/ButtonWatchSerie.vue";
-import ButtonFavoriteSerie from "@/components/ButtonFavoriteSerie.vue";
-import ButtonRemoveSerie from "@/components/ButtonRemoveSerie.vue";
-import ButtonDetailsSerie from "@/components/ButtonDetailsSerie.vue";
+import ButtonWatchSerie from "@/components/buttons/ButtonWatchSerie.vue";
+import ButtonFavoriteSerie from "@/components/buttons/ButtonFavoriteSerie.vue";
+import ButtonRemoveSerie from "@/components/buttons/ButtonRemoveSerie.vue";
+import ButtonDetailsSerie from "@/components/buttons/ButtonDetailsSerie.vue";
 import BaseModal from "@/components/BaseModal.vue";
 import BaseImage from "@/components/BaseImage.vue";
 import BaseToolbar from "@/components/BaseToolbar.vue";
-import SeasonDetails from "@/components/SeasonDetails.vue";
-import SeasonEpisodes from "@/components/SeasonEpisodes.vue";
-import SeasonsRow from "@/components/SeasonsRow.vue";
-import FriendsRow from "@/components/FriendsRow.vue";
+import SeasonDetails from "@/components/seasons/SeasonDetails.vue";
+import SeasonEpisodes from "@/components/seasons/SeasonEpisodes.vue";
+import SeasonsRow from "@/components/seasons/SeasonsRow.vue";
+import FriendsRow from "@/components/friends/FriendsRow.vue";
 import type { SerieInfo } from "@/models/serie";
 import { computed, onBeforeMount, ref } from "vue";
 import { useSeason } from "@/composables/season";

@@ -48,10 +48,10 @@
                 <series-kinds :user-id="userId" />
             </v-col>
             <v-col cols="12" md="6">
-                <series-countries :user-id="userId" />
-            </v-col>
-            <v-col cols="12" md="6">
                 <seasons-platforms :user-id="userId" />
+            </v-col>
+            <v-col cols="12">
+                <series-countries :user-id="userId" />
             </v-col>
         </template>
     </v-row>
@@ -59,23 +59,23 @@
 
 <script lang="ts" setup>
 import BaseAppBar from "@/components/BaseAppBar.vue";
-import EpisodesYears from "./EpisodesYears.vue";
-import EpisodesMonthCurrentYear from "./EpisodesMonthCurrentYear.vue";
-import SeasonsMonths from "./SeasonsMonths.vue";
-import SeasonsMonthCurrentYear from "./SeasonsMonthCurrentYear.vue";
-import SeasonsYears from "./SeasonsYears.vue";
-import SeriesCountries from "./SeriesCountries.vue";
-import SeriesKinds from "./SeriesKinds.vue";
-import SeriesRankingTime from "./SeriesRankingTime.vue";
-import TimeYears from "./TimeYears.vue";
-import SeasonsPlatforms from "./SeasonsPlatforms.vue";
-import FriendSeries from "@/components/FriendSeries.vue";
+import EpisodesYears from "@/components/stats/EpisodesYears.vue";
+import EpisodesMonthCurrentYear from "@/components/stats/EpisodesMonthCurrentYear.vue";
+import SeasonsMonths from "@/components/stats/SeasonsMonths.vue";
+import SeasonsMonthCurrentYear from "@/components/stats/SeasonsMonthCurrentYear.vue";
+import SeasonsYears from "@/components/stats/SeasonsYears.vue";
+import SeriesCountries from "@/components/stats/SeriesCountries.vue";
+import SeriesKinds from "@/components/stats/SeriesKinds.vue";
+import SeriesRankingTime from "@/components/stats/SeriesRankingTime.vue";
+import TimeYears from "@/components/stats/TimeYears.vue";
+import SeasonsPlatforms from "@/components/stats/SeasonsPlatforms.vue";
+import FriendSeries from "@/components/friends/FriendSeries.vue";
 import { useStatistic } from "@/composables/statistic";
 import { ELEVATION } from "@/constants/style";
 import type { GlobalStat } from "@/models/stat";
 import { computed, onBeforeMount, ref } from "vue";
 import storageService from "@/services/storageService";
-import BestMonths from "./BestMonths.vue";
+import BestMonths from "@/components/stats/BestMonths.vue";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
 
 const props = defineProps({

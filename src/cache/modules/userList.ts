@@ -60,8 +60,7 @@ export default class UserListCache extends CacheModule<SerieCacheItem> {
             throw new Error(data.message);
         }
         const cacheValue: SerieCacheItem = {
-            ...JSON.parse(JSON.stringify(data)),
-            addedAt: new Date().toISOString(),
+            ...data,
             expires: Date.now() + this.expires,
         }
         await this.putToCache(cacheValue, `${data.id}`);

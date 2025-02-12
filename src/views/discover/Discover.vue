@@ -28,5 +28,5 @@ watch([filterTitle, filterKinds, filterPlatforms, filterLimit], () => {
     fetchSeries().then();
 });
 
-onBeforeMount(() => fetchSeries().then());
+onBeforeMount(fetchSeries);
 </script>

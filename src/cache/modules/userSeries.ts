@@ -38,7 +38,8 @@ export default class UserSeriesCache extends CacheModule<SerieCacheItem> {
             throw new Error(data.message);
         }
         const cacheValue: SerieCacheItem = {
-            ...JSON.parse(JSON.stringify(data)),
+            ...data,
+            addedAt: new Date().toISOString(),
             expires: Date.now() + this.expires,
         }
         await this.putToCache(cacheValue, `${data.id}`);

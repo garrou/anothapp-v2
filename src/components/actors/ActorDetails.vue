@@ -19,10 +19,10 @@
 </template>
 
 <script lang="ts" setup>
+import BaseImage from '@/components/BaseImage.vue';
 import { ActorDetailsLayout } from '@/layouts/actor-details-layout';
 import type { Actor } from '@/models/person';
 import type { PropType } from 'vue';
-import BaseImage from './BaseImage.vue';
 
 const props = defineProps({
     actor: { type: Object as PropType<Actor>, required: true }

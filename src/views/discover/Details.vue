@@ -25,17 +25,7 @@
             </v-window-item>
 
             <v-window-item :value="2" @group:selected="getChars">
-                <v-row>
-                    <v-col v-for="character in characters" cols="6" md="4" lg="3" :key="character.id">
-                        <base-skeleton :loading="loading" type="card">
-                            <v-card @click="showModal(character.id)">
-                                <base-image v-if="character.picture" cover max-height="580" :src="character.picture" />
-                                <v-card-title>{{ character.actor }}</v-card-title>
-                                <v-card-subtitle class="mb-3">{{ character.name }}</v-card-subtitle>
-                            </v-card>
-                        </base-skeleton>
-                    </v-col>
-                </v-row>
+                <actors-row :characters="characters" :loading="loading" />
             </v-window-item>
 
             <v-window-item :value="3" @group:selected="getSimilars">
@@ -61,35 +51,21 @@
             </v-window-item>
         </v-window>
     </v-container>
-
-    <base-modal v-if="actor" v-model="modal">
-        <template #title>
-            <v-spacer />
-            <v-btn :icon="CLOSE_ICON" variant="text" @click="modal = false" />
-        </template>
-
-        <actor-details :actor="actor" />
-        <series-row :loading="loading" :series="actor.series" total />
-    </base-modal>
 </template>
 
 <script lang="ts" setup>
-import ActorDetails from "@/components/ActorDetails.vue";
-import BaseImage from "@/components/BaseImage.vue";
-import BaseModal from "@/components/BaseModal.vue";
+import ActorsRow from "@/components/actors/ActorsRow.vue";
 import BaseSkeleton from "@/components/BaseSkeleton.vue";
 import BaseToolbar from "@/components/BaseToolbar.vue";
 import FriendsRow from "@/components/friends/FriendsRow.vue";
 import ImagesRow from "@/components/ImagesRow.vue";
 import SerieDetail from "@/components/series/SerieDetail.vue";
-import SeriesRow from "@/components/series/SeriesRow.vue";
 import ButtonAddSerie from "@/components/buttons/ButtonAddSerie.vue";
 import ButtonFavoriteSerie from "@/components/buttons/ButtonFavoriteSerie.vue";
 import ButtonListSerie from "@/components/buttons/ButtonListSerie.vue";
 import { useFriend } from "@/composables/friend";
 import { useSearch } from "@/composables/search";
-import { CLOSE_ICON, DETAILS_ICON } from "@/constants/icons";
-import type { Actor, Character } from "@/models/person";
+import type { Character } from "@/models/person";
 import type { Serie, Similar } from "@/models/serie";
 import type { User } from "@/models/user";
 import { onBeforeMount, ref } from "vue";
@@ -99,14 +75,12 @@ const props = defineProps({
 })
 
 const { getFriends } = useFriend();
-const { getActor, getCharacters, getSerie, getSerieImages, getSimilarsSeries } = useSearch();
+const { getCharacters, getSerie, getSerieImages, getSimilarsSeries } = useSearch();
 
-const actor = ref<Actor>();
 const characters = ref<Character[]>([]);
 const friends = ref<User[]>([]);
 const images = ref<string[]>([]);
 const loading = ref(false);
-const modal = ref(false);
 const serie = ref<Serie>();
 const similars = ref<Similar[]>([]);
 const tab = ref(1);
@@ -137,11 +111,6 @@ const getFriendsWhoWatch = async (): Promise<void> => {
     loading.value = true;
     friends.value = (await getFriends("viewed", props.id)).viewed;
     loading.value = false;
-}
-
-const showModal = async (id: number) => {
-    actor.value = await getActor(id);
-    modal.value = true;
 }
 
 onBeforeMount(async () => {

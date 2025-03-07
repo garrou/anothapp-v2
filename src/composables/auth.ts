@@ -21,8 +21,12 @@ export function useAuth() {
     }
 
     const checkAuth = async (): Promise<boolean> => {
-        const resp = await authService.checkAuth();
-        return isSuccess(resp.status);
+        try {
+            const resp = await authService.checkAuth();
+            return isSuccess(resp.status);
+        } catch (e) {
+            return false;
+        }
     }
 
     const changeEmail = async (oldEmail: string, newEmail: string): Promise<void> => {

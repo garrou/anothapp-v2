@@ -5,7 +5,7 @@
         </v-col>
         <v-col cols="12" md="6">
             <v-alert class="my-2" :color="status" :density="DENSITY" :icon="icon" :title="serie.status" />
-            <template v-for="(obj, _, index) in cards">
+            <template v-for="(obj, index) in cards">
                 <v-card v-if="obj.display !== false" class="mb-2" :elevation="ELEVATION" :key="index">
                     <v-card-item>
                         <v-card-title>{{ obj.name }}</v-card-title>

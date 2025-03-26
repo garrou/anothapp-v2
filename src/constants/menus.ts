@@ -33,29 +33,29 @@ export const APP_MENU: AppMenuItem[] = [
         component: "List"
     },
     {
-        title: "Favoris",
-        icon: FAVORITE_ICON,
-        component: "Favorites"
-    },
-    {
-        title: "Historique",
-        icon: "mdi-timeline-clock",
-        component: "History"
-    },
-    {
-        title: "Calendrier des ajouts",
-        icon: "mdi-calendar",
-        component: "Calendar"
-    },
-    {
         title: "Séries à continuer",
         icon: "mdi-play",
         component: "Continue"
     },
     {
+        title: "Historique",
+        icon: "mdi-timeline-clock",
+        component: "History"
+    },    
+    {
+        title: "Favoris",
+        icon: FAVORITE_ICON,
+        component: "Favorites"
+    },
+    {
         title: "Séries arrêtées",
         icon: "mdi-close-circle",
         component: "Resume"
+    },
+    {
+        title: "Calendrier des ajouts",
+        icon: "mdi-calendar",
+        component: "Calendar"
     },
     {
         title: "Paramètres",

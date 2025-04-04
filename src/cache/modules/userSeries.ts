@@ -6,6 +6,7 @@ import { isError } from "@/utils/response";
 import type { Serie } from "@/models/serie";
 import type { SerieSearchOptions } from "@/models/search";
 import { withoutAccentsIgnoreCase } from "@/utils/format";
+import { SerieStatus } from "@/types/types";
 
 export default class UserSeriesCache extends CacheModule<SerieCacheItem> {
     static readonly NAME = "userseries";
@@ -106,7 +107,7 @@ export default class UserSeriesCache extends CacheModule<SerieCacheItem> {
                 .filter((serie) => serie.favorite)
                 .sort((a, b) => a.title.localeCompare(b.title))
         }
-        const resp = await serieService.getSeriesByStatus("favorite");
+        const resp = await serieService.getSeriesByStatus(SerieStatus.Favorite);
         const data = await resp.json();
 
         if (isError(resp.status)) {

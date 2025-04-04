@@ -96,6 +96,7 @@ import { CLOSE_ICON } from "@/constants/icons";
 import type { User } from "@/models/user";
 import { useFriend } from "@/composables/friend";
 import { useState } from "@/composables/state";
+import { FriendStatus } from "@/types/types";
 
 const props = defineProps({
     id: { type: Number, required: true }
@@ -150,7 +151,7 @@ const showSeason = (season: Season, addable: boolean): void => {
 const getFriendsWhoWatch = async (): Promise<void> => {
     if (friends.value.length) return;
     loading.value = true;
-    friends.value = (await getFriends("viewed", props.id)).viewed;
+    friends.value = (await getFriends(FriendStatus.Viewed, props.id)).viewed;
     loading.value = false;
 }
 

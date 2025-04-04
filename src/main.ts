@@ -32,10 +32,10 @@ const snackbar = useSnackbar();
 
 app.config.errorHandler = (err: unknown) => snackbar.showError(err as Error);
 
-cache.initialize().catch(() => snackbar.showError("Erreur durant l'initialisation de l'application"));
-
-Object
-  .entries(views)
-  .forEach(([name, component]) => app.component(name, component));
-
-app.mount("#app");
+cache
+.initialize()
+.then(() => {
+    Object.entries(views).forEach(([name, component]) => app.component(name, component));
+    app.mount("#app");
+})
+.catch(() => snackbar.showError("Erreur durant l'initialisation de l'application"));

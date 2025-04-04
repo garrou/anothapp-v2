@@ -6,6 +6,7 @@
 import SeriesRow from "@/components/series/SeriesRow.vue";
 import { useSerie } from "@/composables/serie";
 import type { Serie } from "@/models/serie";
+import { SerieStatus } from "@/types/types";
 import { ref, onBeforeMount } from "vue";
 
 const { getSeriesByStatus } = useSerie();
@@ -20,7 +21,7 @@ const refreshFavorites = (id: number, kind: string) => {
 
 onBeforeMount(async () => {
     loading.value = true;
-    favorites.value = await getSeriesByStatus("favorite");
+    favorites.value = await getSeriesByStatus(SerieStatus.Favorite);
     loading.value = false;
 });
 </script>

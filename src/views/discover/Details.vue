@@ -69,6 +69,7 @@ import type { Character } from "@/models/person";
 import type { Serie, Similar } from "@/models/serie";
 import type { User } from "@/models/user";
 import { onBeforeMount, ref } from "vue";
+import { FriendStatus } from "@/types/types";
 
 const props = defineProps({
     id: { type: Number, required: true }
@@ -109,7 +110,7 @@ const getImages = async () => {
 const getFriendsWhoWatch = async (): Promise<void> => {
     if (friends.value.length) return;
     loading.value = true;
-    friends.value = (await getFriends("viewed", props.id)).viewed;
+    friends.value = (await getFriends(FriendStatus.Viewed, props.id)).viewed;
     loading.value = false;
 }
 

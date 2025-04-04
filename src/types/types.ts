@@ -1,13 +1,48 @@
-export type FriendStatus = "friend" | "send" | "receive" | "viewed";
+export enum FriendStatus {
+    Friend = "friend",
+    Send = "send",
+    Receive = "receive",
+    Viewed = "viewed"
+}
 
-export type ProfileModal = "images" | "email" | "password";
+export enum ProfileModal {
+    Images = "images",
+    Email = "email",
+    Password = "password"
+}
 
-export type SerieStatus = "continue" | "resume" | "favorite" | "not-started" | "shared";
+export enum ChartGroupedType {
+    Seasons = "seasons",
+    Episodes = "episodes",
+    Kinds = "kinds",
+    BestMonths = "best-months",
+    Countries = "countries",
+    Platforms = "platforms"
+}
 
-export type ChartGroupedType = "seasons" | "episodes" | "kinds" | "best-months" | "countries" | "platforms";
+export enum ChartGroupedPeriod {
+    Years = "years",
+    Year = "year",
+    Months = "months"
+}
 
-export type ChartGroupedPeriod = "years" | "year" | "months";
+export enum ChartTimeType {
+    Total = "total",
+    Years = "years",
+    Month = "month",
+    Rank = "rank"
+}
 
-export type ChartTimeType = "total" | "years" | "month" | "rank";
+export enum ChartCountType {
+    Shows = "shows",
+    Episodes = "episodes",
+    Seasons = "seasons"
+}
 
-export type ChartCountType = "shows" | "episodes" | "seasons";
+export enum SerieStatus {
+    Continue = "continue",
+    Stopped = "stopped",
+    Favorite = "favorite",
+    Watchlist = "watchlist",
+    Shared = "shared"
+}

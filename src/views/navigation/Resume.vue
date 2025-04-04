@@ -6,6 +6,7 @@
 import SeriesRow from "@/components/series/SeriesRow.vue";
 import { useSerie } from "@/composables/serie";
 import type { Serie } from "@/models/serie";
+import { SerieStatus } from "@/types/types";
 import { onBeforeMount } from "vue";
 import { ref } from "vue";
 
@@ -22,7 +23,7 @@ const refreshResume = (id: number, kind: string) => {
 
 onBeforeMount(async () => {
     loading.value = true;
-    series.value = await getSeriesByStatus("resume");
+    series.value = await getSeriesByStatus(SerieStatus.Stopped);
     loading.value = false;
 });
 </script>

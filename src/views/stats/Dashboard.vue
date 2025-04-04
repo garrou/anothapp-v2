@@ -12,9 +12,9 @@
         </v-col>
     </v-row>
 
-    <friend-series v-if="userId" :user-id="userId" type="shared" />
+    <friend-series v-if="userId" :user-id="userId" :type="SerieStatus.Shared" />
 
-    <friend-series v-if="userId" :user-id="userId" type="favorite" />
+    <friend-series v-if="userId" :user-id="userId" :type="SerieStatus.Favorite" />
 
     <v-switch v-model="displayChart" color="black" label="Afficher les graphiques" @change="changeDisplayChart" />
 
@@ -77,6 +77,7 @@ import { computed, onBeforeMount, ref } from "vue";
 import storageService from "@/services/storageService";
 import BestMonths from "@/components/stats/BestMonths.vue";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
+import { SerieStatus } from "@/types/types";
 
 const props = defineProps({
     userId: { type: String, default: undefined },

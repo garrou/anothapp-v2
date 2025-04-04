@@ -10,6 +10,7 @@ import BaseBottomNavbar from "./components/BaseBottomNavbar.vue";
 import BaseSnackbar from "./components/BaseSnackbar.vue";
 import { useSerie } from "./composables/serie";
 import { useAuth } from "./composables/auth";
+import { SerieStatus } from "./types/types";
 
 const { checkAuth } = useAuth();
 const { getSeries, getSeriesByStatus } = useSerie();
@@ -17,7 +18,7 @@ const { getSeries, getSeriesByStatus } = useSerie();
 onBeforeMount(async () => {
   if (await checkAuth()) {
     await getSeries();
-    await getSeriesByStatus("not-started");
+    await getSeriesByStatus(SerieStatus.Watchlist);
   }
 });
 </script>

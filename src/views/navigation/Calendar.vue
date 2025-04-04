@@ -14,9 +14,10 @@
 <script lang="ts" setup>
 import { useSeason } from "@/composables/season";
 import { computed, onBeforeMount, onMounted, onUnmounted, ref } from "vue";
+import type { CalendarWeekdays } from "vuetify/lib/composables/calendar.mjs";
 
 const colors = ["blue", "indigo", "purple", "cyan", "green", "orange", "red", "amber"];
-const weekdays = [0, 1, 2, 3, 4, 5, 6];
+const weekdays = [0, 1, 2, 3, 4, 5, 6] as CalendarWeekdays[];
 
 const { getSeasonsTimeline } = useSeason();
 

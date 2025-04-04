@@ -1,5 +1,6 @@
 import type { GlobalStat, Stat } from "@/models/stat";
 import statService from "@/services/statService"
+import { ChartGroupedPeriod, ChartGroupedType, ChartTimeType } from "@/types/types";
 import { isError } from "@/utils/response";
 
 export function useStatistic() {
@@ -15,7 +16,7 @@ export function useStatistic() {
     }
 
     const getSeasonsMonthCurrYear = async (userId?: string): Promise<Stat[]> => {
-        const resp = await statService.getGroupedCountByTypeByPeriod("seasons", "year", userId);
+        const resp = await statService.getGroupedCountByTypeByPeriod(ChartGroupedType.Seasons, ChartGroupedPeriod.Year, userId);
         const data = await resp.json();
 
         if (isError(resp.status))
@@ -25,7 +26,7 @@ export function useStatistic() {
     }
 
     const getEpisodesMonthCurrYear = async (userId?: string): Promise<Stat[]> => {
-        const resp = await statService.getGroupedCountByTypeByPeriod("episodes", "year", userId);
+        const resp = await statService.getGroupedCountByTypeByPeriod(ChartGroupedType.Episodes, ChartGroupedPeriod.Year, userId);
         const data = await resp.json();
 
         if (isError(resp.status))
@@ -35,7 +36,7 @@ export function useStatistic() {
     }
 
     const getTimeByYears = async (userId?: string): Promise<Stat[]> => {
-        const resp = await statService.getTimeByType("years", userId);
+        const resp = await statService.getTimeByType(ChartTimeType.Years, userId);
         const data = await resp.json();
 
         if (isError(resp.status))
@@ -45,7 +46,7 @@ export function useStatistic() {
     }
 
     const getSeasonsYears = async (userId?: string): Promise<Stat[]> => {
-        const resp = await statService.getGroupedCountByTypeByPeriod("seasons", "years", userId);
+        const resp = await statService.getGroupedCountByTypeByPeriod(ChartGroupedType.Seasons, ChartGroupedPeriod.Years, userId);
         const data = await resp.json();
 
         if (isError(resp.status))
@@ -55,7 +56,7 @@ export function useStatistic() {
     }
 
     const getEpisodesYears = async (userId?: string): Promise<Stat[]> => {
-        const resp = await statService.getGroupedCountByTypeByPeriod("episodes", "years", userId);
+        const resp = await statService.getGroupedCountByTypeByPeriod(ChartGroupedType.Episodes, ChartGroupedPeriod.Years, userId);
         const data = await resp.json();
 
         if (isError(resp.status))
@@ -65,7 +66,7 @@ export function useStatistic() {
     }
 
     const getSeasonsMonths = async (userId?: string): Promise<Stat[]> => {
-        const resp = await statService.getGroupedCountByTypeByPeriod("seasons", "months", userId);
+        const resp = await statService.getGroupedCountByTypeByPeriod(ChartGroupedType.Seasons, ChartGroupedPeriod.Months, userId);
         const data = await resp.json();
 
         if (isError(resp.status))
@@ -75,7 +76,7 @@ export function useStatistic() {
     }
 
     const getSeriesRanking = async (userId?: string): Promise<Stat[]> => {
-        const resp = await statService.getTimeByType("rank", userId);
+        const resp = await statService.getTimeByType(ChartTimeType.Rank, userId);
         const data = await resp.json();
 
         if (isError(resp.status))
@@ -85,7 +86,7 @@ export function useStatistic() {
     }
 
     const getSeasonsPlatforms = async (userId?: string): Promise<Stat[]> => {
-        const resp = await statService.getGroupedCountByTypeByPeriod("platforms", undefined, userId);
+        const resp = await statService.getGroupedCountByTypeByPeriod(ChartGroupedType.Platforms, undefined, userId);
         const data = await resp.json();
 
         if (isError(resp.status))
@@ -95,7 +96,7 @@ export function useStatistic() {
     }
 
     const getSeriesKinds = async (userId?: string): Promise<Stat[]> => {
-        const resp = await statService.getGroupedCountByTypeByPeriod("kinds", undefined, userId);
+        const resp = await statService.getGroupedCountByTypeByPeriod(ChartGroupedType.Kinds, undefined, userId);
         const data = await resp.json();
 
         if (isError(resp.status))
@@ -105,7 +106,7 @@ export function useStatistic() {
     }
 
     const getSeriesCountries = async (limit: number, userId?: string): Promise<Stat[]> => {
-        const resp = await statService.getGroupedCountByTypeByPeriod("countries", undefined, userId, limit);
+        const resp = await statService.getGroupedCountByTypeByPeriod(ChartGroupedType.Countries, undefined, userId, limit);
         const data = await resp.json();
 
         if (isError(resp.status))
@@ -115,7 +116,7 @@ export function useStatistic() {
     }
 
     const getBestMonths = async (userId?: string): Promise<Stat[]> => {
-        const resp = await statService.getGroupedCountByTypeByPeriod("best-months", undefined, userId);
+        const resp = await statService.getGroupedCountByTypeByPeriod(ChartGroupedType.BestMonths, undefined, userId);
         const data = await resp.json();
 
         if (isError(resp.status))

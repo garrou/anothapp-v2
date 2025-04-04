@@ -5,7 +5,7 @@ import { isError } from "@/utils/response";
 import { useSnackbar } from "./snackbar";
 import { useRouter } from "vue-router";
 import cache from "@/cache";
-import type { SerieStatus } from "@/types/types";
+import { SerieStatus } from "@/types/types";
 import { useState } from "./state";
 import UserSeriesCache from "@/cache/modules/userSeries";
 import UserListCache from "@/cache/modules/userList";
@@ -90,9 +90,9 @@ export function useSerie() {
     }
 
     const getSeriesByStatus = async (status: SerieStatus, friendId?: string): Promise<Serie[]> => {
-        if (status === "favorite" && !friendId) {
+        if (status === SerieStatus.Favorite && !friendId) {
             return cache.userSeries.getFavorites();
-        } else if (status === "not-started") {
+        } else if (status === SerieStatus.Watchlist) {
             return cache.userList.getSeriesInList();
         }
         const resp = await serieService.getSeriesByStatus(status, friendId);

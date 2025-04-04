@@ -4,6 +4,7 @@ import CacheModule from "../cacheModule";
 import serieService from "@/services/serieService";
 import { isError } from "@/utils/response";
 import type { Serie } from "@/models/serie";
+import { SerieStatus } from "@/types/types";
 
 export default class UserListCache extends CacheModule<SerieCacheItem> {
     static readonly NAME = "userlist";
@@ -26,7 +27,7 @@ export default class UserListCache extends CacheModule<SerieCacheItem> {
             return storedSeries;
         }
 
-        const resp = await serieService.getSeriesByStatus("not-started");
+        const resp = await serieService.getSeriesByStatus(SerieStatus.Favorite);
         const data = await resp.json();
 
         if (isError(resp.status)) {

@@ -72,12 +72,13 @@ export function useSerie() {
     }
 
     const getSeries = async (): Promise<Serie[]> => {
-        const { filterKinds, filterTitle, filterPlatforms, formatPlatforms, formatKinds } = serieStore;
+        const { filterCountries, filterKinds, filterTitle, filterPlatforms, formatPlatforms, formatKinds } = serieStore;
 
         if (!filterPlatforms.length) {
             return cache.userSeries.getSeries({ 
                 title: filterTitle, 
-                kinds: filterKinds.length ? filterKinds.map((kind) => kind.value) : undefined
+                kinds: filterKinds.length ? filterKinds.map((kind) => kind.value) : undefined,
+                countries: filterCountries.length ? filterCountries : undefined,
             });
         }
         const resp = await serieService.getSeries(filterTitle, formatPlatforms(), formatKinds());
@@ -87,6 +88,11 @@ export function useSerie() {
             throw new Error(data.message);
 
         return data;
+    }
+
+    const getCountries = async (): Promise<string[]> => {
+        const series = await getSeries();
+        return [...new Set(series.map((serie) => serie.country))];
     }
 
     const getSeriesByStatus = async (status: SerieStatus, friendId?: string): Promise<Serie[]> => {
@@ -135,6 +141,7 @@ export function useSerie() {
         addSerie,
         deleteSerie,
         deleteSerieInList,
+        getCountries,
         getSerie,
         getSerieFromCache,
         getSerieInfos,

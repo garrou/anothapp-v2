@@ -45,6 +45,9 @@
                     <v-tab v-if="discover" min-width="40" :value="3">
                         <v-icon icon="mdi-cog" />
                     </v-tab>
+                    <v-tab v-if="!discover" min-width="40" :value="4">
+                        <v-icon icon="mdi-flag" />
+                    </v-tab>
                 </v-tabs>
                 <v-window v-model="tab" class="w-100">
                     <v-window-item :value="1">
@@ -79,6 +82,14 @@
                             Effacer tous les filtres
                         </v-btn>
                     </v-window-item>
+                    <v-window-item class="px-3" :value="4">
+                        <v-list class="pt-0 mb-10">
+                            <v-list-item v-if="serieStore.filterCountries.length" title="Effacer les filtres"
+                                @click="serieStore.filterCountries = []" />
+                            <v-checkbox v-for="(country, index) in countries" :key="index" v-model="serieStore.filterCountries" hide-details
+                                :label="country" :value="country" />
+                        </v-list>
+                    </v-window-item>
                 </v-window>
             </div>
         </v-navigation-drawer>
@@ -112,6 +123,7 @@ import { useAuth } from "@/composables/auth";
 import { useState } from "@/composables/state";
 import type { AppMenuItem } from "@/models/menu";
 import { DEFAULT_LIMIT } from "@/constants/services";
+import { useSerie } from "@/composables/serie";
 
 const props = defineProps({
     autoSearch: { type: Boolean, default: false },
@@ -123,6 +135,7 @@ const { getKinds, getPlatforms } = useSearch();
 const { getProfile } = useUser();
 const { logout } = useAuth();
 const { setMenuModal, menuModal } = useState();
+const { getCountries } = useSerie();
 const searchStore = useSearchStore();
 const serieStore = useSerieStore();
 
@@ -137,6 +150,7 @@ const platforms = ref<Platform[]>([]);
 const tab = ref(1);
 const title = ref(props.discover ? searchStore.filterTitle : serieStore.filterTitle);
 const user = ref<User>();
+const countries = ref<string[]>([]);
 
 const hasChanges = computed(() => props.discover ? searchStore.hasChanges() : serieStore.hasChanges());
 
@@ -207,6 +221,7 @@ onBeforeMount(async () => {
     user.value = await getProfile();
     kinds.value = await getKinds();
     platforms.value = await getPlatforms();
+    countries.value = await getCountries();
 });
 </script>
 

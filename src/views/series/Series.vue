@@ -14,7 +14,7 @@ import { storeToRefs } from "pinia";
 import { useSerieStore } from "@/stores/serie";
 
 const { getSeries } = useSerie();
-const { filterKinds, filterPlatforms, filterTitle } = storeToRefs(useSerieStore());
+const { filterCountries, filterKinds, filterPlatforms, filterTitle } = storeToRefs(useSerieStore());
 
 const loading = ref(false);
 const series = ref<Serie[]>([]);
@@ -25,7 +25,7 @@ const fetchSeries = async (): Promise<void> => {
     loading.value = false;
 }
 
-watch([filterTitle, filterKinds, filterPlatforms], () => {
+watch([filterTitle, filterKinds, filterPlatforms, filterCountries], () => {
     fetchSeries().then();
 });
 

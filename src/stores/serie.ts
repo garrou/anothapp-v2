@@ -4,20 +4,21 @@ import type { Kind, Platform } from "@/models/serie";
 
 export const useSerieStore = defineStore("serie", () => {
 
+    const filterCountries = ref<string[]>([]);
     const filterKinds = ref<Kind[]>([]);
-
     const filterPlatforms = ref<Platform[]>([]);
-
     const filterTitle = ref<string>();
 
     const reset = () => {
         filterKinds.value = [];
         filterPlatforms.value = [];
         filterTitle.value = undefined;
+        filterCountries.value = [];
     }
 
     const hasChanges = (): boolean => !!filterKinds.value.length 
     || !!filterPlatforms.value.length
+    || !!filterCountries.value.length
     || !!filterTitle.value;
 
     const formatKinds = (): string|undefined => {
@@ -29,6 +30,7 @@ export const useSerieStore = defineStore("serie", () => {
     }
 
     return {
+        filterCountries,
         filterKinds,
         filterPlatforms,
         filterTitle,

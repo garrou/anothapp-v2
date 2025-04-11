@@ -9,6 +9,8 @@ export interface SerieSearchOptions {
     kinds?: string[],
 
     platforms?: string[],
+
+    countries?: string[],
     
     id?: number,
 

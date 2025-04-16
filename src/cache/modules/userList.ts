@@ -27,7 +27,7 @@ export default class UserListCache extends CacheModule<SerieCacheItem> {
             return storedSeries;
         }
 
-        const resp = await serieService.getSeriesByStatus(SerieStatus.Favorite);
+        const resp = await serieService.getSeriesByStatus(SerieStatus.Watchlist);
         const data = await resp.json();
 
         if (isError(resp.status)) {

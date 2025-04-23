@@ -97,12 +97,12 @@
         <base-modal v-if="menuModal?.component" v-model="modal">
             <template #title>
                 <span>{{ menuModal.title }}</span>
-                <v-btn :icon="CLOSE_ICON" variant="text" @click="updateMenuModal(undefined)" />
+                <v-btn :icon="CLOSE_ICON" variant="text" @click="modal = false" />
             </template>
             <component :is="menuModal.component" />
         </base-modal>
         <base-confirm v-else v-model="modal" text="Confirmez-vous la déconnexion ?" title="Se déconnecter" persistent
-            @cancel="modal = false" @confirm="logout" />
+            @cancel="modal = false" @confirm="handleLogout" />
     </v-layout>
 </template>
 
@@ -112,7 +112,7 @@ import BaseModal from "./BaseModal.vue";
 import { DENSITY, ELEVATION } from "@/constants/style";
 import { CLOSE_ICON, FILTER_ICON, PLATFORM_ICON, SEARCH_ICON } from "@/constants/icons";
 import { APP_MENU } from "@/constants/menus";
-import { computed, onBeforeMount, ref } from "vue";
+import { computed, onBeforeMount, ref, watch } from "vue";
 import { useUser } from "@/composables/user";
 import { useSearch } from "@/composables/search";
 import type { Platform, Kind } from "@/models/serie";
@@ -216,6 +216,15 @@ const updateMenuModal = (item?: AppMenuItem) => {
     setMenuModal(item);
     modal.value = !!menuModal.value;
 }
+
+const handleLogout = () => {
+    modal.value = false;
+    logout();
+}
+
+watch(modal, () => {
+    if (!modal.value) setMenuModal(undefined);
+});
 
 onBeforeMount(async () => {
     user.value = await getProfile();

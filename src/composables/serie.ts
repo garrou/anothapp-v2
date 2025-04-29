@@ -92,7 +92,7 @@ export function useSerie() {
 
     const getCountries = async (): Promise<string[]> => {
         const series = await getSeries();
-        return [...new Set(series.map((serie) => serie.country))];
+        return [...new Set(series.map((serie) => serie.country))].sort((a, b) => a.country.localeCompare(b.country));
     }
 
     const getSeriesByStatus = async (status: SerieStatus, friendId?: string): Promise<Serie[]> => {

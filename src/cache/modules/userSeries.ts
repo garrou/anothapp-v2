@@ -118,37 +118,17 @@ export default class UserSeriesCache extends CacheModule<SerieCacheItem> {
 
     private filterSeries(series: SerieCacheItem[], options: SerieSearchOptions): SerieCacheItem[] {
         const { countries, title, kinds } = options;
-        let filteredSeries = series;
 
-        if (title && kinds && countries) {
-            filteredSeries = series.filter((serie) => {
-                return withoutAccentsIgnoreCase(serie.title).includes(withoutAccentsIgnoreCase(title)) 
-                    && kinds.every((kind) => serie.kinds.includes(kind))
-                    && countries.includes(serie.country);
-            });
-        } else if (title && kinds) {
-            filteredSeries = series.filter((serie) => {
-                return withoutAccentsIgnoreCase(serie.title).includes(withoutAccentsIgnoreCase(title)) 
-                    && kinds.every((kind) => serie.kinds.includes(kind));
-            });
-        } else if (title && countries) {
-            filteredSeries = series.filter((serie) => {
-                return withoutAccentsIgnoreCase(serie.title).includes(withoutAccentsIgnoreCase(title)) 
-                    && countries.includes(serie.country);
-            });
-        } else if (kinds && countries) {
-            filteredSeries = series.filter((serie) => {
-                return kinds.every((kind) => serie.kinds.includes(kind)) 
-                    && countries.includes(serie.country);
-            });
-        } else if (title) {
-            filteredSeries = series.filter((serie) => withoutAccentsIgnoreCase(serie.title).includes(withoutAccentsIgnoreCase(title)));
-        } else if (kinds) {
-            filteredSeries = series.filter((serie) => kinds.every((kind) => serie.kinds.includes(kind)));
-        } else if (countries) {
-            filteredSeries = series.filter((serie) => countries.includes(serie.country));
+        if (kinds) {
+            series = series.filter((serie) => kinds.every((kind) => serie.kinds.includes(kind)));
         }
-        return filteredSeries.sort((a, b) => {
+        if (countries) {
+            series = series.filter((serie) => countries.includes(serie.country));
+        }
+        if (title) {
+            series = series.filter((serie) => withoutAccentsIgnoreCase(serie.title).includes(withoutAccentsIgnoreCase(title)));
+        }
+        return series.sort((a, b) => {
             const ad = a.addedAt ? new Date(a.addedAt).getTime() : 1;
             const bd = b.addedAt ? new Date(b.addedAt).getTime() : 2;
             return bd - ad;

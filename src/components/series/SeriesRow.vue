@@ -1,6 +1,6 @@
 <template>
     <span v-if="total">{{ buildPlural("série", series.length) }}</span>
-    <v-row v-if="series.length || loading" class="mt-1">
+    <v-row v-if="series.length || loading" class="mt-2">
         <v-col v-for="serie in series" :cols="6" :md="3" :key="serie.id">
             <base-skeleton :loading="loading" type="card">
                 <serie-card :serie="serie" :watch-status="watchStatus"
@@ -8,7 +8,7 @@
             </base-skeleton>
         </v-col>
     </v-row>
-    <div v-else class="text-center">Aucune série</div>
+    <div v-else class="text-center mt-2">Aucune série</div>
 </template>
 
 <script lang="ts" setup>

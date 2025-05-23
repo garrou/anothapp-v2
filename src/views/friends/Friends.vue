@@ -10,16 +10,16 @@
 
     <v-window v-model="tab" class="pa-1">
         <v-window-item :value="1">
-            <friends-row consult :friends="friends?.friend" :loading="loading" remove />
+            <friends-row consult :friends="friends?.friends" :loading="loading" remove />
         </v-window-item>
         <v-window-item :value="2">
             <friends-row addable :friends="searched" search @search="searchUser" @refresh="fetchFriends" />
         </v-window-item>
         <v-window-item :value="3">
-            <friends-row accept :friends="friends?.receive" :loading="loading" remove @refresh="fetchFriends" />
+            <friends-row accept :friends="friends?.received" :loading="loading" remove @refresh="fetchFriends" />
         </v-window-item>
         <v-window-item :value="4">
-            <friends-row :friends="friends?.send" :loading="loading" remove @refresh="fetchFriends" />
+            <friends-row :friends="friends?.sent" :loading="loading" remove @refresh="fetchFriends" />
         </v-window-item>
     </v-window>
 </template>

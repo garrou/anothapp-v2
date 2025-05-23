@@ -2,11 +2,11 @@ import type { User } from "./user";
 
 export interface FriendResponse {
 
-    send: User[];
+    sent: User[];
 
-    receive: User[];
+    received: User[];
 
-    friend: User[];
+    friends: User[];
 
     viewed: User[];
 }

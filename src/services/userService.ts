@@ -1,19 +1,18 @@
+import { buildUrlWithParams } from "@/utils/format";
 import { ENDPOINT } from "../constants/services";
 import storageService from "./storageService";
 
 const PREFIX = "users";
 
-const getUser = async (username: string): Promise<Response> => {
-    return fetch(`${ENDPOINT}/${PREFIX}/search`, {
-        body: JSON.stringify({
-            username
-        }),
+const getUsers = async (username: string): Promise<Response> => {
+    const url = buildUrlWithParams(`${ENDPOINT}/${PREFIX}`, [
+        { name: "username", value: username },
+    ]);
+    return fetch(url, {
         headers: {
-            "Authorization": `Bearer ${storageService.getJwt()}`,
-            "Content-Type": "application/json",
-        },
-        method: "POST",
-    })
+            "Authorization": `Bearer ${storageService.getJwt()}`
+        }
+    });
 }
 
 const getProfile = async (): Promise<Response> => {
@@ -38,7 +37,7 @@ const updateImage = async (image: string): Promise<Response> => {
 }
 
 export default {
-    getUser,
+    getUsers,
     getProfile,
     updateImage
 };

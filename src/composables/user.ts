@@ -24,7 +24,7 @@ export function useUser() {
     }
 
     const getUsers = async (username: string): Promise<User[]> => {
-        const resp = await userService.getUser(username);
+        const resp = await userService.getUsers(username);
         const data = await resp.json();
 
         if (isError(resp.status))

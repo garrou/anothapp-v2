@@ -66,7 +66,7 @@ export function useSeason() {
         showSuccess(`"${serie.title}" saison ${season.number} ajoutée`);
     }
 
-    const updateSeason = async (id: number, platformId?: number, viewedAt?: string): Promise<void> => {
+    const updateSeason = async (id: number, platformId?: number, viewedAt?: string): Promise<boolean> => {
         if (!platformId || !viewedAt)
             throw new Error("Impossible de modifier la saison");
 
@@ -77,6 +77,7 @@ export function useSeason() {
             throw new Error(data.message);
         }
         showSuccess("Saison modifiée");
+        return true;
     }
 
     return {

@@ -15,7 +15,7 @@
                 <v-btn elevation="0" :icon="isEdited(subSeason.id) ? 'mdi-close' : 'mdi-pencil'"
                     @click="editSeason(subSeason.id)" />
                 <v-btn elevation="0" :icon="DELETE_ICON" @click="selectSeason(subSeason.id)" />
-                <v-btn v-if="isEdited(subSeason.id)" elevation="0" icon="mdi-check" @click="updateSeason(toEdit, platform, viewedAt)"/>
+                <v-btn v-if="isEdited(subSeason.id)" elevation="0" icon="mdi-check" @click="changeSeason"/>
             </template>
 
             <div v-if="isEdited(subSeason.id)" class="px-4">
@@ -82,11 +82,26 @@ const dropSeason = async (id: number) => {
     emit("refresh");
 }
 
+const changeSeason = async () => {
+    const updated = await updateSeason(toEdit.value, platform.value, viewedAt.value);
+    if (!updated) return;
+
+    const idx = seasons.value.map((s) => s.id).indexOf(toEdit.value);
+    if (idx < 0 || !viewedAt.value || !platform.value) return;
+
+    const newPlatform = platforms.value.find((s) => s.id === platform.value);
+    if (!newPlatform) return;
+
+    seasons.value[idx].addedAt = formatDate(viewedAt.value);
+    seasons.value[idx].platform = newPlatform;
+    editSeason(toEdit.value);
+}
+
 watch(toEdit, () => {
     const season = seasons.value.find((s) => s.id === toEdit.value);
 
     if (!season) {
-        toEdit.value = -1;
+        editSeason(toEdit.value);
         return;
     };
     platform.value = season.platform.id;

@@ -62,7 +62,7 @@
         text="Confirmez-vous la suppression de la série ?" @cancel="confirmModal = false"
         @confirm="deleteSerie(infos.serie)" />
 
-    <base-modal v-if="selected" v-model="modal">
+    <base-modal v-if="selected" v-model="modal" :persistent="!isAddable">
         <template #title>
             <span>Saison {{ selected.number }}</span>
             <v-btn :icon="CLOSE_ICON" variant="text" @click="modal = false" />

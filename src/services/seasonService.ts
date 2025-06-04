@@ -13,10 +13,11 @@ const deleteSeasonById = async (id: number): Promise<Response> => {
     });
 }
 
-const updateSeason = async (id: number, platformId: number): Promise<Response> => {
+const updateSeason = async (id: number, platformId: number, viewedAt: string): Promise<Response> => {
     return fetch(`${ENDPOINT}/${PREFIX}/${id}`, {
         body: JSON.stringify({
-            "platform": platformId
+            "platform": platformId,
+            "viewedAt": viewedAt
         }),
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`,

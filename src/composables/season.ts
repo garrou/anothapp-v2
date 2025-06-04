@@ -5,6 +5,7 @@ import type { SeasonSearchOptions } from "@/models/search";
 import { isError } from "@/utils/response";
 import { useSnackbar } from "./snackbar";
 import seasonService from "@/services/seasonService";
+import { formatDateTime } from "@/utils/format";
 
 export function useSeason() {
 
@@ -65,11 +66,11 @@ export function useSeason() {
         showSuccess(`"${serie.title}" saison ${season.number} ajoutée`);
     }
 
-    const updateSeason = async (id: number, platformId?: number): Promise<void> => {
-        if (!platformId)
-            throw new Error("Impossible de modifier la plateforme");
+    const updateSeason = async (id: number, platformId?: number, viewedAt?: string): Promise<void> => {
+        if (!platformId || !viewedAt)
+            throw new Error("Impossible de modifier la saison");
 
-        const resp = await seasonService.updateSeason(id, platformId);
+        const resp = await seasonService.updateSeason(id, platformId, formatDateTime(viewedAt));
 
         if (isError(resp.status)) {
             const data = await resp.json();

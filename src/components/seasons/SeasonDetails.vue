@@ -15,12 +15,13 @@
                 <v-btn elevation="0" :icon="isEdited(subSeason.id) ? 'mdi-close' : 'mdi-pencil'"
                     @click="editSeason(subSeason.id)" />
                 <v-btn elevation="0" :icon="DELETE_ICON" @click="selectSeason(subSeason.id)" />
+                <v-btn v-if="isEdited(subSeason.id)" elevation="0" icon="mdi-check" @click="updateSeason(toEdit, platform, viewedAt)"/>
             </template>
 
             <div v-if="isEdited(subSeason.id)" class="px-4">
                 <v-label>Plateformes</v-label>
-                <v-select v-model="platform" :density="DENSITY" :items="platforms" item-title="name" item-value="id"
-                    @update:modelValue="updateSeason(toEdit, platform)" />
+                <v-select v-model="platform" :density="DENSITY" :items="platforms" item-title="name" item-value="id" />
+                <v-text-field v-model="viewedAt" type="datetime-local" />
             </div>
         </v-card>
     </template>
@@ -35,7 +36,7 @@ import type { PropType } from "vue";
 import { onBeforeMount, ref, watch } from "vue";
 import type { Season, SeasonDetail } from "@/models/season";
 import { useSeason } from "@/composables/season";
-import { formatDate, minsToStringHoursDays } from "@/utils/format";
+import { formatDate, formatDateTime, minsToStringHoursDays } from "@/utils/format";
 import { DENSITY } from "@/constants/style";
 import { DELETE_ICON, PLATFORM_ICON } from "@/constants/icons";
 import { useSerie } from "@/composables/serie";
@@ -62,6 +63,7 @@ const time = ref(0);
 const toEdit = ref(-1);
 const platforms = ref<Platform[]>([]);
 const platform = ref<number>();
+const viewedAt = ref<string>();
 
 const isEdited = (id: number): boolean => toEdit.value === id;
 
@@ -81,7 +83,14 @@ const dropSeason = async (id: number) => {
 }
 
 watch(toEdit, () => {
-    platform.value = seasons.value.find((s) => s.id === toEdit.value)?.platform.id;
+    const season = seasons.value.find((s) => s.id === toEdit.value);
+
+    if (!season) {
+        toEdit.value = -1;
+        return;
+    };
+    platform.value = season.platform.id;
+    viewedAt.value = formatDateTime(season.addedAt);
 });
 
 onBeforeMount(async () => {

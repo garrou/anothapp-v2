@@ -13,6 +13,16 @@ const minsToStringHours = (mins: number): string => {
     return remain === 0 ? `${hours} h` : `${hours} h ${remain} min${remain > 1 ? "s" : ""}`;
 }
 
+export const formatDateTime = (toFormat: string): string => {
+    const date = new Date(toFormat);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day} ${hours}:${minutes}`;
+}
+
 export const formatDate = (toFormat: string): string => {
     const date = new Date(toFormat);
     const yyyy = date.getFullYear();
@@ -43,13 +53,13 @@ interface Param {
 
 const buildUrl = (url: string, query: string, param?: string | number | boolean): string => {
     return param === undefined
-        ? url 
+        ? url
         : url.concat(`${url.includes("?") ? "&" : "?"}${query}=${param}`);
 }
 
 export const buildUrlWithParams = (url: string, params: Param[]): string => {
     return params.reduce((acc, curr) => buildUrl(acc, curr.name, curr.value), url);
-} 
+}
 
 export const buildPlural = (text: string, value?: number, prefix = true, displayValue = true): string => {
     const num = value ?? 0;

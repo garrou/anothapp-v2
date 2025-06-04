@@ -4,6 +4,7 @@ import "./assets/main.css";
 
 import { createApp } from "vue";
 import { createPinia } from "pinia";
+import { fr } from "vuetify/locale";
 
 import App from "./App.vue";
 import router from "./router";
@@ -21,6 +22,10 @@ const vuetify = createVuetify({
     VCalendar,
   },
   directives,
+  locale: {
+    locale: 'fr',
+    messages: { fr }
+  }
 });
 const app = createApp(App);
 

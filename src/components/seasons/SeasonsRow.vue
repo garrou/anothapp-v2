@@ -7,7 +7,7 @@
             <base-skeleton :loading="loading" type="card">
                 <season-card :season="season" @show="$emit('showSeason', season, addable)">
                     <template v-if="addable" #add>
-                        <v-btn color="surface-variant" :icon="ADD_ICON" variant="text"
+                        <v-btn :color="MAIN_COLOR" :icon="ADD_ICON" variant="text"
                             @click="$emit('addSeason', season)" />
                     </template>
                 </season-card>
@@ -22,6 +22,7 @@ import SeasonCard from "./SeasonCard.vue";
 import { computed, ref, type PropType } from "vue";
 import type { Season } from "@/models/season";
 import { ADD_ICON } from "@/constants/icons";
+import { MAIN_COLOR } from "@/constants/style";
 
 const props = defineProps({
     addable: { type: Boolean, default: false },

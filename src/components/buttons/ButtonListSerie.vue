@@ -1,7 +1,7 @@
 <template>
     <v-tooltip :text="computedText" :location="tooltipLocation">
         <template v-slot:activator="{ props }">
-            <v-btn v-bind="props" color="surface-variant" elevation="0" :icon="computedIcon" variant="text"
+            <v-btn v-bind="props" :color="MAIN_COLOR" elevation="0" :icon="computedIcon" variant="text"
                 @click="updateInList" />
         </template>
     </v-tooltip>
@@ -9,7 +9,7 @@
 
 <script lang="ts" setup>
 import { useSerie } from '@/composables/serie';
-import { TOOLTIP_LOCATION } from '@/constants/style';
+import { TOOLTIP_LOCATION, MAIN_COLOR } from '@/constants/style';
 import type { Serie } from '@/models/serie';
 import { computed, onBeforeMount, ref, type PropType } from 'vue';
 

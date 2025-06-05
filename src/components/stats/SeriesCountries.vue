@@ -1,5 +1,5 @@
 <template>
-  <v-switch v-model="showMap" color="black" label="Afficher la carte" />
+  <v-switch v-model="showMap" :color="MAIN_COLOR" label="Afficher la carte" />
   <series-countries-map v-if="showMap" :data="data" />
   <base-pie-chart v-else class="mb-2" :data="data.slice(0, MIN_LIMIT)" :title="TITLE" />
 </template>
@@ -10,6 +10,7 @@ import SeriesCountriesMap from "@/components/stats/SeriesCountriesMap.vue";
 import type { Stat } from "@/models/stat";
 import { onBeforeMount, ref, watch } from "vue";
 import { useStatistic } from "@/composables/statistic";
+import { MAIN_COLOR } from "@/constants/style";
 
 const TITLE = "Pays des séries";
 const MIN_LIMIT = 10;

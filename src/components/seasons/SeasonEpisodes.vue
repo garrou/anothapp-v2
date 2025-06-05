@@ -8,7 +8,7 @@
             </v-expansion-panel-title>
 
             <v-expansion-panel-text>
-                <v-chip class="mb-2" color="black" size="small">
+                <v-chip class="mb-2" :color="MAIN_COLOR" size="small">
                     {{ episode.code }} • {{ episode.date }}
                 </v-chip>
 
@@ -22,6 +22,7 @@
 import { onBeforeMount, ref } from "vue";
 import { useSearch } from "@/composables/search";
 import type { Episode } from "@/models/episode";
+import { MAIN_COLOR } from "@/constants/style";
 
 const props = defineProps({
     id: { type: Number, required: true },

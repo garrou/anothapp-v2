@@ -16,7 +16,7 @@
 
     <friend-series v-if="userId" :user-id="userId" :type="SerieStatus.Favorite" />
 
-    <v-switch v-model="displayChart" color="black" label="Afficher les graphiques" @change="changeDisplayChart" />
+    <v-switch v-model="displayChart" :color="MAIN_COLOR" label="Afficher les graphiques" @change="changeDisplayChart" />
 
     <v-row>
         <template v-if="displayChart">
@@ -71,7 +71,7 @@ import TimeYears from "@/components/stats/TimeYears.vue";
 import SeasonsPlatforms from "@/components/stats/SeasonsPlatforms.vue";
 import FriendSeries from "@/components/friends/FriendSeries.vue";
 import { useStatistic } from "@/composables/statistic";
-import { ELEVATION } from "@/constants/style";
+import { ELEVATION, MAIN_COLOR } from "@/constants/style";
 import type { GlobalStat } from "@/models/stat";
 import { computed, onBeforeMount, ref } from "vue";
 import storageService from "@/services/storageService";

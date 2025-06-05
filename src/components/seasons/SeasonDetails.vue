@@ -12,16 +12,18 @@
                 <span class="text-subtitle-1">{{ formatDate(subSeason.addedAt) }}</span>
             </template>
             <template #append>
-                <v-btn elevation="0" :icon="isEdited(subSeason.id) ? 'mdi-close' : 'mdi-pencil'"
-                    @click="editSeason(subSeason.id)" />
+                <v-btn v-if="!isEdited(subSeason.id)" elevation="0" icon="mdi-pencil" @click="editSeason(subSeason.id)" />
                 <v-btn elevation="0" :icon="DELETE_ICON" @click="selectSeason(subSeason.id)" />
-                <v-btn v-if="isEdited(subSeason.id)" elevation="0" icon="mdi-check" @click="changeSeason"/>
             </template>
 
-            <div v-if="isEdited(subSeason.id)" class="px-4">
+            <div v-if="isEdited(subSeason.id)" class="px-4 pb-2">
                 <v-label>Plateformes</v-label>
                 <v-select v-model="platform" :density="DENSITY" :items="platforms" item-title="name" item-value="id" />
                 <v-text-field v-model="viewedAt" type="datetime-local" />
+
+                <div class="d-flex justify-end">
+                <v-btn v-if="isEdited(subSeason.id)" elevation="0" @click="changeSeason" :color="MAIN_COLOR">Enregistrer</v-btn>
+                </div>
             </div>
         </v-card>
     </template>
@@ -42,6 +44,7 @@ import { DELETE_ICON, PLATFORM_ICON } from "@/constants/icons";
 import { useSerie } from "@/composables/serie";
 import type { Platform } from "@/models/serie";
 import { useSearch } from "@/composables/search";
+import { MAIN_COLOR } from "@/constants/style";
 
 const props = defineProps({
     id: { type: Number, required: true },
@@ -92,9 +95,8 @@ const changeSeason = async () => {
     const newPlatform = platforms.value.find((s) => s.id === platform.value);
     if (!newPlatform) return;
 
-    seasons.value[idx].addedAt = formatDate(viewedAt.value);
+    seasons.value[idx].addedAt = formatDateTime(viewedAt.value);
     seasons.value[idx].platform = newPlatform;
-    editSeason(toEdit.value);
 }
 
 watch(toEdit, () => {

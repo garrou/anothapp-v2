@@ -1,7 +1,7 @@
 <template>
     <v-tooltip v-if="exists" text="Supprimer la série" :location="tooltipLocation">
         <template v-slot:activator="{ props }">
-            <v-btn v-bind="props" color="surface-variant" elevation="0" :icon="DELETE_ICON" variant="text"
+            <v-btn v-bind="props" :color="MAIN_COLOR" elevation="0" :icon="DELETE_ICON" variant="text"
                 @click="confirmModal = true" />
         </template>
     </v-tooltip>
@@ -11,7 +11,7 @@
 import { useState } from '@/composables/state';
 import { useSerie } from '@/composables/serie';
 import { DELETE_ICON } from '@/constants/icons';
-import { TOOLTIP_LOCATION } from '@/constants/style';
+import { TOOLTIP_LOCATION, MAIN_COLOR } from '@/constants/style';
 import type { Serie } from '@/models/serie';
 import { onBeforeMount, ref, type PropType } from 'vue';
 

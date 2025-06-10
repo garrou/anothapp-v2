@@ -110,18 +110,21 @@ export function useSerie() {
         return data;
     }
 
-    const updateField = async (serie: Serie, field: keyof Serie): Promise<boolean> => {
-        const resp = await serieService.updateFieldBySerieId(serie.id, field);
+    const updateField = async (serie: Serie, field: keyof Serie, value: string): Promise<boolean> => {
+        const resp = await serieService.updateFieldBySerieId(serie.id, field, value);
         const data = await resp.json();
 
         if (isError(resp.status)) {
             throw new Error(data.message);
         }
+        const isAddedAtField = field === "addedAt";
+        const newValue = isAddedAtField ? value : data.value;
+
         await cache.userSeries.addSerie({
             ...serie,
-            [field]: data.value
+            [field]: newValue
         });
-        return data.value;
+        return isAddedAtField ? true : data.value;
     }
 
     const getSerieFromCache = async (id: number, cacheOptions: CacheSearchOptions = { type: UserSeriesCache.NAME }): Promise<SerieCacheItem | undefined> => {

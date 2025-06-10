@@ -34,7 +34,7 @@ const favoriteColor = computed(() => isFavorite.value ? "red" : "surface-variant
 
 const changeFavorite = async (): Promise<void> => {
     if (!serie.value) throw new Error("Impossible de modifier la série");
-    isFavorite.value = await updateField(serie.value, "favorite");
+    isFavorite.value = await updateField(serie.value, "favorite", "update");
     showSuccess(isFavorite.value
         ? `"${serie.value.title}" ajoutée aux favoris`
         : `"${serie.value.title}" supprimée des favoris`);

@@ -34,7 +34,7 @@ const watchIcon = computed(() => isWatching.value ? "mdi-close-circle" : "mdi-pl
 
 const changeWatch = async (): Promise<void> => {
     if (!serie.value) throw new Error("Impossible de modifier la série");
-    isWatching.value = await updateField(serie.value, "watch");
+    isWatching.value = await updateField(serie.value, "watch", "update");
     showSuccess(isWatching.value
         ? `Visionnage en cours pour "${serie.value.title}"`
         : `Visionnage arrêté pour "${serie.value.title}"`);

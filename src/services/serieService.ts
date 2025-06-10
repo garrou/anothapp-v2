@@ -94,10 +94,10 @@ const getSeriesByStatus = async (status: SerieStatus, friendId?: string): Promis
     });
 }
 
-const updateFieldBySerieId = async (id: number, field: string): Promise<Response> => {
+const updateFieldBySerieId = async (id: number, field: string, value: string): Promise<Response> => {
     return fetch(`${ENDPOINT}/${PREFIX}/${id}`, {
         body: JSON.stringify({
-            [field]: "update"
+            [field]: value
         }),
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`,

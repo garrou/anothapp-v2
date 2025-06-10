@@ -12,7 +12,7 @@
                 <span class="text-subtitle-1">{{ formatDate(subSeason.addedAt) }}</span>
             </template>
             <template #append>
-                <v-btn v-if="!isEdited(subSeason.id)" elevation="0" icon="mdi-pencil" @click="editSeason(subSeason.id)" />
+                <v-btn v-if="!isEdited(subSeason.id)" elevation="0" :icon="EDIT_ICON" @click="editSeason(subSeason.id)" />
                 <v-btn elevation="0" :icon="DELETE_ICON" @click="selectSeason(subSeason.id)" />
             </template>
 
@@ -22,7 +22,7 @@
                 <v-text-field v-model="viewedAt" type="datetime-local" />
 
                 <div class="d-flex justify-end">
-                <v-btn v-if="isEdited(subSeason.id)" elevation="0" @click="changeSeason" :color="MAIN_COLOR">Enregistrer</v-btn>
+                    <v-btn elevation="0" @click="changeSeason" :color="MAIN_COLOR">Enregistrer</v-btn>
                 </div>
             </div>
         </v-card>
@@ -40,7 +40,7 @@ import type { Season, SeasonDetail } from "@/models/season";
 import { useSeason } from "@/composables/season";
 import { formatDate, formatDateTime, minsToStringHoursDays } from "@/utils/format";
 import { DENSITY } from "@/constants/style";
-import { DELETE_ICON, PLATFORM_ICON } from "@/constants/icons";
+import { EDIT_ICON, DELETE_ICON, PLATFORM_ICON } from "@/constants/icons";
 import { useSerie } from "@/composables/serie";
 import type { Platform } from "@/models/serie";
 import { useSearch } from "@/composables/search";

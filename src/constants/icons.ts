@@ -6,6 +6,8 @@ export const CLOSE_ICON = "mdi-close";
 
 export const DETAILS_ICON = "mdi-eye";
 
+export const EDIT_ICON = "mdi-pencil";
+
 export const FAVORITE_ICON = "mdi-heart";
 
 export const FILTER_ICON = "mdi-filter";

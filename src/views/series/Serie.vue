@@ -27,11 +27,19 @@
                     <v-card-text>
                         <v-progress-linear height="20" :model-value="viewingPercent" rounded="lg" />
 
-                        <div class="d-flex flex-column py-3">
-                            <span class="font-weight-bold mb-2">
-                                {{ buildPlural("épisode", infos.episodes) }} - {{ buildPlural("minute", infos.serie.duration) }}
+                        <div class="d-flex flex-column py-3 ga-2">
+                            <span class="font-weight-bold">
+                                Durée d'un épisode : {{ buildPlural("min", infos.serie.duration) }}
                             </span>
-                            <span class="font-weight-bold">{{ time }}</span>
+                            <span class="font-weight-bold">
+                                Episodes vus : {{ infos.episodes }}
+                            </span>
+                            <span class="font-weight-bold">
+                                Temps de visionnage : {{ time }}
+                            </span>
+                            <span v-if="isMissingSeasons" class="font-weight-bold">
+                                Temps restant : {{ missingTime }}
+                            </span>
                         </div>
                     </v-card-text>
                 </v-card>
@@ -140,6 +148,19 @@ const isAddable = ref(false);
 const updateModal = ref(false);
 const addedAt = ref<string>();
 
+const missingTime = computed(() => { 
+    const allSeasons = seasons.value;
+    const viewedSeasons = infos.value?.seasons ?? [];
+    let missingEpisodes = 0;
+
+    for (const season of allSeasons) {
+        const viewed = viewedSeasons.find((s) => s.number === season.number);
+        if (viewed) continue;
+        missingEpisodes += season.episodes;
+    }
+    return minsToStringHoursDays(missingEpisodes * (infos.value?.serie.duration ?? 0));
+});
+const isMissingSeasons = computed(() => seasons.value.length - (infos.value?.seasons?.length ?? 0) > 0);
 const time = computed(() => minsToStringHoursDays(infos.value?.time));
 const viewingPercent = computed(() => ((infos.value?.seasons.length ?? 0) / seasons.value.length * 100).toFixed(0));
 

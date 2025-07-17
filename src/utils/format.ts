@@ -4,7 +4,7 @@ const MINS_IN_DAY = 1440;
 const minsToStringDays = (mins: number): string => {
     const days = Math.floor(mins / MINS_IN_DAY);
     const time = minsToStringHours(Math.floor(mins % MINS_IN_DAY));
-    return days === 0 ? `${time}` : `${days} jour${days > 1 ? "s" : ""} ${time}`;
+    return days === 0 ? `${time}` : `${days} j ${time}`;
 }
 
 const minsToStringHours = (mins: number): string => {

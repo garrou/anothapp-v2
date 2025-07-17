@@ -24,36 +24,6 @@ const login = async (identifier: string, password: string): Promise<Response> =>
     });
 }
 
-const updateLogin = async (email: string, newEmail: string): Promise<Response> => {
-    return fetch(`${ENDPOINT}/${PREFIX}/me`, {
-        body: JSON.stringify({
-            email,
-            newEmail
-        }),
-        headers: {
-            "Authorization": `Bearer ${storageService.getJwt()}`,
-            "Content-Type": "application/json",
-        },
-        method: "PATCH",
-    })
-}
-
-
-const updatePassword = async (currentPassword: string, newPassword: string, confirmPassword: string): Promise<Response> => {
-    return fetch(`${ENDPOINT}/${PREFIX}/me`, {
-        body: JSON.stringify({
-            currentPassword,
-            newPassword,
-            confirmPassword
-        }),
-        headers: {
-            "Authorization": `Bearer ${storageService.getJwt()}`,
-            "Content-Type": "application/json",
-        },
-        method: "PATCH",
-    })
-}
-
 const register = async (email: string, password: string, confirm: string, username: string): Promise<Response> => {
     return fetch(`${ENDPOINT}/${PREFIX}/register`, {
         body: JSON.stringify({
@@ -72,7 +42,5 @@ const register = async (email: string, password: string, confirm: string, userna
 export default {
     checkAuth,
     login,
-    updateLogin,
-    updatePassword,
     register,
 }

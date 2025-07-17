@@ -10,16 +10,6 @@ export function useAuth() {
     const router = useRouter();
     const { showSuccess } = useSnackbar();
 
-    const changePassword = async (currentPass: string, newPass: string, confPass: string): Promise<void> => {
-        const resp = await authService.updatePassword(currentPass, newPass, confPass);
-
-        if (isError(resp.status)) {
-            const data = await resp.json();
-            throw new Error(data.message);
-        }
-        showSuccess("Mot de passe modifié");
-    }
-
     const checkAuth = async (): Promise<boolean> => {
         try {
             const resp = await authService.checkAuth();
@@ -27,21 +17,6 @@ export function useAuth() {
         } catch (e) {
             return false;
         }
-    }
-
-    const changeEmail = async (oldEmail: string, newEmail: string): Promise<void> => {
-        const resp = await authService.updateLogin(oldEmail, newEmail);
-
-        if (isError(resp.status)) {
-            const data = await resp.json();
-            throw new Error(data.message);
-        }
-        const user = await cache.users.getProfile();
-        await cache.users.addUser({
-            ...user,
-            email: newEmail
-        });
-        showSuccess("Email modifié");
     }
 
     const login = async (identifier: string, password: string): Promise<void> => {
@@ -76,5 +51,5 @@ export function useAuth() {
         router.push("/login");
     }
 
-    return { changeEmail, changePassword, checkAuth, login, logout, register }
+    return { checkAuth, login, logout, register }
 }

@@ -1,5 +1,5 @@
 <template>
-    <v-container class="text-center">
+    <v-container class="d-flex flex-column justify-center text-center" style="height: 100vh">
         <v-form v-model="valid" @submit="createAccount" @submit.prevent>
 
             <h1>{{ TITLE }}</h1>

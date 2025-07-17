@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts" setup>
-import { useAuth } from "@/composables/auth";
+import { useUser } from "@/composables/user";
 import { passwordRules } from "@/utils/validator";
 import { ref } from "vue";
 
@@ -25,7 +25,7 @@ const emit = defineEmits<{
     refresh: []
 }>();
 
-const { changePassword } = useAuth();
+const { changePassword } = useUser();
 
 const valid = ref(false);
 const current = ref("");

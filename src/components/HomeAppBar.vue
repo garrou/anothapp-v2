@@ -1,19 +1,13 @@
 <template>
-    <v-app>
-        <v-app-bar v-if="navbar" app fixed elevation="0" class="bg-black">
-            <v-container>
-                <v-row align="center" no-gutters>
-                    <v-col>
-                        <v-toolbar-title @click="$router.push('/')" class="text-h5 font-weight-bold">ANOTHAPP</v-toolbar-title>
-                    </v-col>
-                    <v-col v-if="showLoginBtn" cols="auto">
-                        <v-btn text class="d-none d-md-inline-flex" @click="$router.push('/login')">Se connecter</v-btn>
-                    </v-col>
-                </v-row>
-            </v-container>
-        </v-app-bar>
-    </v-app>
+    <v-layout v-if="navbar">
+        <v-app-bar fixed elevation="0" class="bg-black">
+            <v-app-bar-title @click="$router.push('/')" class="text-h5 font-weight-bold">ANOTHAPP</v-app-bar-title>
 
+            <template v-slot:append>
+                <v-btn v-if="showLoginBtn" text @click="$router.push('/login')">Se connecter</v-btn>
+            </template>
+        </v-app-bar>
+    </v-layout>
 </template>
 
 <script lang="ts" setup>

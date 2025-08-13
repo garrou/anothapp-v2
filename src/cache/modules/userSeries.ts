@@ -117,7 +117,7 @@ export default class UserSeriesCache extends CacheModule<SerieCacheItem> {
     }
 
     private filterSeries(series: SerieCacheItem[], options: SerieSearchOptions): SerieCacheItem[] {
-        const { countries, title, kinds } = options;
+        const { countries, title, kinds, notes } = options;
 
         if (kinds) {
             series = series.filter((serie) => kinds.every((kind) => serie.kinds.includes(kind)));
@@ -127,6 +127,9 @@ export default class UserSeriesCache extends CacheModule<SerieCacheItem> {
         }
         if (title) {
             series = series.filter((serie) => withoutAccentsIgnoreCase(serie.title).includes(withoutAccentsIgnoreCase(title)));
+        }
+        if (notes) {
+            series = series.filter((serie) => serie.note && notes.includes(serie.note));
         }
         return series.sort((a, b) => {
             const ad = a.addedAt ? new Date(a.addedAt).getTime() : 1;

@@ -40,6 +40,12 @@
                             <span v-if="isMissingSeasons" class="font-weight-bold">
                                 Temps restant : {{ missingTime }}
                             </span>
+                            <v-chip-group v-model="infos.serie.note" :selected-class="MAIN_COLOR" @update:model-value="updateSerieNote">
+                                <v-chip v-for="n in notes" :key="n.id" :value="n.id" :color="NOTE_COLORS[n.id]">
+                                    <v-icon v-if="n.id == infos.serie.note" class="mr-2" :icon="NOTE_ICONS[n.id]" />
+                                    <span>{{ n.name }}</span>
+                                </v-chip>
+                            </v-chip-group>
                         </div>
                     </v-card-text>
                 </v-card>
@@ -59,7 +65,8 @@
                 <seasons-row :loading="loading" :seasons="infos.seasons" @show-season="showSeason" />
             </v-window-item>
             <v-window-item :value="2">
-                <seasons-row addable :loading="loading" :seasons="seasons" @add-season="newSeason" @show-season="showSeason" />
+                <seasons-row addable :loading="loading" :seasons="seasons" @add-season="newSeason"
+                    @show-season="showSeason" />
             </v-window-item>
             <v-window-item :value="3" @group:selected="getFriendsWhoWatch">
                 <friends-row consult :friends="friends" />
@@ -88,7 +95,7 @@
         <v-text-field v-model="addedAt" type="datetime-local" :max="maxDate" />
 
         <div class="d-flex justify-end">
-            <v-btn elevation="0" @click="updateSerie" :color="MAIN_COLOR">Enregistrer</v-btn>
+            <v-btn elevation="0" @click="updateSeasonDate" :color="MAIN_COLOR">Enregistrer</v-btn>
         </div>
     </base-modal>
 </template>
@@ -114,13 +121,15 @@ import { useSearch } from "@/composables/search";
 import { useSerie } from "@/composables/serie";
 import type { Season } from "@/models/season";
 import { buildPlural, formatDateTime, minsToStringHoursDays } from "@/utils/format";
-import { CLOSE_ICON } from "@/constants/icons";
+import { CLOSE_ICON, NOTE_ICONS } from "@/constants/icons";
 import type { User } from "@/models/user";
 import { useFriend } from "@/composables/friend";
 import { useState } from "@/composables/state";
 import { FriendStatus } from "@/types/types";
-import { MAIN_COLOR } from "@/constants/style";
+import { MAIN_COLOR, NOTE_COLORS } from "@/constants/style";
 import { useSnackbar } from "@/composables/snackbar";
+import type { Note } from "@/models/note";
+import { useRouter } from "vue-router";
 
 const props = defineProps({
     id: { type: Number, required: true }
@@ -128,11 +137,12 @@ const props = defineProps({
 
 const maxDate = new Date().toISOString().slice(0, 16);
 
+const router = useRouter();
 const { confirmModal } = useState();
 const { getFriends } = useFriend();
 const { addSeason } = useSeason();
-const { deleteSerie, getSerieInfos, updateField} = useSerie();
-const { getSeasonsBySerieId, getPlatforms } = useSearch();
+const { deleteSerie, getSerieInfos, updateField, getSerieFromCache } = useSerie();
+const { getSeasonsBySerieId, getPlatforms, getNotes } = useSearch();
 const { showSuccess, showError } = useSnackbar();
 
 const friends = ref<User[]>([]);
@@ -143,12 +153,13 @@ const loading = ref(false);
 const modal = ref(false);
 const seasons = ref<Season[]>([]);
 const selected = ref<Season>();
+const notes = ref<Note[]>([]);
 const tab = ref(1);
 const isAddable = ref(false);
 const updateModal = ref(false);
 const addedAt = ref<string>();
 
-const missingTime = computed(() => { 
+const missingTime = computed(() => {
     const allSeasons = seasons.value;
     const viewedSeasons = infos.value?.seasons ?? [];
     let missingEpisodes = 0;
@@ -171,6 +182,11 @@ const refresh = async () => {
 
 const load = async (): Promise<void> => {
     loading.value = true;
+    const exists = !!(await getSerieFromCache(props.id));
+
+    if (!exists) {
+        router.back();
+    }
     infos.value = await getSerieInfos({ id: props.id });
     seasons.value = await getSeasonsBySerieId(props.id);
     isFavorite.value = infos.value?.serie.favorite ?? false;
@@ -201,7 +217,7 @@ const getFriendsWhoWatch = async (): Promise<void> => {
     loading.value = false;
 }
 
-const updateSerie = async (): Promise<void> => {
+const updateSeasonDate = async (): Promise<void> => {
     if (!infos.value?.serie || !addedAt.value) return;
 
     if (new Date(addedAt.value) > new Date(maxDate)) {
@@ -219,8 +235,20 @@ const updateSerie = async (): Promise<void> => {
     updateModal.value = false;
 }
 
+const updateSerieNote = async (): Promise<void> => {
+    if (!infos.value?.serie || !infos.value.serie.note) return;
+    const updated = await updateField(infos.value.serie, "note", infos.value.serie.note);
+
+    if (!updated) {
+        showError("Impossible de modifier la note de la série");
+        return;
+    }
+    showSuccess("Note modifiée");
+}
+
 onBeforeMount(async () => {
     await load();
     await getPlatforms();
+    notes.value = await getNotes();
 });
 </script>

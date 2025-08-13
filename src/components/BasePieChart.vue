@@ -20,6 +20,7 @@ import type { Stat } from "@/models/stat";
 
 const props = defineProps({
   data: { type: Array as PropType<Stat[]>, required: true },
+  itemStyle: { type: Object as PropType<Record<string, any>>, default: () => ({}) },
   title: { type: String, required: true },
 })
 
@@ -51,9 +52,10 @@ const option = computed(() => ({
       name: props.title,
       type: "pie",
       radius: "60%",
-      data: props.data.map((record) => ({
+      data: props.data.map((record, i) => ({
         name: record.label,
-        value: record.value
+        value: record.value,
+        itemStyle: props.itemStyle[i]
       })),
       padAngle: 3,
       label: {

@@ -1,3 +1,5 @@
+import type { IconValue } from "vuetify/lib/composables/icons.mjs";
+
 export const ADD_ICON = "mdi-plus-thick";
 
 export const DELETE_ICON = "mdi-delete";
@@ -17,3 +19,10 @@ export const PLATFORM_ICON = "mdi-movie-open-play";
 export const PLAY_ICON = "mdi-play";
 
 export const SEARCH_ICON = "mdi-magnify";
+
+export const NOTE_ICONS: Record<number, IconValue> = {
+    1: "mdi-emoticon-sad-outline",
+    2: "mdi-emoticon-neutral-outline",
+    3: "mdi-emoticon-happy-outline",
+    4: "mdi-emoticon-excited-outline",
+}

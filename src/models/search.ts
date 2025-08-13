@@ -8,6 +8,8 @@ export interface SerieSearchOptions {
     
     kinds?: string[],
 
+    notes?: number[],
+
     platforms?: string[],
 
     countries?: string[],

@@ -5,6 +5,7 @@ import searchService from "@/services/searchService";
 import { isError } from "@/utils/response";
 import cache from "@/cache";
 import { useSearchStore } from "@/stores/search";
+import type { Note } from "@/models/note";
 
 export function useSearch() {
 
@@ -32,6 +33,10 @@ export function useSearch() {
 
     const getKinds = async (): Promise<Kind[]> => {
         return cache.kinds.getKinds();
+    }
+
+    const getNotes = async (): Promise<Note[]> => {
+        return cache.notes.getNotes();
     }
 
     const getPlatforms = async (): Promise<Platform[]> => {
@@ -115,6 +120,7 @@ export function useSearch() {
         getEpisodes,
         getImages,
         getKinds,
+        getNotes,
         getPlatforms,
         getSeasonsBySerieId,
         getSerie,

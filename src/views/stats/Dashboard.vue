@@ -50,8 +50,11 @@
             <v-col cols="12" md="6">
                 <seasons-platforms :user-id="userId" />
             </v-col>
-            <v-col cols="12">
+            <v-col cols="12" md="6">
                 <series-countries :user-id="userId" />
+            </v-col>
+            <v-col cols="12" md="6">
+                <series-notes :user-id="userId" />
             </v-col>
         </template>
     </v-row>
@@ -70,6 +73,7 @@ import SeriesRankingTime from "@/components/stats/SeriesRankingTime.vue";
 import TimeYears from "@/components/stats/TimeYears.vue";
 import SeasonsPlatforms from "@/components/stats/SeasonsPlatforms.vue";
 import FriendSeries from "@/components/friends/FriendSeries.vue";
+import SeriesNotes from "@/components/stats/SeriesNotes.vue";
 import { useStatistic } from "@/composables/statistic";
 import { ELEVATION, MAIN_COLOR } from "@/constants/style";
 import type { GlobalStat } from "@/models/stat";

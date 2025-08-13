@@ -5,6 +5,7 @@ import UserCache from "./modules/user";
 import PlatformsCache from "./modules/platforms";
 import KindsCache from "./modules/kinds";
 import UserListCache from "./modules/userList";
+import NotesCache from "./modules/notes";
 
 export default new (class CacheManager {
     userSeries!: UserSeriesCache;
@@ -12,10 +13,11 @@ export default new (class CacheManager {
     users!: UserCache;
     platforms!: PlatformsCache;
     kinds!: KindsCache;
+    notes!: NotesCache;
     userList!: UserListCache;
 
     readonly #name = "cache";
-    readonly #version = 1;
+    readonly #version = 2;
 
     async initialize() {
         const db = await openDB(this.#name, this.#version, {
@@ -27,6 +29,9 @@ export default new (class CacheManager {
                     PlatformsCache.createStructure(database);
                     KindsCache.createStructure(database);
                     UserListCache.createStructure(database);
+                }
+                if (oldVersion < 2) {
+                    NotesCache.createStructure(database);
                 }
             },
             blocking() {
@@ -42,6 +47,7 @@ export default new (class CacheManager {
         this.platforms = new PlatformsCache(db);
         this.kinds = new KindsCache(db);
         this.userList = new UserListCache(db);
+        this.notes = new NotesCache(db);
     }
 
     async reset() {

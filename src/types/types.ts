@@ -17,7 +17,8 @@ export enum ChartGroupedType {
     Kinds = "kinds",
     BestMonths = "best-months",
     Countries = "countries",
-    Platforms = "platforms"
+    Platforms = "platforms",
+    Notes = "notes"
 }
 
 export enum ChartGroupedPeriod {

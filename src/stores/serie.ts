@@ -1,6 +1,7 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
 import type { Kind, Platform } from "@/models/serie";
+import type { Note } from "@/models/note";
 
 export const useSerieStore = defineStore("serie", () => {
 
@@ -8,17 +9,20 @@ export const useSerieStore = defineStore("serie", () => {
     const filterKinds = ref<Kind[]>([]);
     const filterPlatforms = ref<Platform[]>([]);
     const filterTitle = ref<string>();
+    const filterNotes = ref<Note[]>([]);
 
     const reset = () => {
         filterKinds.value = [];
         filterPlatforms.value = [];
         filterTitle.value = undefined;
         filterCountries.value = [];
+        filterNotes.value = [];
     }
 
     const hasChanges = (): boolean => !!filterKinds.value.length 
     || !!filterPlatforms.value.length
     || !!filterCountries.value.length
+    || !!filterNotes.value.length
     || !!filterTitle.value;
 
     const formatKinds = (): string|undefined => {
@@ -29,12 +33,18 @@ export const useSerieStore = defineStore("serie", () => {
         return filterPlatforms.value.length ? filterPlatforms.value.map((platform) => `${platform.id}`).join(",") : undefined;
     }
 
+    const formatNotes = (): string|undefined => {
+        return filterNotes.value.length ? filterNotes.value.map((note) => `${note.id}`).join(",") : undefined;
+    }
+
     return {
         filterCountries,
+        filterNotes,
         filterKinds,
         filterPlatforms,
         filterTitle,
         formatKinds,
+        formatNotes,
         formatPlatforms,
         hasChanges,
         reset

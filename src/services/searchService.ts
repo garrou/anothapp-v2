@@ -28,6 +28,14 @@ const getKinds = async (): Promise<Response> => {
     });
 }
 
+const getNotes = async (): Promise<Response> => {
+    return fetch(`${ENDPOINT}/${PREFIX}/notes`, {
+        headers: {
+            "Authorization": `Bearer ${storageService.getJwt()}`
+        }
+    });
+}
+
 const getPlatforms = async (): Promise<Response> => {
     return fetch(`${ENDPOINT}/${PREFIX}/platforms`, {
         headers: {
@@ -108,6 +116,7 @@ export default {
     getEpisodesBySerieIdBySeason,
     getImages,
     getKinds,
+    getNotes,
     getPlatforms,
     getSeasonsBySerieId,
     getSerie,

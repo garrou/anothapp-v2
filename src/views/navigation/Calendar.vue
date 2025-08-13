@@ -1,8 +1,8 @@
 <template>
     <v-sheet>
         <v-calendar ref="calendar" v-model="value" :events="seasons" :view-mode="calendarView" :weekdays="weekdays">
-            <template v-slot:event="{ event }">
-                <v-card class="ma-2" :color="event.color as string" @click="$router.push(`/series/${event.id}`)">
+            <template v-slot:day-body="{ events }">
+                <v-card v-for="event in events" :key="event.id" class="ma-2" :color="event.color as string" @click="$router.push(`/series/${event.id}`)">
                     <v-card-text class="py-1">{{ event.title }}</v-card-text>
                     <v-card-subtitle class="mb-1">{{ event.season }}</v-card-subtitle>
                 </v-card>

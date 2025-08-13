@@ -12,6 +12,7 @@ import UserListCache from "@/cache/modules/userList";
 import SeriesCache from "@/cache/modules/series";
 import type { SerieCacheItem } from "@/types/cache";
 import { useSerieStore } from "@/stores/serie";
+import { fi } from "vuetify/locale";
 
 export function useSerie() {
 
@@ -72,16 +73,17 @@ export function useSerie() {
     }
 
     const getSeries = async (): Promise<Serie[]> => {
-        const { filterCountries, filterKinds, filterTitle, filterPlatforms, formatPlatforms, formatKinds } = serieStore;
+        const { filterCountries, filterKinds, filterNotes, filterTitle, filterPlatforms, formatPlatforms, formatKinds, formatNotes } = serieStore;
 
         if (!filterPlatforms.length) {
             return cache.userSeries.getSeries({ 
+                notes: filterNotes.length ? filterNotes.map((note) => note.id) : undefined,
                 title: filterTitle, 
                 kinds: filterKinds.length ? filterKinds.map((kind) => kind.value) : undefined,
                 countries: filterCountries.length ? filterCountries : undefined,
             });
         }
-        const resp = await serieService.getSeries(filterTitle, formatPlatforms(), formatKinds());
+        const resp = await serieService.getSeries(filterTitle, formatPlatforms(), formatKinds(), formatNotes());
         const data = await resp.json();
 
         if (isError(resp.status))
@@ -110,21 +112,21 @@ export function useSerie() {
         return data;
     }
 
-    const updateField = async (serie: Serie, field: keyof Serie, value: string): Promise<boolean> => {
+    const updateField = async (serie: Serie, field: keyof Serie, value: string | number): Promise<boolean> => {
         const resp = await serieService.updateFieldBySerieId(serie.id, field, value);
         const data = await resp.json();
 
         if (isError(resp.status)) {
             throw new Error(data.message);
         }
-        const isAddedAtField = field === "addedAt";
-        const newValue = isAddedAtField ? value : data.value;
+        const mustSetValue = ["addedAt", "note"].includes(field);
+        const newValue = mustSetValue ? value : data.value;
 
         await cache.userSeries.addSerie({
             ...serie,
             [field]: newValue
         });
-        return isAddedAtField ? true : data.value;
+        return mustSetValue ? true : data.value;
     }
 
     const getSerieFromCache = async (id: number, cacheOptions: CacheSearchOptions = { type: UserSeriesCache.NAME }): Promise<SerieCacheItem | undefined> => {

@@ -69,11 +69,12 @@ const getSerie = async (id: number): Promise<Response> => {
     });
 }
 
-const getSeries = async (title?: string, platforms?: string, kinds?: string): Promise<Response> => {
+const getSeries = async (title?: string, platforms?: string, kinds?: string, notes?: string): Promise<Response> => {
     const url = buildUrlWithParams(`${ENDPOINT}/${PREFIX}`, [
         { name: "title", value: title },
         { name: "platforms", value: platforms },
-        { name: "kinds", value: kinds }
+        { name: "kinds", value: kinds },
+        { name: "notes", value: notes }
     ]);
     return fetch(url, {
         headers: {
@@ -94,7 +95,7 @@ const getSeriesByStatus = async (status: SerieStatus, friendId?: string): Promis
     });
 }
 
-const updateFieldBySerieId = async (id: number, field: string, value: string): Promise<Response> => {
+const updateFieldBySerieId = async (id: number, field: string, value: string | number): Promise<Response> => {
     return fetch(`${ENDPOINT}/${PREFIX}/${id}`, {
         body: JSON.stringify({
             [field]: value

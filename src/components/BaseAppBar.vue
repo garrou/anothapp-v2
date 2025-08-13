@@ -48,8 +48,12 @@
                     <v-tab v-if="!discover" min-width="40" :value="4">
                         <v-icon icon="mdi-flag" />
                     </v-tab>
+                    <v-tab v-if="!discover" min-width="40" :value="5">
+                        <v-icon icon="mdi-numeric" />
+                    </v-tab>
                 </v-tabs>
                 <v-window v-model="tab" class="w-100">
+
                     <v-window-item :value="1">
                         <v-list class="pt-0 mb-10">
                             <v-list-item v-if="selectedKinds.length" title="Effacer les filtres"
@@ -58,6 +62,7 @@
                                 :label="kind.name" :value="kind" @update:model-value="updateKinds(selectedKinds)" />
                         </v-list>
                     </v-window-item>
+
                     <v-window-item :value="2">
                         <v-list class="pt-0 mb-10">
                             <v-list-item v-if="selectedPlatforms.length" title="Effacer les filtres"
@@ -74,6 +79,7 @@
                             </v-checkbox>
                         </v-list>
                     </v-window-item>
+
                     <v-window-item class="px-3" :value="3">
                         <v-text-field v-model="selectedLimit" label="Nombre de résultats" min="0" type="number"
                             variant="underlined" />
@@ -82,12 +88,22 @@
                             Effacer tous les filtres
                         </v-btn>
                     </v-window-item>
+
                     <v-window-item class="px-3" :value="4">
                         <v-list class="pt-0 mb-10">
                             <v-list-item v-if="serieStore.filterCountries.length" title="Effacer les filtres"
                                 @click="serieStore.filterCountries = []" />
                             <v-checkbox v-for="(country, index) in countries" :key="index" v-model="serieStore.filterCountries" hide-details
                                 :label="country" :value="country" />
+                        </v-list>
+                    </v-window-item>
+
+                    <v-window-item class="px-3" :value="5">
+                        <v-list class="pt-0 mb-10">
+                            <v-list-item v-if="serieStore.filterNotes.length" title="Effacer les filtres"
+                                @click="updateNotes([])" />
+                            <v-checkbox v-for="(note) in notes" :key="note.id" v-model="selectedNotes" hide-details
+                                :label="note.name" :value="note" @update:model-value="updateNotes(selectedNotes)" />
                         </v-list>
                     </v-window-item>
                 </v-window>
@@ -124,6 +140,7 @@ import { useState } from "@/composables/state";
 import type { AppMenuItem } from "@/models/menu";
 import { DEFAULT_LIMIT } from "@/constants/services";
 import { useSerie } from "@/composables/serie";
+import type { Note } from "@/models/note";
 
 const props = defineProps({
     autoSearch: { type: Boolean, default: false },
@@ -131,7 +148,7 @@ const props = defineProps({
     placeholder: { type: String, default: "Titre de la série" },
     search: { type: Boolean, default: false },
 });
-const { getKinds, getPlatforms } = useSearch();
+const { getKinds, getPlatforms, getNotes } = useSearch();
 const { getProfile } = useUser();
 const { logout } = useAuth();
 const { setMenuModal, menuModal } = useState();
@@ -145,6 +162,8 @@ const modal = ref(!!menuModal.value);
 const selectedKinds = ref<Kind[]>(props.discover ? searchStore.filterKinds : serieStore.filterKinds);
 const selectedPlatforms = ref<Platform[]>(props.discover ? searchStore.filterPlatforms : serieStore.filterPlatforms);
 const selectedLimit = ref(props.discover ? searchStore.filterLimit : 0);
+const selectedNotes = ref(serieStore.filterNotes);
+const notes = ref<Note[]>([]);
 const kinds = ref<Kind[]>([]);
 const platforms = ref<Platform[]>([]);
 const tab = ref(1);
@@ -195,6 +214,13 @@ const updateKinds = (toFilter: Kind[]) => {
         serieStore.filterKinds = toFilter;
 }
 
+const updateNotes = (toFilter: Note[]) => {
+    selectedNotes.value = toFilter;
+
+    if (!props.discover)
+        serieStore.filterNotes = toFilter;
+}
+
 const updatePlatforms = (toFilter: Platform[]) => {
     selectedPlatforms.value = toFilter;
 
@@ -231,6 +257,7 @@ onBeforeMount(async () => {
     kinds.value = await getKinds();
     platforms.value = await getPlatforms();
     countries.value = await getCountries();
+    notes.value = await getNotes();
 });
 </script>
 

@@ -62,7 +62,7 @@ export function useSearch() {
         const kinds = formatKinds();
         const platforms = formatPlatforms();
 
-        if (filterTitle || kinds || platforms) {
+        if (searchStore.hasChanges()) {
             const resp = await searchService.getSeries(filterTitle, kinds, platforms, filterLimit);
             const data = await resp.json();
 

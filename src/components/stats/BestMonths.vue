@@ -26,6 +26,7 @@ const data = ref<Stat[]>([]);
 onBeforeMount(async () => {
     color.value = storageService.getColorChart(CHART_ID) ?? DEFAULT_COLOR;
     data.value = (await getBestMonths(props.userId)).map((obj) => ({
+        id: obj.id,
         label: obj.label,
         value: minsToHours(obj.value) 
     }));

@@ -12,7 +12,6 @@ import UserListCache from "@/cache/modules/userList";
 import SeriesCache from "@/cache/modules/series";
 import type { SerieCacheItem } from "@/types/cache";
 import { useSerieStore } from "@/stores/serie";
-import { fi } from "vuetify/locale";
 
 export function useSerie() {
 

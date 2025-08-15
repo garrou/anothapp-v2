@@ -1,6 +1,6 @@
 <template>
   <v-card>
-    <v-chart class="chart mt-2" color="#f0a12b" :option="option" autoresize />
+    <v-chart class="chart mt-2" color="#f0a12b" :option="option" autoresize @click="handleChartClick" />
   </v-card>
 </template>
 
@@ -22,7 +22,11 @@ const props = defineProps({
   data: { type: Array as PropType<Stat[]>, required: true },
   itemStyle: { type: Object as PropType<Record<string, any>>, default: () => ({}) },
   title: { type: String, required: true },
-})
+});
+
+const emit = defineEmits<{
+  click: [{ id: number; name: string; value: number }]
+}>();
 
 use([
   GridComponent,
@@ -53,6 +57,7 @@ const option = computed(() => ({
       type: "pie",
       radius: "60%",
       data: props.data.map((record, i) => ({
+        id: record.id,
         name: record.label,
         value: record.value,
         itemStyle: props.itemStyle[i]
@@ -68,4 +73,8 @@ const option = computed(() => ({
     },
   ],
 }));
+
+const handleChartClick = (params: any) => {
+  emit("click", params.data);
+};
 </script>

@@ -1,3 +1,5 @@
+import { ChartGroupedType } from "@/types/types";
+
 export interface GlobalStat {
     
     monthTime: number;
@@ -20,4 +22,15 @@ export interface Stat {
     label: string;
 
     value: number;
+}
+
+export interface ChartData {
+
+    id: number;
+
+    name: string;
+
+    value: number;
+
+    kind: ChartGroupedType;
 }

@@ -26,12 +26,12 @@
             <v-btn :icon="CLOSE_ICON" variant="text" @click="modal = false" />
         </template>
         <div v-if="selected === 'images'">
-            <v-expansion-panels variant="accordion">
+            <v-expansion-panels multiple variant="accordion">
                 <v-expansion-panel v-for="serie in series" :key="serie.id"
                     @group:selected="(open: any) => getImages(open.value, serie.id)">
                     <v-expansion-panel-title>{{ serie.title }}</v-expansion-panel-title>
                     <v-expansion-panel-text>
-                        <images-row :images="images" :loading="loading" @refresh="refresh" />
+                        <images-row :images="images[serie.id]" :loading="loading" @refresh="refresh" />
                     </v-expansion-panel-text>
                 </v-expansion-panel>
             </v-expansion-panels>
@@ -66,7 +66,7 @@ const { getProfile } = useUser();
 const { getSeries } = useSerie();
 const { getSerieImages } = useSearch();
 
-const images = ref<string[]>([]);
+const images = ref<Record<number, string[]>>({});
 const loading = ref(false);
 const modal = ref(false);
 const profile = ref<User>();
@@ -82,9 +82,9 @@ const showModal = async (select: ProfileModal) => {
 }
 
 const getImages = async (open: boolean, id: number) => {
-    if (!open) return;
+    if (!open || images.value[id]) return;
     loading.value = true;
-    images.value = await getSerieImages(id);
+    images.value[id] = await getSerieImages(id);
     loading.value = false;
 }
 

@@ -48,7 +48,7 @@
                 <series-kinds :user-id="userId" @click="handleChartClick" />
             </v-col>
             <v-col cols="12" md="6">
-                <seasons-platforms :user-id="userId" @click="handleChartClick" />
+                <seasons-platforms :user-id="userId" />
             </v-col>
             <v-col cols="12" md="6">
                 <series-countries :user-id="userId" @click="handleChartClick" />
@@ -59,7 +59,7 @@
         </template>
     </v-row>
 
-    <base-modal v-model="modal" :max-width="800" @update:modelValue="handleClose">
+    <base-modal v-model="modal" :max-width="800">
         <template #title>
             <span v-if="modalTitle">{{ modalTitle }}</span>
             <v-btn :icon="CLOSE_ICON" variant="text" @click="modal = false"/>
@@ -94,7 +94,7 @@ import SeriesNotes from "@/components/stats/SeriesNotes.vue";
 import { useStatistic } from "@/composables/statistic";
 import { ELEVATION, MAIN_COLOR } from "@/constants/style";
 import type { ChartData, GlobalStat } from "@/models/stat";
-import { computed, onBeforeMount, ref } from "vue";
+import { computed, onBeforeMount, ref, watch } from "vue";
 import storageService from "@/services/storageService";
 import BestMonths from "@/components/stats/BestMonths.vue";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
@@ -149,10 +149,11 @@ const handleChartClick = async (data: ChartData) => {
     modal.value = true;
 };
 
-const handleClose = () => {
-    if (modal.value) return;
-    serieStore.reset();
-};
+watch(modal, (value) => {
+    if (!value) {
+        serieStore.reset();
+    }
+});
 
 onBeforeMount(async () => {
     loading.value = true;

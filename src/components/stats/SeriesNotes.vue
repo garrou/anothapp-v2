@@ -19,7 +19,7 @@ const { getSeriesNotes } = useStatistic();
 
 const data = ref<Stat[]>([]);
 
-const itemStyle = computed(() => data.value.map((record) => ({ color: NOTE_COLORS_RGB[record.label] })));
+const itemStyle = computed(() => data.value.map((record) => ({ color: NOTE_COLORS_RGB[record.id] })));
 
 onBeforeMount(async () => {
   data.value = await getSeriesNotes(props.userId);

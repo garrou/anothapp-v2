@@ -25,4 +25,5 @@ export const NOTE_ICONS: Record<number, IconValue> = {
     2: "mdi-emoticon-neutral-outline",
     3: "mdi-emoticon-happy-outline",
     4: "mdi-emoticon-excited-outline",
+    5: "mdi-emoticon-cool-outline"
 }

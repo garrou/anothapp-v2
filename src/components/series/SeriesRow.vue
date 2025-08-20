@@ -4,7 +4,7 @@
         <v-col v-for="serie in series" :cols="6" :md="3" :key="serie.id">
             <base-skeleton :loading="loading" type="card">
                 <serie-card :serie="serie" :watch-status="watchStatus"
-                    @refresh="(id, kind) => $emit('refresh', id, kind)" />
+                    @refresh="(id: number, kind: string) => $emit('refresh', id, kind)" />
             </base-skeleton>
         </v-col>
     </v-row>

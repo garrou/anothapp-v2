@@ -12,7 +12,7 @@ import Details from "@/views/discover/Details.vue";
 import { useAuth } from "@/composables/auth";
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHistory(),
   routes: [
     {
       path: "/",

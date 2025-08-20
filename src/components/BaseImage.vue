@@ -1,6 +1,5 @@
 <template>
-    <!-- TODO: add lazy-src -->
-    <v-img :src="src" class="align-end" :cover="cover">
+    <v-img :src="src" class="align-end" :cover="cover" aspect-ratio="0.679">
         <template #placeholder>
             <v-row align="center" class="fill-height ma-0" justify="center">
                 <v-progress-circular :color="MAIN_COLOR" indeterminate />

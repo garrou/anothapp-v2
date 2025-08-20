@@ -7,12 +7,16 @@
 import BaseAppBar from "@/components/BaseAppBar.vue";
 import SeriesRow from "@/components/series/SeriesRow.vue";
 import type { Serie } from "@/models/serie";
-import { onBeforeMount, ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useSerie } from "@/composables/serie";
 import { watch } from "vue";
 import { storeToRefs } from "pinia";
 import { useSerieStore } from "@/stores/serie";
+import { onBeforeRouteLeave, useRoute } from "vue-router";
+import { useScrollStore } from "@/stores/scroll";
 
+const route = useRoute();
+const scrollStore = useScrollStore();
 const { getSeries } = useSerie();
 const { filterCountries, filterKinds, filterPlatforms, filterTitle, filterNotes } = storeToRefs(useSerieStore());
 
@@ -29,5 +33,16 @@ watch([filterTitle, filterKinds, filterPlatforms, filterCountries, filterNotes],
     fetchSeries().then();
 });
 
-onBeforeMount(fetchSeries);
+onBeforeRouteLeave((to, from, next) => {
+    scrollStore.positions[route.fullPath] = window.scrollY;
+    next();
+});
+
+onMounted(async () => {
+    await fetchSeries();
+    const scrollY = scrollStore.positions[route.fullPath];
+    if (scrollY) {
+        window.scrollTo(0, scrollY);
+    }
+});
 </script>

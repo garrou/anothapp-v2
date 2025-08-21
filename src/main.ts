@@ -12,7 +12,6 @@ import { createVuetify } from "vuetify";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
 import { useSnackbar } from "@/composables/snackbar";
-import { views } from "./views";
 import { VCalendar } from "vuetify/labs/VCalendar";
 import cache from "./cache";
 
@@ -40,7 +39,6 @@ app.config.errorHandler = (err: unknown) => snackbar.showError(err as Error);
 cache
 .initialize()
 .then(() => {
-    Object.entries(views).forEach(([name, component]) => app.component(name, component));
     app.mount("#app");
 })
 .catch(() => snackbar.showError("Erreur durant l'initialisation de l'application"));

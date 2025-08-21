@@ -1,3 +1,5 @@
+import type { SerieStatus } from "@/types/types";
+
 interface MenuItem {
 
     title: string;
@@ -10,7 +12,12 @@ export interface BottomNavMenuItem extends MenuItem {
     link: string;
 }
 
-export interface AppMenuItem extends MenuItem {
+export interface NavStatusMenuItem extends MenuItem {
 
-    component?: string;
+    status: SerieStatus;
+}
+
+export interface NavOthersMenuItem extends MenuItem {
+
+    link: string;
 }

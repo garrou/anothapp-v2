@@ -1,5 +1,6 @@
-import type { AppMenuItem, BottomNavMenuItem } from "@/models/menu";
+import type { NavStatusMenuItem, BottomNavMenuItem, NavOthersMenuItem } from "@/models/menu";
 import { ADD_ICON, FAVORITE_ICON } from "./icons";
+import { SerieStatus } from "@/types/types";
 
 export const PAGE_WITHOUT_BOTTOM_NAVBAR = ["home", "login", "register"]
 
@@ -26,44 +27,43 @@ export const NAV_MENU: BottomNavMenuItem[] = [
     }
 ];
 
-export const APP_MENU: AppMenuItem[] = [
+export const NAV_SERIES_STATUS: NavStatusMenuItem[] = [
     {
         title: "Ma liste",
         icon: "mdi-format-list-bulleted-square",
-        component: "List"
+        status: SerieStatus.Watchlist
     },
     {
         title: "Séries à continuer",
         icon: "mdi-play",
-        component: "Continue"
+        status: SerieStatus.Continue
     },
-    {
-        title: "Historique",
-        icon: "mdi-timeline-clock",
-        component: "History"
-    },    
     {
         title: "Favoris",
         icon: FAVORITE_ICON,
-        component: "Favorites"
+        status: SerieStatus.Favorite
     },
     {
         title: "Séries arrêtées",
         icon: "mdi-close-circle",
-        component: "Resume"
+        status: SerieStatus.Stopped
+    }
+];
+
+export const NAV_OTHERS: NavOthersMenuItem[] = [
+    {
+        title: "Historique",
+        icon: "mdi-play",
+        link: "/history"
     },
     {
         title: "Calendrier des ajouts",
         icon: "mdi-calendar",
-        component: "Calendar"
+        link: "/calendar"
     },
     {
         title: "Paramètres",
         icon: "mdi-wrench",
-        component: "Settings"
-    },
-    { 
-        title: "Se déconnecter",
-        icon: "mdi-logout",
+        link: "/settings"
     }
 ];

@@ -1,18 +1,23 @@
 <template>
-    <v-select v-model="month" :density="DENSITY" :items="MONTHS" item-title="text" item-value="value"
-        @update:model-value="getHistory" />
-    <v-timeline>
-        <v-timeline-item v-for="(season, index) in timeline" size="x-small" :key="index">
-            <template v-slot:opposite>
-                <router-link :text="season.showTitle" :to="`/series/${season.showId}`" />
-                <p v-if="season.addedAt">{{ formatDate(season.addedAt) }}</p>
-            </template>
-            <season-card :serieLink="`/series/${season.showId}`" :season="season.season" />
-        </v-timeline-item>
-    </v-timeline>
+    <base-app-bar />
+
+    <v-container>
+        <v-select v-model="month" :density="DENSITY" :items="MONTHS" item-title="text" item-value="value"
+            @update:model-value="getHistory" />
+        <v-timeline>
+            <v-timeline-item v-for="(season, index) in timeline" :key="index">
+                <template v-slot:opposite>
+                    <router-link :text="season.showTitle" :to="`/series/${season.showId}`" />
+                    <p v-if="season.addedAt">{{ formatDate(season.addedAt) }}</p>
+                </template>
+                <season-card :serieLink="`/series/${season.showId}`" :season="season.season" />
+            </v-timeline-item>
+        </v-timeline>
+    </v-container>
 </template>
 
 <script lang="ts" setup>
+import BaseAppBar from "@/components/BaseAppBar.vue";
 import SeasonCard from "@/components/seasons/SeasonCard.vue";
 import { useSeason } from "@/composables/season";
 import { DENSITY } from "@/constants/style";

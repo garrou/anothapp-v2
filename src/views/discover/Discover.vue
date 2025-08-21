@@ -11,7 +11,7 @@ import { onMounted, ref, watch } from "vue";
 import { useSearch } from "@/composables/search";
 import { storeToRefs } from "pinia";
 import { useSearchStore } from "@/stores/search";
-import { onBeforeRouteLeave, useRoute } from "vue-router";
+import { useRoute } from "vue-router";
 import { useScrollStore } from "@/stores/scroll";
 
 const route = useRoute();
@@ -32,16 +32,8 @@ watch([filterTitle, filterKinds, filterPlatforms, filterLimit], () => {
     fetchSeries().then();
 });
 
-onBeforeRouteLeave((to, from, next) => {
-    scrollStore.positions[route.fullPath] = window.scrollY;
-    next();
-});
-
 onMounted(async () => {
     await fetchSeries();
-    const scrollY = scrollStore.positions[route.fullPath];
-    if (scrollY) {
-        window.scrollTo(0, scrollY);
-    }
+    scrollStore.scrollToPosition(route.fullPath);
 });
 </script>

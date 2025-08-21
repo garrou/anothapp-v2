@@ -94,7 +94,7 @@ import SeriesNotes from "@/components/stats/SeriesNotes.vue";
 import { useStatistic } from "@/composables/statistic";
 import { ELEVATION, MAIN_COLOR } from "@/constants/style";
 import type { ChartData, GlobalStat } from "@/models/stat";
-import { computed, onBeforeMount, ref, watch } from "vue";
+import { computed, onBeforeMount, onMounted, ref, watch } from "vue";
 import storageService from "@/services/storageService";
 import BestMonths from "@/components/stats/BestMonths.vue";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
@@ -103,6 +103,8 @@ import { useSerieStore } from "@/stores/serie";
 import type { Serie } from "@/models/serie";
 import { useSerie } from "@/composables/serie";
 import { CLOSE_ICON } from "@/constants/icons";
+import { useScrollStore } from "@/stores/scroll";
+import { useRoute } from "vue-router";
 
 const props = defineProps({
     userId: { type: String, default: undefined },
@@ -111,6 +113,7 @@ const props = defineProps({
 
 const url = props.userId ? "discover" : "series";
 
+const route = useRoute();
 const { getSeries } = useSerie();
 const { getStats } = useStatistic();
 const serieStore = useSerieStore();
@@ -155,10 +158,11 @@ watch(modal, (value) => {
     }
 });
 
-onBeforeMount(async () => {
+onMounted(async () => {
     loading.value = true;
     displayChart.value = storageService.getDisplayChart();
     stat.value = await getStats(props.userId);
     loading.value = false;
+    useScrollStore().scrollToPosition(route.fullPath);
 });
 </script>

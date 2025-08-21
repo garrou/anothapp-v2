@@ -10,11 +10,11 @@
 
         <v-card-actions>
             <base-menu open-on-click open-on-hover>
-                <button-favorite-serie :serie-id="serie.id" @refresh="$emit('refresh', serie.id, 'favorite')" />
+                <button-favorite-serie :serie-id="serie.id" @refresh="$emit('refresh', serie.id)" />
                 <button-watch-serie v-if="watchStatus" :serie-id="serie.id"
-                    @refresh="$emit('refresh', serie.id, 'watch')" />
+                    @refresh="$emit('refresh', serie.id)" />
                 <button-add-serie :serie-id="serie.id" />
-                <button-list-serie :serie="serie" @refresh="$emit('refresh', serie.id, 'list')" />
+                <button-list-serie :serie="serie" @refresh="$emit('refresh', serie.id)" />
                 <button-modal-serie-details :serie="serie" />
             </base-menu>
         </v-card-actions>

@@ -21,15 +21,28 @@
         </v-app-bar>
 
         <v-navigation-drawer v-model="menus" location="left" temporary>
-
             <v-list-item v-if="user" :prepend-avatar="user.picture" :title="user.username"
                 @click="$router.push('/profile')" />
 
             <v-divider />
 
             <v-list :density="DENSITY" nav>
-                <v-list-item v-for="(item, index) in APP_MENU" :key="index" :prepend-icon="item.icon"
-                    :title="item.title" @click="updateMenuModal(item)" />
+                <v-list-item v-for="(item, index) in NAV_SERIES_STATUS" :key="index"
+                    :to="`/series-status?status=${item.status}`" :prepend-icon="item.icon" :title="item.title"
+                    variant="plain" />
+            </v-list>
+
+            <v-divider />
+
+            <v-list :density="DENSITY" nav>
+                <v-list-item v-for="(item, index) in NAV_OTHERS" :key="index" :to="item.link" :prepend-icon="item.icon"
+                    :title="item.title" variant="plain" />
+            </v-list>
+
+            <v-divider />
+
+            <v-list :density="DENSITY" nav>
+                <v-list-item prepend-icon="mdi-logout" title="Se déconnecter" variant="plain" @click="logout" />
             </v-list>
         </v-navigation-drawer>
 
@@ -93,8 +106,8 @@
                         <v-list class="pt-0 mb-10">
                             <v-list-item v-if="serieStore.filterCountries.length" title="Effacer les filtres"
                                 @click="serieStore.filterCountries = []" />
-                            <v-checkbox v-for="(country, index) in countries" :key="index" v-model="serieStore.filterCountries" hide-details
-                                :label="country" :value="country" />
+                            <v-checkbox v-for="(country, index) in countries" :key="index"
+                                v-model="serieStore.filterCountries" hide-details :label="country" :value="country" />
                         </v-list>
                     </v-window-item>
 
@@ -109,25 +122,13 @@
                 </v-window>
             </div>
         </v-navigation-drawer>
-
-        <base-modal v-if="menuModal?.component" v-model="modal">
-            <template #title>
-                <span>{{ menuModal.title }}</span>
-                <v-btn :icon="CLOSE_ICON" variant="text" @click="modal = false" />
-            </template>
-            <component :is="menuModal.component" />
-        </base-modal>
-        <base-confirm v-else v-model="modal" text="Confirmez-vous la déconnexion ?" title="Se déconnecter" persistent
-            @cancel="modal = false" @confirm="handleLogout" />
     </v-layout>
 </template>
 
 <script lang="ts" setup>
-import BaseConfirm from "./BaseConfirm.vue";
-import BaseModal from "./BaseModal.vue";
 import { DENSITY, ELEVATION } from "@/constants/style";
-import { CLOSE_ICON, FILTER_ICON, PLATFORM_ICON, SEARCH_ICON } from "@/constants/icons";
-import { APP_MENU } from "@/constants/menus";
+import { FILTER_ICON, PLATFORM_ICON, SEARCH_ICON } from "@/constants/icons";
+import { NAV_OTHERS, NAV_SERIES_STATUS } from "@/constants/menus";
 import { computed, onBeforeMount, ref, watch } from "vue";
 import { useUser } from "@/composables/user";
 import { useSearch } from "@/composables/search";
@@ -137,7 +138,6 @@ import { useSearchStore } from "@/stores/search";
 import { useSerieStore } from "@/stores/serie";
 import { useAuth } from "@/composables/auth";
 import { useState } from "@/composables/state";
-import type { AppMenuItem } from "@/models/menu";
 import { DEFAULT_LIMIT } from "@/constants/services";
 import { useSerie } from "@/composables/serie";
 import type { Note } from "@/models/note";
@@ -151,14 +151,12 @@ const props = defineProps({
 const { getKinds, getPlatforms, getNotes } = useSearch();
 const { getProfile } = useUser();
 const { logout } = useAuth();
-const { setMenuModal, menuModal } = useState();
 const { getCountries } = useSerie();
 const searchStore = useSearchStore();
 const serieStore = useSerieStore();
 
 const filters = ref(false);
 const menus = ref(false);
-const modal = ref(!!menuModal.value);
 const selectedKinds = ref<Kind[]>(props.discover ? searchStore.filterKinds : serieStore.filterKinds);
 const selectedPlatforms = ref<Platform[]>(props.discover ? searchStore.filterPlatforms : serieStore.filterPlatforms);
 const selectedLimit = ref(props.discover ? searchStore.filterLimit : 0);
@@ -237,20 +235,6 @@ const openFilterDrawer = async () => {
     menus.value = false;
     filters.value = !filters.value;
 }
-
-const updateMenuModal = (item?: AppMenuItem) => {
-    setMenuModal(item);
-    modal.value = !!menuModal.value;
-}
-
-const handleLogout = () => {
-    modal.value = false;
-    logout();
-}
-
-watch(modal, () => {
-    if (!modal.value) setMenuModal(undefined);
-});
 
 onBeforeMount(async () => {
     user.value = await getProfile();

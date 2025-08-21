@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHistory, useRoute } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import LoginView from "@/views/auth/LoginView.vue";
 import RegisterView from "@/views/auth/RegisterView.vue";
@@ -10,6 +10,11 @@ import Profile from "@/views/profile/Profile.vue";
 import Friends from "@/views/friends/Friends.vue";
 import Details from "@/views/discover/Details.vue";
 import { useAuth } from "@/composables/auth";
+import { useScrollStore } from "@/stores/scroll";
+import SeriesStatus from "@/views/series/SeriesStatus.vue";
+import History from "@/views/navigation/History.vue";
+import Calendar from "@/views/navigation/Calendar.vue";
+import Settings from "@/views/navigation/Settings.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -42,6 +47,39 @@ const router = createRouter({
       name: "serie",
       component: Serie,
       props: (route) => ({ id: Number(route.params.id) }),
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: "/series-status",
+      name: "series-status",
+      component: SeriesStatus,
+      props: (route) => ({ status: route.query.status }),
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: "/history",
+      name: "history",
+      component: History,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: "/calendar",
+      name: "calendar",
+      component: Calendar,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: "/settings",
+      name: "settings",
+      component: Settings,
       meta: {
         requiresAuth: true
       }
@@ -95,9 +133,13 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from) => {
+  const route = useRoute();
+  const scrollStore = useScrollStore();
   const { checkAuth } = useAuth();
   const isLoggedIn = await checkAuth();
-  
+
+  scrollStore.saveScrollPosition(route.fullPath, window.scrollY);
+
   if (to.meta.requiresAuth && !isLoggedIn) {
     return {
       path: "/login",

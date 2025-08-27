@@ -1,3 +1,3 @@
 # anothapp-v2
 
-The second version of [Anothapp](https://github.com/garrou/anothapp).
+Application to track and manage TV shows.

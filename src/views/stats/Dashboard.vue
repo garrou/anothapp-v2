@@ -68,7 +68,7 @@
             <tbody>
                 <tr v-for="serie in series" :key="serie.id">
                     <td>
-                        <router-link :text="serie.title" :to="`/${url}/${serie.id}`" />
+                        <router-link :text="serie.title" :to="`/${url}/${serie.id}`" @click="serieStore.reset()" />
                     </td>
                 </tr>
             </tbody>

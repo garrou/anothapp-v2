@@ -4,7 +4,7 @@
             <base-image max-height="580" :src="serie.poster" />
         </v-col>
         <v-col cols="12" md="6">
-            <v-alert class="my-2" :color="status" :density="DENSITY" :icon="icon" :title="serie.status" />
+            <v-alert class="my-2" :color="status" :density="DENSITY" :icon="icon" :title="statusLabel" />
             <template v-for="(obj, index) in cards">
                 <v-card v-if="obj.display !== false" class="mb-2" :elevation="ELEVATION" :key="index">
                     <v-card-item>
@@ -36,7 +36,8 @@ const props = defineProps({
 });
 
 const cards = SerieDetailsLayout(props.serie);
-const status = props.serie.status === "En cours" ? "info" : "success";
+const status = props.serie.finished ? "success" : "info";
+const statusLabel = props.serie.finished ? "Terminée" : "En cours";
 const icon = `\$${status}`;
 </script>
 

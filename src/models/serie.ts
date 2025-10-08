@@ -31,7 +31,7 @@ export interface Serie extends BaseSerie {
         
     note?: number;
         
-    status?: string;
+    finished: boolean;
         
     creation?: number;
 

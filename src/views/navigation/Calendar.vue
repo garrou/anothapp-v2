@@ -3,13 +3,6 @@
 
     <v-sheet>
         <v-calendar ref="calendar" v-model="value" :events="seasons" :view-mode="calendarView" :weekdays="weekdays">
-            <template v-slot:day-body="{ events }">
-                <v-card v-for="event in events" :key="event.id" class="ma-2" :color="event.color as string"
-                    @click="$router.push(`/series/${event.id}`)">
-                    <v-card-text class="py-1">{{ event.title }}</v-card-text>
-                    <v-card-subtitle class="mb-1">{{ event.season }}</v-card-subtitle>
-                </v-card>
-            </template>
         </v-calendar>
     </v-sheet>
 </template>
@@ -26,7 +19,7 @@ const weekdays = [0, 1, 2, 3, 4, 5, 6] as CalendarWeekdays[];
 const { getSeasonsTimeline } = useSeason();
 
 const seasons = ref<any[]>([]);
-const value = ref([new Date()]);
+const value = ref("");
 const windowWidth = ref(window.innerWidth);
 
 const calendarView = computed(() => windowWidth.value < 600 ? "day" : "month");

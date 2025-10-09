@@ -56,7 +56,7 @@ const series = ref<any[]>([]);
 const value = ref("");
 const windowWidth = ref(window.innerWidth);
 
-const calendarView = computed(() => windowWidth.value < 600 ? "day" : "month");
+const calendarView = computed(() => windowWidth.value < 600 ? "week" : "month");
 
 const rnd = (a: number, b: number) => Math.floor((b - a + 1) * Math.random()) + a;
 

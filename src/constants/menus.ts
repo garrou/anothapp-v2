@@ -57,7 +57,7 @@ export const NAV_OTHERS: NavOthersMenuItem[] = [
         link: "/history"
     },
     {
-        title: "Calendrier des ajouts",
+        title: "Prochains épisodes",
         icon: "mdi-calendar",
         link: "/calendar"
     },

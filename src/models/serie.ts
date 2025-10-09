@@ -42,6 +42,8 @@ export interface Serie extends BaseSerie {
     watch?: boolean;
 
     list?: boolean;
+
+    nextEpisode?: string;
 }
 
 export interface Platform {

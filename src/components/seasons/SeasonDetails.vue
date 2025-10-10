@@ -18,8 +18,8 @@
 
             <div v-if="isEdited(subSeason.id)" class="px-4 pb-2">
                 <v-label>Plateformes</v-label>
-                <v-select v-model="platform" :density="DENSITY" :items="platforms" item-title="name" item-value="id" />
-                <v-text-field v-model="viewedAt" type="datetime-local" />
+                <v-select v-model="seasonInfo.platform" :density="DENSITY" :items="platforms" item-title="name" item-value="id" />
+                <v-text-field v-model="seasonInfo.viewedAt" type="datetime-local" />
 
                 <div class="d-flex justify-end">
                     <v-btn elevation="0" @click="changeSeason" :color="MAIN_COLOR">Enregistrer</v-btn>
@@ -35,7 +35,7 @@
 <script lang="ts" setup>
 import BaseConfirm from "@/components/BaseConfirm.vue";
 import type { PropType } from "vue";
-import { onBeforeMount, ref, watch } from "vue";
+import { onBeforeMount, reactive, ref, watch } from "vue";
 import type { Season, SeasonDetail } from "@/models/season";
 import { useSeason } from "@/composables/season";
 import { formatDate, formatDateTime, minsToStringHoursDays } from "@/utils/format";
@@ -65,8 +65,10 @@ const selected = ref(-1);
 const time = ref(0);
 const toEdit = ref(-1);
 const platforms = ref<Platform[]>([]);
-const platform = ref<number>();
-const viewedAt = ref<string>();
+const seasonInfo = reactive({
+    platform: 0,
+    viewedAt: ""
+});
 
 const isEdited = (id: number): boolean => toEdit.value === id;
 
@@ -86,16 +88,16 @@ const dropSeason = async (id: number) => {
 }
 
 const changeSeason = async () => {
-    const updated = await updateSeason(toEdit.value, platform.value, viewedAt.value);
+    const updated = await updateSeason(toEdit.value, seasonInfo.platform, seasonInfo.viewedAt);
     if (!updated) return;
 
     const idx = seasons.value.map((s) => s.id).indexOf(toEdit.value);
-    if (idx < 0 || !viewedAt.value || !platform.value) return;
+    if (idx < 0 || !seasonInfo.viewedAt || !seasonInfo.platform) return;
 
-    const newPlatform = platforms.value.find((s) => s.id === platform.value);
+    const newPlatform = platforms.value.find((s) => s.id === seasonInfo.platform);
     if (!newPlatform) return;
 
-    seasons.value[idx].addedAt = formatDateTime(viewedAt.value);
+    seasons.value[idx].addedAt = formatDateTime(seasonInfo.viewedAt);
     seasons.value[idx].platform = newPlatform;
 }
 
@@ -106,8 +108,8 @@ watch(toEdit, () => {
         editSeason(toEdit.value);
         return;
     };
-    platform.value = season.platform.id;
-    viewedAt.value = formatDateTime(season.addedAt);
+    seasonInfo.platform = season.platform.id;
+    seasonInfo.viewedAt = formatDateTime(season.addedAt);
 });
 
 onBeforeMount(async () => {

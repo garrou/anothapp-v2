@@ -92,10 +92,10 @@
             <span>Modifier la date d'ajout</span>
             <v-btn :icon="CLOSE_ICON" variant="text" @click="updateModal = false" />
         </template>
-        <v-text-field v-model="addedAt" type="datetime-local" :max="maxDate" />
+        <v-text-field v-model="showInfo.addedAt" type="datetime-local" :max="maxDate" />
 
         <div class="d-flex justify-end">
-            <v-btn elevation="0" @click="updateSeasonDate" :color="MAIN_COLOR">Enregistrer</v-btn>
+            <v-btn elevation="0" @click="updateSerieDate" :color="MAIN_COLOR">Enregistrer</v-btn>
         </div>
     </base-modal>
 </template>
@@ -115,7 +115,7 @@ import SeasonEpisodes from "@/components/seasons/SeasonEpisodes.vue";
 import SeasonsRow from "@/components/seasons/SeasonsRow.vue";
 import FriendsRow from "@/components/friends/FriendsRow.vue";
 import type { SerieInfo } from "@/models/serie";
-import { computed, onBeforeMount, ref } from "vue";
+import { computed, onBeforeMount, reactive, ref } from "vue";
 import { useSeason } from "@/composables/season";
 import { useSearch } from "@/composables/search";
 import { useSerie } from "@/composables/serie";
@@ -147,8 +147,6 @@ const { showSuccess, showError } = useSnackbar();
 
 const friends = ref<User[]>([]);
 const infos = ref<SerieInfo>();
-const isFavorite = ref(false);
-const isWatching = ref(false);
 const loading = ref(false);
 const modal = ref(false);
 const seasons = ref<Season[]>([]);
@@ -157,7 +155,11 @@ const notes = ref<Note[]>([]);
 const tab = ref(1);
 const isAddable = ref(false);
 const updateModal = ref(false);
-const addedAt = ref<string>();
+const showInfo = reactive({
+    isFavorite: false,
+    isWatching: false,
+    addedAt: ""
+});
 
 const missingTime = computed(() => {
     const allSeasons = seasons.value;
@@ -189,11 +191,11 @@ const load = async (): Promise<void> => {
     }
     infos.value = await getSerieInfos({ id: props.id });
     seasons.value = await getSeasonsBySerieId(props.id);
-    isFavorite.value = infos.value?.serie.favorite ?? false;
-    isWatching.value = infos.value?.serie.watch ?? false;
+    showInfo.isFavorite = infos.value?.serie.favorite ?? false;
+    showInfo.isWatching = infos.value?.serie.watch ?? false;
 
     if (infos.value?.serie.addedAt) {
-        addedAt.value = formatDateTime(infos.value.serie.addedAt);
+        showInfo.addedAt = formatDateTime(infos.value.serie.addedAt);
     }
     loading.value = false;
 }
@@ -217,20 +219,20 @@ const getFriendsWhoWatch = async (): Promise<void> => {
     loading.value = false;
 }
 
-const updateSeasonDate = async (): Promise<void> => {
-    if (!infos.value?.serie || !addedAt.value) return;
+const updateSerieDate = async (): Promise<void> => {
+    if (!infos.value?.serie || !showInfo.addedAt) return;
 
-    if (new Date(addedAt.value) > new Date(maxDate)) {
+    if (new Date(showInfo.addedAt) > new Date(maxDate)) {
         showError("Date d'ajout invalide");
         return;
     }
-    const updated = await updateField(infos.value.serie, "addedAt", addedAt.value);
+    const updated = await updateField(infos.value.serie, "addedAt", showInfo.addedAt);
 
     if (!updated) {
         showError("Impossible de modifier la date d'ajout de la série");
         return;
     }
-    infos.value.serie.addedAt = addedAt.value;
+    infos.value.serie.addedAt = showInfo.addedAt;
     showSuccess("Date d'ajout de la série modifiée");
     updateModal.value = false;
 }

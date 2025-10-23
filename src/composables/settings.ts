@@ -6,9 +6,10 @@ export function useSettings() {
     const exportData = async () => {
         const resp = await settingService.exportData();
         if (!resp.ok) {
-            throw new Error("Erreur lors de l'export des données");
+            const { message } = await resp.json();
+            throw new Error(message ?? "Erreur lors de l'export des données");
         }
-        
+
         const contentDisposition = resp.headers.get('content-disposition');
         let filename = 'data.json';
 

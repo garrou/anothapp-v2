@@ -52,7 +52,7 @@ const deleteFriend = async (userId: string): Promise<Response> => {
 }
 
 const getFriendProfile = async (userId: string): Promise<Response> => {
-    return fetch(`${ENDPOINT}/${PREFIX}/${userId}/profile`, { 
+    return fetch(`${ENDPOINT}/${PREFIX}/${userId}`, { 
         headers: {
             "Authorization": `Bearer ${storageService.getJwt()}`,
         },

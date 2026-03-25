@@ -12,7 +12,7 @@ import { createVuetify } from "vuetify";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
 import { useSnackbar } from "@/composables/snackbar";
-import { VCalendar } from "vuetify/labs/VCalendar";
+import { VCalendar } from "vuetify/components";
 import cache from "./cache";
 
 const vuetify = createVuetify({

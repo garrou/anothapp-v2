@@ -15,6 +15,7 @@ import SeriesStatus from "@/views/series/SeriesStatus.vue";
 import History from "@/views/navigation/History.vue";
 import Calendar from "@/views/navigation/Calendar.vue";
 import Settings from "@/views/navigation/Settings.vue";
+import Platforms from "@/views/navigation/Platforms.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -56,6 +57,14 @@ const router = createRouter({
       name: "series-status",
       component: SeriesStatus,
       props: (route) => ({ status: route.query.status }),
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: "/platforms",
+      name: "platforms",
+      component: Platforms,
       meta: {
         requiresAuth: true
       }

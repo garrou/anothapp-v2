@@ -28,5 +28,7 @@ export interface SeasonTimeline {
 
     showId: number;
 
+    platformId?: number;
+
     showTitle: string
 }

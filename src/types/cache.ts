@@ -14,3 +14,5 @@ export type PlatformCacheItem = Platform & CacheRecordValue;
 export type KindCacheItem = Kind & CacheRecordValue;
 
 export type NoteCacheItem = Note & CacheRecordValue;
+
+export type UserPlatformCacheItem = { platformId: number } & CacheRecordValue;

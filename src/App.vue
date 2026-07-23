@@ -13,14 +13,19 @@ import HomeAppBar from "./components/HomeAppBar.vue";
 import { useSerie } from "./composables/serie";
 import { useAuth } from "./composables/auth";
 import { SerieStatus } from "./types/types";
+import { usePlatform } from "./composables/platform.js";
 
 const { checkAuth } = useAuth();
+const { getUserPlatforms } = usePlatform();
 const { getSeries, getSeriesByStatus } = useSerie();
 
 onBeforeMount(async () => {
   if (await checkAuth()) {
-    await getSeries();
-    await getSeriesByStatus(SerieStatus.Watchlist);
+    await Promise.all([
+      getSeries(),
+      getSeriesByStatus(SerieStatus.Watchlist),
+      getUserPlatforms(),
+    ]);
   }
 });
 </script>

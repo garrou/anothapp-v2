@@ -248,9 +248,15 @@ const updateSerieNote = async (): Promise<void> => {
     showSuccess("Note modifiée");
 }
 
-onBeforeMount(async () => {
-    await load();
-    await getPlatforms();
+const loadNotes = async () => {
     notes.value = await getNotes();
+}
+
+onBeforeMount(async () => {
+    await Promise.all([
+        load(),
+        getPlatforms(),
+        loadNotes()
+    ]);
 });
 </script>

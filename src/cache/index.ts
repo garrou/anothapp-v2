@@ -6,6 +6,7 @@ import PlatformsCache from "./modules/platforms";
 import KindsCache from "./modules/kinds";
 import UserListCache from "./modules/userList";
 import NotesCache from "./modules/notes";
+import UserPlatformsCache from "./modules/userPlatforms";
 
 export default new (class CacheManager {
     userSeries!: UserSeriesCache;
@@ -15,9 +16,10 @@ export default new (class CacheManager {
     kinds!: KindsCache;
     notes!: NotesCache;
     userList!: UserListCache;
+    userPlatforms!: UserPlatformsCache;
 
-    readonly #name = "cache";
-    readonly #version = 2;
+    readonly #name = "anothapp-cache";
+    readonly #version = 1;
 
     async initialize() {
         const db = await openDB(this.#name, this.#version, {
@@ -29,9 +31,8 @@ export default new (class CacheManager {
                     PlatformsCache.createStructure(database);
                     KindsCache.createStructure(database);
                     UserListCache.createStructure(database);
-                }
-                if (oldVersion < 2) {
                     NotesCache.createStructure(database);
+                    UserPlatformsCache.createStructure(database);
                 }
             },
             blocking() {
@@ -48,6 +49,7 @@ export default new (class CacheManager {
         this.kinds = new KindsCache(db);
         this.userList = new UserListCache(db);
         this.notes = new NotesCache(db);
+        this.userPlatforms = new UserPlatformsCache(db);
     }
 
     async reset() {

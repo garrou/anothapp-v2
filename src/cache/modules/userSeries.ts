@@ -68,20 +68,20 @@ export default class UserSeriesCache extends CacheModule<SerieCacheItem> {
         if (isError(resp.status)) {
             throw new Error(data.message);
         }
-        data.forEach(async (serie: Serie) => {
+        await Promise.all(data.map(async (serie: Serie) => {
             const cacheValue: SerieCacheItem = {
                 expires: Date.now() + this.expires,
                 ...serie
-            }
+            };
             storedSeries.push(cacheValue);
             await this.putToCache(cacheValue, `${serie.id}`);
-        });
+        }));
         return this.filterSeries(storedSeries, options);
     }
 
     async getSerieById(id: number): Promise<SerieCacheItem> {
         const storedSerie = await this.getFromCache(`${id}`);
-        
+
         if (storedSerie) {
             return storedSerie;
         }
@@ -132,8 +132,8 @@ export default class UserSeriesCache extends CacheModule<SerieCacheItem> {
             series = series.filter((serie) => serie.note && notes.includes(serie.note));
         }
         return series.sort((a, b) => {
-            const ad = a.addedAt ? new Date(a.addedAt).getTime() : 1;
-            const bd = b.addedAt ? new Date(b.addedAt).getTime() : 2;
+            const ad = a.addedAt ? new Date(a.addedAt).getTime() : 0;
+            const bd = b.addedAt ? new Date(b.addedAt).getTime() : 0;
             return bd - ad;
         });
     }

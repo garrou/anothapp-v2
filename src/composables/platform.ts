@@ -1,40 +1,22 @@
-import platformService from "@/services/platformService";
-import { isError } from "@/utils/response";
 import { useSnackbar } from "./snackbar";
+import cache from "@/cache";
 
 export function usePlatform() {
 
     const { showSuccess } = useSnackbar();
 
     const getUserPlatforms = async (): Promise<number[]> => {
-        const resp = await platformService.getUserPlatforms();
-        const data = await resp.json();
-
-        if (isError(resp.status))
-            throw new Error(data.message);
-
-        return data;
+        return (await cache.userPlatforms.getPlatforms()).map((p) => p.platformId);
     }
 
     const updateUserPlatforms = async (platformId: number): Promise<void> => {
-        const resp = await platformService.updateUserPlatforms(platformId);
-        const data = await resp.json();
-
-
-        if (isError(resp.status))
-            throw new Error(data.message);
-        
-        showSuccess(data.message);
+        await cache.userPlatforms.addPlatform(platformId);
+        showSuccess("Plateforme ajoutée aux abonnements");
     }
 
     const deleteUserPlatform = async (platformId: number): Promise<void> => {
-        const resp = await platformService.deleteUserPlatform(platformId);
-        const data = await resp.json();
-
-        if (isError(resp.status))
-            throw new Error(data.message);
-
-        showSuccess(data.message);
+        await cache.userPlatforms.deletePlatform(platformId);
+        showSuccess("Plateforme retirée des abonnements");
     }
 
     return {

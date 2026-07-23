@@ -10,7 +10,10 @@
                     <router-link :text="season.showTitle" :to="`/series/${season.showId}`" />
                     <p v-if="season.addedAt">{{ formatDate(season.addedAt) }}</p>
                 </template>
-                <season-card :serieLink="`/series/${season.showId}`" :season="season.season" />
+                <div class="d-flex ga-4 align-start">
+                    <season-card :serieLink="`/series/${season.showId}`" :season="season.season" />
+                    <platform-card :platform="getSpecificPlatform(season.platformId)" />
+                </div>
             </v-timeline-item>
         </v-timeline>
     </v-container>
@@ -19,12 +22,15 @@
 <script lang="ts" setup>
 import BaseAppBar from "@/components/BaseAppBar.vue";
 import SeasonCard from "@/components/seasons/SeasonCard.vue";
+import { useSearch } from "@/composables/search";
 import { useSeason } from "@/composables/season";
 import { DENSITY } from "@/constants/style";
 import type { SeasonTimeline } from "@/models/season";
+import type { Platform } from "@/models/serie";
 import { formatDate } from "@/utils/format";
 import { onBeforeMount } from "vue";
 import { ref } from "vue";
+import PlatformCard from "@/components/series/PlatformCard.vue";
 
 const MONTHS = [
     {
@@ -53,16 +59,27 @@ const MONTHS = [
     }
 ];
 
+const { getPlatforms } = useSearch();
 const { getSeasonsTimeline } = useSeason();
 
 const month = ref(0);
 const timeline = ref<SeasonTimeline[]>([]);
+const platforms = ref<Platform[]>([]);
 
 const getHistory = async () => {
     timeline.value = await getSeasonsTimeline(month.value);
 }
 
+const getAllPlatforms = async () => {
+    platforms.value = await getPlatforms();
+}
+
+const getSpecificPlatform = (id?: number): Platform | undefined => platforms.value.find((p) => p.id === id);
+
 onBeforeMount(async () => {
-    await getHistory();
+    await Promise.all([
+        getAllPlatforms(),
+        getHistory()
+    ]);
 })
 </script>

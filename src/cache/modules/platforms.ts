@@ -28,14 +28,14 @@ export default class PlatformsCache extends CacheModule<PlatformCacheItem> {
         if (isError(resp.status)) {
             throw new Error(data.message);
         }
-        data.forEach(async (platform: Platform) => {
+        await Promise.all(data.forEach(async (platform: Platform) => {
             const cacheValue: PlatformCacheItem = {
                 expires: Date.now() + this.bigExpires,
                 ...platform
             }
             storedPlatforms.push(cacheValue);
             await this.putToCache(cacheValue, `${platform.id}`);
-        });
+        }));
         return storedPlatforms;
     }
 }

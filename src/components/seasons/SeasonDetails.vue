@@ -3,10 +3,7 @@
         <div class="font-weight-bold mb-2">{{ minsToStringHoursDays(time) }}</div>
         <v-card v-for="subSeason in seasons" class="mb-2" :key="subSeason.id" :subtitle="subSeason.platform.name">
             <template #prepend>
-                <v-avatar v-if="subSeason.platform.logo" :image="subSeason.platform.logo" />
-                <v-avatar v-else-if="subSeason.platform.name" color="grey">
-                    <v-icon color="white" :icon="PLATFORM_ICON" />
-                </v-avatar>
+                <platform-card :platform="subSeason.platform" />
             </template>
             <template #title>
                 <span class="text-subtitle-1">{{ formatDate(subSeason.addedAt) }}</span>
@@ -40,11 +37,12 @@ import type { Season, SeasonDetail } from "@/models/season";
 import { useSeason } from "@/composables/season";
 import { formatDate, formatDateTime, minsToStringHoursDays } from "@/utils/format";
 import { DENSITY } from "@/constants/style";
-import { EDIT_ICON, DELETE_ICON, PLATFORM_ICON } from "@/constants/icons";
+import { EDIT_ICON, DELETE_ICON } from "@/constants/icons";
 import { useSerie } from "@/composables/serie";
 import type { Platform } from "@/models/serie";
 import { useSearch } from "@/composables/search";
 import { MAIN_COLOR } from "@/constants/style";
+import PlatformCard from "../series/PlatformCard.vue";
 
 const props = defineProps({
     id: { type: Number, required: true },

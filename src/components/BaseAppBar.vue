@@ -83,11 +83,7 @@
                             <v-checkbox v-for="plt in platforms" :key="plt.id" v-model="selectedPlatforms" hide-details
                                 :value="plt" @update:model-value="updatePlatforms(selectedPlatforms)">
                                 <template #label>
-                                    <v-avatar v-if="plt.logo" :image="plt.logo" />
-                                    <v-avatar v-else color="grey">
-                                        <v-icon color="white" :icon="PLATFORM_ICON" />
-                                    </v-avatar>
-                                    <span class="ms-2">{{ plt.name }}</span>
+                                    <platform-card :platform="plt" show-name />
                                 </template>
                             </v-checkbox>
                         </v-list>
@@ -127,7 +123,7 @@
 
 <script lang="ts" setup>
 import { DENSITY, ELEVATION } from "@/constants/style";
-import { FILTER_ICON, PLATFORM_ICON, SEARCH_ICON } from "@/constants/icons";
+import { FILTER_ICON, SEARCH_ICON } from "@/constants/icons";
 import { NAV_OTHERS, NAV_SERIES_STATUS } from "@/constants/menus";
 import { computed, onBeforeMount, ref, watch } from "vue";
 import { useUser } from "@/composables/user";
@@ -137,10 +133,10 @@ import type { User } from "@/models/user";
 import { useSearchStore } from "@/stores/search";
 import { useSerieStore } from "@/stores/serie";
 import { useAuth } from "@/composables/auth";
-import { useState } from "@/composables/state";
 import { DEFAULT_LIMIT } from "@/constants/services";
 import { useSerie } from "@/composables/serie";
 import type { Note } from "@/models/note";
+import PlatformCard from "./series/PlatformCard.vue";
 
 const props = defineProps({
     autoSearch: { type: Boolean, default: false },

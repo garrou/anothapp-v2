@@ -8,11 +8,7 @@
                     @update:model-value="manageUserPlatforms(plt.id)">
                     <template #label>
                         <div class="d-flex flex-column align-center text-center w-100">
-                            <v-avatar v-if="plt.logo" :image="plt.logo" />
-                            <v-avatar v-else color="grey">
-                                <v-icon color="white" :icon="PLATFORM_ICON" />
-                            </v-avatar>
-                            <span class="text-caption mt-1">{{ plt.name }}</span>
+                            <platform-card :platform="plt" show-name />
                         </div>
                     </template>
                 </v-checkbox>
@@ -25,7 +21,7 @@
 import BaseAppBar from "@/components/BaseAppBar.vue";
 import { usePlatform } from "@/composables/platform";
 import { useSearch } from "@/composables/search";
-import { PLATFORM_ICON } from "@/constants/icons";
+import PlatformCard from "@/components/series/PlatformCard.vue";
 import type { Platform } from "@/models/serie";
 import { onBeforeMount, ref } from "vue";
 

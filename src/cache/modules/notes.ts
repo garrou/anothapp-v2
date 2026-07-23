@@ -28,14 +28,14 @@ export default class NotesCache extends CacheModule<NoteCacheItem> {
         if (isError(resp.status)) {
             throw new Error(data.message);
         }
-        data.forEach(async (note: Note) => {
+        await Promise.all(data.forEach(async (note: Note) => {
             const cacheValue: NoteCacheItem = {
                 expires: Date.now() + this.bigExpires,
                 ...note
             }
             storedNotes.push(cacheValue);
             await this.putToCache(cacheValue, `${note.id}`);
-        });
+        }));
         return storedNotes;
     }
 }

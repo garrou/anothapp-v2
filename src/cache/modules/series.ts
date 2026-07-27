@@ -32,7 +32,7 @@ export default class SeriesCache extends CacheModule<SerieCacheItem> {
         if (isError(resp.status)) {
             throw new Error(data.message);
         }
-        await Promise.all(data.forEach(async (serie: Serie) => {
+        await Promise.all(data.map(async (serie: Serie) => {
             const cacheValue: SerieCacheItem = {
                 expires: Date.now() + this.expires,
                 ...serie

@@ -28,7 +28,7 @@ export default class PlatformsCache extends CacheModule<PlatformCacheItem> {
         if (isError(resp.status)) {
             throw new Error(data.message);
         }
-        await Promise.all(data.forEach(async (platform: Platform) => {
+        await Promise.all(data.map(async (platform: Platform) => {
             const cacheValue: PlatformCacheItem = {
                 expires: Date.now() + this.bigExpires,
                 ...platform

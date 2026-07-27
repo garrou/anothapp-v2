@@ -28,7 +28,7 @@ export default class KindsCache extends CacheModule<KindCacheItem> {
         if (isError(resp.status)) {
             throw new Error(data.message);
         }
-        await Promise.all(data.forEach(async (kind: Kind, index: number) => {
+        await Promise.all(data.map(async (kind: Kind, index: number) => {
             const cacheValue: KindCacheItem = {
                 expires: Date.now() + this.bigExpires,
                 ...kind

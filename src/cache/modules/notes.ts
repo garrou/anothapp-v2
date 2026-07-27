@@ -28,7 +28,7 @@ export default class NotesCache extends CacheModule<NoteCacheItem> {
         if (isError(resp.status)) {
             throw new Error(data.message);
         }
-        await Promise.all(data.forEach(async (note: Note) => {
+        await Promise.all(data.map(async (note: Note) => {
             const cacheValue: NoteCacheItem = {
                 expires: Date.now() + this.bigExpires,
                 ...note

@@ -120,7 +120,6 @@ const serieStore = useSerieStore();
 
 const displayChart = ref(false);
 const modal = ref(false);
-const loading = ref(false);
 const stat = ref<GlobalStat>();
 const modalTitle = ref<string>();
 const series = ref<Serie[]>([]);
@@ -159,10 +158,8 @@ watch(modal, (value) => {
 });
 
 onMounted(async () => {
-    loading.value = true;
     displayChart.value = storageService.getDisplayChart();
     stat.value = await getStats(props.userId);
-    loading.value = false;
     useScrollStore().scrollToPosition(route.fullPath);
 });
 </script>

@@ -1,4 +1,4 @@
-import { deleteDB, openDB } from "idb";
+import { deleteDB, openDB, type IDBPDatabase } from "idb";
 import SeriesCache from "./modules/series";
 import UserSeriesCache from "./modules/userSeries";
 import UserCache from "./modules/user";
@@ -22,7 +22,9 @@ export default new (class CacheManager {
     readonly #version = 1;
 
     async initialize() {
-        const db = await openDB(this.#name, this.#version, {
+        let db: IDBPDatabase | undefined;
+
+        db = await openDB(this.#name, this.#version, {
             upgrade(database, oldVersion) {
                 if (oldVersion < 1) {
                     UserSeriesCache.createStructure(database);
@@ -36,10 +38,10 @@ export default new (class CacheManager {
                 }
             },
             blocking() {
-                db.close();
+                db?.close();
             },
             blocked() {
-                db.close();
+                db?.close();
             }
         });
         this.userSeries = new UserSeriesCache(db);

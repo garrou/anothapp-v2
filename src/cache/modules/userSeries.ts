@@ -103,17 +103,27 @@ export default class UserSeriesCache extends CacheModule<SerieCacheItem> {
         const storedSeries = await this.getAll();
 
         if (storedSeries.length) {
-            return storedSeries
-                .filter((serie) => serie.favorite)
-                .sort((a, b) => a.title.localeCompare(b.title))
+            return this.sortFavorites(storedSeries.filter((serie) => serie.favorite));
         }
+
         const resp = await serieService.getSeriesByStatus(SerieStatus.Favorite);
         const data = await resp.json();
 
         if (isError(resp.status)) {
             throw new Error(data.message);
         }
-        return data;
+
+        const cacheValues: SerieCacheItem[] = data.map((serie: Serie) => ({
+            ...serie,
+            expires: Date.now() + this.expires,
+        }));
+        await Promise.all(cacheValues.map((serie) => this.putToCache(serie, `${serie.id}`)));
+
+        return this.sortFavorites(cacheValues);
+    }
+
+    private sortFavorites(series: SerieCacheItem[]): SerieCacheItem[] {
+        return series.sort((a, b) => a.title.localeCompare(b.title));
     }
 
     private filterSeries(series: SerieCacheItem[], options: SerieSearchOptions): SerieCacheItem[] {

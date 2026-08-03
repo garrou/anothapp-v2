@@ -1,21 +1,6 @@
 import { createRouter, createWebHistory, useRoute } from "vue-router";
-import HomeView from "../views/HomeView.vue";
-import LoginView from "@/views/auth/LoginView.vue";
-import RegisterView from "@/views/auth/RegisterView.vue";
-import Series from "@/views/series/Series.vue";
-import Serie from "@/views/series/Serie.vue";
-import Discover from "@/views/discover/Discover.vue";
-import Dashboard from "@/views/stats/Dashboard.vue";
-import Profile from "@/views/profile/Profile.vue";
-import Friends from "@/views/friends/Friends.vue";
-import Details from "@/views/discover/Details.vue";
 import { useAuth } from "@/composables/auth";
 import { useScrollStore } from "@/stores/scroll";
-import SeriesStatus from "@/views/series/SeriesStatus.vue";
-import History from "@/views/navigation/History.vue";
-import Calendar from "@/views/navigation/Calendar.vue";
-import Settings from "@/views/navigation/Settings.vue";
-import Platforms from "@/views/navigation/Platforms.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -23,22 +8,22 @@ const router = createRouter({
     {
       path: "/",
       name: "home",
-      component: HomeView
+      component: () => import("@/views/HomeView.vue")
     },
     {
       path: "/login",
       name: "login",
-      component: LoginView
+      component: () => import("@/views/auth/LoginView.vue")
     },
     {
       path: "/register",
       name: "register",
-      component: RegisterView
+      component: () => import("@/views/auth/RegisterView.vue")
     },
     {
       path: "/series",
       name: "series",
-      component: Series,
+      component: () => import("@/views/series/Series.vue"),
       meta: {
         requiresAuth: true
       }
@@ -46,7 +31,7 @@ const router = createRouter({
     {
       path: "/series/:id",
       name: "serie",
-      component: Serie,
+      component: () => import("@/views/series/Serie.vue"),
       props: (route) => ({ id: Number(route.params.id) }),
       meta: {
         requiresAuth: true
@@ -55,7 +40,7 @@ const router = createRouter({
     {
       path: "/series-status",
       name: "series-status",
-      component: SeriesStatus,
+      component: () => import("@/views/series/SeriesStatus.vue"),
       props: (route) => ({ status: route.query.status }),
       meta: {
         requiresAuth: true
@@ -64,7 +49,7 @@ const router = createRouter({
     {
       path: "/platforms",
       name: "platforms",
-      component: Platforms,
+      component: () => import("@/views/navigation/Platforms.vue"),
       meta: {
         requiresAuth: true
       }
@@ -72,7 +57,7 @@ const router = createRouter({
     {
       path: "/history",
       name: "history",
-      component: History,
+      component: () => import("@/views/navigation/History.vue"),
       meta: {
         requiresAuth: true
       }
@@ -80,7 +65,7 @@ const router = createRouter({
     {
       path: "/calendar",
       name: "calendar",
-      component: Calendar,
+      component: () => import("@/views/navigation/Calendar.vue"),
       meta: {
         requiresAuth: true
       }
@@ -88,7 +73,7 @@ const router = createRouter({
     {
       path: "/settings",
       name: "settings",
-      component: Settings,
+      component: () => import("@/views/navigation/Settings.vue"),
       meta: {
         requiresAuth: true
       }
@@ -96,7 +81,7 @@ const router = createRouter({
     {
       path: "/discover",
       name: "discover",
-      component: Discover,
+      component: () => import("@/views/discover/Discover.vue"),
       meta: {
         requiresAuth: true
       }
@@ -104,7 +89,7 @@ const router = createRouter({
     {
       path: "/discover/:id",
       name: "details",
-      component: Details,
+      component: () => import("@/views/discover/Details.vue"),
       props: (route) => ({ id: Number(route.params.id) }),
       meta: {
         requiresAuth: true
@@ -113,7 +98,7 @@ const router = createRouter({
     {
       path: "/dashboard",
       name: "dashboard",
-      component: Dashboard,
+      component: () => import("@/views/stats/Dashboard.vue"),
       meta: {
         requiresAuth: true
       }
@@ -121,7 +106,7 @@ const router = createRouter({
     {
       path: "/profile",
       name: "profile",
-      component: Profile,
+      component: () => import("@/views/profile/Profile.vue"),
       meta: {
         requiresAuth: true
       }
@@ -129,7 +114,7 @@ const router = createRouter({
     {
       path: "/friends",
       name: "friends",
-      component: Friends,
+      component: () => import("@/views/friends/Friends.vue"),
       meta: {
         requiresAuth: true
       }
@@ -142,22 +127,17 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from) => {
-  const route = useRoute();
   const scrollStore = useScrollStore();
   const { checkAuth } = useAuth();
   const isLoggedIn = await checkAuth();
 
-  scrollStore.saveScrollPosition(route.fullPath, window.scrollY);
+  scrollStore.saveScrollPosition(from.fullPath, window.scrollY);
 
   if (to.meta.requiresAuth && !isLoggedIn) {
-    return {
-      path: "/login",
-      query: { redirect: to.fullPath }
-    }
-  } else if (!to.meta.requiresAuth && isLoggedIn) {
-    return {
-      path: "/series"
-    }
+    return { path: "/login", query: { redirect: to.fullPath } };
+  }
+  if (!to.meta.requiresAuth && isLoggedIn) {
+    return { path: "/series" };
   }
 });
 

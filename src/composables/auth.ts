@@ -5,18 +5,30 @@ import { useRouter } from "vue-router";
 import cache from "@/cache";
 import storageService from "@/services/storageService";
 
+let pendingCheckAuth: Promise<boolean> | null = null;
+
 export function useAuth() {
 
     const router = useRouter();
     const { showSuccess } = useSnackbar();
 
-    const checkAuth = async (): Promise<boolean> => {
-        try {
-            const resp = await authService.checkAuth();
-            return isSuccess(resp.status);
-        } catch (e) {
-            return false;
+    const checkAuth = (): Promise<boolean> => {
+        if (pendingCheckAuth) {
+            return pendingCheckAuth;
         }
+
+        pendingCheckAuth = (async () => {
+            try {
+                const resp = await authService.checkAuth();
+                return isSuccess(resp.status);
+            } catch (e) {
+                return false;
+            } finally {
+                pendingCheckAuth = null;
+            }
+        })();
+
+        return pendingCheckAuth;
     }
 
     const login = async (identifier: string, password: string): Promise<void> => {

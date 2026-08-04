@@ -22,7 +22,6 @@ const props = defineProps({
   data: { type: Object as PropType<Stat[]>, default: () => [] },
 });
 
-
 const chartOptions = ref({
   tooltip: { trigger: "item" },
   visualMap: {

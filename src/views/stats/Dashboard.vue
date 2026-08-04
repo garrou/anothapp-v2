@@ -21,40 +21,47 @@
     <v-row>
         <template v-if="displayChart">
             <v-col cols="12" md="6">
-                <seasons-month-current-year :user-id="userId" />
+                <chart :data="stat?.seasonsMonthCurrentYear" :type="ChartType.Bar" chart-id="seasons-months-curr-year"
+                    default-color="#a84632" title="Saisons par mois cette année" />
             </v-col>
             <v-col cols="12" md="6">
-                <episodes-month-current-year :user-id="userId" />
+                <chart :data="stat?.episodesMonthCurrentYear" :type="ChartType.Bar" chart-id="episodes-months-curr-year"
+                    default-color="#1ae86c" title="Episodes par mois cette année" />
             </v-col>
             <v-col cols="12" md="6">
-                <time-years :user-id="userId" />
+                <chart :data="stat?.timeYears" :type="ChartType.Line" chart-id="time-hours-years"
+                    default-color="#2bccf0" title="Temps en heures par années" />
             </v-col>
             <v-col cols="12" md="6">
-                <seasons-years :user-id="userId" />
+                <chart :data="stat?.seasonsYears" :type="ChartType.Bar" chart-id="seasons-years"
+                    default-color="#1a20e8" title="Saisons par années" />
             </v-col>
             <v-col cols="12" md="6">
-                <episodes-years :user-id="userId" />
+                <chart :data="stat?.episodesYears" :type="ChartType.Bar" chart-id="episodes-years"
+                    default-color="#e81a70" title="Episodes par années" />
             </v-col>
             <v-col cols="12" md="6">
-                <seasons-months :user-id="userId" />
+                <chart :data="stat?.seasonsMonths" :type="ChartType.Bar" chart-id="seasons-months"
+                    default-color="#e81ac2" title="Saisons par mois" />
             </v-col>
             <v-col cols="12" md="6">
-                <best-months :user-id="userId" />
+                <chart :data="stat?.bestMonths" :type="ChartType.Bar" chart-id="best-months"
+                    default-color="#03fccf" title="Mois records en heures" />
             </v-col>
             <v-col cols="12" md="6">
-                <series-ranking-time :user-id="userId" />
+                <chart :data="stat?.seriesRankingTime" :type="ChartType.Pie" chart-id="ranking-time" title="Séries les plus chronophages" />
             </v-col>
             <v-col cols="12" md="6">
-                <series-kinds :user-id="userId" @click="handleChartClick" />
+                <series-kinds :data="stat?.seriesKinds" @click="handleChartClick" />
             </v-col>
             <v-col cols="12" md="6">
-                <seasons-platforms :user-id="userId" />
+                <chart :data="stat?.seasonsPlatforms" :type="ChartType.Pie" chart-id="seasons-platforms" title="Saisons par plateformes" />
             </v-col>
             <v-col cols="12" md="6">
-                <series-countries :user-id="userId" @click="handleChartClick" />
+                <series-countries :data="stat?.seriesCountries" @click="handleChartClick" />
             </v-col>
             <v-col cols="12" md="6">
-                <series-notes :user-id="userId" @click="handleChartClick" />
+                <series-notes :data="stat?.seriesNotes" @click="handleChartClick" />
             </v-col>
         </template>
     </v-row>
@@ -62,7 +69,7 @@
     <base-modal v-model="modal" :max-width="800">
         <template #title>
             <span v-if="modalTitle">{{ modalTitle }}</span>
-            <v-btn :icon="CLOSE_ICON" variant="text" @click="modal = false"/>
+            <v-btn :icon="CLOSE_ICON" variant="text" @click="modal = false" />
         </template>
         <v-table>
             <tbody>
@@ -79,32 +86,24 @@
 <script lang="ts" setup>
 import BaseAppBar from "@/components/BaseAppBar.vue";
 import BaseModal from "@/components/BaseModal.vue";
-import EpisodesYears from "@/components/stats/EpisodesYears.vue";
-import EpisodesMonthCurrentYear from "@/components/stats/EpisodesMonthCurrentYear.vue";
-import SeasonsMonths from "@/components/stats/SeasonsMonths.vue";
-import SeasonsMonthCurrentYear from "@/components/stats/SeasonsMonthCurrentYear.vue";
-import SeasonsYears from "@/components/stats/SeasonsYears.vue";
 import SeriesCountries from "@/components/stats/SeriesCountries.vue";
 import SeriesKinds from "@/components/stats/SeriesKinds.vue";
-import SeriesRankingTime from "@/components/stats/SeriesRankingTime.vue";
-import TimeYears from "@/components/stats/TimeYears.vue";
-import SeasonsPlatforms from "@/components/stats/SeasonsPlatforms.vue";
 import FriendSeries from "@/components/friends/FriendSeries.vue";
 import SeriesNotes from "@/components/stats/SeriesNotes.vue";
 import { useStatistic } from "@/composables/statistic";
 import { ELEVATION, MAIN_COLOR } from "@/constants/style";
 import type { ChartData, GlobalStat } from "@/models/stat";
-import { computed, onBeforeMount, onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import storageService from "@/services/storageService";
-import BestMonths from "@/components/stats/BestMonths.vue";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
-import { ChartGroupedType, SerieStatus } from "@/types/types";
+import { ChartGroupedType, ChartType, SerieStatus } from "@/types/types";
 import { useSerieStore } from "@/stores/serie";
 import type { Serie } from "@/models/serie";
 import { useSerie } from "@/composables/serie";
 import { CLOSE_ICON } from "@/constants/icons";
 import { useScrollStore } from "@/stores/scroll";
 import { useRoute } from "vue-router";
+import Chart from "@/components/stats/Chart.vue";
 
 const props = defineProps({
     userId: { type: String, default: undefined },

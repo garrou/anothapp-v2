@@ -11,6 +11,12 @@ export enum ProfileModal {
     Password = "password"
 }
 
+export enum ChartType {
+    Bar = "bar",
+    Pie = "pie",
+    Line = "line"
+}
+
 export enum ChartGroupedType {
     Seasons = "seasons",
     Episodes = "episodes",

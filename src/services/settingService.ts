@@ -1,15 +1,8 @@
-import { ENDPOINT } from "@/constants/services";
-import storageService from "./storageService";
+import httpClient from "./httpClient";
 
 const PREFIX = "settings";
 
-const exportData = () => {
-    return fetch(`${ENDPOINT}/${PREFIX}/export-data`, {
-        headers: {
-            "Authorization": `Bearer ${storageService.getJwt()}`
-        }
-    });
-}
+const exportData = (): Promise<Response> => httpClient.get(`${PREFIX}/export-data`);
 
 export default {
     exportData

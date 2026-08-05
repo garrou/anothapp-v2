@@ -1,69 +1,20 @@
-import { buildUrlWithParams } from "@/utils/format";
-import { ENDPOINT } from "../constants/services";
-import storageService from "./storageService";
+import httpClient from "./httpClient";
 
 const PREFIX = "users";
 
-const getUsers = async (username: string): Promise<Response> => {
-    const url = buildUrlWithParams(`${ENDPOINT}/${PREFIX}`, [
-        { name: "username", value: username },
-    ]);
-    return fetch(url, {
-        headers: {
-            "Authorization": `Bearer ${storageService.getJwt()}`
-        }
-    });
-}
+const getUsers = (username: string): Promise<Response> =>
+    httpClient.get(PREFIX, [{ name: "username", value: username }]);
 
-const getProfile = async (): Promise<Response> => {
-    return fetch(`${ENDPOINT}/${PREFIX}/profile`, {
-        headers: {
-            "Authorization": `Bearer ${storageService.getJwt()}`
-        }
-    });
-}
+const getProfile = (): Promise<Response> => httpClient.get(`${PREFIX}/profile`);
 
-const updateImage = async (image: string): Promise<Response> => {
-    return fetch(`${ENDPOINT}/${PREFIX}/me`, {
-        body: JSON.stringify({
-            image
-        }),
-        headers: {
-            "Authorization": `Bearer ${storageService.getJwt()}`,
-            "Content-Type": "application/json",
-        },
-        method: "PATCH",
-    })
-}
+const updateImage = (image: string): Promise<Response> =>
+    httpClient.patch(`${PREFIX}/me`, { image });
 
-const updateLogin = async (email: string, newEmail: string): Promise<Response> => {
-    return fetch(`${ENDPOINT}/${PREFIX}/me`, {
-        body: JSON.stringify({
-            email,
-            newEmail
-        }),
-        headers: {
-            "Authorization": `Bearer ${storageService.getJwt()}`,
-            "Content-Type": "application/json",
-        },
-        method: "PATCH",
-    })
-}
+const updateLogin = (email: string, newEmail: string): Promise<Response> =>
+    httpClient.patch(`${PREFIX}/me`, { email, newEmail });
 
-const updatePassword = async (currentPassword: string, newPassword: string, confirmPassword: string): Promise<Response> => {
-    return fetch(`${ENDPOINT}/${PREFIX}/me`, {
-        body: JSON.stringify({
-            currentPassword,
-            newPassword,
-            confirmPassword
-        }),
-        headers: {
-            "Authorization": `Bearer ${storageService.getJwt()}`,
-            "Content-Type": "application/json",
-        },
-        method: "PATCH",
-    })
-}
+const updatePassword = (currentPassword: string, newPassword: string, confirmPassword: string): Promise<Response> =>
+    httpClient.patch(`${PREFIX}/me`, { currentPassword, newPassword, confirmPassword });
 
 export default {
     getUsers,

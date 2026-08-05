@@ -44,7 +44,7 @@ export const minsToStringHoursDays = (mins: number = 0): string => {
         : minsToStringDays(mins);
 }
 
-interface Param {
+export interface Param {
 
     name: string;
 
@@ -55,7 +55,7 @@ const buildUrl = (url: string, query: string, param?: string | number | boolean)
     return param === undefined
         ? url
         : url.concat(`${url.includes("?") ? "&" : "?"}${encodeURIComponent(query)}=${encodeURIComponent(param)}`);
-}
+};
 
 export const buildUrlWithParams = (url: string, params: Param[]): string => {
     return params.reduce((acc, curr) => buildUrl(acc, curr.name, curr.value), url);

@@ -1,43 +1,14 @@
-import { ENDPOINT } from "../constants/services";
-import storageService from "./storageService";
+import httpClient from "./httpClient";
 
 const PREFIX = "auth";
 
-const checkAuth = async (): Promise<Response> => {
-    return fetch(`${ENDPOINT}/${PREFIX}/me`, {
-        headers: {
-            "Authorization": `Bearer ${storageService.getJwt()}`
-        }
-    });
-}
+const checkAuth = (): Promise<Response> => httpClient.get(`${PREFIX}/me`);
 
-const login = async (identifier: string, password: string): Promise<Response> => {
-    return fetch(`${ENDPOINT}/${PREFIX}/login`, {
-        body: JSON.stringify({
-            identifier,
-            password
-        }),
-        headers: {
-            "Content-Type": "application/json",
-        },
-        method: "POST",
-    });
-}
+const login = (identifier: string, password: string): Promise<Response> =>
+    httpClient.post(`${PREFIX}/login`, { identifier, password }, { auth: false });
 
-const register = async (email: string, password: string, confirm: string, username: string): Promise<Response> => {
-    return fetch(`${ENDPOINT}/${PREFIX}/register`, {
-        body: JSON.stringify({
-            email,
-            confirm,
-            username,
-            password,
-        }),
-        headers: {
-            "Content-Type": "application/json",
-        },
-        method: "POST",
-    });
-}
+const register = (email: string, password: string, confirm: string, username: string): Promise<Response> =>
+    httpClient.post(`${PREFIX}/register`, { email, confirm, username, password }, { auth: false });
 
 export default {
     checkAuth,

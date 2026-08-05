@@ -1,114 +1,39 @@
-import { buildUrlWithParams } from "@/utils/format";
-import { ENDPOINT } from "../constants/services";
-import storageService from "./storageService";
+import httpClient from "./httpClient";
 
 const PREFIX = "search";
 
-const getActor = async (id: number): Promise<Response> => {
-    return fetch(`${ENDPOINT}/${PREFIX}/persons/${id}`, {
-        headers: {
-            "Authorization": `Bearer ${storageService.getJwt()}`
-        }
-    });
-}
+const getActor = (id: number): Promise<Response> => httpClient.get(`${PREFIX}/persons/${id}`);
 
-const getCharacters = async (id: number): Promise<Response> => {
-    return fetch(`${ENDPOINT}/${PREFIX}/shows/${id}/characters`, {
-        headers: {
-            "Authorization": `Bearer ${storageService.getJwt()}`
-        }
-    });
-}
+const getCharacters = (id: number): Promise<Response> => httpClient.get(`${PREFIX}/shows/${id}/characters`);
 
-const getKinds = async (): Promise<Response> => {
-    return fetch(`${ENDPOINT}/${PREFIX}/kinds`, {
-        headers: {
-            "Authorization": `Bearer ${storageService.getJwt()}`
-        }
-    });
-}
+const getKinds = (): Promise<Response> => httpClient.get(`${PREFIX}/kinds`);
 
-const getNotes = async (): Promise<Response> => {
-    return fetch(`${ENDPOINT}/${PREFIX}/notes`, {
-        headers: {
-            "Authorization": `Bearer ${storageService.getJwt()}`
-        }
-    });
-}
+const getNotes = (): Promise<Response> => httpClient.get(`${PREFIX}/notes`);
 
-const getPlatforms = async (): Promise<Response> => {
-    return fetch(`${ENDPOINT}/${PREFIX}/platforms`, {
-        headers: {
-            "Authorization": `Bearer ${storageService.getJwt()}`
-        }
-    });
-}
+const getPlatforms = (): Promise<Response> => httpClient.get(`${PREFIX}/platforms`);
 
-const getSerie = async (id: number): Promise<Response> => {
-    return fetch(`${ENDPOINT}/${PREFIX}/shows/${id}`, {
-        headers: {
-            "Authorization": `Bearer ${storageService.getJwt()}`
-        }
-    });
-}
+const getSerie = (id: number): Promise<Response> => httpClient.get(`${PREFIX}/shows/${id}`);
 
-const getSerieImages = async (id: number): Promise<Response> => {
-    return fetch(`${ENDPOINT}/${PREFIX}/shows/${id}/images`, {
-        headers: {
-            "Authorization": `Bearer ${storageService.getJwt()}`
-        }
-    });
-}
+const getSerieImages = (id: number): Promise<Response> => httpClient.get(`${PREFIX}/shows/${id}/images`);
 
-const getSeries = async (title?: string, kinds?: string, platforms?: string, limit?: number, year?: number): Promise<Response> => {
-    const url = buildUrlWithParams(`${ENDPOINT}/${PREFIX}/shows`, [
+const getSeries = (title?: string, kinds?: string, platforms?: string, limit?: number, year?: number): Promise<Response> =>
+    httpClient.get(`${PREFIX}/shows`, [
         { name: "title", value: title },
         { name: "kinds", value: kinds },
         { name: "platforms", value: platforms },
         { name: "limit", value: limit },
         { name: "year", value: year }
     ]);
-    return fetch(url, {
-        headers: {
-            "Authorization": `Bearer ${storageService.getJwt()}`
-        }
-    });
-}
 
-const getSeasonsBySerieId = async (id: number): Promise<Response> => {
-    return fetch(`${ENDPOINT}/${PREFIX}/shows/${id}/seasons`, {
-        headers: {
-            "Authorization": `Bearer ${storageService.getJwt()}`
-        }
-    });
-}
+const getSeasonsBySerieId = (id: number): Promise<Response> => httpClient.get(`${PREFIX}/shows/${id}/seasons`);
 
-const getSimilarsSeries = async (id: number): Promise<Response> => {
-    return fetch(`${ENDPOINT}/${PREFIX}/shows/${id}/similars`, {
-        headers: {
-            "Authorization": `Bearer ${storageService.getJwt()}`
-        }
-    });
-}
+const getSimilarsSeries = (id: number): Promise<Response> => httpClient.get(`${PREFIX}/shows/${id}/similars`);
 
-const getImages = async (limit: number): Promise<Response> => {
-    const url = buildUrlWithParams(`${ENDPOINT}/${PREFIX}/images`, [
-        { name: "limit", value: limit }
-    ]);
-    return fetch(url, {
-        headers: {
-            "Authorization": `Bearer ${storageService.getJwt()}`
-        }
-    });
-}
+const getImages = (limit: number): Promise<Response> =>
+    httpClient.get(`${PREFIX}/images`, [{ name: "limit", value: limit }]);
 
-const getEpisodesBySerieIdBySeason = async (id: number, season: number) => {
-    return fetch(`${ENDPOINT}/${PREFIX}/shows/${id}/seasons/${season}/episodes`, {
-        headers: {
-            "Authorization": `Bearer ${storageService.getJwt()}`
-        }
-    });
-}
+const getEpisodesBySerieIdBySeason = (id: number, season: number): Promise<Response> =>
+    httpClient.get(`${PREFIX}/shows/${id}/seasons/${season}/episodes`);
 
 export default {
     getActor,

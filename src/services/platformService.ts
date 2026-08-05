@@ -1,40 +1,14 @@
-import { ENDPOINT } from "@/constants/services";
-import storageService from "./storageService";
+import httpClient from "./httpClient";
 
 const PREFIX = "platforms";
 
-const getUserPlatforms = async (): Promise<Response> => {
-    return fetch(`${ENDPOINT}/${PREFIX}`, {
-        headers: {
-            "Authorization": `Bearer ${storageService.getJwt()}`,
-            "Content-Type": "application/json",
-        },
-        method: "GET",
-    })
-}
+const getUserPlatforms = (): Promise<Response> => httpClient.get(PREFIX);
 
-const updateUserPlatforms = async (platformId: number): Promise<Response> => {
-    return fetch(`${ENDPOINT}/${PREFIX}`, {
-        body: JSON.stringify({
-            platformId
-        }),
-        headers: {
-            "Authorization": `Bearer ${storageService.getJwt()}`,
-            "Content-Type": "application/json",
-        },
-        method: "POST",
-    })
-}
+const updateUserPlatforms = (platformId: number): Promise<Response> =>
+    httpClient.post(PREFIX, { platformId });
 
-const deleteUserPlatform = async (platformId: number): Promise<Response> => {
-    return fetch(`${ENDPOINT}/${PREFIX}/${platformId}`, {
-        headers: {
-            "Authorization": `Bearer ${storageService.getJwt()}`,
-            "Content-Type": "application/json",
-        },
-        method: "DELETE",
-    })
-}
+const deleteUserPlatform = (platformId: number): Promise<Response> =>
+    httpClient.delete(`${PREFIX}/${platformId}`);
 
 export default {
     deleteUserPlatform,

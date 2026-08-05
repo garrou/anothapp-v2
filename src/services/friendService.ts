@@ -1,63 +1,24 @@
-import { ENDPOINT } from "@/constants/services";
-import storageService from "./storageService";
-import { buildUrlWithParams } from "@/utils/format";
+import httpClient from "./httpClient";
 
 const PREFIX = "friends";
 
-const getFriends = async (status?: string, serieId?: number): Promise<Response> => {
-    const url = buildUrlWithParams(`${ENDPOINT}/${PREFIX}`, [
+const getFriends = (status?: string, serieId?: number): Promise<Response> =>
+    httpClient.get(PREFIX, [
         { name: "status", value: status },
         { name: "serieId", value: serieId }
     ]);
-    return fetch(url, { 
-        headers: {
-            "Authorization": `Bearer ${storageService.getJwt()}`
-        }
-    });
-}
 
-const acceptFriendRequest = async (userId: string): Promise<Response> => {
-    return fetch(`${ENDPOINT}/${PREFIX}/${userId}`, { 
-        body: JSON.stringify({
-            "userId": userId
-        }),
-        headers: {
-            "Authorization": `Bearer ${storageService.getJwt()}`,
-            "Content-Type": "application/json",
-        },
-        method: "PATCH",
-    });
-}
+const acceptFriendRequest = (userId: string): Promise<Response> =>
+    httpClient.patch(`${PREFIX}/${userId}`, { userId });
 
-const sendFriendRequest = async (userId: string): Promise<Response> => {
-    return fetch(`${ENDPOINT}/${PREFIX}`, { 
-        body: JSON.stringify({
-            "userId": userId
-        }),
-        headers: {
-            "Authorization": `Bearer ${storageService.getJwt()}`,
-            "Content-Type": "application/json",
-        },
-        method: "POST",
-    });
-}
+const sendFriendRequest = (userId: string): Promise<Response> =>
+    httpClient.post(PREFIX, { userId });
 
-const deleteFriend = async (userId: string): Promise<Response> => {
-    return fetch(`${ENDPOINT}/${PREFIX}/${userId}`, { 
-        headers: {
-            "Authorization": `Bearer ${storageService.getJwt()}`,
-        },
-        method: "DELETE"
-    });
-}
+const deleteFriend = (userId: string): Promise<Response> =>
+    httpClient.delete(`${PREFIX}/${userId}`);
 
-const getFriendProfile = async (userId: string): Promise<Response> => {
-    return fetch(`${ENDPOINT}/${PREFIX}/${userId}`, { 
-        headers: {
-            "Authorization": `Bearer ${storageService.getJwt()}`,
-        },
-    });
-}
+const getFriendProfile = (userId: string): Promise<Response> =>
+    httpClient.get(`${PREFIX}/${userId}`);
 
 export default {
     acceptFriendRequest,

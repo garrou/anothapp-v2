@@ -1,112 +1,40 @@
-import { buildUrlWithParams } from "@/utils/format";
-import { ENDPOINT } from "../constants/services";
-import storageService from "./storageService";
+import httpClient from "./httpClient";
 import type { SerieStatus } from "@/types/types";
 
 const PREFIX = "shows";
 
-const addSeason = async (id: number, num: number): Promise<Response> => {
-    return fetch(`${ENDPOINT}/${PREFIX}/${id}/seasons`, {
-        body: JSON.stringify({
-            id,
-            num,
-        }),
-        headers: {
-            "Authorization": `Bearer ${storageService.getJwt()}`,
-            "Content-Type": "application/json",
-        },
-        method: "POST",
-    });
-}
+const addSeason = (id: number, num: number): Promise<Response> =>
+    httpClient.post(`${PREFIX}/${id}/seasons`, { id, num });
 
-const addSerie = async (id: number, inList: boolean): Promise<Response> => {
-    return fetch(`${ENDPOINT}/${PREFIX}`, {
-        body: JSON.stringify({
-            "id": id,
-            "list": inList
-        }),
-        headers: {
-            "Authorization": `Bearer ${storageService.getJwt()}`,
-            "Content-Type": "application/json",
-        },
-        method: "POST",
-    });
-}
+const addSerie = (id: number, inList: boolean): Promise<Response> =>
+    httpClient.post(PREFIX, { id, list: inList });
 
-const deleteSerie = async (id: number, list = false): Promise<Response> => {
-    const url = buildUrlWithParams(`${ENDPOINT}/${PREFIX}/${id}`, [
-        { name: "list", value: list }
-    ]);
-    return fetch(url, {
-        headers: {
-            "Authorization": `Bearer ${storageService.getJwt()}`
-        },
-        method: "DELETE"
-    });
-}
+const deleteSerie = (id: number, list = false): Promise<Response> =>
+    httpClient.delete(`${PREFIX}/${id}`, [{ name: "list", value: list }]);
 
-const getSeasonsBySerieId = async (id: number): Promise<Response> => {
-    return fetch(`${ENDPOINT}/${PREFIX}/${id}/seasons`, {
-        headers: {
-            "Authorization": `Bearer ${storageService.getJwt()}`
-        }
-    });
-}
+const getSeasonsBySerieId = (id: number): Promise<Response> => httpClient.get(`${PREFIX}/${id}/seasons`);
 
-const getSeasonInfosBySerieIdByNumber = async (id: number, num: number): Promise<Response> => {
-    return fetch(`${ENDPOINT}/${PREFIX}/${id}/seasons/${num}`, {
-        headers: {
-            "Authorization": `Bearer ${storageService.getJwt()}`
-        }
-    });
-}
+const getSeasonInfosBySerieIdByNumber = (id: number, num: number): Promise<Response> =>
+    httpClient.get(`${PREFIX}/${id}/seasons/${num}`);
 
-const getSerie = async (id: number): Promise<Response> => {
-    return fetch(`${ENDPOINT}/${PREFIX}/${id}`, {
-        headers: {
-            "Authorization": `Bearer ${storageService.getJwt()}`
-        }
-    });
-}
+const getSerie = (id: number): Promise<Response> => httpClient.get(`${PREFIX}/${id}`);
 
-const getSeries = async (title?: string, platforms?: string, kinds?: string, notes?: string): Promise<Response> => {
-    const url = buildUrlWithParams(`${ENDPOINT}/${PREFIX}`, [
+const getSeries = (title?: string, platforms?: string, kinds?: string, notes?: string): Promise<Response> =>
+    httpClient.get(PREFIX, [
         { name: "title", value: title },
         { name: "platforms", value: platforms },
         { name: "kinds", value: kinds },
         { name: "notes", value: notes }
     ]);
-    return fetch(url, {
-        headers: {
-            "Authorization": `Bearer ${storageService.getJwt()}`
-        }
-    });
-}
 
-const getSeriesByStatus = async (status: SerieStatus, friendId?: string): Promise<Response> => {
-    const url = buildUrlWithParams(`${ENDPOINT}/${PREFIX}`, [
+const getSeriesByStatus = (status: SerieStatus, friendId?: string): Promise<Response> =>
+    httpClient.get(PREFIX, [
         { name: "status", value: status },
         { name: "friendId", value: friendId }
     ]);
-    return fetch(url, {
-        headers: {
-            "Authorization": `Bearer ${storageService.getJwt()}`
-        }
-    });
-}
 
-const updateFieldBySerieId = async (id: number, field: string, value: string | number): Promise<Response> => {
-    return fetch(`${ENDPOINT}/${PREFIX}/${id}`, {
-        body: JSON.stringify({
-            [field]: value
-        }),
-        headers: {
-            "Authorization": `Bearer ${storageService.getJwt()}`,
-            "Content-Type": "application/json",
-        },
-        method: "PATCH"
-    });
-}
+const updateFieldBySerieId = (id: number, field: string, value: string | number): Promise<Response> =>
+    httpClient.patch(`${PREFIX}/${id}`, { [field]: value });
 
 export default {
     addSeason,

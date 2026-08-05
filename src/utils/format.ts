@@ -54,7 +54,7 @@ interface Param {
 const buildUrl = (url: string, query: string, param?: string | number | boolean): string => {
     return param === undefined
         ? url
-        : url.concat(`${url.includes("?") ? "&" : "?"}${query}=${param}`);
+        : url.concat(`${url.includes("?") ? "&" : "?"}${encodeURIComponent(query)}=${encodeURIComponent(param)}`);
 }
 
 export const buildUrlWithParams = (url: string, params: Param[]): string => {

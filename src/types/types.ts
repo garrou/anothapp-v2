@@ -27,25 +27,6 @@ export enum ChartGroupedType {
     Notes = "notes"
 }
 
-export enum ChartGroupedPeriod {
-    Years = "years",
-    Year = "year",
-    Months = "months"
-}
-
-export enum ChartTimeType {
-    Total = "total",
-    Years = "years",
-    Month = "month",
-    Rank = "rank"
-}
-
-export enum ChartCountType {
-    Shows = "shows",
-    Episodes = "episodes",
-    Seasons = "seasons"
-}
-
 export enum SerieStatus {
     Continue = "continue",
     Stopped = "stopped",

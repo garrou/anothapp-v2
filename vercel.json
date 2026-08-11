@@ -1,0 +1,8 @@
+{
+    "rewrites": [
+        {
+            "source": "/api/:path*",
+            "destination": "https://anothapp.alwaysdata.net/:path*"
+        }
+    ]
+}

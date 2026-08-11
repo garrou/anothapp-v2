@@ -35,17 +35,15 @@ export function useAuth() {
         const resp = await authService.login(identifier, password);
         const data = await resp.json();
 
-        if (isError(resp.status) || !data.token)
+        if (isError(resp.status))
             throw new Error(data.message);
 
-        storageService.storeJwt(data.token);
-        delete data.token;
         await cache.users.addUser(data);
         router.replace("/series");
     }
 
     const logout = async () => {
-        storageService.deleteJwt();
+        await authService.logout();
         await cache.userSeries.clearCache();
         await cache.users.clearCache();
         await cache.userList.clearCache();

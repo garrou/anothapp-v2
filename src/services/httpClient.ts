@@ -1,14 +1,17 @@
 import { ENDPOINT } from "@/constants/services";
 import { buildUrlWithParams, type Param } from "@/utils/format";
-import storageService from "./storageService";
 
 type Method = "GET" | "POST" | "PATCH" | "DELETE";
 
 interface RequestOptions {
     params?: Param[];
     body?: unknown;
-    auth?: boolean;
+    skipRefresh?: boolean;
 }
+
+const REFRESH_PATH = "auth/refresh";
+
+let pendingRefresh: Promise<boolean> | null = null;
 
 const buildHeaders = (hasBody: boolean): HeadersInit => {
     const headers: Record<string, string> = {};
@@ -19,7 +22,7 @@ const buildHeaders = (hasBody: boolean): HeadersInit => {
     return headers;
 }
 
-const request = (path: string, method: Method, options: RequestOptions = {}): Promise<Response> => {
+const rawFetch = (path: string, method: Method, options: RequestOptions = {}): Promise<Response> => {
     const { params, body } = options;
     const baseUrl = `${ENDPOINT}/${path}`;
     const url = params ? buildUrlWithParams(baseUrl, params) : baseUrl;
@@ -30,6 +33,32 @@ const request = (path: string, method: Method, options: RequestOptions = {}): Pr
         body: body !== undefined ? JSON.stringify(body) : undefined,
         credentials: "include"
     });
+}
+
+const refreshToken = (): Promise<boolean> => {
+    if (!pendingRefresh) {
+        pendingRefresh = rawFetch(REFRESH_PATH, "POST")
+            .then((resp) => resp.ok)
+            .catch(() => false)
+            .finally(() => {
+                pendingRefresh = null;
+            });
+    }
+    return pendingRefresh;
+}
+
+const request = async (path: string, method: Method, options: RequestOptions = {}): Promise<Response> => {
+    const resp = await rawFetch(path, method, options);
+
+    if (resp.status !== 401 || options.skipRefresh) {
+        return resp;
+    }
+    const refreshed = await refreshToken();
+
+    if (!refreshed) {
+        return resp;
+    }
+    return rawFetch(path, method, options);
 }
 
 const get = (path: string, params?: Param[]): Promise<Response> =>

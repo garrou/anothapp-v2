@@ -10,12 +10,9 @@ interface RequestOptions {
     auth?: boolean;
 }
 
-const buildHeaders = (hasBody: boolean, withAuth: boolean): HeadersInit => {
+const buildHeaders = (hasBody: boolean): HeadersInit => {
     const headers: Record<string, string> = {};
 
-    if (withAuth) {
-        headers["Authorization"] = `Bearer ${storageService.getJwt()}`;
-    }
     if (hasBody) {
         headers["Content-Type"] = "application/json";
     }
@@ -23,14 +20,15 @@ const buildHeaders = (hasBody: boolean, withAuth: boolean): HeadersInit => {
 }
 
 const request = (path: string, method: Method, options: RequestOptions = {}): Promise<Response> => {
-    const { params, body, auth = true } = options;
+    const { params, body } = options;
     const baseUrl = `${ENDPOINT}/${path}`;
     const url = params ? buildUrlWithParams(baseUrl, params) : baseUrl;
 
     return fetch(url, {
         method,
-        headers: buildHeaders(body !== undefined, auth),
+        headers: buildHeaders(body !== undefined),
         body: body !== undefined ? JSON.stringify(body) : undefined,
+        credentials: "include"
     });
 }
 

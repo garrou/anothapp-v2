@@ -3,6 +3,10 @@
         {
             "source": "/api/:path*",
             "destination": "https://anothapp.alwaysdata.net/:path*"
+        },
+        {
+            "source": "/:path*",
+            "destination": "/index.html"
         }
     ]
 }

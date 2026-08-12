@@ -3,7 +3,6 @@ import { isError, isSuccess } from "@/utils/response";
 import { useSnackbar } from "./snackbar";
 import { useRouter } from "vue-router";
 import cache from "@/cache";
-import storageService from "@/services/storageService";
 
 let pendingCheckAuth: Promise<boolean> | null = null;
 
@@ -12,7 +11,7 @@ export function useAuth() {
     const router = useRouter();
     const { showSuccess } = useSnackbar();
 
-    const checkAuth = (): Promise<boolean> => {
+    const checkAuth = async (): Promise<boolean> => {
         if (pendingCheckAuth) {
             return pendingCheckAuth;
         }

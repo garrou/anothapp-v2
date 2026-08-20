@@ -5,30 +5,17 @@
         </v-col>
         <v-col cols="12" md="6">
             <v-alert class="my-2" :color="status" :density="DENSITY" :icon="icon" :title="statusLabel" />
-            <template v-for="(obj, index) in cards">
-                <v-card v-if="obj.display !== false" class="mb-2" :elevation="ELEVATION" :key="index">
-                    <v-card-item>
-                        <v-card-title>{{ obj.name }}</v-card-title>
-                        <v-card-text v-if="obj.format === 'text'">{{ obj.value }}</v-card-text>
-                        <v-row v-else-if="obj.format === 'array'">
-                            <v-col v-for="v in obj.value" :key="v.name" cols="6" md="4" lg="3">
-                                <base-image v-if="v.logo" :src="v.logo" />
-                                <div class="text-center">{{ v.name }}</div>
-                            </v-col>
-                        </v-row>
-                        <v-card-subtitle v-else>{{ obj.value }}</v-card-subtitle>
-                    </v-card-item>
-                </v-card>
-            </template>
+            <info-list :cards="cards" />
         </v-col>
     </v-row>
 </template>
 
 <script lang="ts" setup>
 import BaseImage from "@/components/BaseImage.vue";
+import InfoList from "@/components/InfoList.vue";
 import { type PropType } from "vue";
 import type { Serie } from "@/models/serie";
-import { DENSITY, ELEVATION } from "@/constants/style";
+import { DENSITY } from "@/constants/style";
 import { SerieDetailsLayout } from "@/layouts/serie-details-layout";
 
 const props = defineProps({

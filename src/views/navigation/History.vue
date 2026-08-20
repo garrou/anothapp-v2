@@ -2,9 +2,9 @@
     <base-app-bar />
 
     <v-container>
-        <v-select v-model="month" :density="DENSITY" :items="MONTHS" item-title="text" item-value="value"
-            @update:model-value="getHistory" />
-        <v-timeline>
+        <v-select v-model="month" class="mb-2" style="max-width: 280px" :density="DENSITY" hide-details
+            :items="MONTHS" item-title="text" item-value="value" @update:model-value="getHistory" />
+        <v-timeline density="compact">
             <v-timeline-item v-for="(season, index) in timeline" :key="index">
                 <template v-slot:opposite>
                     <router-link :text="season.showTitle" :to="`/series/${season.showId}`" />

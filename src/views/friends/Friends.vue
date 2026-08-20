@@ -1,12 +1,7 @@
 <template>
-    <base-app-bar />
+    <base-app-bar class="pb-4" />
 
-    <v-tabs v-model="tab" class="m-top">
-        <v-tab :value="1">Amis</v-tab>
-        <v-tab :value="2">Ajouter</v-tab>
-        <v-tab :value="3">Reçues</v-tab>
-        <v-tab :value="4">Envoyées</v-tab>
-    </v-tabs>
+    <pill-tabs v-model="tab" class="m-top mb-4 px-3" :tabs="FRIENDS_TABS" />
 
     <v-window v-model="tab" class="pa-1">
         <v-window-item :value="1">
@@ -27,11 +22,19 @@
 <script lang="ts" setup>
 import FriendsRow from "@/components/friends/FriendsRow.vue";
 import BaseAppBar from "@/components/BaseAppBar.vue";
+import PillTabs from "@/components/PillTabs.vue";
 import { onBeforeMount, ref } from "vue";
 import { useFriend } from "@/composables/friend";
 import type { FriendResponse } from "@/models/friend";
 import type { User } from "@/models/user";
 import { useUser } from "@/composables/user";
+
+const FRIENDS_TABS = [
+    { value: 1, label: "Amis" },
+    { value: 2, label: "Ajouter" },
+    { value: 3, label: "Reçues" },
+    { value: 4, label: "Envoyées" }
+];
 
 const { getFriends } = useFriend();
 const { getUsers } = useUser();

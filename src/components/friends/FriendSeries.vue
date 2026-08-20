@@ -5,16 +5,7 @@
                 <span class="v-card-title pa-0">{{ sharedSeriesLabel }}</span>
             </template>
             <template #text>
-                <v-table>
-                    <tbody>
-                        <tr v-for="serie in series" :key="serie.id">
-                            <td>
-                                <router-link :text="serie.title"
-                                    :to="type === 'shared' ? `/series/${serie.id}` : `/discover/${serie.id}`" />
-                            </td>
-                        </tr>
-                    </tbody>
-                </v-table>
+                <series-link-list :series="series" :base-path="type === 'shared' ? '/series' : '/discover'" />
             </template>
         </v-expansion-panel>
     </v-expansion-panels>
@@ -24,6 +15,7 @@
 import { useSerie } from '@/composables/serie';
 import { ELEVATION } from '@/constants/style';
 import type { Serie } from '@/models/serie';
+import SeriesLinkList from '@/components/series/SeriesLinkList.vue';
 import { SerieStatus } from '@/types/types';
 import { buildPlural } from '@/utils/format';
 import { computed, onBeforeMount, ref, type PropType } from 'vue';

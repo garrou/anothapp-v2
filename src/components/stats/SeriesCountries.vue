@@ -1,7 +1,9 @@
 <template>
-  <v-switch v-model="showMap" :color="MAIN_COLOR" label="Afficher la carte" />
+  <div class="ms-2">
+    <v-switch v-model="showMap" :color="MAIN_COLOR" label="Carte" density="compact" hide-details class="" />
+  </div>
   <series-countries-map v-if="showMap" :data="data" />
-  <base-pie-chart v-else class="mb-2" :data="data.slice(0, MIN_LIMIT)" :title="TITLE" @click="emitClick" />
+  <base-pie-chart v-else :data="data.slice(0, MIN_LIMIT)" :title="TITLE" @click="emitClick" />
 </template>
 
 <script lang="ts" setup>

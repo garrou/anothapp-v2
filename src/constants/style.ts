@@ -1,23 +1,23 @@
-export const ELEVATION = 3;
+export const ELEVATION = 0;
 
 export const DENSITY = "compact";
 
 export const TOOLTIP_LOCATION = "bottom";
 
-export const MAIN_COLOR = "surface-variant";
+export const MAIN_COLOR = "primary";
 
 export const NOTE_COLORS: Record<number, string> = {
-    1: "red-darken-3",
-    2: "orange-darken-3",
-    3: "yellow-darken-3",
-    4: "blue-darken-3",
-    5: "green-darken-3"
+    1: "#e34948",
+    2: "#2a78d6",
+    3: "#eda100",
+    4: "#1baf7a",
+    5: "#008300"
 }
 
-export const NOTE_COLORS_RGB: Record<number, string> = {
-    1: "#E53935",
-    2: "#FB8C00",
-    3: "#FDD835", 
-    4: "#1E88E5", 
-    5: "#43A047"
-}
+export const CATEGORICAL_COLORS = [
+    "#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300", "#4a3aa7", "#e34948"
+];
+
+export const SEQUENTIAL_COLORS = [
+    "#F7F2FF", "#E4D6FF", "#C8AEFA", "#A780E6", "#8156C0", "#5B3291", "#38185F"
+];

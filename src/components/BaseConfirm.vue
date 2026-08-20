@@ -1,14 +1,14 @@
 <template>
-    <v-dialog :max-width="width" :persistent="persistent">
+    <v-dialog :max-width="width" :persistent="persistent" :aria-label="title">
         <v-card :text="text" :title="title">
             <template #actions>
                 <v-spacer></v-spacer>
 
-                <v-btn @click="$emit('cancel')">
+                <v-btn variant="text" @click="$emit('cancel')">
                     {{ cancelText }}
                 </v-btn>
 
-                <v-btn color="red" variant="flat" @click="$emit('confirm')">
+                <v-btn color="error" variant="flat" @click="$emit('confirm')">
                     {{ confirmText }}
                 </v-btn>
             </template>

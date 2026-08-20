@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <v-card>
     <v-chart class="chart" :option="chartOptions" autoresize />
-  </div>
+  </v-card>
 </template>
 
 <script setup lang="ts">
@@ -9,20 +9,25 @@ import { ref, onMounted, type PropType } from "vue";
 import { use } from "echarts/core";
 import { CanvasRenderer } from "echarts/renderers";
 import { MapChart } from "echarts/charts";
-import { VisualMapComponent } from "echarts/components";
+import { TitleComponent, TooltipComponent, VisualMapComponent } from "echarts/components";
 import VChart from "vue-echarts";
 import worldGeoJSON from "@/assets/world.json";
 import * as echarts from "echarts";
 import type { GeoJSONSourceInput } from "echarts/types/src/coord/geo/geoTypes.js";
 import type { Stat } from "@/models/stat";
+import { SEQUENTIAL_COLORS } from "@/constants/style";
 
-use([CanvasRenderer, MapChart, VisualMapComponent]);
+use([CanvasRenderer, MapChart, TitleComponent, TooltipComponent, VisualMapComponent]);
 
 const props = defineProps({
   data: { type: Object as PropType<Stat[]>, default: () => [] },
 });
 
 const chartOptions = ref({
+  title: {
+    text: "Pays des séries",
+    left: "center",
+  },
   tooltip: { trigger: "item" },
   visualMap: {
     roam: true,
@@ -31,6 +36,7 @@ const chartOptions = ref({
     left: "left",
     top: "bottom",
     calculable: true,
+    inRange: { color: SEQUENTIAL_COLORS },
   },
   series: [
     {
@@ -40,7 +46,8 @@ const chartOptions = ref({
       scaleLimit: { min: 0.5, max: 5 },
       type: "map",
       map: "world",
-      emphasis: { label: { show: true } },
+      emphasis: { label: { show: true }, itemStyle: { areaColor: SEQUENTIAL_COLORS[4] } },
+      itemStyle: { borderColor: "#fff", borderWidth: 0.5 },
       data: props.data.map((record) => ({ name: record.label, value: record.value }))
     },
   ],

@@ -1,5 +1,5 @@
 <template>
-    <v-img :src="src" class="align-end" :cover="cover" aspect-ratio="0.679">
+    <v-img :src="src" class="align-end" :cover="cover" aspect-ratio="0.679" rounded="lg">
         <template #placeholder>
             <v-row align="center" class="fill-height ma-0" justify="center">
                 <v-progress-circular :color="MAIN_COLOR" indeterminate />

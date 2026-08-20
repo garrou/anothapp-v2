@@ -1,5 +1,5 @@
 <template>
-    <input v-model="color" type="color" @change="saveColor" />
+    <input v-model="color" class="color-swatch" title="Changer la couleur" type="color" @change="saveColor" />
 </template>
 
 <script lang="ts" setup>
@@ -22,3 +22,32 @@ const saveColor = () => {
     emit("change");
 }
 </script>
+
+<style scoped>
+.color-swatch {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    border: 2px solid rgb(var(--v-theme-surface));
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 0 1px rgb(var(--v-border-color));
+}
+
+.color-swatch::-webkit-color-swatch-wrapper {
+    padding: 0;
+    border-radius: 50%;
+}
+
+.color-swatch::-webkit-color-swatch {
+    border: none;
+    border-radius: 50%;
+}
+
+.color-swatch::-moz-color-swatch {
+    border: none;
+    border-radius: 50%;
+}
+</style>

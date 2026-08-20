@@ -2,29 +2,23 @@
     <base-app-bar />
 
     <v-container v-if="profile">
-        <v-card>
-            <v-row>
-                <v-col cols="12" md="6">
-                    <base-image v-if="profile.picture" :src="profile.picture" max-height="350" />
-                </v-col>
-                <v-col cols="12" md="6">
-                    <v-card-title>{{ profile.username }}</v-card-title>
-                    <v-card-subtitle>{{ profile.email }}</v-card-subtitle>
+        <v-card class="profile-card">
+            <div class="profile-hero">
+                <v-avatar size="96" :image="profile.picture" />
+                <div class="text-h6 font-weight-bold mt-3">{{ profile.username }}</div>
+                <div class="text-body-2 text-medium-emphasis">{{ profile.email }}</div>
+            </div>
 
-                    <v-list class="mt-2">
-                        <v-list-item v-for="(item, i) in ProfileLayout" :key="i" :prepend-icon="item.icon"
-                            :title="item.name" @click="showModal(item.value)" />
-                    </v-list>
-                </v-col>
-            </v-row>
+            <v-divider />
+
+            <v-list class="py-2 px-2">
+                <v-list-item v-for="(item, i) in ProfileLayout" :key="i" rounded="lg" :prepend-icon="item.icon"
+                    :title="item.name" @click="showModal(item.value)" />
+            </v-list>
         </v-card>
     </v-container>
 
-    <base-modal v-model="modal" :max-width="800">
-        <template #title>
-            <span>Modifier</span>
-            <v-btn :icon="CLOSE_ICON" variant="text" @click="modal = false" />
-        </template>
+    <base-modal v-model="modal" :max-width="800" title="Modifier">
         <div v-if="selected === 'images'">
             <v-expansion-panels multiple variant="accordion">
                 <v-expansion-panel v-for="serie in series" :key="serie.id"
@@ -48,7 +42,6 @@
 <script lang="ts" setup>
 import BaseAppBar from "@/components/BaseAppBar.vue";
 import BaseModal from "@/components/BaseModal.vue";
-import BaseImage from "@/components/BaseImage.vue";
 import Email from "./Email.vue";
 import Password from "./Password.vue";
 import ImagesRow from "@/components/ImagesRow.vue";
@@ -59,7 +52,6 @@ import type { Serie } from "@/models/serie";
 import { useSerie } from "@/composables/serie";
 import { useSearch } from "@/composables/search";
 import type { ProfileModal } from "@/types/types";
-import { CLOSE_ICON } from "@/constants/icons";
 import { ProfileLayout } from "@/layouts/profile-layout";
 
 const { getProfile } = useUser();
@@ -97,3 +89,13 @@ const refresh = async () => {
 
 onBeforeMount(refresh);
 </script>
+
+<style scoped>
+.profile-hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 16px;
+    text-align: center;
+}
+</style>

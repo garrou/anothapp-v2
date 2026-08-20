@@ -1,6 +1,6 @@
 <template>
-  <v-card>
-    <base-color :default="colorRef" :id="id" @change="changeColor" />
+  <v-card class="chart-card">
+    <base-color class="chart-color-picker" :default="colorRef" :id="id" @change="changeColor" />
     <v-chart class="chart mt-2" :option="option" autoresize />
   </v-card>
 </template>
@@ -69,3 +69,16 @@ const changeColor = () => {
   colorRef.value = storageService.getColorChart(props.id) ?? props.color;
 }
 </script>
+
+<style scoped>
+.chart-card {
+  position: relative;
+}
+
+.chart-color-picker {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 1;
+}
+</style>

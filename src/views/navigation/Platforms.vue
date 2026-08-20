@@ -4,7 +4,8 @@
     <v-container>
         <v-row class="mb-10">
             <v-col v-for="plt in allPlatforms" :key="plt.id" cols="6" sm="4" md="3" lg="2">
-                <v-checkbox v-model="platforms" hide-details :value="plt.id"
+                <v-checkbox v-model="platforms" class="platform-checkbox" hide-details :value="plt.id"
+                    :class="{ 'platform-checkbox--selected': platforms.includes(plt.id) }"
                     @update:model-value="manageUserPlatforms(plt.id)">
                     <template #label>
                         <div class="d-flex flex-column align-center text-center w-100">
@@ -48,3 +49,17 @@ onBeforeMount(async () => {
     await initAllPlatforms();
 })
 </script>
+
+<style scoped>
+.platform-checkbox {
+    border: 1px solid rgb(var(--v-border-color));
+    border-radius: 12px;
+    padding: 12px 4px;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.platform-checkbox--selected {
+    border-color: rgb(var(--v-theme-primary));
+    background: rgba(var(--v-theme-primary), 0.06);
+}
+</style>

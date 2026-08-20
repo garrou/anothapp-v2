@@ -1,6 +1,6 @@
 <template>
-  <div class="d-flex justify-end">
-    <v-switch v-model="showMap" :color="MAIN_COLOR" label="Carte" density="compact" hide-details />
+  <div class="ms-2">
+    <v-switch v-model="showMap" :color="MAIN_COLOR" label="Carte" density="compact" hide-details class="" />
   </div>
   <series-countries-map v-if="showMap" :data="data" />
   <base-pie-chart v-else :data="data.slice(0, MIN_LIMIT)" :title="TITLE" @click="emitClick" />

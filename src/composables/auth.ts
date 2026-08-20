@@ -6,6 +6,7 @@ import cache from "@/cache";
 
 let pendingCheckAuth: Promise<boolean> | null = null;
 let lastCheckAuth: { result: boolean, at: number } | null = null;
+let authEpoch = 0;
 const CHECK_AUTH_TTL_MS = 30_000;
 
 export function useAuth() {
@@ -21,11 +22,14 @@ export function useAuth() {
             return pendingCheckAuth;
         }
 
+        const epoch = authEpoch;
         pendingCheckAuth = (async () => {
             try {
                 const resp = await authService.checkAuth();
                 const result = isSuccess(resp.status);
-                lastCheckAuth = { result, at: Date.now() };
+                if (epoch === authEpoch) {
+                    lastCheckAuth = { result, at: Date.now() };
+                }
                 return result;
             } catch (e) {
                 return false;
@@ -44,12 +48,14 @@ export function useAuth() {
         if (isError(resp.status))
             throw new Error(data.message);
 
+        authEpoch++;
         lastCheckAuth = { result: true, at: Date.now() };
         await cache.users.addUser(data);
         router.replace("/series");
     }
 
     const logout = async () => {
+        authEpoch++;
         lastCheckAuth = { result: false, at: Date.now() };
         await authService.logout();
         await cache.userSeries.clearCache();

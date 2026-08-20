@@ -22,31 +22,31 @@
         <template v-if="displayChart">
             <v-col cols="12" md="6">
                 <chart :data="stat?.seasonsMonthCurrentYear" :type="ChartType.Bar" chart-id="seasons-months-curr-year"
-                    default-color="#a84632" title="Saisons par mois cette année" />
+                    :default-color="CATEGORICAL_COLORS[0]" title="Saisons par mois cette année" />
             </v-col>
             <v-col cols="12" md="6">
                 <chart :data="stat?.episodesMonthCurrentYear" :type="ChartType.Bar" chart-id="episodes-months-curr-year"
-                    default-color="#1ae86c" title="Episodes par mois cette année" />
+                    :default-color="CATEGORICAL_COLORS[1]" title="Episodes par mois cette année" />
             </v-col>
             <v-col cols="12" md="6">
                 <chart :data="stat?.timeYears" :type="ChartType.Line" chart-id="time-hours-years"
-                    default-color="#2bccf0" title="Temps en heures par années" />
+                    :default-color="CATEGORICAL_COLORS[2]" title="Temps en heures par années" />
             </v-col>
             <v-col cols="12" md="6">
                 <chart :data="stat?.seasonsYears" :type="ChartType.Bar" chart-id="seasons-years"
-                    default-color="#1a20e8" title="Saisons par années" />
+                    :default-color="CATEGORICAL_COLORS[3]" title="Saisons par années" />
             </v-col>
             <v-col cols="12" md="6">
                 <chart :data="stat?.episodesYears" :type="ChartType.Bar" chart-id="episodes-years"
-                    default-color="#e81a70" title="Episodes par années" />
+                    :default-color="CATEGORICAL_COLORS[4]" title="Episodes par années" />
             </v-col>
             <v-col cols="12" md="6">
                 <chart :data="stat?.seasonsMonths" :type="ChartType.Bar" chart-id="seasons-months"
-                    default-color="#e81ac2" title="Saisons par mois" />
+                    :default-color="CATEGORICAL_COLORS[5]" title="Saisons par mois" />
             </v-col>
             <v-col cols="12" md="6">
                 <chart :data="stat?.bestMonths" :type="ChartType.Bar" chart-id="best-months"
-                    default-color="#03fccf" title="Mois records en heures" />
+                    :default-color="CATEGORICAL_COLORS[6]" title="Mois records en heures" />
             </v-col>
             <v-col cols="12" md="6">
                 <chart :data="stat?.seriesRankingTime" :type="ChartType.Pie" chart-id="ranking-time" title="Séries les plus chronophages" />
@@ -80,7 +80,7 @@ import SeriesKinds from "@/components/stats/SeriesKinds.vue";
 import FriendSeries from "@/components/friends/FriendSeries.vue";
 import SeriesNotes from "@/components/stats/SeriesNotes.vue";
 import { useStatistic } from "@/composables/statistic";
-import { ELEVATION, MAIN_COLOR } from "@/constants/style";
+import { CATEGORICAL_COLORS, ELEVATION, MAIN_COLOR } from "@/constants/style";
 import type { ChartData, GlobalStat } from "@/models/stat";
 import { computed, onMounted, ref, watch } from "vue";
 import storageService from "@/services/storageService";

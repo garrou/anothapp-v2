@@ -1,17 +1,20 @@
 <template>
-    <v-container class="d-flex flex-column justify-center text-center" style="height: 100vh">
-        <v-form v-model="valid" @submit="authenticate" @submit.prevent>
+    <v-container class="d-flex align-center justify-center" style="min-height: 100vh">
+        <v-card class="pa-8" width="100%" max-width="420">
+            <h1 class="text-h5 font-weight-bold text-center mb-6">{{ TITLE }}</h1>
 
-            <h1>{{ TITLE }}</h1>
+            <v-form v-model="valid" @submit="authenticate" @submit.prevent>
+                <v-text-field v-model="identifier" label="Username ou email" required />
 
-            <v-text-field v-model="identifier" label="Username ou email" required variant="underlined" />
+                <v-text-field v-model="password" label="Mot de passe" required type="password" />
 
-            <v-text-field v-model="password" label="Mot de passe" required type="password" variant="underlined" />
+                <v-btn block class="mt-2 mb-4" color="primary" :disabled="!valid" :text="TITLE" type="submit" />
 
-            <v-btn block class="my-5" :disabled="!valid" :text="TITLE" type="submit" />
-
-            <router-link text="Pas de compte ? S'inscrire" to="/register" />
-        </v-form>
+                <div class="text-center">
+                    <router-link text="Pas de compte ? S'inscrire" to="/register" />
+                </div>
+            </v-form>
+        </v-card>
     </v-container>
 </template>
 <script lang="ts" setup>

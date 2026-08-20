@@ -1,10 +1,14 @@
 <template>
     <v-layout v-if="navbar">
-        <v-app-bar fixed elevation="0" class="bg-black">
-            <v-app-bar-title @click="$router.push('/')" class="text-h5 font-weight-bold">ANOTHAPP</v-app-bar-title>
+        <v-app-bar fixed elevation="0" border>
+            <v-app-bar-title @click="$router.push('/')" class="text-h5 font-weight-bold" style="cursor: pointer">
+                anothapp
+            </v-app-bar-title>
 
             <template v-slot:append>
-                <v-btn v-if="showLoginBtn" text @click="$router.push('/login')">Se connecter</v-btn>
+                <v-btn v-if="showLoginBtn" color="primary" variant="text" @click="$router.push('/login')">
+                    Se connecter
+                </v-btn>
             </template>
         </v-app-bar>
     </v-layout>

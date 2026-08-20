@@ -1,7 +1,7 @@
 <template>
     <v-menu :open-on-click="openOnClick" :open-on-hover="openOnHover">
         <template v-slot:activator="{ props }">
-            <v-btn icon="mdi-dots-vertical" v-bind="props"></v-btn>
+            <v-btn icon="mdi-dots-vertical" variant="text" v-bind="props"></v-btn>
         </template>
 
         <v-list>

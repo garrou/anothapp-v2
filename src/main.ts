@@ -24,6 +24,43 @@ const vuetify = createVuetify({
   locale: {
     locale: 'fr',
     messages: { fr }
+  },
+  theme: {
+    defaultTheme: "anothapp",
+    themes: {
+      anothapp: {
+        dark: false,
+        colors: {
+          background: "#F6F6FA",
+          surface: "#FFFFFF",
+          "surface-variant": "#F0F0F6",
+          "surface-bright": "#FFFFFF",
+          primary: "#6C5CE0",
+          "primary-darken-1": "#5646B8",
+          secondary: "#C98F2A",
+          "secondary-darken-1": "#A9761E",
+          error: "#D6483A",
+          "on-background": "#1C1D26",
+          "on-surface": "#1C1D26",
+          "on-surface-variant": "#5B5E6E",
+        },
+        variables: {
+          "border-color": "#E2E2EC",
+          "border-opacity": 1,
+          "medium-emphasis-opacity": 0.7,
+        }
+      }
+    }
+  },
+  defaults: {
+    VCard: { rounded: "lg", elevation: 0, border: true },
+    VBtn: { rounded: "lg" },
+    VTextField: { variant: "outlined", rounded: "lg" },
+    VAppBar: { elevation: 0, border: true },
+    VBottomNavigation: { elevation: 0, border: true },
+    VNavigationDrawer: { elevation: 0, border: true },
+    VChip: { rounded: "lg" },
+    VDialog: { transition: "fade-transition" },
   }
 });
 const app = createApp(App);

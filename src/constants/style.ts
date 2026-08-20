@@ -1,10 +1,10 @@
-export const ELEVATION = 3;
+export const ELEVATION = 0;
 
 export const DENSITY = "compact";
 
 export const TOOLTIP_LOCATION = "bottom";
 
-export const MAIN_COLOR = "surface-variant";
+export const MAIN_COLOR = "primary";
 
 export const NOTE_COLORS: Record<number, string> = {
     1: "red-darken-3",

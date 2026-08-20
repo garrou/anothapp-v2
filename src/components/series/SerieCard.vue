@@ -1,10 +1,10 @@
 <template>
-    <v-card>
+    <v-card class="serie-card">
         <router-link v-if="serie.poster" :to="link">
             <base-image cover max-height="580" :src="serie.poster" />
         </router-link>
 
-        <v-card-subtitle class="pt-4">
+        <v-card-subtitle class="pt-4 text-wrap font-weight-medium">
             <router-link :text="serie.title" :to="link" />
         </v-card-subtitle>
 
@@ -39,3 +39,13 @@ const props = defineProps({
 
 const link = props.serie.addedAt ? `/series/${props.serie.id}` : `/discover/${props.serie.id}`;
 </script>
+
+<style scoped>
+.serie-card {
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.serie-card:hover {
+    transform: translateY(-2px);
+}
+</style>

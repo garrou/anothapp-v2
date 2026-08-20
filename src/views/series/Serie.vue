@@ -14,39 +14,32 @@
                 <base-image :src="infos.serie.poster" max-height="350" />
             </v-col>
             <v-col cols="12" sm="9">
-                <v-card>
-                    <v-card-title class="text-overline">
+                <v-card class="overview-card">
+                    <v-card-item>
                         <div class="text-h4 font-weight-bold">{{ viewingPercent }}%</div>
-
-                        <div class="text-h6 text-medium-emphasis font-weight-regular">
+                        <div class="text-body-2 text-medium-emphasis">
                             {{ buildPlural("Saison", infos.seasons.length, false, false) }}
                             {{ infos.seasons.length }} / {{ seasons.length }}
                         </div>
-                    </v-card-title>
+                        <v-progress-linear class="mt-3" height="10" :model-value="viewingPercent" rounded="lg"
+                            color="primary" />
+                    </v-card-item>
 
                     <v-card-text>
-                        <v-progress-linear height="20" :model-value="viewingPercent" rounded="lg" />
-
-                        <div class="d-flex flex-column py-3 ga-2">
-                            <span class="font-weight-bold">
-                                Durée d'un épisode : {{ buildPlural("min", infos.serie.duration) }}
-                            </span>
-                            <span class="font-weight-bold">
-                                Episodes vus : {{ infos.episodes }}
-                            </span>
-                            <span class="font-weight-bold">
-                                Temps de visionnage : {{ time }}
-                            </span>
-                            <span v-if="isMissingSeasons" class="font-weight-bold">
-                                Temps restant : {{ missingTime }}
-                            </span>
-                            <v-chip-group v-model="infos.serie.note" :selected-class="MAIN_COLOR" @update:model-value="updateSerieNote">
-                                <v-chip v-for="n in notes" :key="n.id" :value="n.id" :color="NOTE_COLORS[n.id]">
-                                    <v-icon v-if="n.id == infos.serie.note" class="mr-2" :icon="NOTE_ICONS[n.id]" />
-                                    <span>{{ n.name }}</span>
-                                </v-chip>
-                            </v-chip-group>
+                        <div class="stat-grid">
+                            <stat-tile label="Durée d'un épisode" :value="`${infos.serie.duration} min`" />
+                            <stat-tile label="Episodes vus" :value="infos.episodes" />
+                            <stat-tile label="Temps de visionnage" :value="time" />
+                            <stat-tile v-if="isMissingSeasons" label="Temps restant" :value="missingTime" />
                         </div>
+
+                        <v-chip-group v-model="infos.serie.note" class="mt-4" :selected-class="'bg-primary'"
+                            @update:model-value="updateSerieNote">
+                            <v-chip v-for="n in notes" :key="n.id" :value="n.id" :color="NOTE_COLORS[n.id]">
+                                <v-icon v-if="n.id == infos.serie.note" class="mr-2" :icon="NOTE_ICONS[n.id]" />
+                                <span>{{ n.name }}</span>
+                            </v-chip>
+                        </v-chip-group>
                     </v-card-text>
                 </v-card>
             </v-col>
@@ -110,6 +103,7 @@ import ButtonDetailsSerie from "@/components/buttons/ButtonDetailsSerie.vue";
 import BaseModal from "@/components/BaseModal.vue";
 import BaseImage from "@/components/BaseImage.vue";
 import BaseToolbar from "@/components/BaseToolbar.vue";
+import StatTile from "@/components/StatTile.vue";
 import SeasonDetails from "@/components/seasons/SeasonDetails.vue";
 import SeasonEpisodes from "@/components/seasons/SeasonEpisodes.vue";
 import SeasonsRow from "@/components/seasons/SeasonsRow.vue";
@@ -260,3 +254,15 @@ onBeforeMount(async () => {
     ]);
 });
 </script>
+
+<style scoped>
+.overview-card {
+    padding: 4px;
+}
+
+.stat-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+}
+</style>

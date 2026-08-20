@@ -1,25 +1,26 @@
 <template>
-    <v-container class="d-flex flex-column justify-center text-center" style="height: 100vh">
-        <v-form v-model="valid" @submit="createAccount" @submit.prevent>
+    <v-container class="d-flex align-center justify-center" style="min-height: 100vh">
+        <v-card class="pa-8" width="100%" max-width="420">
+            <h1 class="text-h5 font-weight-bold text-center mb-6">{{ TITLE }}</h1>
 
-            <h1>{{ TITLE }}</h1>
+            <v-form v-model="valid" @submit="createAccount" @submit.prevent>
+                <v-text-field v-model="username" counter label="Username" required :rules="nameRules" />
 
-            <v-text-field v-model="username" counter label="Username" required :rules="nameRules"
-                variant="underlined" />
+                <v-text-field v-model="email" label="Email" required :rules="emailRules" suffix="@xyz.com" />
 
-            <v-text-field v-model="email" label="Email" required :rules="emailRules" suffix="@xyz.com"
-                variant="underlined" />
+                <v-text-field v-model="password" counter label="Mot de passe" required :rules="passwordRules"
+                    type="password" />
 
-            <v-text-field v-model="password" counter label="Mot de passe" required :rules="passwordRules"
-                type="password" variant="underlined" />
+                <v-text-field v-model="confirmPassword" counter label="Confirmer le mot de passe" required
+                    :rules="passwordRules" type="password" />
 
-            <v-text-field v-model="confirmPassword" counter label="Confirmer le mot de passe" required
-                :rules="passwordRules" type="password" variant="underlined" />
+                <v-btn block class="mt-2 mb-4" color="primary" :disabled="!valid" :text="TITLE" type="submit" />
 
-            <v-btn block class="my-5" :disabled="!valid" :text="TITLE" type="submit" />
-
-            <router-link text="Déjà membre ? Se connecter" to="/login" />
-        </v-form>
+                <div class="text-center">
+                    <router-link text="Déjà membre ? Se connecter" to="/login" />
+                </div>
+            </v-form>
+        </v-card>
     </v-container>
 </template>
 

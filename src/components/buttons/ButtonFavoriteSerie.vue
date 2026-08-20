@@ -30,7 +30,7 @@ const serie = ref<Serie>();
 const isFavorite = ref(false);
 
 const favoriteText = computed(() => isFavorite.value ? "Supprimer des favoris" : "Ajouter aux favoris");
-const favoriteColor = computed(() => isFavorite.value ? "red" : "surface-variant");
+const favoriteColor = computed(() => isFavorite.value ? "red" : "on-surface-variant");
 
 const changeFavorite = async (): Promise<void> => {
     if (!serie.value) throw new Error("Impossible de modifier la série");

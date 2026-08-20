@@ -6,14 +6,14 @@ export const TOOLTIP_LOCATION = "bottom";
 
 export const MAIN_COLOR = "primary";
 
-// One hue (violet, matching the app's primary), monotone light -> dark: an
-// ordinal scale where color intensity tracks note quality (1 = décevant, 5 = excellent).
+// Distinct hues (from the categorical palette below) so each note reads apart
+// at a glance, bad (red) -> good (green), validated all-pairs CVD-safe.
 export const NOTE_COLORS: Record<number, string> = {
-    1: "#CDA6FF",
-    2: "#B48DF4",
-    3: "#9871D5",
-    4: "#7A53B4",
-    5: "#5B3291"
+    1: "#e34948",
+    2: "#2a78d6",
+    3: "#eda100",
+    4: "#1baf7a",
+    5: "#008300"
 }
 
 // Fixed hue order for identity charts (multi-slice pies): never reorder or cycle.

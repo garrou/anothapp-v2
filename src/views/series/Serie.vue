@@ -1,15 +1,6 @@
 <template>
     <div v-if="infos">
-        <div class="hero" :style="heroStyle">
-            <div class="hero-scrim"></div>
-            <v-btn class="back-btn" icon="mdi-chevron-left" variant="flat" density="comfortable" @click="goBack" />
-            <div class="hero-content">
-                <div v-if="infos.serie.kinds?.length" class="hero-tags">
-                    <span v-for="kind in infos.serie.kinds" :key="kind" class="tag">{{ kind }}</span>
-                </div>
-                <h1 class="hero-title">{{ infos.serie.title }}</h1>
-            </div>
-        </div>
+        <serie-hero :poster="infos.serie.poster" :kinds="infos.serie.kinds" :title="infos.serie.title" @back="goBack" />
 
         <v-container>
             <v-card class="overview mb-6" rounded="lg">
@@ -112,6 +103,7 @@ import SeasonDetails from "@/components/seasons/SeasonDetails.vue";
 import SeasonEpisodes from "@/components/seasons/SeasonEpisodes.vue";
 import SeasonsRow from "@/components/seasons/SeasonsRow.vue";
 import FriendsRow from "@/components/friends/FriendsRow.vue";
+import SerieHero from "@/components/series/SerieHero.vue";
 import type { SerieInfo } from "@/models/serie";
 import { computed, onBeforeMount, reactive, ref } from "vue";
 import { useSeason } from "@/composables/season";
@@ -178,9 +170,6 @@ const isMissingSeasons = computed(() => seasons.value.length - (infos.value?.sea
 const time = computed(() => minsToStringHoursDays(infos.value?.time));
 const viewingPercent = computed(() => ((infos.value?.seasons.length ?? 0) / seasons.value.length * 100).toFixed(0));
 const ringOffset = computed(() => ringCircumference * (1 - Number(viewingPercent.value) / 100));
-const heroStyle = computed(() => infos.value?.serie.poster
-    ? { backgroundImage: `url(${infos.value.serie.poster})` }
-    : {});
 
 const goBack = () => {
     if (router.options.history.state.back) router.back();
@@ -274,60 +263,6 @@ onBeforeMount(async () => {
 </script>
 
 <style scoped>
-.hero {
-    position: relative;
-    height: 320px;
-    background-color: rgb(var(--v-theme-surface));
-    background-size: cover;
-    background-position: center 20%;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    padding: 24px 24px 28px;
-}
-
-.hero-scrim {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, rgba(10, 8, 16, 0.35) 0%, rgba(10, 8, 16, 0.15) 30%, rgb(var(--v-theme-background)) 100%);
-}
-
-.back-btn {
-    position: relative;
-    z-index: 1;
-    background: rgba(10, 8, 16, 0.5) !important;
-    margin-bottom: auto;
-    align-self: flex-start;
-}
-
-.hero-content {
-    position: relative;
-    z-index: 1;
-}
-
-.hero-tags {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 10px;
-}
-
-.tag {
-    font-size: 11.5px;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.85);
-    background: rgba(255, 255, 255, 0.12);
-    border-radius: 999px;
-    padding: 4px 11px;
-}
-
-.hero-title {
-    font-size: 32px;
-    font-weight: 700;
-    letter-spacing: -0.015em;
-    color: #fff;
-    text-shadow: 0 2px 16px rgba(0, 0, 0, 0.4);
-}
-
 .overview {
     display: flex;
     flex-wrap: wrap;

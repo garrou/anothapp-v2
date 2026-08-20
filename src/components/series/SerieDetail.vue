@@ -4,6 +4,10 @@
             <base-image :src="serie.poster" />
         </div>
         <div class="detail-content">
+            <div v-if="serie.kinds?.length" class="kinds-row">
+                <span v-for="kind in serie.kinds" :key="kind" class="kind-tag">{{ kind }}</span>
+            </div>
+
             <div class="status-badge" :class="serie.finished ? 'status-badge--done' : 'status-badge--ongoing'">
                 <span class="status-dot"></span>
                 {{ statusLabel }}
@@ -14,17 +18,17 @@
                     <div class="stat-value">{{ serie.seasons }}</div>
                     <div class="stat-label">Saisons</div>
                 </div>
-                <v-divider vertical />
+                <v-divider vertical thickness="1" opacity="0.4" />
                 <div class="stat">
                     <div class="stat-value">{{ serie.episodes }}</div>
                     <div class="stat-label">Episodes</div>
                 </div>
-                <v-divider vertical />
+                <v-divider vertical thickness="1" opacity="0.4" />
                 <div class="stat">
                     <div class="stat-value">{{ serie.duration }} min</div>
                     <div class="stat-label">Par épisode</div>
                 </div>
-                <v-divider vertical />
+                <v-divider vertical thickness="1" opacity="0.4" />
                 <div class="stat">
                     <div class="stat-value">{{ totalDuration }}</div>
                     <div class="stat-label">Durée totale</div>
@@ -86,13 +90,13 @@ const totalDuration = computed(() => minsToStringHoursDays(props.serie.duration 
 <style scoped>
 .serie-detail {
     display: flex;
-    flex-wrap: wrap;
-    gap: 32px;
+    flex-direction: column;
+    gap: 20px;
 }
 
 .preview-img {
-    flex: 0 0 240px;
-    width: 240px;
+    width: 180px;
+    align-self: flex-start;
 
     @media screen and (max-width: 600px) {
         display: none;
@@ -100,8 +104,23 @@ const totalDuration = computed(() => minsToStringHoursDays(props.serie.duration 
 }
 
 .detail-content {
-    flex: 1 1 480px;
-    min-width: 280px;
+    width: 100%;
+}
+
+.kinds-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.kind-tag {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: rgb(var(--v-theme-on-surface-variant));
+    background: rgba(var(--v-theme-on-surface), 0.06);
+    border-radius: 999px;
+    padding: 4px 10px;
 }
 
 .status-badge {

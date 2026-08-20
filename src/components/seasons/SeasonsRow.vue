@@ -2,22 +2,19 @@
 
     <v-btn class="mb-2 ms-1" :icon="orderIcon" @click="orderSeasons" />
 
-    <v-row>
-        <v-col v-for="season in seasons" cols="6" md="4" lg="3" :key="season.number">
-            <base-skeleton :loading="loading" type="card">
-                <season-card :season="season" @show="$emit('showSeason', season, addable)">
-                    <template v-if="addable" #add>
-                        <v-btn :color="MAIN_COLOR" :icon="ADD_ICON" variant="text"
-                            @click="$emit('addSeason', season)" />
-                    </template>
-                </season-card>
-            </base-skeleton>
-        </v-col>
-    </v-row>
+    <card-grid :items="seasons" :loading="loading">
+        <template #default="{ item: season }">
+            <season-card :season="season" @show="$emit('showSeason', season, addable)">
+                <template v-if="addable" #add>
+                    <v-btn :color="MAIN_COLOR" :icon="ADD_ICON" variant="text" @click="$emit('addSeason', season)" />
+                </template>
+            </season-card>
+        </template>
+    </card-grid>
 </template>
 
 <script lang="ts" setup>
-import BaseSkeleton from "@/components/BaseSkeleton.vue";
+import CardGrid from "@/components/CardGrid.vue";
 import SeasonCard from "./SeasonCard.vue";
 import { computed, ref, type PropType } from "vue";
 import type { Season } from "@/models/season";

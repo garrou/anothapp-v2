@@ -6,32 +6,24 @@
                 @click:append-inner="$emit('search', username)" />
         </v-form>
 
-        <v-row v-if="friends.length">
-            <v-col v-for="(friend, index) in friends" cols="6" md="4" lg="3" :key="index">
-                <base-skeleton :loading="loading" type="card">
-                    <v-card>
-                        <base-image v-if="friend.picture" cover max-height="580" :src="friend.picture" />
+        <card-grid v-if="friends.length" :items="friends" :loading="loading">
+            <template #default="{ item: friend }">
+                <poster-card :image="friend.picture">
+                    <v-card-subtitle class="pt-4">{{ friend.username }}</v-card-subtitle>
 
-                        <v-card-subtitle class="pt-4">{{ friend.username }}</v-card-subtitle>
-
-                        <v-card-actions>
-                            <v-btn v-if="consult" :icon="DETAILS_ICON" variant="text" @click="showFriend(friend)" />
-                            <v-btn v-if="addable" :icon="ADD_ICON" variant="text" @click="addFriend(friend)" />
-                            <v-btn v-if="accept" icon="mdi-check" variant="text" @click="acceptFriend(friend)" />
-                            <v-btn v-if="remove" :icon="DELETE_ICON" variant="text" @click="showConfirm(friend)" />
-                        </v-card-actions>
-                    </v-card>
-                </base-skeleton>
-            </v-col>
-        </v-row>
+                    <template #actions>
+                        <v-btn v-if="consult" :icon="DETAILS_ICON" variant="text" @click="showFriend(friend)" />
+                        <v-btn v-if="addable" :icon="ADD_ICON" variant="text" @click="addFriend(friend)" />
+                        <v-btn v-if="accept" icon="mdi-check" variant="text" @click="acceptFriend(friend)" />
+                        <v-btn v-if="remove" :icon="DELETE_ICON" variant="text" @click="showConfirm(friend)" />
+                    </template>
+                </poster-card>
+            </template>
+        </card-grid>
         <span v-else>Aucun résultat</span>
     </div>
 
-    <base-modal v-if="friend" v-model="modal" :max-width="1600">
-        <template #title>
-            <span>{{ friend.username }}</span>
-            <v-btn :icon="CLOSE_ICON" variant="text" @click="modal = false" />
-        </template>
+    <base-modal v-if="friend" v-model="modal" :max-width="1600" :title="friend.username">
         <dashboard :user-id="friend.id" :show-bar="false" />
     </base-modal>
 
@@ -41,11 +33,11 @@
 
 <script lang="ts" setup>
 import BaseConfirm from "@/components/BaseConfirm.vue";
-import BaseImage from "@/components/BaseImage.vue";
 import BaseModal from "@/components/BaseModal.vue";
-import BaseSkeleton from "@/components/BaseSkeleton.vue";
+import CardGrid from "@/components/CardGrid.vue";
+import PosterCard from "@/components/PosterCard.vue";
 import Dashboard from "@/views/stats/Dashboard.vue";
-import { ADD_ICON, CLOSE_ICON, DELETE_ICON, DETAILS_ICON, SEARCH_ICON } from "@/constants/icons";
+import { ADD_ICON, DELETE_ICON, DETAILS_ICON, SEARCH_ICON } from "@/constants/icons";
 import type { User } from "@/models/user";
 import { ref, type PropType } from "vue";
 import { useFriend } from "@/composables/friend";

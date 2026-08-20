@@ -30,15 +30,7 @@
 
             <v-window-item :value="3" @group:selected="getSimilars">
                 <base-skeleton :loading="loading" type="table-tbody">
-                    <v-table>
-                        <tbody>
-                            <tr v-for="similar in similars" :key="similar.id">
-                                <td>
-                                    <router-link :text="similar.title" :to="`/discover/${similar.id}`" />
-                                </td>
-                            </tr>
-                        </tbody>
-                    </v-table>
+                    <series-link-list :series="similars" base-path="/discover" />
                 </base-skeleton>
             </v-window-item>
 
@@ -60,6 +52,7 @@ import BaseToolbar from "@/components/BaseToolbar.vue";
 import FriendsRow from "@/components/friends/FriendsRow.vue";
 import ImagesRow from "@/components/ImagesRow.vue";
 import SerieDetail from "@/components/series/SerieDetail.vue";
+import SeriesLinkList from "@/components/series/SeriesLinkList.vue";
 import ButtonAddSerie from "@/components/buttons/ButtonAddSerie.vue";
 import ButtonFavoriteSerie from "@/components/buttons/ButtonFavoriteSerie.vue";
 import ButtonListSerie from "@/components/buttons/ButtonListSerie.vue";

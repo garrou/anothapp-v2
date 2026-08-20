@@ -20,11 +20,7 @@
         </v-card>
     </v-container>
 
-    <base-modal v-model="modal" :max-width="800">
-        <template #title>
-            <span>Modifier</span>
-            <v-btn :icon="CLOSE_ICON" variant="text" @click="modal = false" />
-        </template>
+    <base-modal v-model="modal" :max-width="800" title="Modifier">
         <div v-if="selected === 'images'">
             <v-expansion-panels multiple variant="accordion">
                 <v-expansion-panel v-for="serie in series" :key="serie.id"
@@ -59,7 +55,6 @@ import type { Serie } from "@/models/serie";
 import { useSerie } from "@/composables/serie";
 import { useSearch } from "@/composables/search";
 import type { ProfileModal } from "@/types/types";
-import { CLOSE_ICON } from "@/constants/icons";
 import { ProfileLayout } from "@/layouts/profile-layout";
 
 const { getProfile } = useUser();

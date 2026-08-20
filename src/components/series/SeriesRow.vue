@@ -1,18 +1,15 @@
 <template>
     <span v-if="total">{{ buildPlural("série", series.length) }}</span>
-    <v-row v-if="series.length || loading" class="mt-2">
-        <v-col v-for="serie in series" :cols="6" :md="3" :key="serie.id">
-            <base-skeleton :loading="loading" type="card">
-                <serie-card :serie="serie" :watch-status="watchStatus"
-                    @refresh="(id: number) => $emit('refresh', id)" />
-            </base-skeleton>
-        </v-col>
-    </v-row>
+    <card-grid v-if="series.length || loading" class="mt-2" :items="series" :loading="loading" :md="3">
+        <template #default="{ item: serie }">
+            <serie-card :serie="serie" :watch-status="watchStatus" @refresh="(id: number) => $emit('refresh', id)" />
+        </template>
+    </card-grid>
     <div v-else class="text-center mt-2">Aucune série</div>
 </template>
 
 <script lang="ts" setup>
-import BaseSkeleton from "@/components/BaseSkeleton.vue";
+import CardGrid from "@/components/CardGrid.vue";
 import SerieCard from "@/components/series/SerieCard.vue";
 import type { Serie } from "@/models/serie";
 import { buildPlural } from "@/utils/format";

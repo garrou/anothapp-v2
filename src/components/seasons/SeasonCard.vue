@@ -1,28 +1,20 @@
 <template>
-    <v-card>
-        <div @click="$emit('show', season)" style="cursor: pointer;">
-            <template v-if="season.image">
-                <router-link v-if="serieLink" :to="serieLink">
-                    <base-image v-if="season.image" class="align-end" cover :src="season.image" max-height="580" />
-                </router-link>
-                <base-image v-else class="align-end" cover :src="season.image" max-height="580" />
-            </template>
+    <poster-card :image="season.image" :to="serieLink" @click="$emit('show', season)">
+        <v-card-title>Saison {{ season.number }}</v-card-title>
 
-            <v-card-title>Saison {{ season.number }}</v-card-title>
+        <v-chip class="ml-2" :color="MAIN_COLOR" size="small">
+            {{ text }}
+        </v-chip>
 
-            <v-chip class="ml-2" :color="MAIN_COLOR" size="small">
-                {{ text }}
-            </v-chip>
-        </div>
-        <v-card-actions>
+        <template #actions>
             <slot name="add" />
             <slot name="show" />
-        </v-card-actions>
-    </v-card>
+        </template>
+    </poster-card>
 </template>
 
 <script lang="ts" setup>
-import BaseImage from "@/components/BaseImage.vue";
+import PosterCard from "@/components/PosterCard.vue";
 import type { Season } from "@/models/season";
 import { buildPlural } from "@/utils/format";
 import { computed, type PropType } from "vue";

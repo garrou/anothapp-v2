@@ -71,20 +71,12 @@
         text="Confirmez-vous la suppression de la série ?" @cancel="confirmModal = false"
         @confirm="deleteSerie(infos.serie)" />
 
-    <base-modal v-if="selected" v-model="modal">
-        <template #title>
-            <span>Saison {{ selected.number }}</span>
-            <v-btn :icon="CLOSE_ICON" variant="text" @click="modal = false" />
-        </template>
+    <base-modal v-if="selected" v-model="modal" :title="`Saison ${selected.number}`">
         <season-episodes v-if="isAddable" :id="id" :number="selected.number" />
         <season-details v-else :id="id" :season="selected" @refresh="refresh" />
     </base-modal>
 
-    <base-modal v-model="updateModal">
-        <template #title>
-            <span>Modifier la date d'ajout</span>
-            <v-btn :icon="CLOSE_ICON" variant="text" @click="updateModal = false" />
-        </template>
+    <base-modal v-model="updateModal" title="Modifier la date d'ajout">
         <v-text-field v-model="showInfo.addedAt" type="datetime-local" :max="maxDate" />
 
         <div class="d-flex justify-end">
@@ -115,7 +107,7 @@ import { useSearch } from "@/composables/search";
 import { useSerie } from "@/composables/serie";
 import type { Season } from "@/models/season";
 import { buildPlural, formatDateTime, minsToStringHoursDays } from "@/utils/format";
-import { CLOSE_ICON, NOTE_ICONS } from "@/constants/icons";
+import { NOTE_ICONS } from "@/constants/icons";
 import type { User } from "@/models/user";
 import { useFriend } from "@/composables/friend";
 import { useState } from "@/composables/state";

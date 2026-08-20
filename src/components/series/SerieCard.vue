@@ -1,14 +1,10 @@
 <template>
-    <v-card class="serie-card">
-        <router-link v-if="serie.poster" :to="link">
-            <base-image cover max-height="580" :src="serie.poster" />
-        </router-link>
-
+    <poster-card :image="serie.poster" :to="link">
         <v-card-subtitle class="pt-4 text-wrap font-weight-medium">
             <router-link :text="serie.title" :to="link" />
         </v-card-subtitle>
 
-        <v-card-actions>
+        <template #actions>
             <base-menu open-on-click open-on-hover>
                 <button-favorite-serie :serie-id="serie.id" @refresh="$emit('refresh', serie.id)" />
                 <button-watch-serie v-if="watchStatus" :serie-id="serie.id"
@@ -17,13 +13,13 @@
                 <button-list-serie :serie="serie" @refresh="$emit('refresh', serie.id)" />
                 <button-modal-serie-details :serie="serie" />
             </base-menu>
-        </v-card-actions>
-    </v-card>
+        </template>
+    </poster-card>
 </template>
 
 <script lang="ts" setup>
-import BaseImage from "@/components/BaseImage.vue";
 import BaseMenu from "@/components/BaseMenu.vue";
+import PosterCard from "@/components/PosterCard.vue";
 import ButtonAddSerie from "@/components/buttons/ButtonAddSerie.vue";
 import ButtonFavoriteSerie from "@/components/buttons/ButtonFavoriteSerie.vue";
 import ButtonWatchSerie from "@/components/buttons/ButtonWatchSerie.vue";
@@ -39,13 +35,3 @@ const props = defineProps({
 
 const link = props.serie.addedAt ? `/series/${props.serie.id}` : `/discover/${props.serie.id}`;
 </script>
-
-<style scoped>
-.serie-card {
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.serie-card:hover {
-    transform: translateY(-2px);
-}
-</style>

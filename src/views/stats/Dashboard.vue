@@ -66,26 +66,15 @@
         </template>
     </v-row>
 
-    <base-modal v-model="modal" :max-width="800">
-        <template #title>
-            <span v-if="modalTitle">{{ modalTitle }}</span>
-            <v-btn :icon="CLOSE_ICON" variant="text" @click="modal = false" />
-        </template>
-        <v-table>
-            <tbody>
-                <tr v-for="serie in series" :key="serie.id">
-                    <td>
-                        <router-link :text="serie.title" :to="`/${url}/${serie.id}`" @click="serieStore.reset()" />
-                    </td>
-                </tr>
-            </tbody>
-        </v-table>
+    <base-modal v-model="modal" :max-width="800" :title="modalTitle">
+        <series-link-list :series="series" :base-path="`/${url}`" @click="serieStore.reset()" />
     </base-modal>
 </template>
 
 <script lang="ts" setup>
 import BaseAppBar from "@/components/BaseAppBar.vue";
 import BaseModal from "@/components/BaseModal.vue";
+import SeriesLinkList from "@/components/series/SeriesLinkList.vue";
 import SeriesCountries from "@/components/stats/SeriesCountries.vue";
 import SeriesKinds from "@/components/stats/SeriesKinds.vue";
 import FriendSeries from "@/components/friends/FriendSeries.vue";
@@ -100,7 +89,6 @@ import { ChartGroupedType, ChartType, SerieStatus } from "@/types/types";
 import { useSerieStore } from "@/stores/serie";
 import type { Serie } from "@/models/serie";
 import { useSerie } from "@/composables/serie";
-import { CLOSE_ICON } from "@/constants/icons";
 import { useScrollStore } from "@/stores/scroll";
 import { useRoute } from "vue-router";
 import Chart from "@/components/stats/Chart.vue";

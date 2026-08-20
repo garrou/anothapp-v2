@@ -120,6 +120,23 @@ const router = createRouter({
       }
     },
     {
+      path: "/friend",
+      name: "friend",
+      component: () => import("@/views/friends/FriendView.vue"),
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: "/actor/:id",
+      name: "actor",
+      component: () => import("@/views/actors/ActorView.vue"),
+      props: (route) => ({ id: Number(route.params.id) }),
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
       path: "/:catchAll(.*)",
       redirect: "/",
     },

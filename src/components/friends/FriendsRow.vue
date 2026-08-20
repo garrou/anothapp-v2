@@ -23,24 +23,20 @@
         <span v-else>Aucun résultat</span>
     </div>
 
-    <base-modal v-if="friend" v-model="modal" :max-width="1600" :title="friend.username">
-        <dashboard :user-id="friend.id" :show-bar="false" />
-    </base-modal>
-
     <base-confirm v-model="confirm" text="Supprimer cet(te) ami(e) ?" title="Supprimer" persistent
         @cancel="confirm = false" @confirm="removeFriend" />
 </template>
 
 <script lang="ts" setup>
 import BaseConfirm from "@/components/BaseConfirm.vue";
-import BaseModal from "@/components/BaseModal.vue";
 import CardGrid from "@/components/CardGrid.vue";
 import PosterCard from "@/components/PosterCard.vue";
-import Dashboard from "@/views/stats/Dashboard.vue";
 import { ADD_ICON, DELETE_ICON, DETAILS_ICON, SEARCH_ICON } from "@/constants/icons";
 import type { User } from "@/models/user";
 import { ref, type PropType } from "vue";
 import { useFriend } from "@/composables/friend";
+import { useFriendStore } from "@/stores/friend";
+import { useRouter } from "vue-router";
 
 defineProps({
     accept: { type: Boolean, default: false },
@@ -57,17 +53,17 @@ const emit = defineEmits<{
     refresh: []
 }>();
 
+const router = useRouter();
+const friendStore = useFriendStore();
 const { acceptFriendRequest, deleteFriend, sendFriendRequest } = useFriend();
 
 const confirm = ref(false);
-const friend = ref<User>();
-const modal = ref(false);
 const selected = ref<User>();
 const username = ref<string>("");
 
 const showFriend = (user: User) => {
-    friend.value = user;
-    modal.value = true;
+    friendStore.setFriend(user);
+    router.push('/friend');
 }
 
 const acceptFriend = async (user: User) => {

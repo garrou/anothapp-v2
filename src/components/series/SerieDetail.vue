@@ -117,8 +117,8 @@ const totalDuration = computed(() => minsToStringHoursDays(props.serie.duration 
 .kind-tag {
     font-size: 11.5px;
     font-weight: 600;
-    color: rgb(var(--v-theme-on-surface-variant));
-    background: rgba(var(--v-theme-on-surface), 0.06);
+    color: rgb(var(--v-theme-primary));
+    background: rgba(var(--v-theme-primary), 0.12);
     border-radius: 999px;
     padding: 4px 10px;
 }

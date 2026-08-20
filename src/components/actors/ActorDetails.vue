@@ -1,10 +1,9 @@
 <template>
-    <v-row align="start" class="pa-2">
-        <v-col v-if="actor.poster" cols="12" md="6">
-            <base-image max-height="580" :src="actor.poster" />
-        </v-col>
-
-        <v-col cols="12" md="6">
+    <div class="actor-detail">
+        <div v-if="actor.poster" class="preview-img">
+            <base-image :src="actor.poster" />
+        </div>
+        <div class="detail-content">
             <div class="meta-line">
                 <template v-if="actor.birthday">
                     <span class="meta-item">
@@ -29,8 +28,8 @@
                 <div class="section-label">Description</div>
                 <p class="section-text">{{ actor.description }}</p>
             </div>
-        </v-col>
-    </v-row>
+        </div>
+    </div>
 </template>
 
 <script lang="ts" setup>
@@ -44,6 +43,26 @@ defineProps({
 </script>
 
 <style scoped>
+.actor-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 8px;
+}
+
+.preview-img {
+    width: 180px;
+    align-self: flex-start;
+
+    @media screen and (max-width: 600px) {
+        display: none;
+    }
+}
+
+.detail-content {
+    width: 100%;
+}
+
 .meta-line {
     display: flex;
     flex-wrap: wrap;

@@ -1,5 +1,5 @@
 <template>
-    <v-dialog :max-width="width" :persistent="persistent">
+    <v-dialog :max-width="width" :persistent="persistent" :aria-label="title">
         <v-card :text="text" :title="title">
             <template #actions>
                 <v-spacer></v-spacer>

@@ -21,34 +21,40 @@
         </v-app-bar>
 
         <v-navigation-drawer v-model="menus" location="left" temporary>
-            <v-list-item v-if="user" :prepend-avatar="user.picture" :title="user.username"
-                @click="$router.push('/profile')" />
+            <div v-if="user" class="profile-header" @click="$router.push('/profile')">
+                <v-avatar size="48" :image="user.picture" />
+                <div class="profile-info">
+                    <div class="text-subtitle-1 font-weight-bold">{{ user.username }}</div>
+                    <div class="text-caption text-medium-emphasis">Voir mon profil</div>
+                </div>
+            </div>
 
             <v-divider />
 
-            <v-list :density="DENSITY" nav>
-                <v-list-item v-for="(item, index) in NAV_SERIES_STATUS" :key="index"
+            <v-list :density="DENSITY" nav class="px-2 py-2">
+                <v-list-item v-for="(item, index) in NAV_SERIES_STATUS" :key="index" rounded="lg"
                     :to="`/series-status?status=${item.status}`" :prepend-icon="item.icon" :title="item.title"
                     variant="plain" />
             </v-list>
 
             <v-divider />
 
-            <v-list :density="DENSITY" nav>
-                <v-list-item v-for="(item, index) in NAV_OTHERS" :key="index" :to="item.link" :prepend-icon="item.icon"
-                    :title="item.title" variant="plain" />
+            <v-list :density="DENSITY" nav class="px-2 py-2">
+                <v-list-item v-for="(item, index) in NAV_OTHERS" :key="index" rounded="lg" :to="item.link"
+                    :prepend-icon="item.icon" :title="item.title" variant="plain" />
             </v-list>
 
             <v-divider />
 
-            <v-list :density="DENSITY" nav>
-                <v-list-item prepend-icon="mdi-logout" title="Se déconnecter" variant="plain" @click="logout" />
+            <v-list :density="DENSITY" nav class="px-2 py-2">
+                <v-list-item rounded="lg" prepend-icon="mdi-logout" title="Se déconnecter" variant="plain"
+                    @click="logout" />
             </v-list>
         </v-navigation-drawer>
 
         <v-navigation-drawer v-model="filters" location="right" width="320">
             <div class="d-flex flex-row mt-2">
-                <v-tabs v-model="tab" direction="vertical">
+                <v-tabs v-model="tab" color="primary" direction="vertical">
                     <v-tab min-width="40" :value="1">
                         <v-icon icon="mdi-drama-masks" />
                     </v-tab>
@@ -242,6 +248,19 @@ onBeforeMount(async () => {
 </script>
 
 <style scoped>
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 16px;
+    cursor: pointer;
+    background: rgb(var(--v-theme-surface-variant));
+}
+
+.profile-info {
+    min-width: 0;
+}
+
 .v-list-item:nth-last-child(1) {
     margin-bottom: 75px;
 }

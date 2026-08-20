@@ -1,6 +1,6 @@
 <template>
     <v-layout v-if="navbar" class="mt-10">
-        <v-bottom-navigation>
+        <v-bottom-navigation color="primary">
             <v-btn v-for="(item, index) in NAV_MENU" :key="index" :to="item.link">
                 <v-icon>{{ item.icon }}</v-icon>
                 <span>{{ item.title }}</span>

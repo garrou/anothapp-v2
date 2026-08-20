@@ -9,15 +9,7 @@
                 <button-list-serie :serie="serie" />
             </div>
 
-            <v-card class="mb-2">
-                <v-tabs v-model="tab">
-                    <v-tab :value="1">Informations</v-tab>
-                    <v-tab :value="5">Vue par</v-tab>
-                    <v-tab :value="2">Acteurs</v-tab>
-                    <v-tab :value="3">Séries similaires</v-tab>
-                    <v-tab :value="4">Images</v-tab>
-                </v-tabs>
-            </v-card>
+            <pill-tabs v-model="tab" class="mb-4" :tabs="DETAILS_TABS" />
 
             <v-window v-model="tab" class="pa-1">
 
@@ -55,6 +47,7 @@ import ImagesRow from "@/components/ImagesRow.vue";
 import SerieDetail from "@/components/series/SerieDetail.vue";
 import SerieHero from "@/components/series/SerieHero.vue";
 import SeriesLinkList from "@/components/series/SeriesLinkList.vue";
+import PillTabs from "@/components/PillTabs.vue";
 import ButtonAddSerie from "@/components/buttons/ButtonAddSerie.vue";
 import ButtonFavoriteSerie from "@/components/buttons/ButtonFavoriteSerie.vue";
 import ButtonListSerie from "@/components/buttons/ButtonListSerie.vue";
@@ -70,6 +63,14 @@ import { useRouter } from "vue-router";
 const props = defineProps({
     id: { type: Number, required: true }
 })
+
+const DETAILS_TABS = [
+    { value: 1, label: "Informations" },
+    { value: 5, label: "Vue par" },
+    { value: 2, label: "Acteurs" },
+    { value: 3, label: "Séries similaires" },
+    { value: 4, label: "Images" }
+];
 
 const router = useRouter();
 const { getFriends } = useFriend();

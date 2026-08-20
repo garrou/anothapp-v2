@@ -1,7 +1,7 @@
 <template>
     <v-tooltip :text="computedText" :location="tooltipLocation">
         <template v-slot:activator="{ props }">
-            <v-btn v-bind="props" :color="MAIN_COLOR" elevation="0" :icon="computedIcon" variant="text"
+            <v-btn v-bind="props" :color="computedColor" elevation="0" :icon="computedIcon" variant="text"
                 @click="updateInList" />
         </template>
     </v-tooltip>
@@ -27,6 +27,7 @@ const { addSerie, deleteSerieInList, getSerieFromCache } = useSerie();
 const existsInList = ref(false);
 
 const computedIcon = computed(() => existsInList.value ? "mdi-bookmark-minus" : "mdi-bookmark-plus");
+const computedColor = computed(() => existsInList.value ? MAIN_COLOR : "on-surface-variant");
 const computedText = computed(() => existsInList.value ? "Supprimer de ma liste" : "Ajouter dans ma liste");
 
 const updateInList = async () => {

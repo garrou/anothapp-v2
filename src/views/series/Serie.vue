@@ -49,12 +49,7 @@
                 </v-chip>
             </v-chip-group>
 
-            <v-card class="my-2">
-                <v-tabs v-model="tab">
-                    <v-tab :value="1">Mes saisons</v-tab>
-                    <v-tab :value="2">Ajouter</v-tab>
-                </v-tabs>
-            </v-card>
+            <pill-tabs v-model="tab" class="mb-4" :tabs="SERIE_TABS" />
 
             <v-window v-model="tab" class="pa-1">
                 <v-window-item :value="1">
@@ -104,6 +99,7 @@ import SeasonEpisodes from "@/components/seasons/SeasonEpisodes.vue";
 import SeasonsRow from "@/components/seasons/SeasonsRow.vue";
 import FriendsRow from "@/components/friends/FriendsRow.vue";
 import SerieHero from "@/components/series/SerieHero.vue";
+import PillTabs from "@/components/PillTabs.vue";
 import type { SerieInfo } from "@/models/serie";
 import { computed, onBeforeMount, reactive, ref } from "vue";
 import { useSeason } from "@/composables/season";
@@ -124,6 +120,11 @@ import { useRouter } from "vue-router";
 const props = defineProps({
     id: { type: Number, required: true }
 });
+
+const SERIE_TABS = [
+    { value: 1, label: "Mes saisons" },
+    { value: 2, label: "Ajouter" }
+];
 
 const maxDate = new Date().toISOString().slice(0, 16);
 

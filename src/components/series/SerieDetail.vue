@@ -3,29 +3,84 @@
         <v-col v-if="serie.poster" cols="12" md="6" class="preview-img my-2">
             <base-image max-height="580" :src="serie.poster" />
         </v-col>
-        <v-col cols="12" md="6">
-            <v-alert class="my-2" :color="status" :density="DENSITY" :icon="icon" :title="statusLabel" />
-            <info-list :cards="cards" />
+        <v-col cols="12" md="6" class="my-2">
+            <div class="status-badge" :class="serie.finished ? 'status-badge--done' : 'status-badge--ongoing'">
+                <span class="status-dot"></span>
+                {{ statusLabel }}
+            </div>
+
+            <div class="stat-strip">
+                <div class="stat">
+                    <div class="stat-value">{{ serie.seasons }}</div>
+                    <div class="stat-label">Saisons</div>
+                </div>
+                <v-divider vertical />
+                <div class="stat">
+                    <div class="stat-value">{{ serie.episodes }}</div>
+                    <div class="stat-label">Episodes</div>
+                </div>
+                <v-divider vertical />
+                <div class="stat">
+                    <div class="stat-value">{{ serie.duration }} min</div>
+                    <div class="stat-label">Par épisode</div>
+                </div>
+                <v-divider vertical />
+                <div class="stat">
+                    <div class="stat-value">{{ totalDuration }}</div>
+                    <div class="stat-label">Durée totale</div>
+                </div>
+            </div>
+
+            <div class="meta-line">
+                <template v-if="serie.network">
+                    <span>{{ serie.network }}</span>
+                    <span class="dot">•</span>
+                </template>
+                <span>{{ serie.country }}</span>
+                <template v-if="serie.note">
+                    <span class="dot">•</span>
+                    <span class="meta-note">
+                        <v-icon size="13" icon="mdi-star" color="secondary" />
+                        {{ serie.note.toFixed(2) }} / 5
+                    </span>
+                </template>
+                <template v-if="serie.creation">
+                    <span class="dot">•</span>
+                    <span>Depuis {{ serie.creation }}</span>
+                </template>
+            </div>
+
+            <div v-if="serie.description" class="detail-section">
+                <div class="section-label">Synopsis</div>
+                <p class="section-text">{{ serie.description }}</p>
+            </div>
+
+            <div v-if="serie.platforms?.length" class="detail-section">
+                <div class="section-label">Disponible sur</div>
+                <div class="platforms-row">
+                    <div v-for="plt in serie.platforms" :key="plt.id" class="platform-item">
+                        <platform-card :platform="plt" />
+                        <span class="platform-name">{{ plt.name }}</span>
+                    </div>
+                </div>
+            </div>
         </v-col>
     </v-row>
 </template>
 
 <script lang="ts" setup>
 import BaseImage from "@/components/BaseImage.vue";
-import InfoList from "@/components/InfoList.vue";
-import { type PropType } from "vue";
+import PlatformCard from "@/components/series/PlatformCard.vue";
+import { computed, type PropType } from "vue";
 import type { Serie } from "@/models/serie";
-import { DENSITY } from "@/constants/style";
-import { SerieDetailsLayout } from "@/layouts/serie-details-layout";
+import { minsToStringHoursDays } from "@/utils/format";
 
 const props = defineProps({
     serie: { type: Object as PropType<Serie>, required: true }
 });
 
-const cards = SerieDetailsLayout(props.serie);
-const status = props.serie.finished ? "success" : "info";
-const statusLabel = props.serie.finished ? "Terminée" : "En cours";
-const icon = `\$${status}`;
+const statusLabel = computed(() => props.serie.finished ? "Terminée" : "En cours");
+const totalDuration = computed(() => minsToStringHoursDays(props.serie.duration * (props.serie.episodes ?? 0)));
 </script>
 
 <style scoped>
@@ -33,5 +88,126 @@ const icon = `\$${status}`;
     @media screen and (max-width: 960px) {
         display: none;
     }
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    width: fit-content;
+    padding: 5px 12px 5px 10px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.status-badge--done {
+    background: rgba(var(--v-theme-success), 0.12);
+    color: rgb(var(--v-theme-success));
+}
+
+.status-badge--ongoing {
+    background: rgba(var(--v-theme-info), 0.12);
+    color: rgb(var(--v-theme-info));
+}
+
+.status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
+}
+
+.stat-strip {
+    display: flex;
+    align-items: stretch;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 0 22px;
+}
+
+.stat:first-child {
+    padding-left: 0;
+}
+
+.stat-value {
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 21px;
+    font-weight: 700;
+}
+
+.stat-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: rgb(var(--v-theme-on-surface-variant));
+}
+
+.meta-line {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: rgb(var(--v-theme-on-surface-variant));
+    margin-bottom: 20px;
+}
+
+.meta-note {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.dot {
+    opacity: 0.5;
+}
+
+.detail-section {
+    margin-bottom: 20px;
+}
+
+.section-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: rgb(var(--v-theme-on-surface-variant));
+    margin-bottom: 6px;
+}
+
+.section-text {
+    margin: 0;
+    font-size: 14.5px;
+    line-height: 1.6;
+}
+
+.platforms-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.platform-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    width: 60px;
+}
+
+.platform-name {
+    font-size: 10.5px;
+    color: rgb(var(--v-theme-on-surface-variant));
+    text-align: center;
 }
 </style>

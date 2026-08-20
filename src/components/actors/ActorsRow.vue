@@ -9,7 +9,7 @@
     </card-grid>
     <p v-else>Aucun acteur</p>
 
-    <base-modal v-if="actor" v-model="modal">
+    <base-modal v-if="actor" v-model="modal" :title="actor.name">
         <actor-details :actor="actor" />
         <series-row :loading="loading" :series="actor.series" total />
     </base-modal>

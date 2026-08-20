@@ -5,7 +5,7 @@
         <p>{{ message.message }}</p>
 
         <template #actions>
-            <v-btn color="text-white" variant="text" @click="snackbar = false">Ok</v-btn>
+            <v-btn color="white" variant="text" @click="snackbar = false">Ok</v-btn>
         </template>
     </v-snackbar>
 </template>

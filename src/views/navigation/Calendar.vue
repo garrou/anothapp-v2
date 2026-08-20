@@ -4,7 +4,7 @@
     <v-sheet height="64">
         <v-toolbar flat>
           <v-btn
-            color="grey-darken-2"
+            :color="MAIN_COLOR"
             size="small"
             variant="text"
             icon
@@ -15,7 +15,7 @@
             </v-icon>
           </v-btn>
           <v-btn
-            color="grey-darken-2"
+            :color="MAIN_COLOR"
             size="small"
             variant="text"
             icon
@@ -44,8 +44,8 @@ import { SerieStatus } from "@/types/types";
 import { computed, onBeforeMount, onMounted, onUnmounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import type { CalendarWeekdays } from "vuetify/lib/composables/calendar.mjs";
+import { CATEGORICAL_COLORS, MAIN_COLOR } from "@/constants/style";
 
-const colors = ["blue", "indigo", "purple", "cyan", "green", "orange", "red", "amber"];
 const weekdays = [0, 1, 2, 3, 4, 5, 6] as CalendarWeekdays[];
 
 const { getSeriesByStatus } = useSerie();
@@ -57,8 +57,6 @@ const value = ref("");
 const windowWidth = ref(window.innerWidth);
 
 const calendarView = computed(() => windowWidth.value < 620 ? "week" : "month");
-
-const rnd = (a: number, b: number) => Math.floor((b - a + 1) * Math.random()) + a;
 
 const onWidthChange = () => {
     windowWidth.value = window.innerWidth;
@@ -74,12 +72,12 @@ onUnmounted(() => window.removeEventListener('resize', onWidthChange));
 
 onBeforeMount(async () => {
     const nextSeries = await getSeriesByStatus(SerieStatus.Next);
-    series.value = nextSeries.map((s) => ({
+    series.value = nextSeries.map((s, i) => ({
         id: s.id,
         name: s.title,
         start: `${s.nextEpisode} 00:00`,
         end: `${s.nextEpisode} 23:59`,
-        color: colors[rnd(0, colors.length - 1)],
+        color: CATEGORICAL_COLORS[i % CATEGORICAL_COLORS.length],
     }));
 });
 </script>

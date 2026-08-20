@@ -2,11 +2,9 @@
     <v-container class="text-center">
         <v-form v-model="valid" @submit="updateEmail" @submit.prevent>
 
-            <v-text-field v-model="current" label="Email actuel" required :rules="emailRules" suffix="@xyz.com"
-                variant="underlined" />
+            <v-text-field v-model="current" label="Email actuel" required :rules="emailRules" suffix="@xyz.com" />
 
-            <v-text-field v-model="email" label="Nouvel email" required :rules="emailRules" suffix="@xyz.com"
-                variant="underlined" />
+            <v-text-field v-model="email" label="Nouvel email" required :rules="emailRules" suffix="@xyz.com" />
 
             <v-btn block class="my-5" :disabled="!valid" text="Sauvegarder" type="submit" />
         </v-form>

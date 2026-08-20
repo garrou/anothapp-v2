@@ -3,13 +3,13 @@
         <v-form v-model="valid" @submit="updatePassword" @submit.prevent>
 
             <v-text-field v-model="current" label="Mot de passe actuel" required :rules="passwordRules"
-                type="password" variant="underlined" />
+                type="password" />
 
             <v-text-field v-model="password" counter label="Nouveau mot de passe" required :rules="passwordRules"
-                type="password" variant="underlined" />
+                type="password" />
 
             <v-text-field v-model="confirmPassword" counter label="Confirmer le mot de passe" required
-                :rules="passwordRules" type="password" variant="underlined" />
+                :rules="passwordRules" type="password" />
 
             <v-btn block class="my-5" :disabled="!valid" text="Sauvegarder" type="submit" />
         </v-form>

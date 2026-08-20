@@ -1,9 +1,9 @@
 <template>
-    <v-row>
-        <v-col v-if="serie.poster" cols="12" md="6" class="preview-img my-2">
-            <base-image max-height="580" :src="serie.poster" />
-        </v-col>
-        <v-col cols="12" md="6" class="my-2">
+    <div class="serie-detail">
+        <div v-if="serie.poster" class="preview-img">
+            <base-image :src="serie.poster" />
+        </div>
+        <div class="detail-content">
             <div class="status-badge" :class="serie.finished ? 'status-badge--done' : 'status-badge--ongoing'">
                 <span class="status-dot"></span>
                 {{ statusLabel }}
@@ -64,8 +64,8 @@
                     </div>
                 </div>
             </div>
-        </v-col>
-    </v-row>
+        </div>
+    </div>
 </template>
 
 <script lang="ts" setup>
@@ -84,10 +84,24 @@ const totalDuration = computed(() => minsToStringHoursDays(props.serie.duration 
 </script>
 
 <style scoped>
+.serie-detail {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 32px;
+}
+
 .preview-img {
-    @media screen and (max-width: 960px) {
+    flex: 0 0 240px;
+    width: 240px;
+
+    @media screen and (max-width: 600px) {
         display: none;
     }
+}
+
+.detail-content {
+    flex: 1 1 480px;
+    min-width: 280px;
 }
 
 .status-badge {

@@ -10,7 +10,7 @@
                 <button-watch-serie v-if="watchStatus" :serie="serie" @refresh="$emit('refresh', serie.id)" />
                 <button-add-serie :serie-id="serie.id" />
                 <button-list-serie :serie="serie" @refresh="$emit('refresh', serie.id)" />
-                <button-modal-serie-details :serie="serie" />
+                <button-modal-serie-details v-if="!hideDetailsButton" :serie="serie" />
             </base-menu>
         </template>
     </poster-card>
@@ -28,6 +28,7 @@ import type { Serie } from "@/models/serie";
 import type { PropType } from "vue";
 
 const props = defineProps({
+    hideDetailsButton: { type: Boolean, default: false },
     serie: { type: Object as PropType<Serie>, required: true },
     watchStatus: { type: Boolean, default: false }
 });

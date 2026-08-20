@@ -1,7 +1,7 @@
 <template>
     <v-tooltip v-if="serie.description" text="Voir les détails" :location="tooltipLocation">
         <template v-slot:activator="{ props }">
-            <v-btn v-bind="props" :color="MAIN_COLOR" :icon="DETAILS_ICON" variant="text" @click="modal = true" />
+            <v-btn v-bind="props" color="on-surface-variant" :icon="DETAILS_ICON" variant="text" @click="modal = true" />
         </template>
     </v-tooltip>
     
@@ -14,7 +14,7 @@
 import BaseModal from '@/components/BaseModal.vue';
 import SerieDetail from '@/components/series/SerieDetail.vue';
 import { DETAILS_ICON } from '@/constants/icons';
-import { TOOLTIP_LOCATION, MAIN_COLOR } from '@/constants/style';
+import { TOOLTIP_LOCATION } from '@/constants/style';
 import type { Serie } from '@/models/serie';
 import { ref, type PropType } from 'vue';
 

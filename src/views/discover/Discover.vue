@@ -1,6 +1,6 @@
 <template>
     <base-app-bar discover placeholder="Ajouter une série" search />
-    <series-row :loading="loading" :series="series" />
+    <series-row :loading="loading" :series="series" hide-details-button />
 </template>
 
 <script lang="ts" setup>

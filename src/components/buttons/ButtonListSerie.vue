@@ -24,7 +24,6 @@ const emit = defineEmits<{
 
 const { addSerie, deleteSerieInList, getSerieFromCache } = useSerie();
 
-const exists = ref(false);
 const existsInList = ref(false);
 
 const computedIcon = computed(() => existsInList.value ? "mdi-bookmark-minus" : "mdi-bookmark-plus");
@@ -41,7 +40,6 @@ const updateInList = async () => {
 }
 
 onBeforeMount(async () => {
-    exists.value = !!(await getSerieFromCache(props.serie.id));
     existsInList.value = !!(await getSerieFromCache(props.serie.id, { type: "userlist" }));
 });
 </script>

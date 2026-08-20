@@ -6,7 +6,7 @@
 import BasePieChart from "@/components/BasePieChart.vue";
 import type { ChartData, Stat } from "@/models/stat";
 import { computed } from "vue";
-import { NOTE_COLORS_RGB } from "@/constants/style";
+import { NOTE_COLORS } from "@/constants/style";
 import { ChartGroupedType } from "@/types/types";
 
 const TITLE = "Notes attribuées aux séries";
@@ -19,7 +19,7 @@ const emit = defineEmits<{
     click: [ChartData]
 }>();
 
-const itemStyle = computed(() => props.data.map((record) => ({ color: NOTE_COLORS_RGB[record.id] })));
+const itemStyle = computed(() => props.data.map((record) => ({ color: NOTE_COLORS[record.id] })));
 
 const emitClick = (data: { id: number, name: string, value: number }) => {
   emit("click", { kind: ChartGroupedType.Notes, ...data });

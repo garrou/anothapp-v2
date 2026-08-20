@@ -58,10 +58,10 @@
                 <chart :data="stat?.seasonsPlatforms" :type="ChartType.Pie" chart-id="seasons-platforms" title="Saisons par plateformes" />
             </v-col>
             <v-col cols="12" md="6">
-                <series-countries :data="stat?.seriesCountries" @click="handleChartClick" />
-            </v-col>
-            <v-col cols="12" md="6">
                 <series-notes :data="stat?.seriesNotes" @click="handleChartClick" />
+            </v-col>
+            <v-col cols="12">
+                <series-countries :data="stat?.seriesCountries" @click="handleChartClick" />
             </v-col>
         </template>
     </v-row>

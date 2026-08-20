@@ -1,71 +1,81 @@
 <template>
-    <v-container v-if="infos">
-        <base-toolbar icon="mdi-chevron-left" :title="infos.serie.title">
-            <template #buttons>
-                <button-details-serie :serie-id="id" />
-                <button-favorite-serie :serie-id="id" />
-                <button-watch-serie :serie-id="id" />
-                <button-update-serie :serie="infos.serie" @update="updateModal = true" />
-                <button-remove-serie :serie="infos.serie" />
-            </template>
-        </base-toolbar>
-        <v-row>
-            <v-col v-if="infos.serie.poster" cols="12" sm="3">
-                <base-image :src="infos.serie.poster" max-height="350" />
-            </v-col>
-            <v-col cols="12" sm="9">
-                <v-card class="overview-card">
-                    <v-card-item>
-                        <div class="text-h4 font-weight-bold">{{ viewingPercent }}%</div>
-                        <div class="text-body-2 text-medium-emphasis">
+    <div v-if="infos">
+        <div class="hero" :style="heroStyle">
+            <div class="hero-scrim"></div>
+            <v-btn class="back-btn" icon="mdi-chevron-left" variant="flat" density="comfortable" @click="goBack" />
+            <div class="hero-content">
+                <div v-if="infos.serie.kinds?.length" class="hero-tags">
+                    <span v-for="kind in infos.serie.kinds" :key="kind" class="tag">{{ kind }}</span>
+                </div>
+                <h1 class="hero-title">{{ infos.serie.title }}</h1>
+            </div>
+        </div>
+
+        <v-container>
+            <v-card class="overview mb-6" rounded="lg">
+                <div class="ring-wrap">
+                    <svg width="128" height="128" viewBox="0 0 128 128">
+                        <circle cx="64" cy="64" r="54" fill="none" class="ring-track" stroke-width="10" />
+                        <circle cx="64" cy="64" r="54" fill="none" class="ring-value-circle" stroke-width="10"
+                            stroke-linecap="round" :stroke-dasharray="ringCircumference"
+                            :stroke-dashoffset="ringOffset" transform="rotate(-90 64 64)" />
+                    </svg>
+                    <div class="ring-center">
+                        <div class="ring-value">{{ viewingPercent }}%</div>
+                        <div class="ring-label">
                             {{ buildPlural("Saison", infos.seasons.length, false, false) }}
                             {{ infos.seasons.length }} / {{ seasons.length }}
                         </div>
-                        <v-progress-linear class="mt-3" height="10" :model-value="viewingPercent" rounded="lg"
-                            color="primary" />
-                    </v-card-item>
+                    </div>
+                </div>
+                <div class="overview-stats">
+                    <stat-tile label="Episodes vus" :value="infos.episodes" />
+                    <stat-tile label="Temps de visionnage" :value="time" />
+                    <stat-tile v-if="isMissingSeasons" label="Temps restant" :value="missingTime" />
+                    <stat-tile label="Durée d'un épisode" :value="`${infos.serie.duration} min`" />
+                </div>
+            </v-card>
 
-                    <v-card-text>
-                        <div class="stat-grid">
-                            <stat-tile label="Durée d'un épisode" :value="`${infos.serie.duration} min`" />
-                            <stat-tile label="Episodes vus" :value="infos.episodes" />
-                            <stat-tile label="Temps de visionnage" :value="time" />
-                            <stat-tile v-if="isMissingSeasons" label="Temps restant" :value="missingTime" />
-                        </div>
+            <div class="actions-row mb-6">
+                <button-favorite-serie :serie-id="id" />
+                <button-watch-serie :serie="infos.serie" />
+                <button-details-serie :serie="infos.serie" />
+                <button-update-serie :serie="infos.serie" @update="updateModal = true" />
+                <v-tooltip text="Amis qui regardent cette série" :location="TOOLTIP_LOCATION">
+                    <template v-slot:activator="{ props: tooltipProps }">
+                        <v-btn v-bind="tooltipProps" :color="MAIN_COLOR" elevation="0" icon="mdi-account-heart"
+                            variant="text" @click="openFriendsModal" />
+                    </template>
+                </v-tooltip>
+                <button-remove-serie :serie="infos.serie" />
+            </div>
 
-                        <v-chip-group v-model="infos.serie.note" class="mt-4" :selected-class="'bg-primary'"
-                            @update:model-value="updateSerieNote">
-                            <v-chip v-for="n in notes" :key="n.id" :value="n.id" :color="NOTE_COLORS[n.id]">
-                                <v-icon v-if="n.id == infos.serie.note" class="mr-2" :icon="NOTE_ICONS[n.id]" />
-                                <span>{{ n.name }}</span>
-                            </v-chip>
-                        </v-chip-group>
-                    </v-card-text>
-                </v-card>
-            </v-col>
-        </v-row>
+            <v-chip-group v-model="infos.serie.note" class="mb-6" :selected-class="'bg-primary'"
+                @update:model-value="updateSerieNote">
+                <v-chip v-for="n in notes" :key="n.id" :value="n.id" :color="NOTE_COLORS[n.id]">
+                    <v-icon v-if="n.id == infos.serie.note" class="mr-2" :icon="NOTE_ICONS[n.id]" />
+                    <span>{{ n.name }}</span>
+                </v-chip>
+            </v-chip-group>
 
-        <v-card class="my-2">
-            <v-tabs v-model="tab">
-                <v-tab :value="1">Mes saisons</v-tab>
-                <v-tab :value="2">Ajouter</v-tab>
-                <v-tab :value="3">Vue par</v-tab>
-            </v-tabs>
-        </v-card>
+            <v-card class="my-2">
+                <v-tabs v-model="tab">
+                    <v-tab :value="1">Mes saisons</v-tab>
+                    <v-tab :value="2">Ajouter</v-tab>
+                </v-tabs>
+            </v-card>
 
-        <v-window v-model="tab" class="pa-1">
-            <v-window-item :value="1">
-                <seasons-row :loading="loading" :seasons="infos.seasons" @show-season="showSeason" />
-            </v-window-item>
-            <v-window-item :value="2">
-                <seasons-row addable :loading="loading" :seasons="seasons" @add-season="newSeason"
-                    @show-season="showSeason" />
-            </v-window-item>
-            <v-window-item :value="3" @group:selected="getFriendsWhoWatch">
-                <friends-row consult :friends="friends" />
-            </v-window-item>
-        </v-window>
-    </v-container>
+            <v-window v-model="tab" class="pa-1">
+                <v-window-item :value="1">
+                    <seasons-row :loading="loading" :seasons="infos.seasons" @show-season="showSeason" />
+                </v-window-item>
+                <v-window-item :value="2">
+                    <seasons-row addable :loading="loading" :seasons="seasons" @add-season="newSeason"
+                        @show-season="showSeason" />
+                </v-window-item>
+            </v-window>
+        </v-container>
+    </div>
 
     <base-confirm v-if="infos?.serie" v-model="confirmModal" title="Supprimer"
         text="Confirmez-vous la suppression de la série ?" @cancel="confirmModal = false"
@@ -74,6 +84,10 @@
     <base-modal v-if="selected" v-model="modal" :title="`Saison ${selected.number}`">
         <season-episodes v-if="isAddable" :id="id" :number="selected.number" />
         <season-details v-else :id="id" :season="selected" @refresh="refresh" />
+    </base-modal>
+
+    <base-modal v-model="friendsModal" title="Amis qui regardent cette série">
+        <friends-row consult :friends="friends" :loading="loading" />
     </base-modal>
 
     <base-modal v-model="updateModal" title="Modifier la date d'ajout">
@@ -93,8 +107,6 @@ import ButtonFavoriteSerie from "@/components/buttons/ButtonFavoriteSerie.vue";
 import ButtonRemoveSerie from "@/components/buttons/ButtonRemoveSerie.vue";
 import ButtonDetailsSerie from "@/components/buttons/ButtonDetailsSerie.vue";
 import BaseModal from "@/components/BaseModal.vue";
-import BaseImage from "@/components/BaseImage.vue";
-import BaseToolbar from "@/components/BaseToolbar.vue";
 import StatTile from "@/components/StatTile.vue";
 import SeasonDetails from "@/components/seasons/SeasonDetails.vue";
 import SeasonEpisodes from "@/components/seasons/SeasonEpisodes.vue";
@@ -112,7 +124,7 @@ import type { User } from "@/models/user";
 import { useFriend } from "@/composables/friend";
 import { useState } from "@/composables/state";
 import { FriendStatus } from "@/types/types";
-import { MAIN_COLOR, NOTE_COLORS } from "@/constants/style";
+import { MAIN_COLOR, NOTE_COLORS, TOOLTIP_LOCATION } from "@/constants/style";
 import { useSnackbar } from "@/composables/snackbar";
 import type { Note } from "@/models/note";
 import { useRouter } from "vue-router";
@@ -132,6 +144,7 @@ const { getSeasonsBySerieId, getPlatforms, getNotes } = useSearch();
 const { showSuccess, showError } = useSnackbar();
 
 const friends = ref<User[]>([]);
+const friendsModal = ref(false);
 const infos = ref<SerieInfo>();
 const loading = ref(false);
 const modal = ref(false);
@@ -146,6 +159,8 @@ const showInfo = reactive({
     isWatching: false,
     addedAt: ""
 });
+
+const ringCircumference = 2 * Math.PI * 54;
 
 const missingTime = computed(() => {
     const allSeasons = seasons.value;
@@ -162,6 +177,15 @@ const missingTime = computed(() => {
 const isMissingSeasons = computed(() => seasons.value.length - (infos.value?.seasons?.length ?? 0) > 0);
 const time = computed(() => minsToStringHoursDays(infos.value?.time));
 const viewingPercent = computed(() => ((infos.value?.seasons.length ?? 0) / seasons.value.length * 100).toFixed(0));
+const ringOffset = computed(() => ringCircumference * (1 - Number(viewingPercent.value) / 100));
+const heroStyle = computed(() => infos.value?.serie.poster
+    ? { backgroundImage: `url(${infos.value.serie.poster})` }
+    : {});
+
+const goBack = () => {
+    if (router.options.history.state.back) router.back();
+    else router.push('/series');
+}
 
 const refresh = async () => {
     modal.value = false;
@@ -198,7 +222,9 @@ const showSeason = (season: Season, addable: boolean): void => {
     modal.value = true;
 }
 
-const getFriendsWhoWatch = async (): Promise<void> => {
+const openFriendsModal = async (): Promise<void> => {
+    friendsModal.value = true;
+
     if (friends.value.length) return;
     loading.value = true;
     friends.value = (await getFriends(FriendStatus.Viewed, props.id)).viewed;
@@ -248,13 +274,120 @@ onBeforeMount(async () => {
 </script>
 
 <style scoped>
-.overview-card {
-    padding: 4px;
+.hero {
+    position: relative;
+    height: 320px;
+    background-color: rgb(var(--v-theme-surface));
+    background-size: cover;
+    background-position: center 20%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 24px 24px 28px;
 }
 
-.stat-grid {
+.hero-scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(10, 8, 16, 0.35) 0%, rgba(10, 8, 16, 0.15) 30%, rgb(var(--v-theme-background)) 100%);
+}
+
+.back-btn {
+    position: relative;
+    z-index: 1;
+    background: rgba(10, 8, 16, 0.5) !important;
+    margin-bottom: auto;
+    align-self: flex-start;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+}
+
+.hero-tags {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.tag {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 999px;
+    padding: 4px 11px;
+}
+
+.hero-title {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    color: #fff;
+    text-shadow: 0 2px 16px rgba(0, 0, 0, 0.4);
+}
+
+.overview {
     display: flex;
     flex-wrap: wrap;
-    gap: 24px;
+    align-items: center;
+    gap: 28px;
+    padding: 24px 28px;
+}
+
+.ring-wrap {
+    position: relative;
+    width: 128px;
+    height: 128px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ring-track {
+    stroke: rgb(var(--v-theme-surface-variant));
+}
+
+.ring-value-circle {
+    stroke: rgb(var(--v-theme-primary));
+    transition: stroke-dashoffset 0.4s ease;
+}
+
+.ring-center {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    text-align: center;
+}
+
+.ring-value {
+    font-family: "Space Grotesk", sans-serif;
+    font-weight: 700;
+    font-size: 24px;
+}
+
+.ring-label {
+    font-size: 10.5px;
+    color: rgb(var(--v-theme-on-surface-variant));
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.overview-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 32px;
+    flex: 1;
+}
+
+.actions-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 </style>

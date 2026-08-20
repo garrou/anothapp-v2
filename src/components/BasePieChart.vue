@@ -1,6 +1,6 @@
 <template>
   <v-card>
-    <v-chart class="chart mt-2" color="#f0a12b" :option="option" autoresize @click="handleChartClick" />
+    <v-chart class="chart mt-2" :color="CATEGORICAL_COLORS" :option="option" autoresize @click="handleChartClick" />
   </v-card>
 </template>
 
@@ -17,6 +17,7 @@ import {
 import VChart from "vue-echarts";
 import { computed, type PropType } from "vue";
 import type { Stat } from "@/models/stat";
+import { CATEGORICAL_COLORS } from "@/constants/style";
 
 const props = defineProps({
   data: { type: Array as PropType<Stat[]>, required: true },

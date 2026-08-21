@@ -8,10 +8,7 @@
 
         <template v-else-if="groups.length">
             <div v-for="group in groups" :key="group.date" class="upcoming-group">
-                <div class="day-badge" :class="{ 'day-badge--today': group.isToday }">
-                    <span class="day-badge-dow">{{ group.dow }}</span>
-                    <span class="day-badge-num">{{ group.day }}</span>
-                </div>
+                <day-badge :active="group.isToday" :day="group.day" :dow="group.dow" />
 
                 <div class="upcoming-column">
                     <div class="upcoming-label">{{ group.label }}</div>
@@ -40,28 +37,18 @@
 <script lang="ts" setup>
 import BaseAppBar from "@/components/BaseAppBar.vue";
 import BaseImage from "@/components/BaseImage.vue";
+import DayBadge from "@/components/DayBadge.vue";
 import EmptyState from "@/components/EmptyState.vue";
 import { useSerie } from "@/composables/serie";
 import type { Serie } from "@/models/serie";
 import { SerieStatus } from "@/types/types";
+import { MONTHS_FR, WEEKDAYS_LONG, WEEKDAYS_SHORT, isSameDay, parseLocalDate } from "@/utils/date";
 import { computed, onBeforeMount, ref } from "vue";
-
-const WEEKDAYS_SHORT = ["dim.", "lun.", "mar.", "mer.", "jeu.", "ven.", "sam."];
-const WEEKDAYS_LONG = ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"];
-const MONTHS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
 
 const { getSeriesByStatus } = useSerie();
 
 const loading = ref(false);
 const series = ref<Serie[]>([]);
-
-const parseLocalDate = (dateStr: string): Date => {
-    const [y, m, d] = dateStr.slice(0, 10).split("-").map(Number);
-    return new Date(y, m - 1, d);
-}
-
-const isSameDay = (a: Date, b: Date): boolean =>
-    a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
 
 const groups = computed(() => {
     const today = new Date();
@@ -83,7 +70,7 @@ const groups = computed(() => {
         const date = parseLocalDate(key);
         const isToday = isSameDay(date, today);
         const isTomorrow = isSameDay(date, tomorrow);
-        const label = isToday ? "Aujourd'hui" : isTomorrow ? "Demain" : `${WEEKDAYS_LONG[date.getDay()]} ${date.getDate()} ${MONTHS[date.getMonth()]}`;
+        const label = isToday ? "Aujourd'hui" : isTomorrow ? "Demain" : `${WEEKDAYS_LONG[date.getDay()]} ${date.getDate()} ${MONTHS_FR[date.getMonth()]}`;
 
         return {
             date: key,
@@ -121,43 +108,6 @@ onBeforeMount(async () => {
     display: flex;
     gap: 16px;
     margin-bottom: 28px;
-}
-
-.day-badge {
-    flex-shrink: 0;
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    background: rgb(var(--v-theme-surface-variant));
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    line-height: 1.1;
-}
-
-.day-badge--today {
-    background: rgb(var(--v-theme-primary));
-}
-
-.day-badge--today .day-badge-dow,
-.day-badge--today .day-badge-num {
-    color: #fff;
-}
-
-.day-badge-dow {
-    font-size: 9px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-    color: rgb(var(--v-theme-on-surface-variant));
-}
-
-.day-badge-num {
-    font-family: "Space Grotesk", sans-serif;
-    font-size: 18px;
-    font-weight: 700;
-    color: rgb(var(--v-theme-on-surface));
 }
 
 .upcoming-column {

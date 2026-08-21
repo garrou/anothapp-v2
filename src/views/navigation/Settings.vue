@@ -4,12 +4,11 @@
     <v-container>
         <v-card>
             <v-list>
-                <v-list-item title="Thème sombre" subtitle="Adapte l'application à une utilisation en soirée">
+                <v-list-item title="Thème sombre">
                     <template #append>
                         <v-switch v-model="isDark" color="primary" hide-details @update:model-value="toggleTheme" />
                     </template>
                 </v-list-item>
-                <v-divider />
                 <v-list-item prepend-icon="mdi-refresh" title="Réinitialiser l'application" @click="settings.clearCaches" />
                 <v-list-item prepend-icon="mdi-database" title="Exporter mes données" @click="settings.exportData" />
             </v-list>

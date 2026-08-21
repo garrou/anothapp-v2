@@ -13,7 +13,7 @@
 
             <v-list class="py-2 px-2">
                 <v-list-item v-for="(item, i) in ProfileLayout" :key="i" rounded="lg" :prepend-icon="item.icon"
-                    :title="item.name" @click="showModal(item.value)" />
+                    :title="item.name" :to="item.route" @click="item.route ? undefined : showModal(item.value)" />
             </v-list>
         </v-card>
     </v-container>

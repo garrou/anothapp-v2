@@ -52,11 +52,6 @@ export const NAV_SERIES_STATUS: NavStatusMenuItem[] = [
 
 export const NAV_OTHERS: NavOthersMenuItem[] = [
     {
-        title: "Mes plateformes",
-        icon: "mdi-animation-play",
-        link: "/platforms"
-    },
-    {
         title: "Historique",
         icon: "mdi-timeline-clock",
         link: "/history"
@@ -65,10 +60,5 @@ export const NAV_OTHERS: NavOthersMenuItem[] = [
         title: "Prochains épisodes",
         icon: "mdi-calendar",
         link: "/calendar"
-    },
-    {
-        title: "Paramètres",
-        icon: "mdi-wrench",
-        link: "/settings"
     }
 ];

@@ -32,14 +32,6 @@
             <v-divider />
 
             <v-list :density="DENSITY" nav class="px-2 py-2">
-                <v-list-item v-for="(item, index) in NAV_SERIES_STATUS" :key="index" rounded="lg"
-                    :to="`/series-status?status=${item.status}`" :prepend-icon="item.icon" :title="item.title"
-                    variant="plain" />
-            </v-list>
-
-            <v-divider />
-
-            <v-list :density="DENSITY" nav class="px-2 py-2">
                 <v-list-item v-for="(item, index) in NAV_OTHERS" :key="index" rounded="lg" :to="item.link"
                     :prepend-icon="item.icon" :title="item.title" variant="plain" />
             </v-list>
@@ -130,7 +122,7 @@
 <script lang="ts" setup>
 import { DENSITY, ELEVATION } from "@/constants/style";
 import { FILTER_ICON, SEARCH_ICON } from "@/constants/icons";
-import { NAV_OTHERS, NAV_SERIES_STATUS } from "@/constants/menus";
+import { NAV_OTHERS } from "@/constants/menus";
 import { computed, onBeforeMount, ref, watch } from "vue";
 import { useUser } from "@/composables/user";
 import { useSearch } from "@/composables/search";

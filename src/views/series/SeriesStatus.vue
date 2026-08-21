@@ -1,7 +1,7 @@
 <template>
     <base-app-bar />
 
-    <series-tabs class="mx-3 mb-2" />
+    <series-tabs class="mx-3 mt-4 mb-2" />
 
     <series-row :loading="loading" :series="series" :watch-status="displayWatchStatus" :empty-title="emptyCopy.title"
         :empty-description="emptyCopy.description" @refresh="(id) => refresh(id)" />

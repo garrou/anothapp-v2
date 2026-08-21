@@ -5,7 +5,7 @@ export const ProfileLayout: Layout[] = [
         icon: "mdi-image",
         name: "Changer la photo de profil",
         value: "images"
-    }, 
+    },
     {
         icon: "mdi-email",
         name: "Modifier l'email",
@@ -15,5 +15,15 @@ export const ProfileLayout: Layout[] = [
         icon: "mdi-account-lock",
         name: "Modifier le mot de passe",
         value: "password"
+    },
+    {
+        icon: "mdi-animation-play",
+        name: "Mes plateformes",
+        route: "/platforms"
+    },
+    {
+        icon: "mdi-wrench",
+        name: "Paramètres",
+        route: "/settings"
     }
 ]

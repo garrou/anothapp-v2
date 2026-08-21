@@ -12,7 +12,6 @@ import { createVuetify } from "vuetify";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
 import { useSnackbar } from "@/composables/snackbar";
-import { VCalendar } from "vuetify/components";
 import cache from "./cache";
 import storageService from "@/services/storageService";
 import { THEME_ANOTHAPP, THEME_ANOTHAPP_DARK, applyThemeClass } from "@/utils/theme";
@@ -20,7 +19,6 @@ import { THEME_ANOTHAPP, THEME_ANOTHAPP_DARK, applyThemeClass } from "@/utils/th
 const vuetify = createVuetify({
   components: {
     ...components,
-    VCalendar,
   },
   directives,
   locale: {

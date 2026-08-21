@@ -1,6 +1,6 @@
 <template>
     <base-app-bar auto-search placeholder="Chercher dans mes séries" search />
-    <series-tabs class="mx-3 mb-2" />
+    <series-tabs class="mx-3 mt-4 mb-2" />
     <series-row :loading="loading" :series="series" />
 </template>
 

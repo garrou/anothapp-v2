@@ -17,9 +17,6 @@ import { NAV_SERIES_STATUS } from "@/constants/menus";
 
 const route = useRoute();
 
-// Driven explicitly from the route rather than relying on <v-tab to="..">'s
-// own route-matching: "/series-status" shares a prefix with "/series" and
-// v-tab's built-in active detection got that ambiguous in practice.
 const active = computed(() => route.name === "series-status" ? (route.query.status as string) : "all");
 </script>
 
@@ -28,6 +25,7 @@ const active = computed(() => route.name === "series-status" ? (route.query.stat
     display: flex;
     flex-wrap: wrap;
     gap: 4px;
+    padding-top: 20px;
 }
 
 .pill-tab {

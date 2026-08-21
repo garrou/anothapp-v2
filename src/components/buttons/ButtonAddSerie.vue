@@ -15,7 +15,7 @@
     <v-tooltip v-else-if="!exists" text="Ajouter la série" :location="tooltipLocation">
         <template v-slot:activator="{ props }">
             <v-btn v-bind="props" class="add-btn" :class="{ 'add-btn--quick': quick }"
-                :color="quick ? 'primary' : 'on-surface-variant'" :elevation="0" :icon="ADD_ICON"
+                color="on-surface-variant" :elevation="0" :icon="ADD_ICON"
                 :size="quick ? 32 : undefined" :variant="quick ? 'flat' : 'text'" @click="addSerie(serieId)" />
         </template>
     </v-tooltip>

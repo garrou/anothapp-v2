@@ -14,6 +14,7 @@
 
 <script lang="ts" setup>
 import BaseMenu from "./BaseMenu.vue";
+import { goBack } from "@/utils/navigation";
 import { useRouter } from "vue-router";
 
 defineProps({
@@ -23,10 +24,5 @@ defineProps({
 
 const router = useRouter();
 
-const navigate = () => {
-  if (router.options.history.state.back)
-    router.back();
-  else
-    router.push('/series');
-}
+const navigate = () => goBack(router, "/series");
 </script>

@@ -29,18 +29,15 @@
                 </div>
             </div>
 
-            <v-divider />
-
-            <v-list :density="DENSITY" nav class="px-2 py-2">
-                <v-list-item v-for="(item, index) in NAV_OTHERS" :key="index" rounded="lg" :to="item.link"
+            <v-list :density="DENSITY" nav class="px-2 py-2 drawer-menu">
+                <v-list-item v-for="(item, index) in NAV_OTHERS" :key="index" class="drawer-menu-item"
+                    :class="{ 'drawer-menu-item--active': isMenuActive(item.link) }" rounded="lg" :to="item.link"
                     :prepend-icon="item.icon" :title="item.title" variant="plain" />
             </v-list>
 
-            <v-divider />
-
-            <v-list :density="DENSITY" nav class="px-2 py-2">
-                <v-list-item rounded="lg" prepend-icon="mdi-logout" title="Se déconnecter" variant="plain"
-                    @click="logout" />
+            <v-list :density="DENSITY" nav class="px-2 py-2 drawer-menu">
+                <v-list-item class="drawer-menu-item" rounded="lg" prepend-icon="mdi-logout" title="Se déconnecter"
+                    variant="plain" @click="logout" />
             </v-list>
         </v-navigation-drawer>
 
@@ -124,6 +121,7 @@ import { DENSITY, ELEVATION } from "@/constants/style";
 import { FILTER_ICON, SEARCH_ICON } from "@/constants/icons";
 import { NAV_OTHERS } from "@/constants/menus";
 import { computed, onBeforeMount, ref, watch } from "vue";
+import { useRoute } from "vue-router";
 import { useUser } from "@/composables/user";
 import { useSearch } from "@/composables/search";
 import type { Platform, Kind } from "@/models/serie";
@@ -135,6 +133,12 @@ import { DEFAULT_LIMIT } from "@/constants/services";
 import { useSerie } from "@/composables/serie";
 import type { Note } from "@/models/note";
 import PlatformCard from "./series/PlatformCard.vue";
+
+const route = useRoute();
+
+// Exact or segment-boundary match: avoids a route whose path merely starts
+// with another link's characters being wrongly treated as active.
+const isMenuActive = (link: string) => route.path === link || route.path.startsWith(`${link}/`);
 
 const props = defineProps({
     autoSearch: { type: Boolean, default: false },
@@ -255,6 +259,22 @@ onBeforeMount(async () => {
 
 .v-list-item:nth-last-child(1) {
     margin-bottom: 75px;
+}
+
+.drawer-menu-item {
+    font-weight: 600;
+    color: rgb(var(--v-theme-on-surface-variant));
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.drawer-menu-item:hover {
+    background: rgb(var(--v-theme-surface-variant));
+    color: rgb(var(--v-theme-on-surface));
+}
+
+.drawer-menu-item--active {
+    background: rgba(var(--v-theme-primary), 0.12);
+    color: rgb(var(--v-theme-primary));
 }
 
 .v-navigation-drawer__scrim {

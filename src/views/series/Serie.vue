@@ -116,6 +116,7 @@ import { FriendStatus } from "@/types/types";
 import { MAIN_COLOR, NOTE_COLORS } from "@/constants/style";
 import { useSnackbar } from "@/composables/snackbar";
 import type { Note } from "@/models/note";
+import { goBack as navigateBack } from "@/utils/navigation";
 import { useRouter } from "vue-router";
 
 const props = defineProps({
@@ -173,10 +174,7 @@ const time = computed(() => minsToStringHoursDays(infos.value?.time));
 const viewingPercent = computed(() => ((infos.value?.seasons.length ?? 0) / seasons.value.length * 100).toFixed(0));
 const ringOffset = computed(() => ringCircumference * (1 - Number(viewingPercent.value) / 100));
 
-const goBack = () => {
-    if (router.options.history.state.back) router.back();
-    else router.push('/series');
-}
+const goBack = () => navigateBack(router, "/series");
 
 const refresh = async () => {
     modal.value = false;
@@ -188,7 +186,7 @@ const load = async (): Promise<void> => {
     const exists = !!(await getSerieFromCache(props.id));
 
     if (!exists) {
-        router.back();
+        navigateBack(router, "/series");
     }
     infos.value = await getSerieInfos({ id: props.id });
     seasons.value = await getSeasonsBySerieId(props.id);

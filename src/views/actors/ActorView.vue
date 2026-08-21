@@ -16,6 +16,7 @@ import SerieHero from "@/components/series/SerieHero.vue";
 import SeriesRow from "@/components/series/SeriesRow.vue";
 import { useSearch } from "@/composables/search";
 import type { Actor } from "@/models/person";
+import { goBack as navigateBack } from "@/utils/navigation";
 import { onBeforeMount, ref } from "vue";
 import { useRouter } from "vue-router";
 
@@ -29,10 +30,7 @@ const { getActor } = useSearch();
 const actor = ref<Actor>();
 const loading = ref(false);
 
-const goBack = () => {
-    if (router.options.history.state.back) router.back();
-    else router.push('/discover');
-}
+const goBack = () => navigateBack(router, "/discover");
 
 onBeforeMount(async () => {
     loading.value = true;

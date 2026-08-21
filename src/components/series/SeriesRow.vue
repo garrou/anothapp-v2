@@ -3,7 +3,7 @@
     <card-grid v-if="series.length || loading" class="mt-2" :items="series" :loading="loading" :md="3">
         <template #default="{ item: serie }">
             <serie-card :serie="serie" :watch-status="watchStatus" :hide-details-button="hideDetailsButton"
-                @refresh="(id: number) => $emit('refresh', id)" />
+                @refresh="(id: number, kind: 'favorite' | 'list' | 'watch') => $emit('refresh', id, kind)" />
         </template>
     </card-grid>
     <empty-state v-else icon="mdi-movie-open-outline" :title="emptyTitle" :description="emptyDescription">
@@ -31,6 +31,6 @@ defineProps({
 });
 
 defineEmits<{
-    refresh: [number]
+    refresh: [id: number, kind: "favorite" | "list" | "watch"]
 }>();
 </script>

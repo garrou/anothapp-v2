@@ -17,11 +17,6 @@ export const ProfileLayout: Layout[] = [
         value: "password"
     },
     {
-        icon: "mdi-animation-play",
-        name: "Mes plateformes",
-        route: "/platforms"
-    },
-    {
         icon: "mdi-wrench",
         name: "Paramètres",
         route: "/settings"

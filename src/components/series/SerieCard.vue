@@ -2,8 +2,8 @@
     <poster-card :image="serie.poster" :to="link">
         <template #quick-actions>
             <button-add-serie v-if="!serie.addedAt" :serie-id="serie.id" quick />
-            <button-favorite-serie :serie-id="serie.id" quick @refresh="$emit('refresh', serie.id)" />
-            <button-list-serie :serie="serie" quick @refresh="$emit('refresh', serie.id)" />
+            <button-favorite-serie :serie-id="serie.id" quick @refresh="$emit('refresh', serie.id, 'favorite')" />
+            <button-list-serie :serie="serie" quick @refresh="$emit('refresh', serie.id, 'list')" />
         </template>
 
         <v-card-subtitle class="pt-4 pb-4 text-wrap font-weight-medium">
@@ -12,7 +12,7 @@
 
         <template v-if="watchStatus || (!hideDetailsButton && serie.description)" #actions>
             <base-menu open-on-click open-on-hover>
-                <button-watch-serie v-if="watchStatus" :serie="serie" menu-item @refresh="$emit('refresh', serie.id)" />
+                <button-watch-serie v-if="watchStatus" :serie="serie" menu-item @refresh="$emit('refresh', serie.id, 'watch')" />
                 <button-modal-serie-details v-if="!hideDetailsButton" :serie="serie" menu-item />
             </base-menu>
         </template>
@@ -35,6 +35,10 @@ const props = defineProps({
     serie: { type: Object as PropType<Serie>, required: true },
     watchStatus: { type: Boolean, default: false }
 });
+
+defineEmits<{
+    refresh: [id: number, kind: "favorite" | "list" | "watch"]
+}>();
 
 const link = props.serie.addedAt ? `/series/${props.serie.id}` : `/discover/${props.serie.id}`;
 </script>

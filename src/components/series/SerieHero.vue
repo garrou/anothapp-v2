@@ -1,7 +1,8 @@
 <template>
     <div class="hero" :style="heroStyle">
         <div class="hero-scrim"></div>
-        <v-btn class="back-btn" icon="mdi-chevron-left" variant="flat" density="comfortable" @click="$emit('back')" />
+        <v-btn class="back-btn" icon="mdi-chevron-left" color="white" variant="flat" density="comfortable"
+            @click="$emit('back')" />
         <div class="hero-content">
             <div v-if="kinds.length" class="hero-tags">
                 <base-tag v-for="kind in kinds" :key="kind" variant="on-image">{{ kind }}</base-tag>
@@ -50,9 +51,10 @@ const heroStyle = computed(() => props.poster ? { backgroundImage: `url(${props.
 .back-btn {
     position: relative;
     z-index: 1;
-    background: rgba(10, 8, 16, 0.5) !important;
+    color: rgba(10, 8, 16, 0.85) !important;
     margin-bottom: auto;
     align-self: flex-start;
+    box-shadow: 0 4px 10px rgba(10, 8, 16, 0.25);
 }
 
 .hero-content {

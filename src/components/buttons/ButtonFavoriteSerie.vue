@@ -5,7 +5,7 @@
     <v-tooltip v-else-if="!!serie" :text="favoriteText" :location="tooltipLocation">
         <template v-slot:activator="{ props }">
             <v-btn v-bind="props" class="fav-btn" :class="{ 'fav-btn--quick': quick }" :color="favoriteColor"
-                :icon="FAVORITE_ICON" :size="quick ? 32 : undefined" :variant="quick ? 'tonal' : 'text'"
+                :icon="FAVORITE_ICON" :size="quick ? 32 : undefined" :variant="quick ? 'flat' : 'text'"
                 @click="changeFavorite" />
         </template>
     </v-tooltip>
@@ -56,6 +56,6 @@ onBeforeMount(async () => {
 
 <style scoped>
 .fav-btn--quick {
-    box-shadow: 0 4px 10px rgba(28, 26, 36, 0.12);
+    box-shadow: 0 8px 18px rgba(108, 92, 224, 0.35);
 }
 </style>

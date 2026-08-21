@@ -57,6 +57,11 @@ export const NAV_OTHERS: NavOthersMenuItem[] = [
         link: "/history"
     },
     {
+        title: "Mes plateformes",
+        icon: "mdi-animation-play",
+        link: "/platforms"
+    },
+    {
         title: "Prochains épisodes",
         icon: "mdi-calendar",
         link: "/calendar"

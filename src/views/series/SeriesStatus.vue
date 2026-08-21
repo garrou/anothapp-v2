@@ -4,7 +4,7 @@
     <series-tabs class="mx-3 mt-4 mb-2" />
 
     <series-row :loading="loading" :series="series" :watch-status="displayWatchStatus" :empty-title="emptyCopy.title"
-        :empty-description="emptyCopy.description" @refresh="(id) => refresh(id)" />
+        :empty-description="emptyCopy.description" @refresh="(id, kind) => refresh(id, kind)" />
 </template>
 
 <script lang="ts" setup>
@@ -43,8 +43,15 @@ const emptyCopy = computed(() => {
 const series = ref<Serie[]>([]);
 const loading = ref(false);
 
-const refresh = (id: number) => {
-    series.value = series.value.filter((serie) => serie.id !== id);
+const refresh = (id: number, kind: "favorite" | "list" | "watch") => {
+    const affectsCurrentStatus =
+        (props.status === SerieStatus.Favorite && kind === "favorite") ||
+        (props.status === SerieStatus.Watchlist && kind === "list") ||
+        ((props.status === SerieStatus.Continue || props.status === SerieStatus.Stopped) && kind === "watch");
+
+    if (affectsCurrentStatus) {
+        series.value = series.value.filter((serie) => serie.id !== id);
+    }
 }
 
 const loadSeries = async () => {

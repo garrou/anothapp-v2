@@ -17,15 +17,12 @@
                 <div class="stat-cell">
                     <stat-tile label="Saisons" :value="serie.seasons ?? 0" />
                 </div>
-                <v-divider vertical thickness="1" opacity="0.4" />
                 <div class="stat-cell">
                     <stat-tile label="Episodes" :value="serie.episodes ?? 0" />
                 </div>
-                <v-divider vertical thickness="1" opacity="0.4" />
                 <div class="stat-cell">
                     <stat-tile label="Par épisode" :value="`${serie.duration} min`" />
                 </div>
-                <v-divider vertical thickness="1" opacity="0.4" />
                 <div class="stat-cell">
                     <stat-tile label="Durée totale" :value="totalDuration" />
                 </div>
@@ -143,18 +140,26 @@ const totalDuration = computed(() => minsToStringHoursDays(props.serie.duration 
 }
 
 .stat-strip {
-    display: flex;
-    align-items: stretch;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     margin-bottom: 16px;
 }
 
 .stat-cell {
-    padding: 0 22px;
+    padding: 12px 22px;
 }
 
-.stat-cell:first-child {
+.stat-cell:nth-child(odd) {
     padding-left: 0;
+    border-right: 1px solid rgb(var(--v-border-color));
+}
+
+.stat-cell:nth-child(-n+2) {
+    padding-top: 0;
+}
+
+.stat-cell:nth-child(n+3) {
+    border-top: 1px solid rgb(var(--v-border-color));
 }
 
 .meta-line {

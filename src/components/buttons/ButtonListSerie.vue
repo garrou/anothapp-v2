@@ -4,7 +4,7 @@
     <v-tooltip v-else :text="computedText" :location="tooltipLocation">
         <template v-slot:activator="{ props }">
             <v-btn v-bind="props" class="list-btn" :class="{ 'list-btn--quick': quick }"
-                :color="quick ? 'primary' : computedColor" :elevation="quick ? undefined : 0" :icon="computedIcon"
+                :color="computedColor" :elevation="quick ? undefined : 0" :icon="computedIcon"
                 :size="quick ? 32 : undefined" :variant="quick ? 'flat' : 'text'" @click="updateInList" />
         </template>
     </v-tooltip>

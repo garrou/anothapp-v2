@@ -1,11 +1,13 @@
 <template>
-    <v-row v-if="items.length || loading">
-        <v-col v-for="(item, index) in items" :key="index" :cols="cols" :md="md" :lg="lg">
-            <base-skeleton :loading="loading" type="card">
-                <slot :item="item" />
-            </base-skeleton>
-        </v-col>
-    </v-row>
+    <v-container v-if="items.length || loading" fluid class="pa-0">
+        <v-row dense>
+            <v-col v-for="(item, index) in items" :key="index" :cols="cols" :md="md" :lg="lg">
+                <base-skeleton :loading="loading" type="card">
+                    <slot :item="item" />
+                </base-skeleton>
+            </v-col>
+        </v-row>
+    </v-container>
     <slot v-else name="empty" />
 </template>
 

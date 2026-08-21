@@ -2,8 +2,24 @@
     <base-app-bar />
 
     <v-container class="history-container">
-        <v-select v-model="month" class="mb-4" style="max-width: 280px" :density="DENSITY" hide-details
-            :items="MONTHS" item-title="text" item-value="value" @update:model-value="getHistory" />
+        <v-menu v-model="menuOpen" location="bottom start" :close-on-content-click="true">
+            <template #activator="{ props: menuProps }">
+                <button type="button" class="month-trigger" v-bind="menuProps">
+                    <v-icon icon="mdi-calendar-range" size="17" />
+                    <span>{{ selectedMonthLabel }}</span>
+                    <v-icon icon="mdi-chevron-down" size="18" class="month-trigger-chevron"
+                        :class="{ 'month-trigger-chevron--open': menuOpen }" />
+                </button>
+            </template>
+
+            <div class="month-menu">
+                <button v-for="opt in MONTHS" :key="opt.value" type="button" class="month-option"
+                    :class="{ 'month-option--active': opt.value === month }" @click="selectMonth(opt.value)">
+                    {{ opt.text }}
+                    <v-icon v-if="opt.value === month" icon="mdi-check" size="16" />
+                </button>
+            </div>
+        </v-menu>
 
         <div v-if="loading" class="history-loading">
             <v-progress-circular color="primary" indeterminate />
@@ -47,7 +63,6 @@ import DayBadge from "@/components/DayBadge.vue";
 import EmptyState from "@/components/EmptyState.vue";
 import { useSearch } from "@/composables/search";
 import { useSeason } from "@/composables/season";
-import { DENSITY } from "@/constants/style";
 import type { Season, SeasonTimeline } from "@/models/season";
 import type { Platform } from "@/models/serie";
 import { buildPlural } from "@/utils/format";
@@ -69,8 +84,16 @@ const { getSeasonsTimeline } = useSeason();
 
 const loading = ref(false);
 const month = ref(0);
+const menuOpen = ref(false);
 const timeline = ref<SeasonTimeline[]>([]);
 const platforms = ref<Platform[]>([]);
+
+const selectedMonthLabel = computed(() => MONTHS.find((m) => m.value === month.value)?.text ?? MONTHS[0].text);
+
+const selectMonth = (value: number) => {
+    month.value = value;
+    getHistory();
+}
 
 const seasonSubtitle = (season: Season): string =>
     `Saison ${season.number} · ${buildPlural("épisode", season.episodes)}`;
@@ -129,6 +152,76 @@ onBeforeMount(async () => {
 <style scoped>
 .history-container {
     max-width: 720px;
+}
+
+.month-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 220px;
+    padding: 10px 16px;
+    border: 1px solid rgb(var(--v-border-color));
+    border-radius: 999px;
+    background: rgb(var(--v-theme-surface));
+    color: rgb(var(--v-theme-on-surface));
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    margin-bottom: 20px;
+}
+
+.month-trigger:hover {
+    border-color: rgb(var(--v-theme-primary));
+}
+
+.month-trigger span {
+    flex: 1;
+    text-align: left;
+}
+
+.month-trigger-chevron {
+    color: rgb(var(--v-theme-on-surface-variant));
+    transition: transform 0.15s ease;
+}
+
+.month-trigger-chevron--open {
+    transform: rotate(180deg);
+}
+
+.month-menu {
+    display: flex;
+    flex-direction: column;
+    min-width: 240px;
+    padding: 6px;
+    border-radius: 14px;
+    background: rgb(var(--v-theme-surface));
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.16);
+}
+
+.month-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 10px 12px;
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    color: rgb(var(--v-theme-on-surface));
+    font-size: 14px;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+}
+
+.month-option:hover {
+    background: rgb(var(--v-theme-surface-variant));
+}
+
+.month-option--active {
+    color: rgb(var(--v-theme-primary));
+    font-weight: 700;
 }
 
 .history-loading {

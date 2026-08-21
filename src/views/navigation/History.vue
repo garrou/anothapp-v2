@@ -1,18 +1,22 @@
 <template>
     <base-app-bar />
 
-    <v-container>
-        <v-select v-model="month" class="mb-2" style="max-width: 280px" :density="DENSITY" hide-details
+    <v-container class="history-container">
+        <v-select v-model="month" class="mb-4" style="max-width: 280px" :density="DENSITY" hide-details
             :items="MONTHS" item-title="text" item-value="value" @update:model-value="getHistory" />
-        <v-timeline density="compact">
-            <v-timeline-item v-for="(season, index) in timeline" :key="index">
-                <template v-slot:opposite>
-                    <router-link :text="season.showTitle" :to="`/series/${season.showId}`" />
-                    <p v-if="season.addedAt">{{ formatDate(season.addedAt) }}</p>
-                </template>
-                <div class="d-flex ga-4 align-start">
-                    <season-card :serieLink="`/series/${season.showId}`" :season="season.season" />
-                    <platform-card :platform="getSpecificPlatform(season.platformId)" />
+
+        <v-timeline density="compact" line-thickness="2" side="end">
+            <v-timeline-item v-for="(season, index) in timeline" :key="index" size="small">
+                <div class="history-item">
+                    <div class="history-item-head">
+                        <router-link class="history-item-title" :text="season.showTitle"
+                            :to="`/series/${season.showId}`" />
+                        <span v-if="season.addedAt" class="history-item-date">{{ formatDate(season.addedAt) }}</span>
+                    </div>
+                    <div class="history-item-body">
+                        <season-card :serieLink="`/series/${season.showId}`" :season="season.season" />
+                        <platform-card :platform="getSpecificPlatform(season.platformId)" />
+                    </div>
                 </div>
             </v-timeline-item>
         </v-timeline>
@@ -83,3 +87,40 @@ onBeforeMount(async () => {
     ]);
 })
 </script>
+
+<style scoped>
+.history-container {
+    max-width: 720px;
+}
+
+.history-item {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-bottom: 4px;
+}
+
+.history-item-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+}
+
+.history-item-title {
+    font-weight: 700;
+}
+
+.history-item-date {
+    font-size: 12.5px;
+    color: rgb(var(--v-theme-on-surface-variant));
+    white-space: nowrap;
+}
+
+.history-item-body {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+}
+</style>

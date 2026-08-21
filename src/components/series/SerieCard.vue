@@ -1,7 +1,8 @@
 <template>
     <poster-card :image="serie.poster" :to="link">
-        <template v-if="!serie.addedAt" #quick-actions>
-            <button-add-serie :serie-id="serie.id" quick />
+        <template #quick-actions>
+            <button-add-serie v-if="!serie.addedAt" :serie-id="serie.id" quick />
+            <button-list-serie :serie="serie" quick @refresh="$emit('refresh', serie.id)" />
         </template>
 
         <v-card-subtitle class="pt-4 text-wrap font-weight-medium">
@@ -12,7 +13,6 @@
             <base-menu open-on-click open-on-hover>
                 <button-favorite-serie :serie-id="serie.id" menu-item @refresh="$emit('refresh', serie.id)" />
                 <button-watch-serie v-if="watchStatus" :serie="serie" menu-item @refresh="$emit('refresh', serie.id)" />
-                <button-list-serie :serie="serie" menu-item @refresh="$emit('refresh', serie.id)" />
                 <button-modal-serie-details v-if="!hideDetailsButton" :serie="serie" menu-item />
             </base-menu>
         </template>

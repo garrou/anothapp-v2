@@ -4,7 +4,7 @@
 
         <v-container>
             <div class="actions-row mb-6">
-                <button-add-serie :serie-id="serie.id" />
+                <button-add-serie :serie-id="serie.id" primary />
                 <button-favorite-serie :serie-id="serie.id" />
                 <button-list-serie :serie="serie" />
             </div>
@@ -127,6 +127,7 @@ onBeforeMount(async () => {
 <style scoped>
 .actions-row {
     display: flex;
+    align-items: center;
     flex-wrap: wrap;
     gap: 10px;
 }

@@ -3,8 +3,9 @@
 
     <v-tooltip v-else :text="computedText" :location="tooltipLocation">
         <template v-slot:activator="{ props }">
-            <v-btn v-bind="props" :color="computedColor" elevation="0" :icon="computedIcon" variant="text"
-                @click="updateInList" />
+            <v-btn v-bind="props" class="list-btn" :class="{ 'list-btn--quick': quick }" :color="computedColor"
+                :elevation="quick ? undefined : 0" :icon="computedIcon" :size="quick ? 32 : undefined"
+                :variant="quick ? 'tonal' : 'text'" @click="updateInList" />
         </template>
     </v-tooltip>
 </template>
@@ -17,6 +18,7 @@ import { computed, onBeforeMount, ref, type PropType } from 'vue';
 
 const props = defineProps({
     menuItem: { type: Boolean, default: false },
+    quick: { type: Boolean, default: false },
     serie: { type: Object as PropType<Serie>, required: true },
     tooltipLocation: { type: String as PropType<"left" | "bottom">, default: TOOLTIP_LOCATION }
 });
@@ -47,3 +49,9 @@ onBeforeMount(async () => {
     existsInList.value = !!(await getSerieFromCache(props.serie.id, { type: "userlist" }));
 });
 </script>
+
+<style scoped>
+.list-btn--quick {
+    box-shadow: 0 4px 10px rgba(28, 26, 36, 0.12);
+}
+</style>

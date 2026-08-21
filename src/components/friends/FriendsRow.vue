@@ -8,15 +8,19 @@
 
         <card-grid v-if="friends.length" :items="friends" :loading="loading">
             <template #default="{ item: friend }">
-                <poster-card :image="friend.picture">
-                    <v-card-subtitle class="pt-4">{{ friend.username }}</v-card-subtitle>
-
-                    <template #actions>
-                        <v-btn v-if="consult" :icon="DETAILS_ICON" variant="text" @click="showFriend(friend)" />
-                        <v-btn v-if="addable" :icon="ADD_ICON" variant="text" @click="addFriend(friend)" />
-                        <v-btn v-if="accept" icon="mdi-check" variant="text" @click="acceptFriend(friend)" />
-                        <v-btn v-if="remove" :icon="DELETE_ICON" variant="text" @click="showConfirm(friend)" />
+                <poster-card :image="friend.picture" @click="consult ? showFriend(friend) : undefined">
+                    <template #quick-actions>
+                        <v-btn v-if="consult" class="friend-quick-btn" :icon="DETAILS_ICON" size="32" variant="flat"
+                            color="on-surface-variant" @click.stop="showFriend(friend)" />
+                        <v-btn v-if="addable" class="friend-quick-btn" :icon="ADD_ICON" size="32" variant="flat"
+                            color="on-surface-variant" @click.stop="addFriend(friend)" />
+                        <v-btn v-if="accept" class="friend-quick-btn" icon="mdi-check" size="32" variant="flat"
+                            color="green" @click.stop="acceptFriend(friend)" />
+                        <v-btn v-if="remove" class="friend-quick-btn" :icon="DELETE_ICON" size="32" variant="flat"
+                            color="red" @click.stop="showConfirm(friend)" />
                     </template>
+
+                    <v-card-subtitle class="pt-4 pb-4 font-weight-medium">{{ friend.username }}</v-card-subtitle>
                 </poster-card>
             </template>
         </card-grid>
@@ -96,3 +100,9 @@ const showConfirm = (user: User) => {
     confirm.value = true;
 }
 </script>
+
+<style scoped>
+.friend-quick-btn {
+    box-shadow: 0 8px 18px rgba(108, 92, 224, 0.35);
+}
+</style>

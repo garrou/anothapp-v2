@@ -1,28 +1,31 @@
 <template>
     <template v-if="seasons.length">
-        <div class="font-weight-bold mb-2">{{ minsToStringHoursDays(time) }}</div>
-        <v-card v-for="subSeason in seasons" class="mb-2" :key="subSeason.id" :subtitle="subSeason.platform.name">
-            <template #prepend>
-                <platform-card :platform="subSeason.platform" />
-            </template>
-            <template #title>
-                <span class="text-subtitle-1">{{ formatDate(subSeason.addedAt) }}</span>
-            </template>
-            <template #append>
-                <v-btn v-if="!isEdited(subSeason.id)" elevation="0" :icon="EDIT_ICON" @click="editSeason(subSeason.id)" />
-                <v-btn elevation="0" :icon="DELETE_ICON" @click="selectSeason(subSeason.id)" />
-            </template>
+        <div class="season-details-total">{{ minsToStringHoursDays(time) }}</div>
 
-            <div v-if="isEdited(subSeason.id)" class="px-4 pb-2">
-                <v-label>Plateformes</v-label>
-                <v-select v-model="seasonInfo.platform" :density="DENSITY" :items="platforms" item-title="name" item-value="id" />
-                <v-text-field v-model="seasonInfo.viewedAt" type="datetime-local" />
+        <div v-for="subSeason in seasons" :key="subSeason.id" class="season-entry">
+            <div class="season-entry-row">
+                <platform-card class="season-entry-platform" :platform="subSeason.platform" />
 
-                <div class="d-flex justify-end">
-                    <v-btn elevation="0" @click="changeSeason" :color="MAIN_COLOR">Enregistrer</v-btn>
+                <div class="season-entry-info">
+                    <div class="season-entry-date">{{ formatDate(subSeason.addedAt) }}</div>
+                    <div class="season-entry-subtitle">{{ subSeason.platform.name }}</div>
                 </div>
+
+                <v-btn v-if="!isEdited(subSeason.id)" class="season-entry-btn" :icon="EDIT_ICON" size="32"
+                    variant="text" @click="editSeason(subSeason.id)" />
+                <v-btn class="season-entry-btn" :icon="DELETE_ICON" size="32" variant="text"
+                    @click="selectSeason(subSeason.id)" />
             </div>
-        </v-card>
+
+            <div v-if="isEdited(subSeason.id)" class="season-entry-edit">
+                <v-label class="season-entry-label">Plateforme</v-label>
+                <v-select v-model="seasonInfo.platform" class="mb-3" :density="DENSITY" hide-details
+                    :items="platforms" item-title="name" item-value="id" />
+                <v-text-field v-model="seasonInfo.viewedAt" class="mb-3" hide-details type="datetime-local" />
+
+                <v-btn block color="primary" rounded="pill" @click="changeSeason">Enregistrer</v-btn>
+            </div>
+        </div>
     </template>
 
     <base-confirm v-model="modal" text="Supprimer ce visionnage ?" title="Supprimer" persistent @cancel="modal = false"
@@ -41,7 +44,6 @@ import { EDIT_ICON, DELETE_ICON } from "@/constants/icons";
 import { useSerie } from "@/composables/serie";
 import type { Platform } from "@/models/serie";
 import { useSearch } from "@/composables/search";
-import { MAIN_COLOR } from "@/constants/style";
 import PlatformCard from "../series/PlatformCard.vue";
 
 const props = defineProps({
@@ -117,3 +119,64 @@ onBeforeMount(async () => {
     time.value = serie.duration * props.season.episodes * seasons.value.length;
 });
 </script>
+
+<style scoped>
+.season-details-total {
+    font-family: "Space Grotesk", sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+
+.season-entry {
+    border: 1px solid rgb(var(--v-border-color));
+    border-radius: 12px;
+    padding: 8px 12px;
+    margin-bottom: 10px;
+}
+
+.season-entry-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.season-entry-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.season-entry-date {
+    font-weight: 600;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.season-entry-subtitle {
+    font-size: 12px;
+    color: rgb(var(--v-theme-on-surface-variant));
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.season-entry-btn {
+    flex-shrink: 0;
+}
+
+.season-entry-edit {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgb(var(--v-border-color));
+}
+
+.season-entry-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: rgb(var(--v-theme-on-surface-variant));
+}
+</style>

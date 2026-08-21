@@ -182,14 +182,34 @@ onMounted(async () => {
 
 <style scoped>
 .kpi-strip {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    row-gap: 16px;
+}
+
+@media (min-width: 600px) {
+    .kpi-strip {
+        grid-template-columns: repeat(3, 1fr);
+    }
 }
 
 .kpi-cell {
-    flex: 1 1 150px;
     padding: var(--sp-4, 16px) var(--sp-5, 20px);
     border-right: 1px solid rgb(var(--v-border-color));
+}
+
+.kpi-cell:nth-child(2n) {
+    border-right: none;
+}
+
+@media (min-width: 600px) {
+    .kpi-cell:nth-child(2n) {
+        border-right: 1px solid rgb(var(--v-border-color));
+    }
+
+    .kpi-cell:nth-child(3n) {
+        border-right: none;
+    }
 }
 
 .kpi-cell:last-child {

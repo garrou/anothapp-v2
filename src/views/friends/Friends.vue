@@ -70,6 +70,6 @@ onBeforeMount(async () => {
 
 <style scoped>
 .m-top {
-    margin-top: 50px;
+    margin-top: 20px;
 }
 </style>

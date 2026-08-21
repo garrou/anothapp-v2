@@ -1,11 +1,13 @@
 <template>
     <base-app-bar auto-search placeholder="Chercher dans mes séries" search />
+    <series-tabs class="mx-3 mb-2" />
     <series-row :loading="loading" :series="series" />
 </template>
 
 <script lang="ts" setup>
 import BaseAppBar from "@/components/BaseAppBar.vue";
 import SeriesRow from "@/components/series/SeriesRow.vue";
+import SeriesTabs from "@/components/series/SeriesTabs.vue";
 import type { Serie } from "@/models/serie";
 import { onMounted, ref } from "vue";
 import { useSerie } from "@/composables/serie";

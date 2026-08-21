@@ -7,7 +7,7 @@
         </template>
 
         <v-card-subtitle class="pt-4 pb-4 text-wrap font-weight-medium">
-            <router-link :text="serie.title" :to="link" />
+            <router-link class="serie-card-title" :text="serie.title" :to="link" />
         </v-card-subtitle>
 
         <template v-if="watchStatus || (!hideDetailsButton && serie.description)" #actions>
@@ -42,3 +42,12 @@ defineEmits<{
 
 const link = props.serie.addedAt ? `/series/${props.serie.id}` : `/discover/${props.serie.id}`;
 </script>
+
+<style scoped>
+/* The global `a` link color reads poorly at v-card-subtitle's reduced
+   opacity in dark theme, unlike plain text — match the surrounding text
+   color instead, consistent with other card titles in the app. */
+.serie-card-title {
+    color: inherit;
+}
+</style>

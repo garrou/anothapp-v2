@@ -3,7 +3,7 @@
         <template #default="{ item: character }">
             <poster-card :image="character.picture" :to="`/actor/${character.id}`">
                 <v-card-title>
-                    <router-link :text="character.actor" :to="`/actor/${character.id}`" />
+                    <router-link class="actor-card-title" :text="character.actor" :to="`/actor/${character.id}`" />
                 </v-card-title>
                 <v-card-subtitle class="mb-3">{{ character.name }}</v-card-subtitle>
             </poster-card>
@@ -25,3 +25,12 @@ defineProps({
     loading: { type: Boolean, required: true },
 });
 </script>
+
+<style scoped>
+/* The global `a` link color reads poorly at v-card-title's reduced opacity
+   in dark theme, unlike plain text — match the surrounding text color
+   instead, consistent with other card titles in the app. */
+.actor-card-title {
+    color: inherit;
+}
+</style>

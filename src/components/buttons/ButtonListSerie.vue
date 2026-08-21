@@ -3,9 +3,9 @@
 
     <v-tooltip v-else :text="computedText" :location="tooltipLocation">
         <template v-slot:activator="{ props }">
-            <v-btn v-bind="props" class="list-btn" :class="{ 'list-btn--quick': quick }" :color="computedColor"
-                :elevation="quick ? undefined : 0" :icon="computedIcon" :size="quick ? 32 : undefined"
-                :variant="quick ? 'tonal' : 'text'" @click="updateInList" />
+            <v-btn v-bind="props" class="list-btn" :class="{ 'list-btn--quick': quick }"
+                :color="quick ? 'primary' : computedColor" :elevation="quick ? undefined : 0" :icon="computedIcon"
+                :size="quick ? 32 : undefined" :variant="quick ? 'flat' : 'text'" @click="updateInList" />
         </template>
     </v-tooltip>
 </template>
@@ -52,6 +52,6 @@ onBeforeMount(async () => {
 
 <style scoped>
 .list-btn--quick {
-    box-shadow: 0 4px 10px rgba(28, 26, 36, 0.12);
+    box-shadow: 0 8px 18px rgba(108, 92, 224, 0.35);
 }
 </style>

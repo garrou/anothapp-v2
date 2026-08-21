@@ -2,6 +2,7 @@
     <poster-card :image="serie.poster" :to="link">
         <template #quick-actions>
             <button-add-serie v-if="!serie.addedAt" :serie-id="serie.id" quick />
+            <button-favorite-serie :serie-id="serie.id" quick @refresh="$emit('refresh', serie.id)" />
             <button-list-serie :serie="serie" quick @refresh="$emit('refresh', serie.id)" />
         </template>
 
@@ -9,9 +10,8 @@
             <router-link :text="serie.title" :to="link" />
         </v-card-subtitle>
 
-        <template #actions>
+        <template v-if="watchStatus || (!hideDetailsButton && serie.description)" #actions>
             <base-menu open-on-click open-on-hover>
-                <button-favorite-serie :serie-id="serie.id" menu-item @refresh="$emit('refresh', serie.id)" />
                 <button-watch-serie v-if="watchStatus" :serie="serie" menu-item @refresh="$emit('refresh', serie.id)" />
                 <button-modal-serie-details v-if="!hideDetailsButton" :serie="serie" menu-item />
             </base-menu>

@@ -29,13 +29,15 @@
                 </div>
             </div>
 
-            <v-divider />
+            <template v-if="!mdAndUp">
+                <v-divider />
 
-            <v-list :density="DENSITY" nav class="px-2 py-2">
-                <v-list-item v-for="(item, index) in NAV_SERIES_STATUS" :key="index" rounded="lg"
-                    :to="`/series-status?status=${item.status}`" :prepend-icon="item.icon" :title="item.title"
-                    variant="plain" />
-            </v-list>
+                <v-list :density="DENSITY" nav class="px-2 py-2">
+                    <v-list-item v-for="(item, index) in NAV_SERIES_STATUS" :key="index" rounded="lg"
+                        :to="`/series-status?status=${item.status}`" :prepend-icon="item.icon" :title="item.title"
+                        variant="plain" />
+                </v-list>
+            </template>
 
             <v-divider />
 
@@ -132,6 +134,7 @@ import { DENSITY, ELEVATION } from "@/constants/style";
 import { FILTER_ICON, SEARCH_ICON } from "@/constants/icons";
 import { NAV_OTHERS, NAV_SERIES_STATUS } from "@/constants/menus";
 import { computed, onBeforeMount, ref, watch } from "vue";
+import { useDisplay } from "vuetify";
 import { useUser } from "@/composables/user";
 import { useSearch } from "@/composables/search";
 import type { Platform, Kind } from "@/models/serie";
@@ -154,6 +157,7 @@ const { getKinds, getPlatforms, getNotes } = useSearch();
 const { getProfile } = useUser();
 const { logout } = useAuth();
 const { getCountries } = useSerie();
+const { mdAndUp } = useDisplay();
 const searchStore = useSearchStore();
 const serieStore = useSerieStore();
 

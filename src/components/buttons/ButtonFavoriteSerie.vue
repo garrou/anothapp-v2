@@ -4,7 +4,9 @@
 
     <v-tooltip v-else-if="!!serie" :text="favoriteText" :location="tooltipLocation">
         <template v-slot:activator="{ props }">
-            <v-btn v-bind="props" :color="favoriteColor" :icon="FAVORITE_ICON" variant="text" @click="changeFavorite" />
+            <v-btn v-bind="props" class="fav-btn" :class="{ 'fav-btn--quick': quick }" :color="favoriteColor"
+                :icon="FAVORITE_ICON" :size="quick ? 32 : undefined" :variant="quick ? 'tonal' : 'text'"
+                @click="changeFavorite" />
         </template>
     </v-tooltip>
 </template>
@@ -19,6 +21,7 @@ import { computed, onBeforeMount, ref, type PropType } from 'vue';
 
 const props = defineProps({
     menuItem: { type: Boolean, default: false },
+    quick: { type: Boolean, default: false },
     serieId: { type: Number, required: true },
     tooltipLocation: { type: String as PropType<"left" | "bottom">, default: TOOLTIP_LOCATION }
 });
@@ -50,3 +53,9 @@ onBeforeMount(async () => {
     isFavorite.value = serie.value?.favorite ?? false;
 });
 </script>
+
+<style scoped>
+.fav-btn--quick {
+    box-shadow: 0 4px 10px rgba(28, 26, 36, 0.12);
+}
+</style>

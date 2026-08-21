@@ -42,7 +42,7 @@ onBeforeMount(async () => {
 <style scoped>
 @media (min-width: 960px) {
   .app-shell--nav {
-    padding-left: 84px;
+    padding-left: 96px;
   }
 }
 </style>

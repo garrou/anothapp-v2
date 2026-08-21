@@ -4,7 +4,8 @@
 
         <v-container>
             <actor-details :actor="actor" />
-            <series-row :loading="loading" :series="actor.series" total />
+            <series-row :loading="loading" :series="actor.series" total empty-title="Aucune série connue"
+                empty-description="Aucune série n'est associée à cet acteur pour le moment." :empty-cta="false" />
         </v-container>
     </div>
 </template>
@@ -35,7 +36,10 @@ const goBack = () => {
 
 onBeforeMount(async () => {
     loading.value = true;
-    actor.value = await getActor(props.id);
-    loading.value = false;
+    try {
+        actor.value = await getActor(props.id);
+    } finally {
+        loading.value = false;
+    }
 });
 </script>

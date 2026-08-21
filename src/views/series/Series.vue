@@ -25,8 +25,11 @@ const series = ref<Serie[]>([]);
 
 const fetchSeries = async (): Promise<void> => {
     loading.value = true;
-    series.value = await getSeries();
-    loading.value = false;
+    try {
+        series.value = await getSeries();
+    } finally {
+        loading.value = false;
+    }
 }
 
 watch([filterTitle, filterKinds, filterPlatforms, filterCountries, filterNotes], () => {

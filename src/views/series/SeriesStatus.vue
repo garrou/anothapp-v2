@@ -1,6 +1,7 @@
 <template>
     <base-app-bar />
-    <series-row :loading="loading" :series="series" :watch-status="displayWatchStatus" @refresh="(id) => refresh(id)" />
+    <series-row :loading="loading" :series="series" :watch-status="displayWatchStatus" :empty-title="emptyCopy.title"
+        :empty-description="emptyCopy.description" @refresh="(id) => refresh(id)" />
 </template>
 
 <script lang="ts" setup>
@@ -22,6 +23,19 @@ const { getSeriesByStatus } = useSerie();
 
 const displayWatchStatus = computed(() => props.status === SerieStatus.Stopped || props.status === SerieStatus.Continue);
 
+const emptyCopy = computed(() => {
+    switch (props.status) {
+        case SerieStatus.Favorite:
+            return { title: "Aucun favori", description: "Ajoutez une série à vos favoris depuis sa fiche." };
+        case SerieStatus.Continue:
+            return { title: "Rien à continuer", description: "Les séries dont le visionnage est en cours apparaîtront ici." };
+        case SerieStatus.Stopped:
+            return { title: "Aucune série arrêtée", description: "Les séries que vous arrêtez de suivre apparaissent ici." };
+        default:
+            return { title: "Votre liste est vide", description: "Ajoutez une série depuis Découvrir pour commencer à la suivre." };
+    }
+});
+
 const series = ref<Serie[]>([]);
 const loading = ref(false);
 
@@ -31,8 +45,11 @@ const refresh = (id: number) => {
 
 const loadSeries = async () => {
     loading.value = true;
-    series.value = await getSeriesByStatus(props.status);
-    loading.value = false;
+    try {
+        series.value = await getSeriesByStatus(props.status);
+    } finally {
+        loading.value = false;
+    }
 };
 
 watch(() => props.status, async () => {

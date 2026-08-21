@@ -1,9 +1,15 @@
 <template>
     <v-card class="poster-card" @click="$emit('click')">
-        <router-link v-if="to" :to="to" @click.stop>
-            <base-image v-if="image" cover max-height="580" :src="image" />
-        </router-link>
-        <base-image v-else-if="image" cover max-height="580" :src="image" />
+        <div class="poster-media">
+            <router-link v-if="to" :to="to" @click.stop>
+                <base-image v-if="image" cover max-height="580" :src="image" />
+            </router-link>
+            <base-image v-else-if="image" cover max-height="580" :src="image" />
+
+            <div v-if="$slots['quick-actions']" class="quick-actions" @click.stop>
+                <slot name="quick-actions" />
+            </div>
+        </div>
 
         <slot />
 
@@ -28,10 +34,23 @@ defineEmits<{
 
 <style scoped>
 .poster-card {
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
 }
 
 .poster-card:hover {
-    transform: translateY(-2px);
+    transform: translateY(-4px);
+    border-color: rgb(var(--v-theme-primary)) !important;
+    box-shadow: 0 16px 32px rgba(76, 60, 150, 0.16);
+}
+
+.poster-media {
+    position: relative;
+}
+
+.quick-actions {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 1;
 }
 </style>

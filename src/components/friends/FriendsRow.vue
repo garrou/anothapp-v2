@@ -20,7 +20,7 @@
                 </poster-card>
             </template>
         </card-grid>
-        <span v-else>Aucun résultat</span>
+        <empty-state v-else :icon="emptyCopy.icon" :title="emptyCopy.title" :description="emptyCopy.description" />
     </div>
 
     <base-confirm v-model="confirm" text="Supprimer cet(te) ami(e) ?" title="Supprimer" persistent
@@ -30,15 +30,16 @@
 <script lang="ts" setup>
 import BaseConfirm from "@/components/BaseConfirm.vue";
 import CardGrid from "@/components/CardGrid.vue";
+import EmptyState from "@/components/EmptyState.vue";
 import PosterCard from "@/components/PosterCard.vue";
 import { ADD_ICON, DELETE_ICON, DETAILS_ICON, SEARCH_ICON } from "@/constants/icons";
 import type { User } from "@/models/user";
-import { ref, type PropType } from "vue";
+import { computed, ref, type PropType } from "vue";
 import { useFriend } from "@/composables/friend";
 import { useFriendStore } from "@/stores/friend";
 import { useRouter } from "vue-router";
 
-defineProps({
+const props = defineProps({
     accept: { type: Boolean, default: false },
     addable: { type: Boolean, default: false },
     consult: { type: Boolean, default: false },
@@ -60,6 +61,13 @@ const { acceptFriendRequest, deleteFriend, sendFriendRequest } = useFriend();
 const confirm = ref(false);
 const selected = ref<User>();
 const username = ref<string>("");
+
+const emptyCopy = computed(() => {
+    if (props.addable) return { icon: "mdi-account-search-outline", title: "Aucun résultat", description: "Recherchez un nom d'utilisateur pour envoyer une demande." };
+    if (props.accept) return { icon: "mdi-account-clock-outline", title: "Aucune demande reçue", description: "Les demandes d'ami reçues apparaîtront ici." };
+    if (props.remove && !props.consult) return { icon: "mdi-send-outline", title: "Aucune demande envoyée", description: "Les demandes que vous envoyez apparaîtront ici." };
+    return { icon: "mdi-account-heart-outline", title: "Aucun ami pour l'instant", description: "Ajoutez des amis pour comparer vos séries et vos statistiques." };
+});
 
 const showFriend = (user: User) => {
     friendStore.setFriend(user);

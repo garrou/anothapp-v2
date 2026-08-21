@@ -46,14 +46,20 @@ const tab = ref(1);
 
 const searchUser = async (username: string) => {
     loading.value = true;
-    searched.value = await getUsers(username);
-    loading.value = false;
+    try {
+        searched.value = await getUsers(username);
+    } finally {
+        loading.value = false;
+    }
 }
 
 const fetchFriends = async () => {
     loading.value = true;
-    friends.value = await getFriends();
-    loading.value = false;
+    try {
+        friends.value = await getFriends();
+    } finally {
+        loading.value = false;
+    }
 }
 
 onBeforeMount(async () => {

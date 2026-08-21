@@ -9,11 +9,13 @@
             </poster-card>
         </template>
     </card-grid>
-    <p v-else>Aucun acteur</p>
+    <empty-state v-else icon="mdi-account-group-outline" title="Aucun acteur"
+        description="Le casting de cette série n'est pas disponible." />
 </template>
 
 <script lang="ts" setup>
 import CardGrid from "@/components/CardGrid.vue";
+import EmptyState from "@/components/EmptyState.vue";
 import PosterCard from "@/components/PosterCard.vue";
 import type { Character } from '@/models/person';
 import type { PropType } from 'vue';

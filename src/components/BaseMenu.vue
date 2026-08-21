@@ -4,12 +4,8 @@
             <v-btn icon="mdi-dots-vertical" variant="text" v-bind="props"></v-btn>
         </template>
 
-        <v-list>
-            <v-list-item>
-                <div>
-                    <slot name="default" />
-                </div>
-            </v-list-item>
+        <v-list density="compact" min-width="200" nav>
+            <slot name="default" />
         </v-list>
     </v-menu>
 </template>

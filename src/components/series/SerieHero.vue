@@ -4,7 +4,7 @@
         <v-btn class="back-btn" icon="mdi-chevron-left" variant="flat" density="comfortable" @click="$emit('back')" />
         <div class="hero-content">
             <div v-if="kinds.length" class="hero-tags">
-                <span v-for="kind in kinds" :key="kind" class="tag">{{ kind }}</span>
+                <base-tag v-for="kind in kinds" :key="kind" variant="on-image">{{ kind }}</base-tag>
             </div>
             <h1 class="hero-title">{{ title }}</h1>
         </div>
@@ -13,6 +13,7 @@
 
 <script lang="ts" setup>
 import { computed, type PropType } from "vue";
+import BaseTag from "@/components/BaseTag.vue";
 
 const props = defineProps({
     kinds: { type: Array as PropType<string[]>, default: () => [] },
@@ -61,17 +62,9 @@ const heroStyle = computed(() => props.poster ? { backgroundImage: `url(${props.
 
 .hero-tags {
     display: flex;
+    flex-wrap: wrap;
     gap: 8px;
     margin-bottom: 10px;
-}
-
-.tag {
-    font-size: 11.5px;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.85);
-    background: rgba(255, 255, 255, 0.12);
-    border-radius: 999px;
-    padding: 4px 11px;
 }
 
 .hero-title {

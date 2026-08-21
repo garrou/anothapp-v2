@@ -5,7 +5,7 @@
         </div>
         <div class="detail-content">
             <div v-if="serie.kinds?.length" class="kinds-row">
-                <span v-for="kind in serie.kinds" :key="kind" class="kind-tag">{{ kind }}</span>
+                <base-tag v-for="kind in serie.kinds" :key="kind">{{ kind }}</base-tag>
             </div>
 
             <div class="status-badge" :class="serie.finished ? 'status-badge--done' : 'status-badge--ongoing'">
@@ -14,24 +14,20 @@
             </div>
 
             <div class="stat-strip">
-                <div class="stat">
-                    <div class="stat-value">{{ serie.seasons }}</div>
-                    <div class="stat-label">Saisons</div>
+                <div class="stat-cell">
+                    <stat-tile label="Saisons" :value="serie.seasons ?? 0" />
                 </div>
                 <v-divider vertical thickness="1" opacity="0.4" />
-                <div class="stat">
-                    <div class="stat-value">{{ serie.episodes }}</div>
-                    <div class="stat-label">Episodes</div>
+                <div class="stat-cell">
+                    <stat-tile label="Episodes" :value="serie.episodes ?? 0" />
                 </div>
                 <v-divider vertical thickness="1" opacity="0.4" />
-                <div class="stat">
-                    <div class="stat-value">{{ serie.duration }} min</div>
-                    <div class="stat-label">Par épisode</div>
+                <div class="stat-cell">
+                    <stat-tile label="Par épisode" :value="`${serie.duration} min`" />
                 </div>
                 <v-divider vertical thickness="1" opacity="0.4" />
-                <div class="stat">
-                    <div class="stat-value">{{ totalDuration }}</div>
-                    <div class="stat-label">Durée totale</div>
+                <div class="stat-cell">
+                    <stat-tile label="Durée totale" :value="totalDuration" />
                 </div>
             </div>
 
@@ -74,6 +70,8 @@
 
 <script lang="ts" setup>
 import BaseImage from "@/components/BaseImage.vue";
+import BaseTag from "@/components/BaseTag.vue";
+import StatTile from "@/components/StatTile.vue";
 import PlatformCard from "@/components/series/PlatformCard.vue";
 import { computed, type PropType } from "vue";
 import type { Serie } from "@/models/serie";
@@ -114,15 +112,6 @@ const totalDuration = computed(() => minsToStringHoursDays(props.serie.duration 
     margin-bottom: 12px;
 }
 
-.kind-tag {
-    font-size: 11.5px;
-    font-weight: 600;
-    color: rgb(var(--v-theme-primary));
-    background: rgba(var(--v-theme-primary), 0.12);
-    border-radius: 999px;
-    padding: 4px 10px;
-}
-
 .status-badge {
     display: inline-flex;
     align-items: center;
@@ -160,29 +149,12 @@ const totalDuration = computed(() => minsToStringHoursDays(props.serie.duration 
     margin-bottom: 16px;
 }
 
-.stat {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
+.stat-cell {
     padding: 0 22px;
 }
 
-.stat:first-child {
+.stat-cell:first-child {
     padding-left: 0;
-}
-
-.stat-value {
-    font-family: "Space Grotesk", sans-serif;
-    font-size: 21px;
-    font-weight: 700;
-}
-
-.stat-label {
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-    color: rgb(var(--v-theme-on-surface-variant));
 }
 
 .meta-line {

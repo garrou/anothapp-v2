@@ -1,5 +1,8 @@
     <template>
-    <v-tooltip v-if="!!serie" :text="favoriteText" :location="tooltipLocation">
+    <v-list-item v-if="!!serie && menuItem" :prepend-icon="FAVORITE_ICON" :title="favoriteText"
+        :class="{ 'text-red': isFavorite }" @click="changeFavorite" />
+
+    <v-tooltip v-else-if="!!serie" :text="favoriteText" :location="tooltipLocation">
         <template v-slot:activator="{ props }">
             <v-btn v-bind="props" :color="favoriteColor" :icon="FAVORITE_ICON" variant="text" @click="changeFavorite" />
         </template>
@@ -15,6 +18,7 @@ import type { Serie } from '@/models/serie';
 import { computed, onBeforeMount, ref, type PropType } from 'vue';
 
 const props = defineProps({
+    menuItem: { type: Boolean, default: false },
     serieId: { type: Number, required: true },
     tooltipLocation: { type: String as PropType<"left" | "bottom">, default: TOOLTIP_LOCATION }
 });

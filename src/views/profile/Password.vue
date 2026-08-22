@@ -11,7 +11,8 @@
             <v-text-field v-model="confirmPassword" counter label="Confirmer le mot de passe" required
                 :rules="passwordRules" type="password" />
 
-            <v-btn block class="my-5" :disabled="!valid" text="Sauvegarder" type="submit" />
+            <v-btn block class="my-5" color="primary" rounded="pill" :disabled="!valid" text="Sauvegarder"
+                type="submit" />
         </v-form>
     </v-container>
 </template>

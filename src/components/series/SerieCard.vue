@@ -1,16 +1,19 @@
 <template>
     <poster-card :image="serie.poster" :to="link">
-        <v-card-subtitle class="pt-4 text-wrap font-weight-medium">
-            <router-link :text="serie.title" :to="link" />
+        <template #quick-actions>
+            <button-add-serie v-if="!serie.addedAt" :serie-id="serie.id" quick />
+            <button-favorite-serie :serie-id="serie.id" quick @refresh="$emit('refresh', serie.id, 'favorite')" />
+            <button-list-serie :serie="serie" quick @refresh="$emit('refresh', serie.id, 'list')" />
+        </template>
+
+        <v-card-subtitle class="pt-4 pb-4 text-wrap font-weight-medium">
+            <router-link class="serie-card-title" :text="serie.title" :to="link" />
         </v-card-subtitle>
 
-        <template #actions>
+        <template v-if="watchStatus || (!hideDetailsButton && serie.description)" #actions>
             <base-menu open-on-click open-on-hover>
-                <button-favorite-serie :serie-id="serie.id" @refresh="$emit('refresh', serie.id)" />
-                <button-watch-serie v-if="watchStatus" :serie="serie" @refresh="$emit('refresh', serie.id)" />
-                <button-add-serie :serie-id="serie.id" />
-                <button-list-serie :serie="serie" @refresh="$emit('refresh', serie.id)" />
-                <button-modal-serie-details v-if="!hideDetailsButton" :serie="serie" />
+                <button-watch-serie v-if="watchStatus" :serie="serie" menu-item @refresh="$emit('refresh', serie.id, 'watch')" />
+                <button-modal-serie-details v-if="!hideDetailsButton" :serie="serie" menu-item />
             </base-menu>
         </template>
     </poster-card>
@@ -33,5 +36,18 @@ const props = defineProps({
     watchStatus: { type: Boolean, default: false }
 });
 
+defineEmits<{
+    refresh: [id: number, kind: "favorite" | "list" | "watch"]
+}>();
+
 const link = props.serie.addedAt ? `/series/${props.serie.id}` : `/discover/${props.serie.id}`;
 </script>
+
+<style scoped>
+/* The global `a` link color reads poorly at v-card-subtitle's reduced
+   opacity in dark theme, unlike plain text — match the surrounding text
+   color instead, consistent with other card titles in the app. */
+.serie-card-title {
+    color: inherit;
+}
+</style>

@@ -1,5 +1,5 @@
 <template>
-    <v-layout v-if="navbar" class="mt-10">
+    <v-layout v-if="navbar" class="mt-10 bottom-navbar-layout">
         <v-bottom-navigation color="primary">
             <v-btn v-for="(item, index) in NAV_MENU" :key="index" :to="item.link">
                 <v-icon>{{ item.icon }}</v-icon>
@@ -26,6 +26,12 @@ const navbar = computed(() => !PAGE_WITHOUT_BOTTOM_NAVBAR.includes(route.name as
     }
 
     .v-btn span {
+        display: none;
+    }
+}
+
+@media (min-width: 960px) {
+    .bottom-navbar-layout {
         display: none;
     }
 }

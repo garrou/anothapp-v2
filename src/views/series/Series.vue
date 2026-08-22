@@ -1,11 +1,13 @@
 <template>
     <base-app-bar auto-search placeholder="Chercher dans mes séries" search />
+    <series-tabs class="mx-3 mt-4 mb-2" />
     <series-row :loading="loading" :series="series" />
 </template>
 
 <script lang="ts" setup>
 import BaseAppBar from "@/components/BaseAppBar.vue";
 import SeriesRow from "@/components/series/SeriesRow.vue";
+import SeriesTabs from "@/components/series/SeriesTabs.vue";
 import type { Serie } from "@/models/serie";
 import { onMounted, ref } from "vue";
 import { useSerie } from "@/composables/serie";
@@ -25,8 +27,11 @@ const series = ref<Serie[]>([]);
 
 const fetchSeries = async (): Promise<void> => {
     loading.value = true;
-    series.value = await getSeries();
-    loading.value = false;
+    try {
+        series.value = await getSeries();
+    } finally {
+        loading.value = false;
+    }
 }
 
 watch([filterTitle, filterKinds, filterPlatforms, filterCountries, filterNotes], () => {

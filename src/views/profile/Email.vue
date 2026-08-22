@@ -6,7 +6,8 @@
 
             <v-text-field v-model="email" label="Nouvel email" required :rules="emailRules" suffix="@xyz.com" />
 
-            <v-btn block class="my-5" :disabled="!valid" text="Sauvegarder" type="submit" />
+            <v-btn block class="my-5" color="primary" rounded="pill" :disabled="!valid" text="Sauvegarder"
+                type="submit" />
         </v-form>
     </v-container>
 </template>

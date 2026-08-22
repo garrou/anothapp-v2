@@ -16,6 +16,7 @@ import {
 import { CanvasRenderer } from "echarts/renderers";
 import VChart from "vue-echarts";
 import { computed, ref, type PropType } from "vue";
+import { useTheme } from "vuetify";
 import type { Stat } from "@/models/stat";
 import BaseColor from "./BaseColor.vue";
 import storageService from "@/services/storageService";
@@ -35,12 +36,19 @@ use([
   TooltipComponent,
 ]);
 
+const theme = useTheme();
 const colorRef = ref(props.color);
+
+// ECharts renders titles/labels on a canvas, unaffected by the app's CSS
+// theme variables — the color has to be resolved and passed explicitly,
+// otherwise it defaults to a dark grey that's unreadable on dark surfaces.
+const textColor = computed(() => theme.current.value.colors["on-surface"]);
 
 const option = computed(() => ({
   title: {
     text: props.title,
     left: "center",
+    textStyle: { color: textColor.value },
   },
   tooltip: {
     trigger: "item",

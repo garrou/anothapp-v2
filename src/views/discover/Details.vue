@@ -4,7 +4,7 @@
 
         <v-container>
             <div class="actions-row mb-6">
-                <button-add-serie :serie-id="serie.id" />
+                <button-add-serie :serie-id="serie.id" primary />
                 <button-favorite-serie :serie-id="serie.id" />
                 <button-list-serie :serie="serie" />
             </div>
@@ -56,6 +56,7 @@ import { useSearch } from "@/composables/search";
 import type { Character } from "@/models/person";
 import type { Serie, Similar } from "@/models/serie";
 import type { User } from "@/models/user";
+import { goBack as navigateBack } from "@/utils/navigation";
 import { onBeforeMount, ref } from "vue";
 import { FriendStatus } from "@/types/types";
 import { useRouter } from "vue-router";
@@ -84,10 +85,7 @@ const serie = ref<Serie>();
 const similars = ref<Similar[]>([]);
 const tab = ref(1);
 
-const goBack = () => {
-    if (router.options.history.state.back) router.back();
-    else router.push('/discover');
-}
+const goBack = () => navigateBack(router, "/discover");
 
 const getChars = async () => {
     if (characters.value.length) return;
@@ -127,6 +125,7 @@ onBeforeMount(async () => {
 <style scoped>
 .actions-row {
     display: flex;
+    align-items: center;
     flex-wrap: wrap;
     gap: 10px;
 }

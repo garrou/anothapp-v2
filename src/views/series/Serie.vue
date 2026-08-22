@@ -28,17 +28,17 @@
             </v-card>
 
             <div class="actions-row mb-6">
+                <button-watch-serie :serie="infos.serie" primary />
                 <button-favorite-serie :serie-id="id" />
-                <button-watch-serie :serie="infos.serie" />
-                <button-details-serie :serie="infos.serie" />
-                <button-update-serie :serie="infos.serie" @update="updateModal = true" />
-                <v-tooltip text="Amis qui regardent cette série" :location="TOOLTIP_LOCATION">
-                    <template v-slot:activator="{ props: tooltipProps }">
-                        <v-btn v-bind="tooltipProps" :color="MAIN_COLOR" elevation="0" icon="mdi-account-heart"
-                            variant="text" @click="openFriendsModal" />
-                    </template>
-                </v-tooltip>
-                <button-remove-serie :serie="infos.serie" />
+
+                <base-menu open-on-click>
+                    <button-details-serie :serie="infos.serie" menu-item />
+                    <button-update-serie :serie="infos.serie" menu-item @update="updateModal = true" />
+                    <v-list-item prepend-icon="mdi-account-heart" title="Amis qui regardent cette série"
+                        @click="openFriendsModal" />
+                    <v-divider class="my-1" />
+                    <button-remove-serie :serie="infos.serie" menu-item />
+                </base-menu>
             </div>
 
             <v-chip-group v-model="infos.serie.note" class="mb-6" :selected-class="'bg-primary'"
@@ -87,6 +87,7 @@
 
 <script lang="ts" setup>
 import BaseConfirm from "@/components/BaseConfirm.vue";
+import BaseMenu from "@/components/BaseMenu.vue";
 import ButtonUpdateSerie from "@/components/buttons/ButtonUpdateSerie.vue";
 import ButtonWatchSerie from "@/components/buttons/ButtonWatchSerie.vue";
 import ButtonFavoriteSerie from "@/components/buttons/ButtonFavoriteSerie.vue";
@@ -112,9 +113,10 @@ import type { User } from "@/models/user";
 import { useFriend } from "@/composables/friend";
 import { useState } from "@/composables/state";
 import { FriendStatus } from "@/types/types";
-import { MAIN_COLOR, NOTE_COLORS, TOOLTIP_LOCATION } from "@/constants/style";
+import { MAIN_COLOR, NOTE_COLORS } from "@/constants/style";
 import { useSnackbar } from "@/composables/snackbar";
 import type { Note } from "@/models/note";
+import { goBack as navigateBack } from "@/utils/navigation";
 import { useRouter } from "vue-router";
 
 const props = defineProps({
@@ -172,10 +174,7 @@ const time = computed(() => minsToStringHoursDays(infos.value?.time));
 const viewingPercent = computed(() => ((infos.value?.seasons.length ?? 0) / seasons.value.length * 100).toFixed(0));
 const ringOffset = computed(() => ringCircumference * (1 - Number(viewingPercent.value) / 100));
 
-const goBack = () => {
-    if (router.options.history.state.back) router.back();
-    else router.push('/series');
-}
+const goBack = () => navigateBack(router, "/series");
 
 const refresh = async () => {
     modal.value = false;
@@ -187,7 +186,7 @@ const load = async (): Promise<void> => {
     const exists = !!(await getSerieFromCache(props.id));
 
     if (!exists) {
-        router.back();
+        navigateBack(router, "/series");
     }
     infos.value = await getSerieInfos({ id: props.id });
     seasons.value = await getSeasonsBySerieId(props.id);
@@ -323,6 +322,7 @@ onBeforeMount(async () => {
 
 .actions-row {
     display: flex;
+    align-items: center;
     flex-wrap: wrap;
     gap: 10px;
 }

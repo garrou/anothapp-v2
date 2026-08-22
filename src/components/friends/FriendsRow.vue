@@ -8,19 +8,23 @@
 
         <card-grid v-if="friends.length" :items="friends" :loading="loading">
             <template #default="{ item: friend }">
-                <poster-card :image="friend.picture">
-                    <v-card-subtitle class="pt-4">{{ friend.username }}</v-card-subtitle>
-
-                    <template #actions>
-                        <v-btn v-if="consult" :icon="DETAILS_ICON" variant="text" @click="showFriend(friend)" />
-                        <v-btn v-if="addable" :icon="ADD_ICON" variant="text" @click="addFriend(friend)" />
-                        <v-btn v-if="accept" icon="mdi-check" variant="text" @click="acceptFriend(friend)" />
-                        <v-btn v-if="remove" :icon="DELETE_ICON" variant="text" @click="showConfirm(friend)" />
+                <poster-card :image="friend.picture" @click="consult ? showFriend(friend) : undefined">
+                    <template #quick-actions>
+                        <v-btn v-if="consult" class="friend-quick-btn" :icon="DETAILS_ICON" size="32" variant="flat"
+                            color="on-surface-variant" @click.stop="showFriend(friend)" />
+                        <v-btn v-if="addable" class="friend-quick-btn" :icon="ADD_ICON" size="32" variant="flat"
+                            color="on-surface-variant" @click.stop="addFriend(friend)" />
+                        <v-btn v-if="accept" class="friend-quick-btn" icon="mdi-check" size="32" variant="flat"
+                            color="green" @click.stop="acceptFriend(friend)" />
+                        <v-btn v-if="remove" class="friend-quick-btn" :icon="DELETE_ICON" size="32" variant="flat"
+                            color="red" @click.stop="showConfirm(friend)" />
                     </template>
+
+                    <v-card-subtitle class="pt-4 pb-4 font-weight-medium">{{ friend.username }}</v-card-subtitle>
                 </poster-card>
             </template>
         </card-grid>
-        <span v-else>Aucun résultat</span>
+        <empty-state v-else :icon="emptyCopy.icon" :title="emptyCopy.title" :description="emptyCopy.description" />
     </div>
 
     <base-confirm v-model="confirm" text="Supprimer cet(te) ami(e) ?" title="Supprimer" persistent
@@ -30,15 +34,16 @@
 <script lang="ts" setup>
 import BaseConfirm from "@/components/BaseConfirm.vue";
 import CardGrid from "@/components/CardGrid.vue";
+import EmptyState from "@/components/EmptyState.vue";
 import PosterCard from "@/components/PosterCard.vue";
 import { ADD_ICON, DELETE_ICON, DETAILS_ICON, SEARCH_ICON } from "@/constants/icons";
 import type { User } from "@/models/user";
-import { ref, type PropType } from "vue";
+import { computed, ref, type PropType } from "vue";
 import { useFriend } from "@/composables/friend";
 import { useFriendStore } from "@/stores/friend";
 import { useRouter } from "vue-router";
 
-defineProps({
+const props = defineProps({
     accept: { type: Boolean, default: false },
     addable: { type: Boolean, default: false },
     consult: { type: Boolean, default: false },
@@ -60,6 +65,13 @@ const { acceptFriendRequest, deleteFriend, sendFriendRequest } = useFriend();
 const confirm = ref(false);
 const selected = ref<User>();
 const username = ref<string>("");
+
+const emptyCopy = computed(() => {
+    if (props.addable) return { icon: "mdi-account-search-outline", title: "Aucun résultat", description: "Recherchez un nom d'utilisateur pour envoyer une demande." };
+    if (props.accept) return { icon: "mdi-account-clock-outline", title: "Aucune demande reçue", description: "Les demandes d'ami reçues apparaîtront ici." };
+    if (props.remove && !props.consult) return { icon: "mdi-send-outline", title: "Aucune demande envoyée", description: "Les demandes que vous envoyez apparaîtront ici." };
+    return { icon: "mdi-account-heart-outline", title: "Aucun ami pour l'instant", description: "Ajoutez des amis pour comparer vos séries et vos statistiques." };
+});
 
 const showFriend = (user: User) => {
     friendStore.setFriend(user);
@@ -88,3 +100,9 @@ const showConfirm = (user: User) => {
     confirm.value = true;
 }
 </script>
+
+<style scoped>
+.friend-quick-btn {
+    box-shadow: 0 8px 18px rgba(108, 92, 224, 0.35);
+}
+</style>

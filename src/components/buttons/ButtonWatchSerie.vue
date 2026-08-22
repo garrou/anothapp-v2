@@ -1,5 +1,12 @@
 <template>
-    <v-tooltip :text="watchText" :location="tooltipLocation">
+    <v-btn v-if="primary" class="watch-btn--primary" color="primary" :prepend-icon="watchIcon" rounded="pill"
+        @click="changeWatch">
+        {{ watchText }}
+    </v-btn>
+
+    <v-list-item v-else-if="menuItem" :prepend-icon="watchIcon" :title="watchText" @click="changeWatch" />
+
+    <v-tooltip v-else :text="watchText" :location="tooltipLocation">
         <template v-slot:activator="{ props }">
             <v-btn v-bind="props" :color="watchColor" :icon="watchIcon" variant="text" @click="changeWatch" />
         </template>
@@ -14,6 +21,8 @@ import type { Serie } from '@/models/serie';
 import { computed, ref, watch, type PropType } from 'vue';
 
 const props = defineProps({
+    menuItem: { type: Boolean, default: false },
+    primary: { type: Boolean, default: false },
     serie: { type: Object as PropType<Serie>, required: true },
     tooltipLocation: { type: String as PropType<"left" | "bottom">, default: TOOLTIP_LOCATION }
 });
@@ -41,3 +50,9 @@ const changeWatch = async (): Promise<void> => {
     emit("refresh");
 }
 </script>
+
+<style scoped>
+.watch-btn--primary {
+    box-shadow: 0 8px 18px rgba(108, 92, 224, 0.32);
+}
+</style>

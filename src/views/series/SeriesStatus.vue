@@ -1,10 +1,15 @@
 <template>
     <base-app-bar />
-    <series-row :loading="loading" :series="series" :watch-status="displayWatchStatus" @refresh="(id) => refresh(id)" />
+
+    <series-tabs class="mx-3 mt-4 mb-2" />
+
+    <series-row :loading="loading" :series="series" :watch-status="displayWatchStatus" :empty-title="emptyCopy.title"
+        :empty-description="emptyCopy.description" @refresh="(id, kind) => refresh(id, kind)" />
 </template>
 
 <script lang="ts" setup>
 import SeriesRow from "@/components/series/SeriesRow.vue";
+import SeriesTabs from "@/components/series/SeriesTabs.vue";
 import { useSerie } from "@/composables/serie";
 import type { Serie } from "@/models/serie";
 import { useScrollStore } from "@/stores/scroll";
@@ -22,17 +27,40 @@ const { getSeriesByStatus } = useSerie();
 
 const displayWatchStatus = computed(() => props.status === SerieStatus.Stopped || props.status === SerieStatus.Continue);
 
+const emptyCopy = computed(() => {
+    switch (props.status) {
+        case SerieStatus.Favorite:
+            return { title: "Aucun favori", description: "Ajoutez une série à vos favoris depuis sa fiche." };
+        case SerieStatus.Continue:
+            return { title: "Rien à continuer", description: "Les séries dont le visionnage est en cours apparaîtront ici." };
+        case SerieStatus.Stopped:
+            return { title: "Aucune série arrêtée", description: "Les séries que vous arrêtez de suivre apparaissent ici." };
+        default:
+            return { title: "Votre liste est vide", description: "Ajoutez une série depuis Découvrir pour commencer à la suivre." };
+    }
+});
+
 const series = ref<Serie[]>([]);
 const loading = ref(false);
 
-const refresh = (id: number) => {
-    series.value = series.value.filter((serie) => serie.id !== id);
+const refresh = (id: number, kind: "favorite" | "list" | "watch") => {
+    const affectsCurrentStatus =
+        (props.status === SerieStatus.Favorite && kind === "favorite") ||
+        (props.status === SerieStatus.Watchlist && kind === "list") ||
+        ((props.status === SerieStatus.Continue || props.status === SerieStatus.Stopped) && kind === "watch");
+
+    if (affectsCurrentStatus) {
+        series.value = series.value.filter((serie) => serie.id !== id);
+    }
 }
 
 const loadSeries = async () => {
     loading.value = true;
-    series.value = await getSeriesByStatus(props.status);
-    loading.value = false;
+    try {
+        series.value = await getSeriesByStatus(props.status);
+    } finally {
+        loading.value = false;
+    }
 };
 
 watch(() => props.status, async () => {

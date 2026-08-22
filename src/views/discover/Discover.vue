@@ -1,6 +1,7 @@
 <template>
     <base-app-bar discover placeholder="Ajouter une série" search />
-    <series-row :loading="loading" :series="series" hide-details-button />
+    <series-row :loading="loading" :series="series" hide-details-button empty-title="Aucun résultat"
+        empty-description="Essayez un autre titre, ou modifiez vos filtres." :empty-cta="false" />
 </template>
 
 <script lang="ts" setup>
@@ -24,8 +25,11 @@ const series = ref<Serie[]>([]);
 
 const fetchSeries = async (): Promise<void> => {
     loading.value = true;
-    series.value = await getSeries();
-    loading.value = false;
+    try {
+        series.value = await getSeries();
+    } finally {
+        loading.value = false;
+    }
 }
 
 watch([filterTitle, filterKinds, filterPlatforms, filterLimit], () => {

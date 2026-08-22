@@ -31,8 +31,8 @@ export const DashboardLayout = (stat: GlobalStat): Layout[] => [
     },
     {
         icon: "mdi-crown",
-        name: "Record",
-        value: `${stat.bestMonth?.label} : ${minsToStringHoursDays(stat.bestMonth?.value)}`,
+        name: minsToStringHoursDays(stat.bestMonth?.value),
+        value: stat.bestMonth?.label,
         display: !!stat.bestMonth
     }
 ];

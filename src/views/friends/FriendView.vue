@@ -16,8 +16,9 @@
 <script lang="ts" setup>
 import Dashboard from "@/views/stats/Dashboard.vue";
 import { useFriendStore } from "@/stores/friend";
+import { goBack as navigateBack } from "@/utils/navigation";
 import { storeToRefs } from "pinia";
-import { onBeforeMount, onBeforeUnmount } from "vue";
+import { onBeforeMount } from "vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
@@ -25,15 +26,13 @@ const friendStore = useFriendStore();
 const { friend } = storeToRefs(friendStore);
 
 const goBack = () => {
-    if (router.options.history.state.back) router.back();
-    else router.push('/friends');
+    friendStore.reset();
+    navigateBack(router, "/friends");
 }
 
 onBeforeMount(() => {
     if (!friend.value) router.replace('/friends');
 });
-
-onBeforeUnmount(() => friendStore.reset());
 </script>
 
 <style scoped>

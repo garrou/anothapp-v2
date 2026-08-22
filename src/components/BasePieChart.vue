@@ -16,6 +16,7 @@ import {
 } from "echarts/components";
 import VChart from "vue-echarts";
 import { computed, type PropType } from "vue";
+import { useTheme } from "vuetify";
 import type { Stat } from "@/models/stat";
 import { CATEGORICAL_COLORS } from "@/constants/style";
 
@@ -24,6 +25,13 @@ const props = defineProps({
   itemStyle: { type: Object as PropType<Record<string, any>>, default: () => ({}) },
   title: { type: String, required: true },
 });
+
+const theme = useTheme();
+
+// ECharts renders titles/legends on a canvas, unaffected by the app's CSS
+// theme variables — the color has to be resolved and passed explicitly,
+// otherwise it defaults to a dark grey that's unreadable on dark surfaces.
+const textColor = computed(() => theme.current.value.colors["on-surface"]);
 
 const emit = defineEmits<{
   click: [{ id: number; name: string; value: number }]
@@ -42,6 +50,7 @@ const option = computed(() => ({
   title: {
     text: props.title,
     left: "center",
+    textStyle: { color: textColor.value },
   },
   tooltip: {
     trigger: "item",
@@ -50,7 +59,8 @@ const option = computed(() => ({
   legend: {
     orient: 'vertical',
     top: '25px',
-    left: 'left'
+    left: 'left',
+    textStyle: { color: textColor.value },
   },
   series: [
     {

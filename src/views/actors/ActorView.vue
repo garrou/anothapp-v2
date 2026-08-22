@@ -4,7 +4,8 @@
 
         <v-container>
             <actor-details :actor="actor" />
-            <series-row :loading="loading" :series="actor.series" total />
+            <series-row :loading="loading" :series="actor.series" total empty-title="Aucune série connue"
+                empty-description="Aucune série n'est associée à cet acteur pour le moment." :empty-cta="false" />
         </v-container>
     </div>
 </template>
@@ -15,6 +16,7 @@ import SerieHero from "@/components/series/SerieHero.vue";
 import SeriesRow from "@/components/series/SeriesRow.vue";
 import { useSearch } from "@/composables/search";
 import type { Actor } from "@/models/person";
+import { goBack as navigateBack } from "@/utils/navigation";
 import { onBeforeMount, ref } from "vue";
 import { useRouter } from "vue-router";
 
@@ -28,14 +30,14 @@ const { getActor } = useSearch();
 const actor = ref<Actor>();
 const loading = ref(false);
 
-const goBack = () => {
-    if (router.options.history.state.back) router.back();
-    else router.push('/discover');
-}
+const goBack = () => navigateBack(router, "/discover");
 
 onBeforeMount(async () => {
     loading.value = true;
-    actor.value = await getActor(props.id);
-    loading.value = false;
+    try {
+        actor.value = await getActor(props.id);
+    } finally {
+        loading.value = false;
+    }
 });
 </script>

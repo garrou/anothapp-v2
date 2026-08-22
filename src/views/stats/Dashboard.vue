@@ -14,7 +14,7 @@
 
         <friend-series v-if="userId" :user-id="userId" :type="SerieStatus.Favorite" />
 
-        <div class="dash-toolbar my-4">
+        <div class="dash-toolbar my-4 px-3 px-sm-0">
             <pill-tabs v-if="displayChart" v-model="tab" :tabs="DASHBOARD_TABS" />
             <span v-else class="text-body-2 text-medium-emphasis">Graphiques masqués</span>
             <v-switch v-model="displayChart" :color="MAIN_COLOR" density="compact" hide-details

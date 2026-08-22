@@ -28,6 +28,8 @@ defineEmits<{
 <style scoped>
 .pill-tabs {
     background: transparent;
+    mask-image: linear-gradient(to right, black calc(100% - 28px), transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, black calc(100% - 28px), transparent 100%);
 }
 
 .pill-tab {
@@ -46,5 +48,13 @@ defineEmits<{
 .pill-tab.v-tab--selected {
     background: rgba(var(--v-theme-primary), 0.12);
     color: rgb(var(--v-theme-primary));
+}
+
+@media screen and (max-width: 420px) {
+    .pill-tab {
+        margin-right: 2px;
+        padding: 0 12px;
+        font-size: 13px;
+    }
 }
 </style>

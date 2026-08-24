@@ -34,7 +34,9 @@ const range = computed<[string, string]>(() => {
     return [toISO(start), toISO(today)];
 });
 
-const maxValue = computed(() => Math.max(1, ...props.data.map((d) => d.value)));
+const visibleData = computed(() => props.data.filter((d) => d.date >= range.value[0] && d.date <= range.value[1]));
+
+const maxValue = computed(() => Math.max(1, ...visibleData.value.map((d) => d.value)));
 
 const chartOptions = computed(() => ({
     title: {
@@ -74,7 +76,7 @@ const chartOptions = computed(() => ({
     series: {
         type: "heatmap",
         coordinateSystem: "calendar",
-        data: props.data.map((d) => [d.date, d.value])
+        data: visibleData.value.map((d) => [d.date, d.value])
     }
 }));
 </script>

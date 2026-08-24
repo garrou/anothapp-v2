@@ -61,7 +61,7 @@ const emit = defineEmits<{
 
 const { getPlatforms } = useSearch();
 const { getSerie } = useSerie();
-const { deleteSeason, getSeasonInfosBySerieIdByNumber, updateSeason } = useSeason();
+const { deleteSeason, getSeasonInfosBySerieIdByNumber, getSeasonWatchedTime, updateSeason } = useSeason();
 const { getProfile } = useUser();
 
 const modal = ref(false);
@@ -121,10 +121,15 @@ watch(toEdit, () => {
 onBeforeMount(async () => {
     platforms.value = await getPlatforms();
     seasons.value = await getSeasonInfosBySerieIdByNumber(props.id, props.season.number);
-    const serie = await getSerie({ id: props.id });
-    time.value = serie.duration * props.season.episodes * seasons.value.length;
     const user = await getProfile();
     episodeTrackingEnabled.value = user.episodeTrackingEnabled ?? false;
+
+    if (episodeTrackingEnabled.value) {
+        time.value = (await getSeasonWatchedTime(props.id, props.season.number)) ?? 0;
+    } else {
+        const serie = await getSerie({ id: props.id });
+        time.value = serie.duration * props.season.episodes * seasons.value.length;
+    }
 });
 </script>
 

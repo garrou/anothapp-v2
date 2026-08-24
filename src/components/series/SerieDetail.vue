@@ -1,8 +1,10 @@
 <template>
     <div class="serie-detail">
+        <!--
         <div v-if="serie.poster" class="preview-img">
             <base-image :src="serie.poster" />
         </div>
+        -->
         <div class="detail-content">
             <div v-if="serie.kinds?.length" class="kinds-row">
                 <base-tag v-for="kind in serie.kinds" :key="kind">{{ kind }}</base-tag>

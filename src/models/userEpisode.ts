@@ -8,6 +8,8 @@ export interface UserEpisode {
 
     number: number;
 
+    global: number;
+
     date: string;
 
     views: number;

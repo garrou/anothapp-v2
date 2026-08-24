@@ -9,10 +9,12 @@
                         <v-switch v-model="isDark" color="primary" hide-details @update:model-value="toggleTheme" />
                     </template>
                 </v-list-item>
-                <v-list-item prepend-icon="mdi-format-list-checks" title="Suivi des épisodes">
+                <v-list-item prepend-icon="mdi-format-list-checks" title="Suivi des épisodes"
+                    :subtitle="episodeTrackingSubtitle">
                     <template #append>
                         <v-switch v-model="episodeTrackingEnabled" color="primary" hide-details
-                            :disabled="episodeTrackingLoading" @update:model-value="toggleEpisodeTracking" />
+                            :loading="episodeTrackingLoading" :disabled="episodeTrackingLoading"
+                            @update:model-value="toggleEpisodeTracking" />
                     </template>
                 </v-list-item>
                 <v-list-item prepend-icon="mdi-database" title="Exporter mes données" @click="settings.exportData" />
@@ -35,7 +37,7 @@ import { useUser } from '@/composables/user';
 import storageService from '@/services/storageService';
 import { THEME_ANOTHAPP, THEME_ANOTHAPP_DARK, applyThemeClass } from '@/utils/theme';
 import { useTheme } from 'vuetify';
-import { onBeforeMount, ref } from 'vue';
+import { computed, onBeforeMount, ref } from 'vue';
 
 const settings = useSettings();
 const { getProfile, updateEpisodeTracking } = useUser();
@@ -45,6 +47,12 @@ const isDark = ref(theme.global.name.value === THEME_ANOTHAPP_DARK);
 const confirmReset = ref(false);
 const episodeTrackingEnabled = ref(false);
 const episodeTrackingLoading = ref(false);
+
+const episodeTrackingSubtitle = computed(() =>
+    episodeTrackingLoading.value && episodeTrackingEnabled.value
+        ? "Synchronisation de l'historique en cours…"
+        : undefined
+);
 
 const toggleTheme = (value: boolean | null) => {
     const name = value ? THEME_ANOTHAPP_DARK : THEME_ANOTHAPP;

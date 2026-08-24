@@ -1,6 +1,6 @@
 <template>
     <template v-if="seasons.length">
-        <episodes-checklist v-if="episodeTrackingEnabled" :id="id" :number="season.number" />
+        <episodes-checklist v-if="episodeTrackingEnabled" class="mb-4" :id="id" :number="season.number" />
 
         <div class="season-details-total">{{ minsToStringHoursDays(time) }}</div>
 

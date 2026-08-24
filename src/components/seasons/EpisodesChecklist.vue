@@ -1,14 +1,18 @@
 <template>
-    <v-list class="episodes-checklist" density="compact">
-        <v-list-item v-for="episode in episodes" :key="episode.id" :title="episode.title"
-            :subtitle="`${episode.code} • ${formatDate(episode.date)}`">
-            <template #append>
-                <v-chip v-if="!isAired(episode)" size="small" variant="outlined">À venir</v-chip>
+    <v-expansion-panels multiple>
+        <v-expansion-panel v-for="episode in episodes" :key="episode.id">
+            <v-expansion-panel-title>
+                <p class="text-subtitle-1 mr-2">#{{ episode.global }}</p>
+                <p class="flex-grow-1">{{ episode.title }}</p>
+
+                <v-chip v-if="!isAired(episode)" size="small" variant="outlined" @click.stop>
+                    À venir
+                </v-chip>
 
                 <v-menu v-else>
                     <template #activator="{ props: menuProps }">
                         <v-btn v-bind="menuProps" size="small" variant="tonal"
-                            :color="episode.views > 0 ? MAIN_COLOR : undefined">
+                            :color="episode.views > 0 ? MAIN_COLOR : undefined" @click.stop>
                             x{{ episode.views }}
                         </v-btn>
                     </template>
@@ -19,9 +23,15 @@
                             @click="removeViewing(episode)" />
                     </v-list>
                 </v-menu>
-            </template>
-        </v-list-item>
-    </v-list>
+            </v-expansion-panel-title>
+
+            <v-expansion-panel-text>
+                <v-chip :color="MAIN_COLOR" size="small">
+                    {{ episode.code }} • {{ formatDate(episode.date) }}
+                </v-chip>
+            </v-expansion-panel-text>
+        </v-expansion-panel>
+    </v-expansion-panels>
 </template>
 
 <script lang="ts" setup>
@@ -54,11 +64,3 @@ onBeforeMount(async () => {
     episodes.value = await getEpisodesBySerieIdBySeason(props.id, props.number);
 });
 </script>
-
-<style scoped>
-.episodes-checklist {
-    border: 1px solid rgb(var(--v-border-color));
-    border-radius: 12px;
-    margin-bottom: 16px;
-}
-</style>

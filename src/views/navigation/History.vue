@@ -134,11 +134,13 @@ const episodeCards = computed<HistoryCard[]>(() => episodeTimeline.value.map((it
     platformId: item.platformId
 })));
 
+const cards = computed<HistoryCard[]>(() => episodeTrackingEnabled.value ? episodeCards.value : seasonCards.value);
+
 const groups = computed(() => {
     const today = new Date();
 
     const byDate = new Map<string, HistoryCard[]>();
-    const sorted = [...seasonCards.value, ...episodeCards.value].sort((a, b) => b.date.localeCompare(a.date));
+    const sorted = [...cards.value].sort((a, b) => b.date.localeCompare(a.date));
 
     for (const item of sorted) {
         const key = item.date.slice(0, 10);
@@ -165,13 +167,11 @@ const groups = computed(() => {
 const getHistory = async () => {
     loading.value = true;
     try {
-        const requests: Promise<void>[] = [
-            getSeasonsTimeline(month.value).then((data) => { timeline.value = data; })
-        ];
         if (episodeTrackingEnabled.value) {
-            requests.push(getEpisodesTimeline(month.value).then((data) => { episodeTimeline.value = data; }));
+            episodeTimeline.value = await getEpisodesTimeline(month.value);
+        } else {
+            timeline.value = await getSeasonsTimeline(month.value);
         }
-        await Promise.all(requests);
     } finally {
         loading.value = false;
     }

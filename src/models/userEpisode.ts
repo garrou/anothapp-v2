@@ -1,6 +1,8 @@
 export interface UserEpisode {
 
-    id: number;
+    id: number | null;
+
+    episodeId: number;
 
     title: string;
 
@@ -12,5 +14,5 @@ export interface UserEpisode {
 
     date: string;
 
-    views: number;
+    watchedAt: string | null;
 }

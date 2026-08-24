@@ -1,12 +1,12 @@
 import type { UserEpisode } from "@/models/userEpisode";
 import episodeService from "@/services/episodeService";
-import serieService from "@/services/serieService";
+import seasonService from "@/services/seasonService";
 import { isError } from "@/utils/response";
 
 export function useEpisode() {
 
-    const getEpisodesBySerieIdBySeason = async (id: number, num: number): Promise<UserEpisode[]> => {
-        const resp = await serieService.getEpisodesBySerieIdBySeason(id, num);
+    const getEpisodesBySeasonId = async (userSeasonId: number): Promise<UserEpisode[]> => {
+        const resp = await seasonService.getEpisodesBySeasonId(userSeasonId);
         const data = await resp.json();
 
         if (isError(resp.status))
@@ -15,29 +15,37 @@ export function useEpisode() {
         return data;
     }
 
-    const watchEpisode = async (id: number): Promise<number> => {
-        const resp = await episodeService.watchEpisode(id);
-        const data = await resp.json();
+    const addEpisodeViewing = async (userSeasonId: number, episodeId: number): Promise<void> => {
+        const resp = await seasonService.addEpisodeViewing(userSeasonId, episodeId);
 
-        if (isError(resp.status))
+        if (isError(resp.status)) {
+            const data = await resp.json();
             throw new Error(data.message);
-
-        return data.views;
+        }
     }
 
-    const unwatchEpisode = async (id: number): Promise<number> => {
-        const resp = await episodeService.unwatchEpisode(id);
-        const data = await resp.json();
+    const updateEpisodeViewing = async (id: number, watchedAt: string): Promise<void> => {
+        const resp = await episodeService.updateViewing(id, watchedAt);
 
-        if (isError(resp.status))
+        if (isError(resp.status)) {
+            const data = await resp.json();
             throw new Error(data.message);
+        }
+    }
 
-        return data.views;
+    const deleteEpisodeViewing = async (id: number): Promise<void> => {
+        const resp = await episodeService.deleteViewing(id);
+
+        if (isError(resp.status)) {
+            const data = await resp.json();
+            throw new Error(data.message);
+        }
     }
 
     return {
-        getEpisodesBySerieIdBySeason,
-        watchEpisode,
-        unwatchEpisode
+        getEpisodesBySeasonId,
+        addEpisodeViewing,
+        updateEpisodeViewing,
+        deleteEpisodeViewing
     }
 }

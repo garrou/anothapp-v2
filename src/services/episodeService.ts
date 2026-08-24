@@ -2,11 +2,12 @@ import httpClient from "./httpClient";
 
 const PREFIX = "episodes";
 
-const watchEpisode = (id: number): Promise<Response> => httpClient.post(`${PREFIX}/${id}/watch`);
+const updateViewing = (id: number, watchedAt: string): Promise<Response> =>
+    httpClient.patch(`${PREFIX}/${id}`, { watchedAt });
 
-const unwatchEpisode = (id: number): Promise<Response> => httpClient.delete(`${PREFIX}/${id}/watch`);
+const deleteViewing = (id: number): Promise<Response> => httpClient.delete(`${PREFIX}/${id}`);
 
 export default {
-    watchEpisode,
-    unwatchEpisode
+    updateViewing,
+    deleteViewing
 }

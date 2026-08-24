@@ -1,7 +1,5 @@
 <template>
     <template v-if="seasons.length">
-        <episodes-checklist v-if="episodeTrackingEnabled" class="mb-4" :id="id" :number="season.number" />
-
         <div class="season-details-total">{{ minsToStringHoursDays(time) }}</div>
 
         <div v-for="subSeason in seasons" :key="subSeason.id" class="season-entry">
@@ -27,6 +25,8 @@
 
                 <v-btn block color="primary" rounded="pill" @click="changeSeason">Enregistrer</v-btn>
             </div>
+
+            <episodes-checklist v-if="episodeTrackingEnabled" class="mt-3" :user-season-id="subSeason.id" />
         </div>
     </template>
 

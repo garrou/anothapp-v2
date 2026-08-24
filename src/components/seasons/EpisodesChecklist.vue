@@ -1,66 +1,142 @@
 <template>
-    <v-expansion-panels multiple>
-        <v-expansion-panel v-for="episode in episodes" :key="episode.id">
-            <v-expansion-panel-title>
-                <p class="text-subtitle-1 mr-2">#{{ episode.global }}</p>
-                <p class="flex-grow-1">{{ episode.title }}</p>
-
-                <v-chip v-if="!isAired(episode)" size="small" variant="outlined" @click.stop>
-                    À venir
-                </v-chip>
-
-                <v-menu v-else>
-                    <template #activator="{ props: menuProps }">
-                        <v-btn v-bind="menuProps" size="small" variant="tonal"
-                            :color="episode.views > 0 ? MAIN_COLOR : undefined" @click.stop>
-                            x{{ episode.views }}
-                        </v-btn>
-                    </template>
-
-                    <v-list density="compact">
-                        <v-list-item title="Ajouter un visionnage" @click="addViewing(episode)" />
-                        <v-list-item v-if="episode.views > 0" title="Supprimer le dernier visionnage"
-                            @click="removeViewing(episode)" />
-                    </v-list>
-                </v-menu>
-            </v-expansion-panel-title>
-
+    <v-expansion-panels>
+        <v-expansion-panel title="Épisodes">
             <v-expansion-panel-text>
-                <v-chip :color="MAIN_COLOR" size="small">
-                    {{ episode.code }} • {{ formatDate(episode.date) }}
-                </v-chip>
+                <div v-for="episode in episodes" :key="episode.episodeId" class="episode-entry">
+                    <div class="episode-entry-row">
+                        <div class="episode-entry-info">
+                            <div class="episode-entry-title">#{{ episode.global }} {{ episode.title }}</div>
+                            <div class="episode-entry-subtitle">{{ episode.code }}</div>
+                        </div>
+
+                        <v-chip v-if="!isAired(episode)" size="small" variant="outlined">À venir</v-chip>
+
+                        <template v-else-if="episode.watchedAt">
+                            <div class="episode-entry-date">{{ formatDate(episode.watchedAt) }}</div>
+                            <v-btn v-if="!isEdited(episode.episodeId)" class="episode-entry-btn" :icon="EDIT_ICON"
+                                size="32" variant="text" @click="editEpisode(episode.episodeId)" />
+                            <v-btn class="episode-entry-btn" :icon="DELETE_ICON" size="32" variant="text"
+                                @click="removeViewing(episode)" />
+                        </template>
+
+                        <v-btn v-else class="episode-entry-btn" :color="MAIN_COLOR" :icon="ADD_ICON" size="32"
+                            variant="text" @click="addViewing(episode)" />
+                    </div>
+
+                    <div v-if="isEdited(episode.episodeId)" class="episode-entry-edit">
+                        <v-text-field v-model="watchedAtInput" class="mb-3" hide-details type="datetime-local" />
+
+                        <v-btn block color="primary" rounded="pill" @click="saveViewedAt(episode)">Enregistrer</v-btn>
+                    </div>
+                </div>
             </v-expansion-panel-text>
         </v-expansion-panel>
     </v-expansion-panels>
 </template>
 
 <script lang="ts" setup>
-import { onBeforeMount, ref } from "vue";
+import { onBeforeMount, ref, watch } from "vue";
 import { useEpisode } from "@/composables/episode";
 import type { UserEpisode } from "@/models/userEpisode";
-import { formatDate } from "@/utils/format";
+import { formatDate, formatDateTime } from "@/utils/format";
 import { MAIN_COLOR } from "@/constants/style";
+import { ADD_ICON, EDIT_ICON, DELETE_ICON } from "@/constants/icons";
 
 const props = defineProps({
-    id: { type: Number, required: true },
-    number: { type: Number, required: true }
+    userSeasonId: { type: Number, required: true }
 });
 
-const { getEpisodesBySerieIdBySeason, watchEpisode, unwatchEpisode } = useEpisode();
+const { getEpisodesBySeasonId, addEpisodeViewing, updateEpisodeViewing, deleteEpisodeViewing } = useEpisode();
 
 const episodes = ref<UserEpisode[]>([]);
+const toEdit = ref(-1);
+const watchedAtInput = ref("");
 
 const isAired = (episode: UserEpisode): boolean => !!episode.date && new Date(episode.date) <= new Date();
+const isEdited = (episodeId: number): boolean => toEdit.value === episodeId;
+
+const load = async (): Promise<void> => {
+    episodes.value = await getEpisodesBySeasonId(props.userSeasonId);
+}
+
+const editEpisode = (episodeId: number): void => {
+    toEdit.value = isEdited(episodeId) ? -1 : episodeId;
+}
 
 const addViewing = async (episode: UserEpisode): Promise<void> => {
-    episode.views = await watchEpisode(episode.id);
+    await addEpisodeViewing(props.userSeasonId, episode.episodeId);
+    await load();
 }
 
 const removeViewing = async (episode: UserEpisode): Promise<void> => {
-    episode.views = await unwatchEpisode(episode.id);
+    if (!episode.id) return;
+    await deleteEpisodeViewing(episode.id);
+    await load();
 }
 
-onBeforeMount(async () => {
-    episodes.value = await getEpisodesBySerieIdBySeason(props.id, props.number);
+const saveViewedAt = async (episode: UserEpisode): Promise<void> => {
+    if (!episode.id || !watchedAtInput.value) return;
+    await updateEpisodeViewing(episode.id, formatDateTime(watchedAtInput.value));
+    toEdit.value = -1;
+    await load();
+}
+
+watch(toEdit, () => {
+    const episode = episodes.value.find((e) => e.episodeId === toEdit.value);
+    watchedAtInput.value = episode?.watchedAt ? formatDateTime(episode.watchedAt) : "";
 });
+
+onBeforeMount(load);
 </script>
+
+<style scoped>
+.episode-entry {
+    border: 1px solid rgb(var(--v-border-color));
+    border-radius: 12px;
+    padding: 8px 12px;
+    margin-bottom: 10px;
+}
+
+.episode-entry-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.episode-entry-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.episode-entry-title {
+    font-weight: 600;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.episode-entry-subtitle {
+    font-size: 12px;
+    color: rgb(var(--v-theme-on-surface-variant));
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.episode-entry-date {
+    font-size: 12px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.episode-entry-btn {
+    flex-shrink: 0;
+}
+
+.episode-entry-edit {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgb(var(--v-border-color));
+}
+</style>

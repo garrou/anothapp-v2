@@ -171,7 +171,14 @@ const missingTime = computed(() => {
 });
 const isMissingSeasons = computed(() => seasons.value.length - (infos.value?.seasons?.length ?? 0) > 0);
 const time = computed(() => minsToStringHoursDays(infos.value?.time));
-const viewingPercent = computed(() => ((infos.value?.seasons.length ?? 0) / seasons.value.length * 100).toFixed(0));
+const totalEpisodes = computed(() => seasons.value.reduce((acc, season) => acc + season.episodes, 0));
+
+const viewingPercent = computed(() => {
+    if (infos.value?.distinctEpisodes !== undefined && totalEpisodes.value) {
+        return (infos.value.distinctEpisodes / totalEpisodes.value * 100).toFixed(0);
+    }
+    return ((infos.value?.seasons.length ?? 0) / seasons.value.length * 100).toFixed(0);
+});
 const ringOffset = computed(() => ringCircumference * (1 - Number(viewingPercent.value) / 100));
 
 const goBack = () => navigateBack(router, "/series");

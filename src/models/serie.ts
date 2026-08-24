@@ -64,6 +64,8 @@ export interface SerieInfo {
     time: number;
 
     episodes: number;
+
+    distinctEpisodes?: number;
 }
 
 export type Similar = Required<BaseSerie>;

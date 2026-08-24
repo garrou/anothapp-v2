@@ -35,8 +35,8 @@ export function useEpisode() {
         }
     }
 
-    const updateEpisodeViewing = async (id: number, watchedAt: string): Promise<void> => {
-        const resp = await episodeService.updateViewing(id, watchedAt);
+    const updateEpisodeViewing = async (id: number, watchedAt: string, platformId: number): Promise<void> => {
+        const resp = await episodeService.updateViewing(id, watchedAt, platformId);
 
         if (isError(resp.status)) {
             const data = await resp.json();

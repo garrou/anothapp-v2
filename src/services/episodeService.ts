@@ -5,8 +5,8 @@ const PREFIX = "episodes";
 const getViewedByMonthAgo = (month: number): Promise<Response> =>
     httpClient.get(PREFIX, [{ name: "month", value: month }]);
 
-const updateViewing = (id: number, watchedAt: string): Promise<Response> =>
-    httpClient.patch(`${PREFIX}/${id}`, { watchedAt });
+const updateViewing = (id: number, watchedAt: string, platformId: number): Promise<Response> =>
+    httpClient.patch(`${PREFIX}/${id}`, { watchedAt, platformId });
 
 const deleteViewing = (id: number): Promise<Response> => httpClient.delete(`${PREFIX}/${id}`);
 

@@ -56,6 +56,16 @@ export function useSeason() {
         return data;
     }
 
+    const getSeasonWatchedTime = async (id: number, num: number): Promise<number | null> => {
+        const resp = await serieService.getSeasonWatchedTime(id, num);
+        const data = await resp.json();
+
+        if (isError(resp.status))
+            throw new Error(data.message);
+
+        return data.time;
+    }
+
     const addSeason = async (serie: Serie, season: Season): Promise<void> => {
         const resp = await serieService.addSeason(serie.id, season.number);
 
@@ -86,6 +96,7 @@ export function useSeason() {
         getSeasonsBySerieId,
         getSeasonsTimeline,
         getSeasonInfosBySerieIdByNumber,
+        getSeasonWatchedTime,
         updateSeason
     }
 }

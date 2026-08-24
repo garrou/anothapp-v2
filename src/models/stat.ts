@@ -36,7 +36,9 @@ export interface GlobalStat {
             
     seriesCountries: Stat[];
             
-    seriesNotes: Stat[];    
+    seriesNotes: Stat[];
+
+    episodesHeatmap?: { date: string; value: number }[];
 }
 
 export interface Stat {

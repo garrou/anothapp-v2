@@ -21,3 +21,7 @@ export const CATEGORICAL_COLORS = [
 export const SEQUENTIAL_COLORS = [
     "#F7F2FF", "#E4D6FF", "#C8AEFA", "#A780E6", "#8156C0", "#5B3291", "#38185F"
 ];
+
+export const HEATMAP_COLORS = [
+    "#F3EEFF", "#DCC9FF", "#C09EFF", "#9A6EF5", "#7440DE", "#4F1FB0", "#2A0F66"
+];

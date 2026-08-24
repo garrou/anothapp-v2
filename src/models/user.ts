@@ -9,4 +9,6 @@ export interface User {
     current: boolean;
 
     picture?: string;
+
+    episodeTrackingEnabled?: boolean;
 }

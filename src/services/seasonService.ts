@@ -10,8 +10,15 @@ const updateSeason = (id: number, platformId: number, viewedAt: string): Promise
 const getSeasons = (year?: number, month?: number): Promise<Response> =>
     httpClient.get(PREFIX, [{ name: year ? "year" : "month", value: year ?? month }]);
 
+const getEpisodesBySeasonId = (id: number): Promise<Response> => httpClient.get(`${PREFIX}/${id}/episodes`);
+
+const addEpisodeViewing = (id: number, episodeId: number): Promise<Response> =>
+    httpClient.post(`${PREFIX}/${id}/episodes/${episodeId}`);
+
 export default {
+    addEpisodeViewing,
     deleteSeasonById,
+    getEpisodesBySeasonId,
     getSeasons,
     updateSeason
 }

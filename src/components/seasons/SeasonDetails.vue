@@ -25,6 +25,8 @@
 
                 <v-btn block color="primary" rounded="pill" @click="changeSeason">Enregistrer</v-btn>
             </div>
+
+            <episodes-checklist v-if="episodeTrackingEnabled" class="mt-3" :user-season-id="subSeason.id" />
         </div>
     </template>
 
@@ -44,7 +46,9 @@ import { EDIT_ICON, DELETE_ICON } from "@/constants/icons";
 import { useSerie } from "@/composables/serie";
 import type { Platform } from "@/models/serie";
 import { useSearch } from "@/composables/search";
+import { useUser } from "@/composables/user";
 import PlatformCard from "../series/PlatformCard.vue";
+import EpisodesChecklist from "./EpisodesChecklist.vue";
 
 const props = defineProps({
     id: { type: Number, required: true },
@@ -57,13 +61,15 @@ const emit = defineEmits<{
 
 const { getPlatforms } = useSearch();
 const { getSerie } = useSerie();
-const { deleteSeason, getSeasonInfosBySerieIdByNumber, updateSeason } = useSeason();
+const { deleteSeason, getSeasonInfosBySerieIdByNumber, getSeasonWatchedTime, updateSeason } = useSeason();
+const { getProfile } = useUser();
 
 const modal = ref(false);
 const seasons = ref<SeasonDetail[]>([]);
 const selected = ref(-1);
 const time = ref(0);
 const toEdit = ref(-1);
+const episodeTrackingEnabled = ref(false);
 const platforms = ref<Platform[]>([]);
 const seasonInfo = reactive({
     platform: 0,
@@ -115,8 +121,15 @@ watch(toEdit, () => {
 onBeforeMount(async () => {
     platforms.value = await getPlatforms();
     seasons.value = await getSeasonInfosBySerieIdByNumber(props.id, props.season.number);
-    const serie = await getSerie({ id: props.id });
-    time.value = serie.duration * props.season.episodes * seasons.value.length;
+    const user = await getProfile();
+    episodeTrackingEnabled.value = user.episodeTrackingEnabled ?? false;
+
+    if (episodeTrackingEnabled.value) {
+        time.value = (await getSeasonWatchedTime(props.id, props.season.number)) ?? 0;
+    } else {
+        const serie = await getSerie({ id: props.id });
+        time.value = serie.duration * props.season.episodes * seasons.value.length;
+    }
 });
 </script>
 

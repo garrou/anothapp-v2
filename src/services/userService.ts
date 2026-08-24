@@ -16,9 +16,13 @@ const updateLogin = (email: string, newEmail: string): Promise<Response> =>
 const updatePassword = (currentPassword: string, newPassword: string, confirmPassword: string): Promise<Response> =>
     httpClient.patch(`${PREFIX}/me`, { currentPassword, newPassword, confirmPassword });
 
+const updateEpisodeTracking = (episodeTrackingEnabled: boolean): Promise<Response> =>
+    httpClient.patch(`${PREFIX}/me`, { episodeTrackingEnabled });
+
 export default {
     getUsers,
     getProfile,
+    updateEpisodeTracking,
     updateImage,
     updateLogin,
     updatePassword

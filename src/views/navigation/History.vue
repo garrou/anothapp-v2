@@ -32,16 +32,16 @@
                 <div class="history-column">
                     <div class="history-label">{{ group.label }}</div>
 
-                    <router-link v-for="item in group.items" :key="`${item.showId}-${item.season.number}`"
-                        :to="`/series/${item.showId}`" class="history-card">
-                        <base-image v-if="item.season.image" class="history-poster" :src="item.season.image" cover />
+                    <router-link v-for="item in group.items" :key="item.key" :to="`/series/${item.showId}`"
+                        class="history-card">
+                        <base-image v-if="item.poster" class="history-poster" :src="item.poster" cover />
                         <div v-else class="history-poster history-poster--empty">
                             <v-icon icon="mdi-movie-open-outline" size="16" />
                         </div>
 
                         <div class="history-info">
-                            <div class="history-title">{{ item.showTitle }}</div>
-                            <div class="history-subtitle">{{ seasonSubtitle(item.season) }}</div>
+                            <div class="history-title">{{ item.title }}</div>
+                            <div class="history-subtitle">{{ item.subtitle }}</div>
                         </div>
 
                         <platform-card class="history-platform" :platform="getSpecificPlatform(item.platformId)" />
@@ -63,12 +63,25 @@ import DayBadge from "@/components/DayBadge.vue";
 import EmptyState from "@/components/EmptyState.vue";
 import { useSearch } from "@/composables/search";
 import { useSeason } from "@/composables/season";
-import type { Season, SeasonTimeline } from "@/models/season";
+import { useEpisode } from "@/composables/episode";
+import { useUser } from "@/composables/user";
+import type { SeasonTimeline } from "@/models/season";
+import type { EpisodeTimeline } from "@/models/episodeTimeline";
 import type { Platform } from "@/models/serie";
 import { buildPlural } from "@/utils/format";
 import { MONTHS_FR, WEEKDAYS_LONG, WEEKDAYS_SHORT, isSameDay, parseLocalDate } from "@/utils/date";
 import { computed, onBeforeMount, ref } from "vue";
 import PlatformCard from "@/components/series/PlatformCard.vue";
+
+interface HistoryCard {
+    key: string;
+    date: string;
+    showId: number;
+    title: string;
+    subtitle: string;
+    poster?: string;
+    platformId?: number;
+}
 
 const MONTHS = [
     { text: "Ce mois", value: 0 },
@@ -81,12 +94,16 @@ const MONTHS = [
 
 const { getPlatforms } = useSearch();
 const { getSeasonsTimeline } = useSeason();
+const { getEpisodesTimeline } = useEpisode();
+const { getProfile } = useUser();
 
 const loading = ref(false);
 const month = ref(0);
 const menuOpen = ref(false);
 const timeline = ref<SeasonTimeline[]>([]);
+const episodeTimeline = ref<EpisodeTimeline[]>([]);
 const platforms = ref<Platform[]>([]);
+const episodeTrackingEnabled = ref(false);
 
 const selectedMonthLabel = computed(() => MONTHS.find((m) => m.value === month.value)?.text ?? MONTHS[0].text);
 
@@ -95,19 +112,38 @@ const selectMonth = (value: number) => {
     getHistory();
 }
 
-const seasonSubtitle = (season: Season): string =>
-    `Saison ${season.number} · ${buildPlural("épisode", season.episodes)}`;
-
 const getSpecificPlatform = (id?: number): Platform | undefined => platforms.value.find((p) => p.id === id);
+
+const seasonCards = computed<HistoryCard[]>(() => timeline.value.map((item) => ({
+    key: `season-${item.showId}-${item.season.number}-${item.addedAt}`,
+    date: item.addedAt,
+    showId: item.showId,
+    title: item.showTitle,
+    subtitle: `Saison ${item.season.number} · ${buildPlural("épisode", item.season.episodes)}`,
+    poster: item.season.image,
+    platformId: item.platformId
+})));
+
+const episodeCards = computed<HistoryCard[]>(() => episodeTimeline.value.map((item) => ({
+    key: `episode-${item.episode.id}-${item.watchedAt}`,
+    date: item.watchedAt,
+    showId: item.showId,
+    title: item.showTitle,
+    subtitle: `${item.episode.code} · ${item.episode.title}`,
+    poster: item.showPoster,
+    platformId: item.platformId
+})));
+
+const cards = computed<HistoryCard[]>(() => episodeTrackingEnabled.value ? episodeCards.value : seasonCards.value);
 
 const groups = computed(() => {
     const today = new Date();
 
-    const byDate = new Map<string, SeasonTimeline[]>();
-    const sorted = [...timeline.value].sort((a, b) => b.addedAt.localeCompare(a.addedAt));
+    const byDate = new Map<string, HistoryCard[]>();
+    const sorted = [...cards.value].sort((a, b) => b.date.localeCompare(a.date));
 
     for (const item of sorted) {
-        const key = item.addedAt.slice(0, 10);
+        const key = item.date.slice(0, 10);
         if (!byDate.has(key)) byDate.set(key, []);
         byDate.get(key)!.push(item);
     }
@@ -131,7 +167,11 @@ const groups = computed(() => {
 const getHistory = async () => {
     loading.value = true;
     try {
-        timeline.value = await getSeasonsTimeline(month.value);
+        if (episodeTrackingEnabled.value) {
+            episodeTimeline.value = await getEpisodesTimeline(month.value);
+        } else {
+            timeline.value = await getSeasonsTimeline(month.value);
+        }
     } finally {
         loading.value = false;
     }
@@ -142,6 +182,8 @@ const getAllPlatforms = async () => {
 }
 
 onBeforeMount(async () => {
+    const user = await getProfile();
+    episodeTrackingEnabled.value = user.episodeTrackingEnabled ?? false;
     await Promise.all([
         getAllPlatforms(),
         getHistory()

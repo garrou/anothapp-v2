@@ -1,5 +1,7 @@
 <template>
     <template v-if="seasons.length">
+        <episodes-checklist v-if="episodeTrackingEnabled" :id="id" :number="season.number" />
+
         <div class="season-details-total">{{ minsToStringHoursDays(time) }}</div>
 
         <div v-for="subSeason in seasons" :key="subSeason.id" class="season-entry">
@@ -44,7 +46,9 @@ import { EDIT_ICON, DELETE_ICON } from "@/constants/icons";
 import { useSerie } from "@/composables/serie";
 import type { Platform } from "@/models/serie";
 import { useSearch } from "@/composables/search";
+import { useUser } from "@/composables/user";
 import PlatformCard from "../series/PlatformCard.vue";
+import EpisodesChecklist from "./EpisodesChecklist.vue";
 
 const props = defineProps({
     id: { type: Number, required: true },
@@ -58,12 +62,14 @@ const emit = defineEmits<{
 const { getPlatforms } = useSearch();
 const { getSerie } = useSerie();
 const { deleteSeason, getSeasonInfosBySerieIdByNumber, updateSeason } = useSeason();
+const { getProfile } = useUser();
 
 const modal = ref(false);
 const seasons = ref<SeasonDetail[]>([]);
 const selected = ref(-1);
 const time = ref(0);
 const toEdit = ref(-1);
+const episodeTrackingEnabled = ref(false);
 const platforms = ref<Platform[]>([]);
 const seasonInfo = reactive({
     platform: 0,
@@ -117,6 +123,8 @@ onBeforeMount(async () => {
     seasons.value = await getSeasonInfosBySerieIdByNumber(props.id, props.season.number);
     const serie = await getSerie({ id: props.id });
     time.value = serie.duration * props.season.episodes * seasons.value.length;
+    const user = await getProfile();
+    episodeTrackingEnabled.value = user.episodeTrackingEnabled ?? false;
 });
 </script>
 

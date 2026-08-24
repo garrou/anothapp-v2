@@ -24,6 +24,9 @@
         <v-window v-if="displayChart" v-model="tab">
             <v-window-item :value="1">
                 <v-row>
+                    <v-col v-if="stat?.episodesHeatmap?.length" cols="12">
+                        <episodes-heatmap :data="stat.episodesHeatmap" />
+                    </v-col>
                     <v-col cols="12" md="6">
                         <chart :data="stat?.seasonsMonthCurrentYear" :type="ChartType.Bar"
                             chart-id="seasons-months-curr-year" :default-color="CATEGORICAL_COLORS[0]"
@@ -101,6 +104,7 @@ import SeriesCountries from "@/components/stats/SeriesCountries.vue";
 import SeriesKinds from "@/components/stats/SeriesKinds.vue";
 import FriendSeries from "@/components/friends/FriendSeries.vue";
 import SeriesNotes from "@/components/stats/SeriesNotes.vue";
+import EpisodesHeatmap from "@/components/stats/EpisodesHeatmap.vue";
 import { useStatistic } from "@/composables/statistic";
 import { CATEGORICAL_COLORS, MAIN_COLOR } from "@/constants/style";
 import type { ChartData, GlobalStat } from "@/models/stat";

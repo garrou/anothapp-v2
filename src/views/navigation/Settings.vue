@@ -27,6 +27,11 @@
     <base-confirm v-model="confirmReset" title="Réinitialiser l'application"
         text="Les données mises en cache seront supprimées et l'application va recharger. Confirmez-vous ?"
         confirm-text="Réinitialiser" persistent @cancel="confirmReset = false" @confirm="settings.clearCaches" />
+
+    <base-confirm v-model="confirmEpisodeTracking" title="Activer le suivi des épisodes"
+        text="Votre historique existant sera synchronisé au niveau des épisodes, ce qui peut prendre un moment selon le nombre de séries suivies. Confirmez-vous ?"
+        confirm-text="Activer" confirm-color="primary" persistent @cancel="cancelEpisodeTracking"
+        @confirm="confirmEpisodeTrackingEnable" />
 </template>
 
 <script lang="ts" setup>
@@ -45,6 +50,7 @@ const theme = useTheme();
 
 const isDark = ref(theme.global.name.value === THEME_ANOTHAPP_DARK);
 const confirmReset = ref(false);
+const confirmEpisodeTracking = ref(false);
 const episodeTrackingEnabled = ref(false);
 const episodeTrackingLoading = ref(false);
 
@@ -61,17 +67,35 @@ const toggleTheme = (value: boolean | null) => {
     storageService.storeTheme(name);
 }
 
-const toggleEpisodeTracking = async (value: boolean | null) => {
+const applyEpisodeTracking = async (value: boolean) => {
     episodeTrackingLoading.value = true;
 
     try {
-        await updateEpisodeTracking(!!value);
+        await updateEpisodeTracking(value);
     } catch (e) {
         episodeTrackingEnabled.value = !value;
         throw e;
     } finally {
         episodeTrackingLoading.value = false;
     }
+}
+
+const toggleEpisodeTracking = async (value: boolean | null) => {
+    if (value) {
+        confirmEpisodeTracking.value = true;
+        return;
+    }
+    await applyEpisodeTracking(false);
+}
+
+const cancelEpisodeTracking = () => {
+    episodeTrackingEnabled.value = false;
+    confirmEpisodeTracking.value = false;
+}
+
+const confirmEpisodeTrackingEnable = async () => {
+    confirmEpisodeTracking.value = false;
+    await applyEpisodeTracking(true);
 }
 
 onBeforeMount(async () => {

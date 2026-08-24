@@ -12,7 +12,7 @@ import { HeatmapChart } from "echarts/charts";
 import { CalendarComponent, TitleComponent, TooltipComponent, VisualMapComponent } from "echarts/components";
 import VChart from "vue-echarts";
 import { useTheme } from "vuetify";
-import { SEQUENTIAL_COLORS } from "@/constants/style";
+import { HEATMAP_COLORS } from "@/constants/style";
 
 use([CanvasRenderer, HeatmapChart, CalendarComponent, TitleComponent, TooltipComponent, VisualMapComponent]);
 
@@ -56,15 +56,15 @@ const chartOptions = computed(() => ({
         orient: "horizontal",
         left: "center",
         top: 36,
-        inRange: { color: SEQUENTIAL_COLORS },
+        inRange: { color: HEATMAP_COLORS },
         textStyle: { color: textColor.value }
     },
     calendar: {
-        top: 90,
-        left: 30,
+        top: 100,
+        left: 40,
         right: 20,
         range: range.value,
-        cellSize: ["auto", 14],
+        cellSize: ["auto", 22],
         itemStyle: { borderWidth: 2, borderColor: lineColor.value },
         yearLabel: { show: false },
         dayLabel: { color: textColor.value },
@@ -82,6 +82,6 @@ const chartOptions = computed(() => ({
 <style scoped>
 .chart {
     width: 100%;
-    height: 220px;
+    height: 320px;
 }
 </style>

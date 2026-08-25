@@ -15,7 +15,10 @@ const getEpisodesBySeasonId = (id: number): Promise<Response> => httpClient.get(
 const addEpisodeViewing = (id: number, episodeId: number): Promise<Response> =>
     httpClient.post(`${PREFIX}/${id}/episodes/${episodeId}`);
 
+const addAllEpisodesViewing = (id: number): Promise<Response> => httpClient.post(`${PREFIX}/${id}/episodes`);
+
 export default {
+    addAllEpisodesViewing,
     addEpisodeViewing,
     deleteSeasonById,
     getEpisodesBySeasonId,

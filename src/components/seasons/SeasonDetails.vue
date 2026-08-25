@@ -26,7 +26,20 @@
                 <v-btn block color="primary" rounded="pill" @click="changeSeason">Enregistrer</v-btn>
             </div>
 
-            <episodes-checklist v-if="episodeTrackingEnabled" class="mt-3" :user-season-id="subSeason.id" />
+            <div v-if="bulkOfferSeasonId === subSeason.id" class="season-entry-edit">
+                <p class="mb-3">Marquer tous les épisodes diffusés de cette saison comme vus ?</p>
+                <div class="d-flex ga-2">
+                    <v-btn class="flex-grow-1" color="primary" rounded="pill" @click="acceptBulkAdd(subSeason.id)">
+                        Tout marquer
+                    </v-btn>
+                    <v-btn class="flex-grow-1" rounded="pill" variant="outlined" @click="bulkOfferSeasonId = -1">
+                        Non merci
+                    </v-btn>
+                </div>
+            </div>
+
+            <episodes-checklist v-if="episodeTrackingEnabled" class="mt-3" :key="`${subSeason.id}-${episodesRefreshKey}`"
+                :user-season-id="subSeason.id" />
         </div>
     </template>
 
@@ -40,6 +53,7 @@ import type { PropType } from "vue";
 import { onBeforeMount, reactive, ref, watch } from "vue";
 import type { Season, SeasonDetail } from "@/models/season";
 import { useSeason } from "@/composables/season";
+import { useEpisode } from "@/composables/episode";
 import { formatDate, formatDateTime, minsToStringHoursDays } from "@/utils/format";
 import { DENSITY } from "@/constants/style";
 import { EDIT_ICON, DELETE_ICON } from "@/constants/icons";
@@ -53,6 +67,7 @@ import EpisodesChecklist from "./EpisodesChecklist.vue";
 
 const props = defineProps({
     id: { type: Number, required: true },
+    justAdded: { type: Boolean, default: false },
     season: { type: Object as PropType<Season>, required: true }
 });
 
@@ -63,6 +78,7 @@ const emit = defineEmits<{
 const { getPlatforms } = useSearch();
 const { getSerie } = useSerie();
 const { deleteSeason, getSeasonInfosBySerieIdByNumber, getSeasonWatchedTime, updateSeason } = useSeason();
+const { addAllEpisodesViewing } = useEpisode();
 const { getProfile } = useUser();
 const { getUserPlatforms } = usePlatform();
 
@@ -73,6 +89,8 @@ const time = ref(0);
 const toEdit = ref(-1);
 const episodeTrackingEnabled = ref(false);
 const platforms = ref<Platform[]>([]);
+const bulkOfferSeasonId = ref(-1);
+const episodesRefreshKey = ref(0);
 const seasonInfo = reactive({
     platform: 0,
     viewedAt: ""
@@ -87,6 +105,12 @@ const editSeason = (id: number) => {
 const selectSeason = (id: number) => {
     selected.value = id;
     modal.value = true;
+}
+
+const acceptBulkAdd = async (userSeasonId: number) => {
+    bulkOfferSeasonId.value = -1;
+    await addAllEpisodesViewing(userSeasonId);
+    episodesRefreshKey.value++;
 }
 
 const dropSeason = async (id: number) => {
@@ -129,6 +153,14 @@ onBeforeMount(async () => {
     seasons.value = await getSeasonInfosBySerieIdByNumber(props.id, props.season.number);
     const user = await getProfile();
     episodeTrackingEnabled.value = user.episodeTrackingEnabled ?? false;
+
+    // Offer to bulk-mark the season's episodes right after adding it, so
+    // newcomers catching up on an already-aired season don't have to check
+    // every episode one by one. `seasons` is ordered by addedAt, so the
+    // viewing just created is the last entry.
+    if (episodeTrackingEnabled.value && props.justAdded && seasons.value.length) {
+        bulkOfferSeasonId.value = seasons.value[seasons.value.length - 1].id;
+    }
 
     if (episodeTrackingEnabled.value) {
         time.value = (await getSeasonWatchedTime(props.id, props.season.number)) ?? 0;

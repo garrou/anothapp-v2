@@ -69,7 +69,7 @@
 
     <base-modal v-if="selected" v-model="modal" :title="`Saison ${selected.number}`">
         <season-episodes v-if="isAddable" :id="id" :number="selected.number" />
-        <season-details v-else :id="id" :season="selected" @refresh="refresh" />
+        <season-details v-else :id="id" :season="selected" :just-added="justAddedSeason" @refresh="refresh" />
     </base-modal>
 
     <base-modal v-model="friendsModal" title="Amis qui regardent cette série">
@@ -148,6 +148,7 @@ const selected = ref<Season>();
 const notes = ref<Note[]>([]);
 const tab = ref(1);
 const isAddable = ref(false);
+const justAddedSeason = ref(false);
 const updateModal = ref(false);
 const showInfo = reactive({
     isFavorite: false,
@@ -210,12 +211,14 @@ const newSeason = async (season: Season): Promise<void> => {
     await addSeason(infos.value!.serie, season);
     infos.value = await getSerieInfos({ id: props.id });
     showSeason(season, false);
+    justAddedSeason.value = true;
 }
 
 const showSeason = (season: Season, addable: boolean): void => {
     isAddable.value = addable;
     selected.value = season;
     modal.value = true;
+    justAddedSeason.value = false;
 }
 
 const openFriendsModal = async (): Promise<void> => {

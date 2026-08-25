@@ -3,8 +3,11 @@ import type { EpisodeTimeline } from "@/models/episodeTimeline";
 import episodeService from "@/services/episodeService";
 import seasonService from "@/services/seasonService";
 import { isError } from "@/utils/response";
+import { useSnackbar } from "./snackbar";
 
 export function useEpisode() {
+
+    const { showSuccess } = useSnackbar();
 
     const getEpisodesTimeline = async (month: number): Promise<EpisodeTimeline[]> => {
         const resp = await episodeService.getViewedByMonthAgo(month);
@@ -35,6 +38,16 @@ export function useEpisode() {
         }
     }
 
+    const addAllEpisodesViewing = async (userSeasonId: number): Promise<void> => {
+        const resp = await seasonService.addAllEpisodesViewing(userSeasonId);
+
+        if (isError(resp.status)) {
+            const data = await resp.json();
+            throw new Error(data.message);
+        }
+        showSuccess("Tous les épisodes diffusés ont été marqués comme vus");
+    }
+
     const updateEpisodeViewing = async (id: number, watchedAt: string): Promise<void> => {
         const resp = await episodeService.updateViewing(id, watchedAt);
 
@@ -57,6 +70,7 @@ export function useEpisode() {
         getEpisodesTimeline,
         getEpisodesBySeasonId,
         addEpisodeViewing,
+        addAllEpisodesViewing,
         updateEpisodeViewing,
         deleteEpisodeViewing
     }

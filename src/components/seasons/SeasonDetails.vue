@@ -47,6 +47,7 @@ import { useSerie } from "@/composables/serie";
 import type { Platform } from "@/models/serie";
 import { useSearch } from "@/composables/search";
 import { useUser } from "@/composables/user";
+import { usePlatform } from "@/composables/platform";
 import PlatformCard from "../series/PlatformCard.vue";
 import EpisodesChecklist from "./EpisodesChecklist.vue";
 
@@ -63,6 +64,7 @@ const { getPlatforms } = useSearch();
 const { getSerie } = useSerie();
 const { deleteSeason, getSeasonInfosBySerieIdByNumber, getSeasonWatchedTime, updateSeason } = useSeason();
 const { getProfile } = useUser();
+const { getUserPlatforms } = usePlatform();
 
 const modal = ref(false);
 const seasons = ref<SeasonDetail[]>([]);
@@ -119,7 +121,11 @@ watch(toEdit, () => {
 });
 
 onBeforeMount(async () => {
-    platforms.value = await getPlatforms();
+    const [allPlatforms, userPlatformIds] = await Promise.all([getPlatforms(), getUserPlatforms()]);
+    platforms.value = [
+        ...allPlatforms.filter((p) => userPlatformIds.includes(p.id)),
+        ...allPlatforms.filter((p) => !userPlatformIds.includes(p.id))
+    ];
     seasons.value = await getSeasonInfosBySerieIdByNumber(props.id, props.season.number);
     const user = await getProfile();
     episodeTrackingEnabled.value = user.episodeTrackingEnabled ?? false;

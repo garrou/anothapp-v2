@@ -18,12 +18,15 @@
 
     <base-modal v-model="modal" :max-width="800" title="Modifier">
         <div v-if="selected === 'images'">
+            <v-text-field v-model="imagesQuery" :append-inner-icon="SEARCH_ICON" class="mb-4" clearable
+                hide-details label="Filtrer par titre" variant="underlined" />
+
             <v-expansion-panels multiple variant="accordion">
-                <v-expansion-panel v-for="serie in series" :key="serie.id"
+                <v-expansion-panel v-for="serie in filteredSeries" :key="serie.id"
                     @group:selected="(open: any) => getImages(open.value, serie.id)">
                     <v-expansion-panel-title>{{ serie.title }}</v-expansion-panel-title>
                     <v-expansion-panel-text>
-                        <images-row :images="images[serie.id]" :loading="loading" @refresh="refresh" />
+                        <images-row :images="images[serie.id] ?? []" :loading="loading" @refresh="refresh" />
                     </v-expansion-panel-text>
                 </v-expansion-panel>
             </v-expansion-panels>
@@ -45,28 +48,35 @@ import Password from "./Password.vue";
 import ImagesRow from "@/components/ImagesRow.vue";
 import { useUser } from "@/composables/user";
 import type { User } from "@/models/user";
-import { onBeforeMount, ref } from "vue";
+import { computed, onBeforeMount, ref } from "vue";
 import type { Serie } from "@/models/serie";
 import { useSerie } from "@/composables/serie";
 import { useSearch } from "@/composables/search";
 import type { ProfileModal } from "@/types/types";
 import { ProfileLayout } from "@/layouts/profile-layout";
+import { SEARCH_ICON } from "@/constants/icons";
+import { withoutAccentsIgnoreCase } from "@/utils/format";
 
 const { getProfile } = useUser();
 const { getSeries } = useSerie();
 const { getSerieImages } = useSearch();
 
 const images = ref<Record<number, string[]>>({});
+const imagesQuery = ref("");
 const loading = ref(false);
 const modal = ref(false);
 const profile = ref<User>();
 const selected = ref("");
 const series = ref<Serie[]>();
 
-const showModal = async (select: ProfileModal) => {
-    if (select === "images")
-        series.value = await getSeries();
+const filteredSeries = computed(() => series.value?.filter((serie) =>
+    withoutAccentsIgnoreCase(serie.title).includes(withoutAccentsIgnoreCase(imagesQuery.value))) ?? []);
 
+const showModal = async (select: ProfileModal) => {
+    if (select === "images") {
+        series.value = await getSeries();
+        imagesQuery.value = "";
+    }
     selected.value = select;
     modal.value = true;
 }

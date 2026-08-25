@@ -3,8 +3,16 @@
         <div class="poster-media">
             <router-link v-if="to" :to="to" @click.stop>
                 <base-image v-if="image" cover max-height="580" :src="image" />
+                <div v-else class="poster-placeholder">
+                    <v-icon size="40" icon="mdi-image-off-outline" />
+                </div>
             </router-link>
-            <base-image v-else-if="image" cover max-height="580" :src="image" />
+            <template v-else>
+                <base-image v-if="image" cover max-height="580" :src="image" />
+                <div v-else class="poster-placeholder">
+                    <v-icon size="40" icon="mdi-image-off-outline" />
+                </div>
+            </template>
 
             <div v-if="$slots['quick-actions']" class="quick-actions" @click.stop>
                 <slot name="quick-actions" />

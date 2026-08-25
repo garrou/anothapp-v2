@@ -61,6 +61,7 @@ export function useAuth() {
         await cache.userSeries.clearCache();
         await cache.users.clearCache();
         await cache.userList.clearCache();
+        await cache.userPlatforms.clearCache();
         router.replace("/login");
     }
 

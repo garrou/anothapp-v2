@@ -131,6 +131,7 @@ import { useSerieStore } from "@/stores/serie";
 import { useAuth } from "@/composables/auth";
 import { DEFAULT_LIMIT } from "@/constants/services";
 import { useSerie } from "@/composables/serie";
+import { usePlatform } from "@/composables/platform";
 import type { Note } from "@/models/note";
 import PlatformCard from "./series/PlatformCard.vue";
 
@@ -150,6 +151,7 @@ const { getKinds, getPlatforms, getNotes } = useSearch();
 const { getProfile } = useUser();
 const { logout } = useAuth();
 const { getCountries } = useSerie();
+const { getUserPlatforms } = usePlatform();
 const searchStore = useSearchStore();
 const serieStore = useSerieStore();
 
@@ -237,7 +239,12 @@ const openFilterDrawer = async () => {
 onBeforeMount(async () => {
     user.value = await getProfile();
     kinds.value = await getKinds();
-    platforms.value = await getPlatforms();
+
+    const [allPlatforms, userPlatformIds] = await Promise.all([getPlatforms(), getUserPlatforms()]);
+    platforms.value = [
+        ...allPlatforms.filter((p) => userPlatformIds.includes(p.id)),
+        ...allPlatforms.filter((p) => !userPlatformIds.includes(p.id))
+    ];
     countries.value = await getCountries();
     notes.value = await getNotes();
 });

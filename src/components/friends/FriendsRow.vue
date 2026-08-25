@@ -6,7 +6,7 @@
                 @click:append-inner="$emit('search', username)" />
         </v-form>
 
-        <card-grid v-if="friends.length" :items="friends" :loading="loading">
+        <card-grid v-if="friends.length" :items="friends" :loading="loading" :sm="4" :md="2" :lg="2">
             <template #default="{ item: friend }">
                 <poster-card :image="friend.picture" @click="consult ? showFriend(friend) : undefined">
                     <template #quick-actions>

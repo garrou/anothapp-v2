@@ -1,6 +1,8 @@
 <template>
     <v-card>
-        <v-chart class="chart" :option="chartOptions" autoresize />
+        <div class="chart-scroll">
+            <v-chart class="chart mt-2" :option="chartOptions" autoresize />
+        </div>
     </v-card>
 </template>
 
@@ -82,8 +84,13 @@ const chartOptions = computed(() => ({
 </script>
 
 <style scoped>
+.chart-scroll {
+    overflow-x: auto;
+}
+
 .chart {
     width: 100%;
+    min-width: 700px;
     height: 320px;
 }
 </style>

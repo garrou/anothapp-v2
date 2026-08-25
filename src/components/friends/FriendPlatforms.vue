@@ -34,7 +34,7 @@ const { getPlatforms } = useSearch();
 const platforms = ref<Platform[]>([]);
 
 const platformsLabel = computed(() =>
-    `${buildPlural("plateforme", platforms.value.length)} ${buildPlural("suivie", platforms.value.length, false, false)}`);
+    `${buildPlural("plateforme", platforms.value.length)} ${buildPlural("utilisée", platforms.value.length, false, false)}`);
 
 onBeforeMount(async () => {
     const [allPlatforms, friendPlatformIds] = await Promise.all([getPlatforms(), getFriendPlatforms(props.userId)]);

@@ -57,7 +57,7 @@ import type { Character } from "@/models/person";
 import type { Serie, Similar } from "@/models/serie";
 import type { User } from "@/models/user";
 import { goBack as navigateBack } from "@/utils/navigation";
-import { onBeforeMount, ref } from "vue";
+import { onBeforeMount, ref, watch } from "vue";
 import { FriendStatus } from "@/types/types";
 import { useRouter } from "vue-router";
 
@@ -115,11 +115,22 @@ const getFriendsWhoWatch = async (): Promise<void> => {
     loading.value = false;
 }
 
-onBeforeMount(async () => {
+const load = async () => {
     loading.value = true;
     serie.value = await getSerie(props.id);
     loading.value = false;
+}
+
+watch(() => props.id, () => {
+    tab.value = 1;
+    characters.value = [];
+    friends.value = [];
+    images.value = [];
+    similars.value = [];
+    load();
 });
+
+onBeforeMount(load);
 </script>
 
 <style scoped>

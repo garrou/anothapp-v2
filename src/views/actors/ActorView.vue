@@ -17,7 +17,7 @@ import SeriesRow from "@/components/series/SeriesRow.vue";
 import { useSearch } from "@/composables/search";
 import type { Actor } from "@/models/person";
 import { goBack as navigateBack } from "@/utils/navigation";
-import { onBeforeMount, ref } from "vue";
+import { onBeforeMount, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 
 const props = defineProps({
@@ -32,12 +32,16 @@ const loading = ref(false);
 
 const goBack = () => navigateBack(router, "/discover");
 
-onBeforeMount(async () => {
+const load = async () => {
     loading.value = true;
     try {
         actor.value = await getActor(props.id);
     } finally {
         loading.value = false;
     }
-});
+}
+
+watch(() => props.id, load);
+
+onBeforeMount(load);
 </script>

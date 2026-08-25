@@ -102,7 +102,7 @@ import FriendsRow from "@/components/friends/FriendsRow.vue";
 import SerieHero from "@/components/series/SerieHero.vue";
 import PillTabs from "@/components/PillTabs.vue";
 import type { SerieInfo } from "@/models/serie";
-import { computed, onBeforeMount, reactive, ref } from "vue";
+import { computed, onBeforeMount, reactive, ref, watch } from "vue";
 import { useSeason } from "@/composables/season";
 import { useSearch } from "@/composables/search";
 import { useSerie } from "@/composables/serie";
@@ -259,6 +259,12 @@ const updateSerieNote = async (): Promise<void> => {
 const loadNotes = async () => {
     notes.value = await getNotes();
 }
+
+watch(() => props.id, () => {
+    tab.value = 1;
+    friends.value = [];
+    load();
+});
 
 onBeforeMount(async () => {
     await Promise.all([

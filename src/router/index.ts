@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory, useRoute } from "vue-router";
 import { useAuth } from "@/composables/auth";
 import { useScrollStore } from "@/stores/scroll";
+import { trackNavigation } from "@/utils/navigation";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -156,6 +157,10 @@ router.beforeEach(async (to, from) => {
   if (!to.meta.requiresAuth && isLoggedIn) {
     return { path: "/series" };
   }
+});
+
+router.afterEach((to) => {
+  trackNavigation(to.fullPath);
 });
 
 export default router;

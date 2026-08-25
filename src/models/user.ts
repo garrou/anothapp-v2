@@ -4,7 +4,7 @@ export interface User {
 
     username: string;
 
-    email: string;
+    email?: string;
 
     current: boolean;
 

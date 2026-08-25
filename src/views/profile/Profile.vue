@@ -62,7 +62,7 @@ const { getSeries } = useSerie();
 const { getSerieImages } = useSearch();
 
 const images = ref<Record<number, string[]>>({});
-const imagesQuery = ref("");
+const imagesQuery = ref<string | null>("");
 const loading = ref(false);
 const modal = ref(false);
 const profile = ref<User>();

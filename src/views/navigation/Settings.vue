@@ -32,6 +32,11 @@
         text="Votre historique existant sera synchronisé au niveau des épisodes, ce qui peut prendre un moment selon le nombre de séries suivies. Confirmez-vous ?"
         confirm-text="Activer" confirm-color="primary" persistent @cancel="cancelEpisodeTracking"
         @confirm="confirmEpisodeTrackingEnable" />
+
+    <base-confirm v-model="confirmEpisodeTrackingDisable" title="Désactiver le suivi des épisodes"
+        text="Rien ne sera supprimé : vos épisodes déjà enregistrés restent disponibles et vous pourrez réactiver le suivi à tout moment. Confirmez-vous ?"
+        confirm-text="Désactiver" persistent @cancel="cancelEpisodeTrackingDisable"
+        @confirm="confirmEpisodeTrackingDisableConfirm" />
 </template>
 
 <script lang="ts" setup>
@@ -51,6 +56,7 @@ const theme = useTheme();
 const isDark = ref(theme.global.name.value === THEME_ANOTHAPP_DARK);
 const confirmReset = ref(false);
 const confirmEpisodeTracking = ref(false);
+const confirmEpisodeTrackingDisable = ref(false);
 const episodeTrackingEnabled = ref(false);
 const episodeTrackingLoading = ref(false);
 
@@ -85,7 +91,7 @@ const toggleEpisodeTracking = async (value: boolean | null) => {
         confirmEpisodeTracking.value = true;
         return;
     }
-    await applyEpisodeTracking(false);
+    confirmEpisodeTrackingDisable.value = true;
 }
 
 const cancelEpisodeTracking = () => {
@@ -96,6 +102,16 @@ const cancelEpisodeTracking = () => {
 const confirmEpisodeTrackingEnable = async () => {
     confirmEpisodeTracking.value = false;
     await applyEpisodeTracking(true);
+}
+
+const cancelEpisodeTrackingDisable = () => {
+    episodeTrackingEnabled.value = true;
+    confirmEpisodeTrackingDisable.value = false;
+}
+
+const confirmEpisodeTrackingDisableConfirm = async () => {
+    confirmEpisodeTrackingDisable.value = false;
+    await applyEpisodeTracking(false);
 }
 
 onBeforeMount(async () => {

@@ -15,6 +15,4 @@ export interface UserEpisode {
     date: string;
 
     watchedAt: string | null;
-
-    platformId: number | null;
 }

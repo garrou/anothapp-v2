@@ -12,7 +12,6 @@
                         <v-chip v-if="!isAired(episode)" size="small" variant="outlined">À venir</v-chip>
 
                         <template v-else-if="episode.watchedAt">
-                            <platform-card :platform="getSpecificPlatform(episode.platformId)" />
                             <div class="episode-entry-date">{{ formatDate(episode.watchedAt) }}</div>
                             <v-btn v-if="!isEdited(episode.episodeId)" class="episode-entry-btn" :icon="EDIT_ICON"
                                 size="32" variant="text" @click="editEpisode(episode.episodeId)" />
@@ -25,12 +24,9 @@
                     </div>
 
                     <div v-if="isEdited(episode.episodeId)" class="episode-entry-edit">
-                        <v-label class="episode-entry-label">Plateforme</v-label>
-                        <v-select v-model="platformInput" class="mb-3" :density="DENSITY" hide-details
-                            :items="platforms" item-title="name" item-value="id" />
                         <v-text-field v-model="watchedAtInput" class="mb-3" hide-details type="datetime-local" />
 
-                        <v-btn block color="primary" rounded="pill" @click="saveEpisode(episode)">Enregistrer</v-btn>
+                        <v-btn block color="primary" rounded="pill" @click="saveViewedAt(episode)">Enregistrer</v-btn>
                     </div>
                 </div>
             </v-expansion-panel-text>
@@ -41,30 +37,23 @@
 <script lang="ts" setup>
 import { onBeforeMount, ref, watch } from "vue";
 import { useEpisode } from "@/composables/episode";
-import { useSearch } from "@/composables/search";
 import type { UserEpisode } from "@/models/userEpisode";
-import type { Platform } from "@/models/serie";
 import { formatDate, formatDateTime } from "@/utils/format";
-import { DENSITY, MAIN_COLOR } from "@/constants/style";
+import { MAIN_COLOR } from "@/constants/style";
 import { ADD_ICON, EDIT_ICON, DELETE_ICON } from "@/constants/icons";
-import PlatformCard from "@/components/series/PlatformCard.vue";
 
 const props = defineProps({
     userSeasonId: { type: Number, required: true }
 });
 
 const { getEpisodesBySeasonId, addEpisodeViewing, updateEpisodeViewing, deleteEpisodeViewing } = useEpisode();
-const { getPlatforms } = useSearch();
 
 const episodes = ref<UserEpisode[]>([]);
-const platforms = ref<Platform[]>([]);
 const toEdit = ref(-1);
 const watchedAtInput = ref("");
-const platformInput = ref(0);
 
 const isAired = (episode: UserEpisode): boolean => !!episode.date && new Date(episode.date) <= new Date();
 const isEdited = (episodeId: number): boolean => toEdit.value === episodeId;
-const getSpecificPlatform = (id: number | null): Platform | undefined => platforms.value.find((p) => p.id === id);
 
 const load = async (): Promise<void> => {
     episodes.value = await getEpisodesBySeasonId(props.userSeasonId);
@@ -85,9 +74,9 @@ const removeViewing = async (episode: UserEpisode): Promise<void> => {
     await load();
 }
 
-const saveEpisode = async (episode: UserEpisode): Promise<void> => {
-    if (!episode.id || !watchedAtInput.value || !platformInput.value) return;
-    await updateEpisodeViewing(episode.id, formatDateTime(watchedAtInput.value), platformInput.value);
+const saveViewedAt = async (episode: UserEpisode): Promise<void> => {
+    if (!episode.id || !watchedAtInput.value) return;
+    await updateEpisodeViewing(episode.id, formatDateTime(watchedAtInput.value));
     toEdit.value = -1;
     await load();
 }
@@ -95,13 +84,9 @@ const saveEpisode = async (episode: UserEpisode): Promise<void> => {
 watch(toEdit, () => {
     const episode = episodes.value.find((e) => e.episodeId === toEdit.value);
     watchedAtInput.value = episode?.watchedAt ? formatDateTime(episode.watchedAt) : "";
-    platformInput.value = episode?.platformId ?? 0;
 });
 
-onBeforeMount(async () => {
-    platforms.value = await getPlatforms();
-    await load();
-});
+onBeforeMount(load);
 </script>
 
 <style scoped>
@@ -153,13 +138,5 @@ onBeforeMount(async () => {
     margin-top: 12px;
     padding-top: 12px;
     border-top: 1px solid rgb(var(--v-border-color));
-}
-
-.episode-entry-label {
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: rgb(var(--v-theme-on-surface-variant));
 }
 </style>

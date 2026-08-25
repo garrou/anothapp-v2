@@ -10,9 +10,13 @@
             </template>
         </v-card>
 
+        <friend-series v-if="userId" :user-id="userId" :type="SerieStatus.All" />
+
         <friend-series v-if="userId" :user-id="userId" :type="SerieStatus.Shared" />
 
         <friend-series v-if="userId" :user-id="userId" :type="SerieStatus.Favorite" />
+
+        <friend-platforms v-if="userId" :user-id="userId" />
 
         <div class="dash-toolbar my-4 px-3 px-sm-0">
             <pill-tabs v-if="displayChart" v-model="tab" :tabs="DASHBOARD_TABS" />
@@ -103,6 +107,7 @@ import SeriesLinkList from "@/components/series/SeriesLinkList.vue";
 import SeriesCountries from "@/components/stats/SeriesCountries.vue";
 import SeriesKinds from "@/components/stats/SeriesKinds.vue";
 import FriendSeries from "@/components/friends/FriendSeries.vue";
+import FriendPlatforms from "@/components/friends/FriendPlatforms.vue";
 import SeriesNotes from "@/components/stats/SeriesNotes.vue";
 import EpisodesHeatmap from "@/components/stats/EpisodesHeatmap.vue";
 import { useStatistic } from "@/composables/statistic";

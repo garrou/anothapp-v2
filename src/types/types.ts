@@ -33,5 +33,6 @@ export enum SerieStatus {
     Favorite = "favorite",
     Watchlist = "watchlist",
     Shared = "shared",
-    Next = "next"
+    Next = "next",
+    All = "all"
 }

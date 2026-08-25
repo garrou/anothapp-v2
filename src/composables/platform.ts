@@ -1,5 +1,7 @@
 import { useSnackbar } from "./snackbar";
 import cache from "@/cache";
+import platformService from "@/services/platformService";
+import { isError } from "@/utils/response";
 
 export function usePlatform() {
 
@@ -7,6 +9,16 @@ export function usePlatform() {
 
     const getUserPlatforms = async (): Promise<number[]> => {
         return (await cache.userPlatforms.getPlatforms()).map((p) => p.platformId);
+    }
+
+    const getFriendPlatforms = async (friendId: string): Promise<number[]> => {
+        const resp = await platformService.getFriendPlatforms(friendId);
+        const data = await resp.json();
+
+        if (isError(resp.status))
+            throw new Error(data.message);
+
+        return data;
     }
 
     const updateUserPlatforms = async (platformId: number): Promise<void> => {
@@ -21,6 +33,7 @@ export function usePlatform() {
 
     return {
         deleteUserPlatform,
+        getFriendPlatforms,
         getUserPlatforms,
         updateUserPlatforms,
     }

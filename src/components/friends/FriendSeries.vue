@@ -22,20 +22,23 @@ import { computed, onBeforeMount, ref, type PropType } from 'vue';
 
 const props = defineProps({
     userId: { type: String, required: true },
-    type: { type: String as PropType<SerieStatus.Shared | SerieStatus.Favorite>, required: true }
+    type: { type: String as PropType<SerieStatus.All | SerieStatus.Shared | SerieStatus.Favorite>, required: true }
 });
 
 const { getSeriesByStatus } = useSerie();
 
-const sharedSeriesLabel = computed(() => props.type === SerieStatus.Shared
-    ? `${buildPlural("série", series.value.length)} ${buildPlural("commune", series.value.length, false, false)}`
-    : `${buildPlural("série", series.value.length)} ${buildPlural("favorite", series.value.length, false, false)}`);
+const LABELS: Record<string, string> = {
+    [SerieStatus.All]: "vue",
+    [SerieStatus.Shared]: "commune",
+    [SerieStatus.Favorite]: "favorite",
+};
+
+const sharedSeriesLabel = computed(() =>
+    `${buildPlural("série", series.value.length)} ${buildPlural(LABELS[props.type], series.value.length, false, false)}`);
 
 const series = ref<Serie[]>([]);
 
 onBeforeMount(async () => {
-    series.value = props.type === SerieStatus.Shared
-        ? await getSeriesByStatus(SerieStatus.Shared, props.userId)
-        : await getSeriesByStatus(SerieStatus.Favorite, props.userId);
+    series.value = await getSeriesByStatus(props.type, props.userId);
 });
 </script>

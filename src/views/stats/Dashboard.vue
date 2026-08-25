@@ -25,7 +25,7 @@
                 label="Graphiques" @change="changeDisplayChart" />
         </div>
 
-        <v-window v-if="displayChart" v-model="tab">
+        <v-window v-if="displayChart" v-model="tab" :touch="false">
             <v-window-item :value="1">
                 <v-row>
                     <v-col v-if="stat?.episodesHeatmap?.length" cols="12">

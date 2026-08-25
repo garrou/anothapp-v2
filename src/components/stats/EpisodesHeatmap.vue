@@ -64,7 +64,7 @@ const chartOptions = computed(() => ({
         textStyle: { color: textColor.value }
     },
     calendar: {
-        top: 100,
+        top: 130,
         left: 40,
         right: 20,
         range: range.value,

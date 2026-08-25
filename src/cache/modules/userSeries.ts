@@ -40,6 +40,7 @@ export default class UserSeriesCache extends CacheModule<SerieCacheItem> {
         }
         const cacheValue: SerieCacheItem = {
             ...data,
+            watch: true,
             addedAt: new Date().toISOString(),
             expires: Date.now() + this.expires,
         }

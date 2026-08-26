@@ -2,7 +2,7 @@
     <v-menu v-model="menu" location="bottom end" :close-on-content-click="false">
         <template #activator="{ props: menuProps }">
             <v-badge :content="unreadCount" :model-value="unreadCount > 0" color="error" offset-x="6" offset-y="6">
-                <v-btn v-bind="menuProps" icon="mdi-bell-outline" variant="text" />
+                <v-btn v-bind="menuProps" icon="mdi-bell-outline" density="compact" size="small" variant="text" />
             </v-badge>
         </template>
 

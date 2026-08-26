@@ -10,10 +10,12 @@
                     <v-text-field v-model="title" class="mb-4 me-4" clearable hide-details :placeholder="placeholder"
                         single-line variant="plain" @input="onChange" @click:clear="filterTitle(undefined)">
                         <template #append-inner>
-                            <v-btn :icon="SEARCH_ICON" variant="text" @click="filterTitle(title)" />
+                            <v-btn :icon="SEARCH_ICON" density="compact" size="small" variant="text"
+                                @click="filterTitle(title)" />
                         </template>
                         <template #append>
-                            <v-btn :icon="FILTER_ICON" variant="text" @click="openFilterDrawer" />
+                            <v-btn :icon="FILTER_ICON" density="compact" size="small" variant="text"
+                                @click="openFilterDrawer" />
                         </template>
                     </v-text-field>
                 </v-form>

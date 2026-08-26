@@ -190,8 +190,6 @@ const refresh = async () => {
     await load();
 }
 
-// Same data as refresh(), but doesn't close the modal - used when episode
-// checks change the stats without the user having asked to leave the season.
 const refreshStats = async () => {
     infos.value = await getSerieInfos({ id: props.id });
 }

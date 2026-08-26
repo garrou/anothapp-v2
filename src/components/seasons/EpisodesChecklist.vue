@@ -46,6 +46,10 @@ const props = defineProps({
     userSeasonId: { type: Number, required: true }
 });
 
+const emit = defineEmits<{
+    refresh: []
+}>();
+
 const { getEpisodesBySeasonId, addEpisodeViewing, updateEpisodeViewing, deleteEpisodeViewing } = useEpisode();
 
 const episodes = ref<UserEpisode[]>([]);
@@ -66,12 +70,14 @@ const editEpisode = (episodeId: number): void => {
 const addViewing = async (episode: UserEpisode): Promise<void> => {
     await addEpisodeViewing(props.userSeasonId, episode.episodeId);
     await load();
+    emit("refresh");
 }
 
 const removeViewing = async (episode: UserEpisode): Promise<void> => {
     if (!episode.id) return;
     await deleteEpisodeViewing(episode.id);
     await load();
+    emit("refresh");
 }
 
 const saveViewedAt = async (episode: UserEpisode): Promise<void> => {

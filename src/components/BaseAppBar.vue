@@ -7,10 +7,15 @@
 
             <template #title>
                 <v-form v-if="search" @submit="filterTitle(title)" @submit.prevent>
-                    <v-text-field v-model="title" :append-inner-icon="SEARCH_ICON" :append-icon="FILTER_ICON"
-                        class="mb-4 me-4" clearable hide-details :placeholder="placeholder" single-line variant="plain"
-                        @input="onChange" @click:append-inner="filterTitle(title)" @click:clear="filterTitle(undefined)"
-                        @click:append="openFilterDrawer" />
+                    <v-text-field v-model="title" class="mb-4 me-4" clearable hide-details :placeholder="placeholder"
+                        single-line variant="plain" @input="onChange" @click:clear="filterTitle(undefined)">
+                        <template #append-inner>
+                            <v-btn :icon="SEARCH_ICON" variant="text" @click="filterTitle(title)" />
+                        </template>
+                        <template #append>
+                            <v-btn :icon="FILTER_ICON" variant="text" @click="openFilterDrawer" />
+                        </template>
+                    </v-text-field>
                 </v-form>
                 <slot v-else name="title" />
             </template>

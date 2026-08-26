@@ -9,6 +9,10 @@
                 <v-form v-if="search" @submit="filterTitle(title)" @submit.prevent>
                     <v-text-field v-model="title" class="mb-4 me-4" clearable hide-details :placeholder="placeholder"
                         single-line variant="plain" @input="onChange" @click:clear="filterTitle(undefined)">
+                        <template #clear="{ props: clearProps }">
+                            <v-btn v-bind="clearProps" aria-label="Vider" icon="mdi-close-circle" density="compact"
+                                size="small" variant="text" />
+                        </template>
                         <template #append-inner>
                             <v-btn :icon="SEARCH_ICON" density="compact" size="small" variant="text"
                                 @click="filterTitle(title)" />

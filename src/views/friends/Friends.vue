@@ -1,7 +1,7 @@
 <template>
     <base-app-bar class="pb-4" />
 
-    <pill-tabs v-model="tab" class="m-top mb-4 px-3" :tabs="FRIENDS_TABS" />
+    <pill-tabs v-model="tab" class="m-top mb-4 px-3" :tabs="friendsTabs" />
 
     <v-window v-model="tab" class="pa-1">
         <v-window-item :value="1">
@@ -23,18 +23,11 @@
 import FriendsRow from "@/components/friends/FriendsRow.vue";
 import BaseAppBar from "@/components/BaseAppBar.vue";
 import PillTabs from "@/components/PillTabs.vue";
-import { onBeforeMount, ref } from "vue";
+import { computed, onBeforeMount, ref } from "vue";
 import { useFriend } from "@/composables/friend";
 import type { FriendResponse } from "@/models/friend";
 import type { User } from "@/models/user";
 import { useUser } from "@/composables/user";
-
-const FRIENDS_TABS = [
-    { value: 1, label: "Amis" },
-    { value: 2, label: "Ajouter" },
-    { value: 3, label: "Reçues" },
-    { value: 4, label: "Envoyées" }
-];
 
 const { getFriends } = useFriend();
 const { getUsers } = useUser();
@@ -43,6 +36,13 @@ const friends = ref<FriendResponse>();
 const searched = ref<User[]>([]);
 const loading = ref(false);
 const tab = ref(1);
+
+const friendsTabs = computed(() => [
+    { value: 1, label: "Amis" },
+    { value: 2, label: "Ajouter" },
+    { value: 3, label: "Reçues", badge: friends.value?.received?.length },
+    { value: 4, label: "Envoyées" }
+]);
 
 const searchUser = async (username: string) => {
     loading.value = true;

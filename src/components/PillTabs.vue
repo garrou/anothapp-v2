@@ -3,6 +3,7 @@
         @update:model-value="$emit('update:modelValue', $event)">
         <v-tab v-for="item in tabs" :key="item.value" class="pill-tab" :value="item.value">
             {{ item.label }}
+            <v-badge v-if="item.badge" :content="item.badge" color="error" inline />
         </v-tab>
     </v-tabs>
 </template>
@@ -13,6 +14,7 @@ import type { PropType } from "vue";
 interface TabItem {
     value: number;
     label: string;
+    badge?: number;
 }
 
 defineProps({

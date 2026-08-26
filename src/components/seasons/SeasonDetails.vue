@@ -39,7 +39,7 @@
             </div>
 
             <episodes-checklist v-if="episodeTrackingEnabled" class="mt-3" :key="`${subSeason.id}-${episodesRefreshKey}`"
-                :user-season-id="subSeason.id" />
+                :user-season-id="subSeason.id" @refresh="onEpisodesRefresh" />
         </div>
     </template>
 
@@ -73,6 +73,7 @@ const props = defineProps({
 
 const emit = defineEmits<{
     refresh: []
+    refreshStats: []
 }>();
 
 const { getPlatforms } = useSearch();
@@ -107,10 +108,23 @@ const selectSeason = (id: number) => {
     modal.value = true;
 }
 
+const refreshTime = async () => {
+    if (episodeTrackingEnabled.value) {
+        time.value = (await getSeasonWatchedTime(props.id, props.season.number)) ?? 0;
+    }
+}
+
 const acceptBulkAdd = async (userSeasonId: number) => {
     bulkOfferSeasonId.value = -1;
     await addAllEpisodesViewing(userSeasonId);
     episodesRefreshKey.value++;
+    await refreshTime();
+    emit("refreshStats");
+}
+
+const onEpisodesRefresh = async () => {
+    await refreshTime();
+    emit("refreshStats");
 }
 
 const dropSeason = async (id: number) => {
@@ -163,7 +177,7 @@ onBeforeMount(async () => {
     }
 
     if (episodeTrackingEnabled.value) {
-        time.value = (await getSeasonWatchedTime(props.id, props.season.number)) ?? 0;
+        await refreshTime();
     } else {
         const serie = await getSerie({ id: props.id });
         time.value = serie.duration * props.season.episodes * seasons.value.length;

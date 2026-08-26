@@ -69,7 +69,8 @@
 
     <base-modal v-if="selected" v-model="modal" :title="`Saison ${selected.number}`">
         <season-episodes v-if="isAddable" :id="id" :number="selected.number" />
-        <season-details v-else :id="id" :season="selected" :just-added="justAddedSeason" @refresh="refresh" />
+        <season-details v-else :id="id" :season="selected" :just-added="justAddedSeason" @refresh="refresh"
+            @refresh-stats="refreshStats" />
     </base-modal>
 
     <base-modal v-model="friendsModal" title="Amis qui regardent cette série">
@@ -187,6 +188,10 @@ const goBack = () => navigateBack(router, "/series");
 const refresh = async () => {
     modal.value = false;
     await load();
+}
+
+const refreshStats = async () => {
+    infos.value = await getSerieInfos({ id: props.id });
 }
 
 const load = async (): Promise<void> => {

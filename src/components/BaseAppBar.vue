@@ -17,6 +17,7 @@
 
             <template #append>
                 <v-spacer />
+                <notification-bell />
             </template>
         </v-app-bar>
 
@@ -134,6 +135,7 @@ import { useSerie } from "@/composables/serie";
 import { usePlatform } from "@/composables/platform";
 import type { Note } from "@/models/note";
 import PlatformCard from "./series/PlatformCard.vue";
+import NotificationBell from "./NotificationBell.vue";
 
 const route = useRoute();
 

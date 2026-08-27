@@ -179,6 +179,9 @@ const viewingPercent = computed(() => {
     if (infos.value?.distinctEpisodes !== undefined && totalEpisodes.value) {
         return (infos.value.distinctEpisodes / totalEpisodes.value * 100).toFixed(0);
     }
+    if (!seasons.value.length) {
+        return "0";
+    }
     return ((infos.value?.seasons.length ?? 0) / seasons.value.length * 100).toFixed(0);
 });
 const ringOffset = computed(() => ringCircumference * (1 - Number(viewingPercent.value) / 100));
@@ -196,20 +199,25 @@ const refreshStats = async () => {
 
 const load = async (): Promise<void> => {
     loading.value = true;
-    const exists = !!(await getSerieFromCache(props.id));
 
-    if (!exists) {
-        navigateBack(router, "/series");
-    }
-    infos.value = await getSerieInfos({ id: props.id });
-    seasons.value = await getSeasonsBySerieId(props.id);
-    showInfo.isFavorite = infos.value?.serie.favorite ?? false;
-    showInfo.isWatching = infos.value?.serie.watch ?? false;
+    try {
+        const exists = !!(await getSerieFromCache(props.id));
 
-    if (infos.value?.serie.addedAt) {
-        showInfo.addedAt = formatDateTime(infos.value.serie.addedAt);
+        if (!exists) {
+            navigateBack(router, "/series");
+            return;
+        }
+        infos.value = await getSerieInfos({ id: props.id });
+        seasons.value = await getSeasonsBySerieId(props.id);
+        showInfo.isFavorite = infos.value?.serie.favorite ?? false;
+        showInfo.isWatching = infos.value?.serie.watch ?? false;
+
+        if (infos.value?.serie.addedAt) {
+            showInfo.addedAt = formatDateTime(infos.value.serie.addedAt);
+        }
+    } finally {
+        loading.value = false;
     }
-    loading.value = false;
 }
 
 const newSeason = async (season: Season): Promise<void> => {

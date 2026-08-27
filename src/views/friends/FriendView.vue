@@ -3,7 +3,10 @@
         <v-btn class="back-btn" icon="mdi-chevron-left" variant="text" @click="goBack" />
 
         <div class="friend-hero">
-            <v-avatar size="96" :image="friend.picture" />
+            <v-avatar size="96" :color="friend.picture ? undefined : 'primary'">
+                <v-img v-if="friend.picture" :src="friend.picture" alt="" />
+                <span v-else class="text-h4 font-weight-bold">{{ friend.username.charAt(0).toUpperCase() }}</span>
+            </v-avatar>
             <div class="text-h6 font-weight-bold mt-3">{{ friend.username }}</div>
         </div>
 

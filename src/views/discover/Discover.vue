@@ -1,6 +1,9 @@
 <template>
     <base-app-bar discover placeholder="Ajouter une série" search />
     <friend-recommendations v-if="!searchStore.hasChanges()" />
+    <div class="px-4 pt-4">
+        <span class="v-card-title pa-0">Découvrir</span>
+    </div>
     <series-row :loading="loading" :series="series" hide-details-button empty-title="Aucun résultat"
         empty-description="Essayez un autre titre, ou modifiez vos filtres." :empty-cta="false" />
 </template>

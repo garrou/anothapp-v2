@@ -83,6 +83,17 @@ export interface Recommendation extends BaseSerie {
     nbFriends: number;
 
     avgNote: number;
+
+    friends: RecommendationFriend[];
+}
+
+export interface RecommendationFriend {
+
+    id: string;
+
+    username: string;
+
+    picture?: string;
 }
 
 export interface Kind {

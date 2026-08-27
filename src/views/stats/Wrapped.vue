@@ -5,7 +5,7 @@
         <div class="wrapped-header">
             <h1 class="wrapped-title">Votre année {{ selectedYear }}</h1>
             <div class="wrapped-header-actions">
-                <v-btn v-if="wrapped?.totalTime" :icon="SHARE_ICON" variant="tonal" :color="MAIN_COLOR"
+                <v-btn v-if="wrapped?.totalTime" :icon="SHARE_ICON" variant="tonal" :color="MAIN_COLOR" size="40"
                     @click="shareModal = true" />
                 <v-select v-model="selectedYear" class="wrapped-year-select" :items="years" density="compact"
                     hide-details variant="outlined" />
@@ -117,7 +117,8 @@ const years = computed(() => {
 });
 
 const cardStyle = (index: number) => ({
-    "--card-color": CATEGORICAL_COLORS[index % CATEGORICAL_COLORS.length]
+    "--card-color": CATEGORICAL_COLORS[index % CATEGORICAL_COLORS.length],
+    "--delay": `${index * 60}ms`
 });
 
 const load = async (): Promise<void> => {
@@ -232,6 +233,9 @@ watch(selectedYear, load, { immediate: true });
     display: flex;
     flex-direction: column;
     justify-content: center;
+    opacity: 0;
+    animation: wrapped-card-in 0.5s ease-out forwards;
+    animation-delay: var(--delay, 0ms);
 }
 
 .wrapped-card--hero {
@@ -239,6 +243,8 @@ watch(selectedYear, load, { immediate: true });
     min-height: 160px;
     align-items: center;
     text-align: center;
+    background: linear-gradient(160deg, #2a1f6b 0%, #6c5ce0 55%, #e87ba4 100%);
+    border: none;
 }
 
 .wrapped-card-icon {
@@ -255,7 +261,30 @@ watch(selectedYear, load, { immediate: true });
 }
 
 .wrapped-card--hero .wrapped-card-value {
-    font-size: 40px;
+    font-size: 42px;
+    color: white;
+}
+
+.wrapped-card--hero .wrapped-card-label {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+@keyframes wrapped-card-in {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .wrapped-card {
+        opacity: 1;
+        animation: none;
+    }
 }
 
 .wrapped-card-value--text {

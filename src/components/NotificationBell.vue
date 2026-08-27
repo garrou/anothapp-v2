@@ -9,9 +9,11 @@
         <v-card class="notification-panel" max-width="380" min-width="320">
             <div class="notification-header">
                 <span class="text-subtitle-2 font-weight-bold">Notifications</span>
-                <v-btn v-if="unreadCount > 0" density="compact" size="small" variant="text"
+                <v-btn v-if="hasUnreadInView" density="compact" size="small" variant="text"
                     @click="markAllRead">Tout marquer comme lu</v-btn>
             </div>
+
+            <pill-tabs v-model="selectedTab" class="px-3 pb-2" :tabs="tabItems" />
 
             <v-divider />
 
@@ -19,13 +21,13 @@
                 <v-progress-circular color="primary" indeterminate size="24" />
             </div>
 
-            <div v-else-if="!notifications.length" class="notification-empty">
+            <div v-else-if="!filteredNotifications.length" class="notification-empty">
                 <v-icon icon="mdi-bell-off-outline" size="28" class="mb-2" />
-                <div class="text-body-2">Aucune notification</div>
+                <div class="text-body-2">{{ emptyMessage }}</div>
             </div>
 
             <v-list v-else class="notification-list" density="compact">
-                <v-list-item v-for="item in notifications" :key="item.id" class="notification-item"
+                <v-list-item v-for="item in filteredNotifications" :key="item.id" class="notification-item"
                     :class="{ 'notification-item--unread': !item.read }" @click="openNotification(item)">
                     <template #prepend>
                         <v-avatar v-if="item.actor?.picture" :image="item.actor.picture" size="36" />
@@ -43,12 +45,20 @@
 </template>
 
 <script lang="ts" setup>
-import { onBeforeMount, ref } from "vue";
+import { computed, onBeforeMount, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useNotification } from "@/composables/notification";
 import { useSearch } from "@/composables/search";
-import type { Notification } from "@/models/notification";
+import { NOTIFICATION_GROUPS, type Notification, type NotificationGroup } from "@/models/notification";
 import { formatDate, buildPlural } from "@/utils/format";
+import PillTabs from "@/components/PillTabs.vue";
+
+const TABS: { value: number; label: string; group?: NotificationGroup }[] = [
+    { value: 0, label: "Tout" },
+    { value: 1, label: "Amis", group: "friends" },
+    { value: 2, label: "Activité", group: "activity" },
+    { value: 3, label: "Rappels", group: "reminders" },
+];
 
 const router = useRouter();
 const { getNotifications, markAsRead, markAllAsRead } = useNotification();
@@ -59,6 +69,25 @@ const loading = ref(false);
 const notifications = ref<Notification[]>([]);
 const unreadCount = ref(0);
 const noteNames = ref<Record<number, string>>({});
+const selectedTab = ref(0);
+
+const activeGroup = computed(() => TABS.find((t) => t.value === selectedTab.value)?.group);
+
+const filteredNotifications = computed(() => activeGroup.value
+    ? notifications.value.filter((n) => NOTIFICATION_GROUPS[n.type] === activeGroup.value)
+    : notifications.value);
+
+const hasUnreadInView = computed(() => filteredNotifications.value.some((n) => !n.read));
+
+const emptyMessage = computed(() => activeGroup.value ? "Aucune notification dans cette catégorie" : "Aucune notification");
+
+const tabItems = computed(() => TABS.map((tab) => ({
+    value: tab.value,
+    label: tab.label,
+    badge: tab.group
+        ? notifications.value.filter((n) => !n.read && NOTIFICATION_GROUPS[n.type] === tab.group).length || undefined
+        : undefined,
+})));
 
 const describe = (item: Notification): string => {
     const actor = item.actor?.username ?? "Quelqu'un";
@@ -107,9 +136,16 @@ const openNotification = async (item: Notification) => {
 }
 
 const markAllRead = async () => {
-    notifications.value.forEach((n) => n.read = true);
-    unreadCount.value = 0;
-    await markAllAsRead();
+    if (!activeGroup.value) {
+        notifications.value.forEach((n) => n.read = true);
+        unreadCount.value = 0;
+        await markAllAsRead();
+        return;
+    }
+    const toMark = filteredNotifications.value.filter((n) => !n.read);
+    toMark.forEach((n) => n.read = true);
+    unreadCount.value = Math.max(0, unreadCount.value - toMark.length);
+    await Promise.all(toMark.map((n) => markAsRead(n.id)));
 }
 
 onBeforeMount(async () => {

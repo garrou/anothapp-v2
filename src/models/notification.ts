@@ -9,6 +9,20 @@ export type NotificationType =
     | "friend_declined"
     | "episode_upcoming";
 
+export type NotificationGroup = "friends" | "activity" | "reminders";
+
+export const NOTIFICATION_GROUPS: Record<NotificationType, NotificationGroup> = {
+    friend_request: "friends",
+    friend_accepted: "friends",
+    friend_declined: "friends",
+    show_started: "activity",
+    show_rated: "activity",
+    season_watched: "activity",
+    episode_watched: "activity",
+    episode_bulk_watched: "activity",
+    episode_upcoming: "reminders",
+};
+
 export interface NotificationActor {
 
     id: string;

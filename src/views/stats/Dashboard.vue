@@ -10,7 +10,7 @@
         <v-card v-if="cardsConfig" class="kpi-strip mb-6">
             <template v-for="(obj, index) in cardsConfig" :key="index">
                 <div v-if="obj.display !== false" class="kpi-cell">
-                    <stat-tile :label="obj.name" :value="obj.value" />
+                    <stat-tile :icon="obj.icon" :label="obj.name" :value="obj.value" />
                 </div>
             </template>
         </v-card>

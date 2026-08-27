@@ -20,6 +20,8 @@ export const PLAY_ICON = "mdi-play";
 
 export const SEARCH_ICON = "mdi-magnify";
 
+export const SHARE_ICON = "mdi-share-variant";
+
 export const NOTE_ICONS: Record<number, IconValue> = {
     1: "mdi-emoticon-sad-outline",
     2: "mdi-emoticon-neutral-outline",

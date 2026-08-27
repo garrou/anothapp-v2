@@ -32,7 +32,7 @@
         <empty-state v-else :icon="emptyCopy.icon" :title="emptyCopy.title" :description="emptyCopy.description" />
     </div>
 
-    <base-confirm v-model="confirm" text="Supprimer cet(te) ami(e) ?" title="Supprimer" persistent
+    <base-confirm v-model="confirm" :text="confirmText" :title="confirmTitle" persistent
         @cancel="confirm = false" @confirm="removeFriend" />
 </template>
 
@@ -74,6 +74,28 @@ const sentRequests = ref(new Set<string>());
 
 const isSent = (id: string): boolean => sentRequests.value.has(id);
 
+const removeContext = computed<"friend" | "received" | "sent">(() => {
+    if (props.accept) return "received";
+    if (props.consult) return "friend";
+    return "sent";
+});
+
+const confirmText = computed(() => {
+    switch (removeContext.value) {
+        case "received": return "Refuser cette demande d'ami ?";
+        case "sent": return "Annuler cette demande d'ami ?";
+        default: return "Supprimer cet(te) ami(e) ?";
+    }
+});
+
+const confirmTitle = computed(() => {
+    switch (removeContext.value) {
+        case "received": return "Refuser";
+        case "sent": return "Annuler";
+        default: return "Supprimer";
+    }
+});
+
 const emptyCopy = computed(() => {
     if (props.addable) return { icon: "mdi-account-search-outline", title: "Aucun résultat", description: "Recherchez un nom d'utilisateur pour envoyer une demande." };
     if (props.accept) return { icon: "mdi-account-clock-outline", title: "Aucune demande reçue", description: "Les demandes d'ami reçues apparaîtront ici." };
@@ -107,7 +129,7 @@ const addFriend = async (user: User) => {
 
 const removeFriend = async () => {
     if (!selected.value) throw new Error("Impossible de supprimer cet(te) ami(e).");
-    await deleteFriend(selected.value);
+    await deleteFriend(selected.value, removeContext.value);
     confirm.value = false;
     emit("refresh");
 }

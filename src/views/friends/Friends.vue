@@ -5,7 +5,7 @@
 
     <v-window v-model="tab" class="pa-1">
         <v-window-item :value="1">
-            <friends-row consult :friends="friends?.friends" :loading="loading" remove />
+            <friends-row consult :friends="friends?.friends" :loading="loading" remove @refresh="fetchFriends" />
         </v-window-item>
         <v-window-item :value="2">
             <friends-row addable :friends="searched" search @search="searchUser" @refresh="fetchFriends" />

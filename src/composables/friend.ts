@@ -39,14 +39,19 @@ export function useFriend() {
         return data;
     }
 
-    const deleteFriend = async (user: User): Promise<void> => {
+    const deleteFriend = async (user: User, context: "friend" | "received" | "sent" = "friend"): Promise<void> => {
         const resp = await friendService.deleteFriend(user.id);
 
         if (isError(resp.status)) {
             const data = await resp.json();
             throw new Error(data.message);
         }
-        showSuccess(`Amitié avec ${user.username} supprimée`);
+        const messages = {
+            friend: `Amitié avec ${user.username} supprimée`,
+            received: `Demande de ${user.username} refusée`,
+            sent: `Demande envoyée à ${user.username} annulée`,
+        };
+        showSuccess(messages[context]);
     }
 
     return { acceptFriendRequest, deleteFriend, getFriends, sendFriendRequest }

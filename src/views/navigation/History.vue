@@ -69,7 +69,7 @@ import type { SeasonTimeline } from "@/models/season";
 import type { EpisodeTimeline } from "@/models/episodeTimeline";
 import type { Platform } from "@/models/serie";
 import { buildPlural } from "@/utils/format";
-import { MONTHS_FR, WEEKDAYS_LONG, WEEKDAYS_SHORT, isSameDay, parseLocalDate } from "@/utils/date";
+import { MONTHS_FR, WEEKDAYS_LONG, WEEKDAYS_SHORT, isSameDay, parseLocalDate, toLocalDateKey } from "@/utils/date";
 import { computed, onBeforeMount, ref } from "vue";
 import PlatformCard from "@/components/series/PlatformCard.vue";
 
@@ -143,7 +143,7 @@ const groups = computed(() => {
     const sorted = [...cards.value].sort((a, b) => b.date.localeCompare(a.date));
 
     for (const item of sorted) {
-        const key = item.date.slice(0, 10);
+        const key = toLocalDateKey(item.date);
         if (!byDate.has(key)) byDate.set(key, []);
         byDate.get(key)!.push(item);
     }

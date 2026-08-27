@@ -5,7 +5,7 @@ import type { SeasonSearchOptions } from "@/models/search";
 import { isError } from "@/utils/response";
 import { useSnackbar } from "./snackbar";
 import seasonService from "@/services/seasonService";
-import { formatDateTime } from "@/utils/format";
+import { fromDatetimeLocalInput } from "@/utils/format";
 
 export function useSeason() {
 
@@ -80,7 +80,7 @@ export function useSeason() {
         if (!platformId || !viewedAt)
             throw new Error("Impossible de modifier la saison");
 
-        const resp = await seasonService.updateSeason(id, platformId, formatDateTime(viewedAt));
+        const resp = await seasonService.updateSeason(id, platformId, fromDatetimeLocalInput(viewedAt));
 
         if (isError(resp.status)) {
             const data = await resp.json();

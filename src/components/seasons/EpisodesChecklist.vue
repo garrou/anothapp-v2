@@ -38,7 +38,7 @@
 import { onBeforeMount, ref, watch } from "vue";
 import { useEpisode } from "@/composables/episode";
 import type { UserEpisode } from "@/models/userEpisode";
-import { formatDate, formatDateTime } from "@/utils/format";
+import { formatDate, fromDatetimeLocalInput, toDatetimeLocalInput } from "@/utils/format";
 import { MAIN_COLOR } from "@/constants/style";
 import { ADD_ICON, EDIT_ICON, DELETE_ICON } from "@/constants/icons";
 
@@ -82,14 +82,14 @@ const removeViewing = async (episode: UserEpisode): Promise<void> => {
 
 const saveViewedAt = async (episode: UserEpisode): Promise<void> => {
     if (!episode.id || !watchedAtInput.value) return;
-    await updateEpisodeViewing(episode.id, formatDateTime(watchedAtInput.value));
+    await updateEpisodeViewing(episode.id, fromDatetimeLocalInput(watchedAtInput.value));
     toEdit.value = -1;
     await load();
 }
 
 watch(toEdit, () => {
     const episode = episodes.value.find((e) => e.episodeId === toEdit.value);
-    watchedAtInput.value = episode?.watchedAt ? formatDateTime(episode.watchedAt) : "";
+    watchedAtInput.value = episode?.watchedAt ? toDatetimeLocalInput(episode.watchedAt) : "";
 });
 
 onBeforeMount(load);

@@ -54,7 +54,7 @@ import { onBeforeMount, reactive, ref, watch } from "vue";
 import type { Season, SeasonDetail } from "@/models/season";
 import { useSeason } from "@/composables/season";
 import { useEpisode } from "@/composables/episode";
-import { formatDate, formatDateTime, minsToStringHoursDays } from "@/utils/format";
+import { formatDate, toDatetimeLocalInput, minsToStringHoursDays } from "@/utils/format";
 import { DENSITY } from "@/constants/style";
 import { EDIT_ICON, DELETE_ICON } from "@/constants/icons";
 import { useSerie } from "@/composables/serie";
@@ -143,7 +143,7 @@ const changeSeason = async () => {
     const newPlatform = platforms.value.find((s) => s.id === seasonInfo.platform);
     if (!newPlatform) return;
 
-    seasons.value[idx].addedAt = formatDateTime(seasonInfo.viewedAt);
+    seasons.value[idx].addedAt = seasonInfo.viewedAt;
     seasons.value[idx].platform = newPlatform;
 }
 
@@ -155,7 +155,7 @@ watch(toEdit, () => {
         return;
     };
     seasonInfo.platform = season.platform.id;
-    seasonInfo.viewedAt = formatDateTime(season.addedAt);
+    seasonInfo.viewedAt = toDatetimeLocalInput(season.addedAt);
 });
 
 onBeforeMount(async () => {

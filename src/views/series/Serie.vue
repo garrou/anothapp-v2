@@ -109,7 +109,7 @@ import { useSeason } from "@/composables/season";
 import { useSearch } from "@/composables/search";
 import { useSerie } from "@/composables/serie";
 import type { Season } from "@/models/season";
-import { buildPlural, formatDateTime, minsToStringHoursDays } from "@/utils/format";
+import { buildPlural, fromDatetimeLocalInput, toDatetimeLocalInput, minsToStringHoursDays } from "@/utils/format";
 import { NOTE_ICONS } from "@/constants/icons";
 import type { User } from "@/models/user";
 import { useFriend } from "@/composables/friend";
@@ -130,7 +130,7 @@ const SERIE_TABS = [
     { value: 2, label: "Ajouter" }
 ];
 
-const maxDate = new Date().toISOString().slice(0, 16);
+const maxDate = toDatetimeLocalInput(new Date().toISOString());
 
 const router = useRouter();
 const { confirmModal } = useState();
@@ -214,7 +214,7 @@ const load = async (): Promise<void> => {
         showInfo.isWatching = infos.value?.serie.watch ?? false;
 
         if (infos.value?.serie.addedAt) {
-            showInfo.addedAt = formatDateTime(infos.value.serie.addedAt);
+            showInfo.addedAt = toDatetimeLocalInput(infos.value.serie.addedAt);
         }
     } finally {
         loading.value = false;
@@ -251,13 +251,14 @@ const updateSerieDate = async (): Promise<void> => {
         showError("Date d'ajout invalide");
         return;
     }
-    const updated = await updateField(infos.value.serie, "addedAt", showInfo.addedAt);
+    const addedAt = fromDatetimeLocalInput(showInfo.addedAt);
+    const updated = await updateField(infos.value.serie, "addedAt", addedAt);
 
     if (!updated) {
         showError("Impossible de modifier la date d'ajout de la série");
         return;
     }
-    infos.value.serie.addedAt = showInfo.addedAt;
+    infos.value.serie.addedAt = addedAt;
     showSuccess("Date d'ajout de la série modifiée");
     updateModal.value = false;
 }

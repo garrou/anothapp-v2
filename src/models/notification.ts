@@ -6,7 +6,8 @@ export type NotificationType =
     | "episode_bulk_watched"
     | "friend_request"
     | "friend_accepted"
-    | "friend_declined";
+    | "friend_declined"
+    | "episode_upcoming";
 
 export interface NotificationActor {
 

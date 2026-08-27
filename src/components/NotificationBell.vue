@@ -84,6 +84,8 @@ const describe = (item: Notification): string => {
             return `${actor} a accepté votre demande d'ami`;
         case "friend_declined":
             return `${actor} a refusé votre demande d'ami`;
+        case "episode_upcoming":
+            return `Un nouvel épisode de "${show}" sort le ${formatDate(String(meta.date))}`;
         default:
             return actor;
     }

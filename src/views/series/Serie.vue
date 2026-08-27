@@ -177,12 +177,12 @@ const totalEpisodes = computed(() => seasons.value.reduce((acc, season) => acc +
 
 const viewingPercent = computed(() => {
     if (infos.value?.distinctEpisodes !== undefined && totalEpisodes.value) {
-        return (infos.value.distinctEpisodes / totalEpisodes.value * 100).toFixed(0);
+        return (Math.min(1, infos.value.distinctEpisodes / totalEpisodes.value) * 100).toFixed(0);
     }
     if (!seasons.value.length) {
         return "0";
     }
-    return ((infos.value?.seasons.length ?? 0) / seasons.value.length * 100).toFixed(0);
+    return (Math.min(1, (infos.value?.seasons.length ?? 0) / seasons.value.length) * 100).toFixed(0);
 });
 const ringOffset = computed(() => ringCircumference * (1 - Number(viewingPercent.value) / 100));
 

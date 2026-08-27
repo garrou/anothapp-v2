@@ -2,7 +2,11 @@
     <v-layout v-if="navbar" class="mt-10 bottom-navbar-layout">
         <v-bottom-navigation color="primary">
             <v-btn v-for="(item, index) in NAV_MENU" :key="index" :to="item.link">
-                <v-icon>{{ item.icon }}</v-icon>
+                <v-badge v-if="item.link === '/friends'" :content="pendingRequests"
+                    :model-value="pendingRequests > 0" color="error">
+                    <v-icon>{{ item.icon }}</v-icon>
+                </v-badge>
+                <v-icon v-else>{{ item.icon }}</v-icon>
                 <span>{{ item.title }}</span>
             </v-btn>
         </v-bottom-navigation>
@@ -13,8 +17,10 @@
 import { computed } from "vue";
 import { useRoute } from "vue-router";
 import { NAV_MENU, PAGE_WITHOUT_BOTTOM_NAVBAR } from "@/constants/menus";
+import { usePendingFriendRequests } from "@/composables/pendingFriendRequests";
 
 const route = useRoute();
+const pendingRequests = usePendingFriendRequests();
 
 const navbar = computed(() => !PAGE_WITHOUT_BOTTOM_NAVBAR.includes(route.name as string));
 </script>

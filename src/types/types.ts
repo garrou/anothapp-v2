@@ -1,7 +1,7 @@
 export enum FriendStatus {
     Friend = "friend",
     Send = "send",
-    Receive = "receive",
+    Received = "received",
     Viewed = "viewed"
 }
 

@@ -126,6 +126,7 @@ onBeforeMount(async () => {
 <style scoped>
 .bell-badge {
     margin-top: -3px;
+    margin-right: 12px;
 }
 
 .notification-header {

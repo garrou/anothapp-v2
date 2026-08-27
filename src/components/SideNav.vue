@@ -7,7 +7,11 @@
         <div class="side-nav-links">
             <router-link v-for="(item, index) in NAV_MENU" :key="index" :to="item.link" class="side-nav-link"
                 :class="{ 'side-nav-link--active': isMenuActive(item.link) }">
-                <v-icon :icon="item.icon" size="22" />
+                <v-badge v-if="item.link === '/friends'" :content="pendingRequests"
+                    :model-value="pendingRequests > 0" color="error">
+                    <v-icon :icon="item.icon" size="22" />
+                </v-badge>
+                <v-icon v-else :icon="item.icon" size="22" />
                 <span>{{ item.title }}</span>
             </router-link>
         </div>
@@ -18,14 +22,13 @@
 import { computed } from "vue";
 import { useRoute } from "vue-router";
 import { NAV_MENU, PAGE_WITHOUT_BOTTOM_NAVBAR } from "@/constants/menus";
+import { usePendingFriendRequests } from "@/composables/pendingFriendRequests";
 
 const route = useRoute();
+const pendingRequests = usePendingFriendRequests();
 
 const show = computed(() => !PAGE_WITHOUT_BOTTOM_NAVBAR.includes(route.name as string));
 
-// Exact or segment-boundary match: avoids "/series-status" being wrongly
-// treated as active for the "/series" link (plain startsWith would collide
-// since "/series-status" begins with the same characters as "/series").
 const isMenuActive = (link: string) => route.path === link || route.path.startsWith(`${link}/`);
 </script>
 

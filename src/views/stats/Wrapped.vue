@@ -243,7 +243,7 @@ watch(selectedYear, load, { immediate: true });
     min-height: 160px;
     align-items: center;
     text-align: center;
-    background: linear-gradient(160deg, #2a1f6b 0%, #6c5ce0 55%, #e87ba4 100%);
+    background: linear-gradient(160deg, rgb(var(--v-theme-primary-darken-1)) 0%, rgb(var(--v-theme-primary)) 55%, #e87ba4 100%);
     border: none;
 }
 

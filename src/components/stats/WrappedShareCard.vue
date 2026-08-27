@@ -82,7 +82,7 @@ defineExpose({ capture });
     display: flex;
     flex-direction: column;
     border-radius: 24px;
-    background: linear-gradient(160deg, #2a1f6b 0%, #6c5ce0 55%, #e87ba4 100%);
+    background: linear-gradient(160deg, #5646b8 0%, #6c5ce0 55%, #e87ba4 100%);
     color: white;
     font-family: "Space Grotesk", sans-serif;
     box-sizing: border-box;

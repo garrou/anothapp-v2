@@ -16,7 +16,7 @@
                             <v-btn v-if="!isEdited(episode.episodeId)" class="episode-entry-btn" :icon="EDIT_ICON"
                                 size="32" variant="text" @click="editEpisode(episode.episodeId)" />
                             <v-btn class="episode-entry-btn" :icon="DELETE_ICON" size="32" variant="text"
-                                @click="removeViewing(episode)" />
+                                @click="selectViewing(episode)" />
                         </template>
 
                         <v-btn v-else class="episode-entry-btn" :color="MAIN_COLOR" :icon="ADD_ICON" size="32"
@@ -32,9 +32,13 @@
             </v-expansion-panel-text>
         </v-expansion-panel>
     </v-expansion-panels>
+
+    <base-confirm v-model="modal" text="Supprimer ce visionnage ?" title="Supprimer" persistent @cancel="modal = false"
+        @confirm="removeViewing" />
 </template>
 
 <script lang="ts" setup>
+import BaseConfirm from "@/components/BaseConfirm.vue";
 import { onBeforeMount, ref, watch } from "vue";
 import { useEpisode } from "@/composables/episode";
 import type { UserEpisode } from "@/models/userEpisode";
@@ -55,6 +59,8 @@ const { getEpisodesBySeasonId, addEpisodeViewing, updateEpisodeViewing, deleteEp
 const episodes = ref<UserEpisode[]>([]);
 const toEdit = ref(-1);
 const watchedAtInput = ref("");
+const modal = ref(false);
+const selected = ref<UserEpisode>();
 
 const isAired = (episode: UserEpisode): boolean => !!episode.date && new Date(episode.date) <= new Date();
 const isEdited = (episodeId: number): boolean => toEdit.value === episodeId;
@@ -73,9 +79,15 @@ const addViewing = async (episode: UserEpisode): Promise<void> => {
     emit("refresh");
 }
 
-const removeViewing = async (episode: UserEpisode): Promise<void> => {
-    if (!episode.id) return;
-    await deleteEpisodeViewing(episode.id);
+const selectViewing = (episode: UserEpisode): void => {
+    selected.value = episode;
+    modal.value = true;
+}
+
+const removeViewing = async (): Promise<void> => {
+    if (!selected.value?.id) return;
+    await deleteEpisodeViewing(selected.value.id);
+    modal.value = false;
     await load();
     emit("refresh");
 }

@@ -4,13 +4,17 @@
             <router-link v-if="to" :to="to" @click.stop>
                 <base-image v-if="image" cover max-height="580" :src="image" />
                 <div v-else class="poster-placeholder">
-                    <v-icon size="40" icon="mdi-image-off-outline" />
+                    <slot name="placeholder">
+                        <v-icon size="40" icon="mdi-image-off-outline" />
+                    </slot>
                 </div>
             </router-link>
             <template v-else>
                 <base-image v-if="image" cover max-height="580" :src="image" />
                 <div v-else class="poster-placeholder">
-                    <v-icon size="40" icon="mdi-image-off-outline" />
+                    <slot name="placeholder">
+                        <v-icon size="40" icon="mdi-image-off-outline" />
+                    </slot>
                 </div>
             </template>
 
@@ -53,6 +57,15 @@ defineEmits<{
 
 .poster-media {
     position: relative;
+}
+
+.poster-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 0.679;
+    border-radius: 8px;
+    background: rgb(var(--v-theme-surface-variant));
 }
 
 .quick-actions {

@@ -9,6 +9,10 @@
         <card-grid v-if="friends.length" :items="friends" :loading="loading" :sm="4" :md="2" :lg="2">
             <template #default="{ item: friend }">
                 <poster-card :image="friend.picture" @click="consult ? showFriend(friend) : undefined">
+                    <template #placeholder>
+                        <span class="friend-initial">{{ friend.username.charAt(0).toUpperCase() }}</span>
+                    </template>
+
                     <template #quick-actions>
                         <v-btn v-if="consult" class="friend-quick-btn" :icon="DETAILS_ICON" size="32" variant="flat"
                             color="on-surface-variant" @click.stop="showFriend(friend)" />
@@ -117,5 +121,11 @@ const showConfirm = (user: User) => {
 <style scoped>
 .friend-quick-btn {
     box-shadow: 0 8px 18px rgba(108, 92, 224, 0.35);
+}
+
+.friend-initial {
+    font-size: 56px;
+    font-weight: 700;
+    color: rgb(var(--v-theme-primary));
 }
 </style>

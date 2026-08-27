@@ -4,8 +4,12 @@
     <v-container class="wrapped-container">
         <div class="wrapped-header">
             <h1 class="wrapped-title">Votre année {{ selectedYear }}</h1>
-            <v-select v-model="selectedYear" class="wrapped-year-select" :items="years" density="compact"
-                hide-details variant="outlined" />
+            <div class="wrapped-header-actions">
+                <v-btn v-if="wrapped?.totalTime" :icon="SHARE_ICON" variant="tonal" :color="MAIN_COLOR" size="40"
+                    @click="shareModal = true" />
+                <v-select v-model="selectedYear" class="wrapped-year-select" :items="years" density="compact"
+                    hide-details variant="outlined" />
+            </div>
         </div>
 
         <div v-if="loading" class="wrapped-loading">
@@ -55,27 +59,54 @@
                     <div class="wrapped-card-value wrapped-card-value--text">{{ wrapped.bestMonth.label.trim() }}</div>
                     <div class="wrapped-card-label">mois le plus actif</div>
                 </div>
+
+                <div v-if="wrapped.bestStreak" class="wrapped-card" :style="cardStyle(7)">
+                    <v-icon icon="mdi-fire" size="20" class="wrapped-card-icon" />
+                    <div class="wrapped-card-value">{{ wrapped.bestStreak }}</div>
+                    <div class="wrapped-card-label">
+                        {{ wrapped.bestStreak > 1 ? "jours d'affilée (record)" : "jour d'affilée (record)" }}
+                    </div>
+                </div>
             </div>
         </template>
     </v-container>
+
+    <base-modal v-model="shareModal" title="Partager votre année" :max-width="420">
+        <div class="share-preview">
+            <wrapped-share-card v-if="wrapped" ref="shareCardRef" :wrapped="wrapped" :year="selectedYear" />
+        </div>
+        <div class="share-actions">
+            <v-btn block color="primary" rounded="pill" :loading="sharing" @click="share">Partager</v-btn>
+            <v-btn block variant="outlined" rounded="pill" :loading="downloading" @click="download">Télécharger</v-btn>
+        </div>
+    </base-modal>
 </template>
 
 <script lang="ts" setup>
 import BaseAppBar from "@/components/BaseAppBar.vue";
+import BaseModal from "@/components/BaseModal.vue";
+import WrappedShareCard from "@/components/stats/WrappedShareCard.vue";
 import { useStatistic } from "@/composables/statistic";
+import { useSnackbar } from "@/composables/snackbar";
 import type { WrappedStat } from "@/models/stat";
-import { CATEGORICAL_COLORS } from "@/constants/style";
+import { CATEGORICAL_COLORS, MAIN_COLOR } from "@/constants/style";
+import { SHARE_ICON } from "@/constants/icons";
 import { minsToStringHoursDays } from "@/utils/format";
 import { computed, ref, watch } from "vue";
 
 const MIN_YEAR = 2000;
 
 const { getWrapped } = useStatistic();
+const { showError } = useSnackbar();
 
 const currentYear = new Date().getFullYear();
 const selectedYear = ref(currentYear);
 const wrapped = ref<WrappedStat>();
 const loading = ref(false);
+const shareModal = ref(false);
+const sharing = ref(false);
+const downloading = ref(false);
+const shareCardRef = ref<InstanceType<typeof WrappedShareCard>>();
 
 const years = computed(() => {
     const list = [];
@@ -86,7 +117,8 @@ const years = computed(() => {
 });
 
 const cardStyle = (index: number) => ({
-    "--card-color": CATEGORICAL_COLORS[index % CATEGORICAL_COLORS.length]
+    "--card-color": CATEGORICAL_COLORS[index % CATEGORICAL_COLORS.length],
+    "--delay": `${index * 60}ms`
 });
 
 const load = async (): Promise<void> => {
@@ -95,6 +127,52 @@ const load = async (): Promise<void> => {
         wrapped.value = await getWrapped(selectedYear.value);
     } finally {
         loading.value = false;
+    }
+}
+
+const triggerDownload = (dataUrl: string): void => {
+    const link = document.createElement("a");
+    link.href = dataUrl;
+    link.download = `wrapped-${selectedYear.value}.png`;
+    link.click();
+}
+
+const captureImage = async (): Promise<{ dataUrl: string; file: File }> => {
+    if (!shareCardRef.value) throw new Error("Impossible de générer l'image");
+    const dataUrl = await shareCardRef.value.capture();
+    const blob = await (await fetch(dataUrl)).blob();
+    const file = new File([blob], `wrapped-${selectedYear.value}.png`, { type: "image/png" });
+    return { dataUrl, file };
+}
+
+const share = async (): Promise<void> => {
+    sharing.value = true;
+    try {
+        const { dataUrl, file } = await captureImage();
+
+        if (navigator.canShare?.({ files: [file] })) {
+            await navigator.share({ files: [file], title: `Mon année ${selectedYear.value} en séries` });
+        } else {
+            triggerDownload(dataUrl);
+        }
+    } catch (e) {
+        if ((e as Error).name !== "AbortError") {
+            showError("Impossible de partager l'image");
+        }
+    } finally {
+        sharing.value = false;
+    }
+}
+
+const download = async (): Promise<void> => {
+    downloading.value = true;
+    try {
+        const { dataUrl } = await captureImage();
+        triggerDownload(dataUrl);
+    } catch {
+        showError("Impossible de générer l'image");
+    } finally {
+        downloading.value = false;
     }
 }
 
@@ -118,6 +196,12 @@ watch(selectedYear, load, { immediate: true });
     font-family: "Space Grotesk", sans-serif;
     font-weight: 700;
     font-size: 26px;
+}
+
+.wrapped-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .wrapped-year-select {
@@ -149,6 +233,9 @@ watch(selectedYear, load, { immediate: true });
     display: flex;
     flex-direction: column;
     justify-content: center;
+    opacity: 0;
+    animation: wrapped-card-in 0.5s ease-out forwards;
+    animation-delay: var(--delay, 0ms);
 }
 
 .wrapped-card--hero {
@@ -156,6 +243,13 @@ watch(selectedYear, load, { immediate: true });
     min-height: 160px;
     align-items: center;
     text-align: center;
+    background: linear-gradient(160deg, rgb(var(--v-theme-primary-darken-1)) 0%, rgb(var(--v-theme-primary)) 55%, #e87ba4 100%);
+    border: none;
+}
+
+.wrapped-card-icon {
+    color: var(--card-color);
+    margin-bottom: 6px;
 }
 
 .wrapped-card-value {
@@ -167,7 +261,30 @@ watch(selectedYear, load, { immediate: true });
 }
 
 .wrapped-card--hero .wrapped-card-value {
-    font-size: 40px;
+    font-size: 42px;
+    color: white;
+}
+
+.wrapped-card--hero .wrapped-card-label {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+@keyframes wrapped-card-in {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .wrapped-card {
+        opacity: 1;
+        animation: none;
+    }
 }
 
 .wrapped-card-value--text {
@@ -179,5 +296,18 @@ watch(selectedYear, load, { immediate: true });
     margin-top: 6px;
     font-size: 13.5px;
     color: rgb(var(--v-theme-on-surface-variant));
+}
+
+.share-preview {
+    display: flex;
+    justify-content: center;
+    padding: 16px 0;
+}
+
+.share-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-bottom: 8px;
 }
 </style>

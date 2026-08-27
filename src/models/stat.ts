@@ -71,6 +71,8 @@ export interface WrappedStat {
     topPlatform: Stat | null;
 
     bestMonth: Stat | null;
+
+    bestStreak: number;
 }
 
 export interface ChartData {

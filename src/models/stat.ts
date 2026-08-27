@@ -50,6 +50,25 @@ export interface Stat {
     value: number;
 }
 
+export interface WrappedStat {
+
+    year: number;
+
+    totalTime: number;
+
+    totalEpisodes: number;
+
+    nbNewShows: number;
+
+    topShow: Stat | null;
+
+    topKind: Stat | null;
+
+    topPlatform: Stat | null;
+
+    bestMonth: Stat | null;
+}
+
 export interface ChartData {
 
     id: number;

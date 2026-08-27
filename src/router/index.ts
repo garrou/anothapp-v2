@@ -105,6 +105,14 @@ const router = createRouter({
       }
     },
     {
+      path: "/wrapped",
+      name: "wrapped",
+      component: () => import("@/views/stats/Wrapped.vue"),
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
       path: "/profile",
       name: "profile",
       component: () => import("@/views/profile/Profile.vue"),

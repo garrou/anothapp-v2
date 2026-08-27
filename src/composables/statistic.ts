@@ -1,4 +1,4 @@
-import type { GlobalStat } from "@/models/stat";
+import type { GlobalStat, WrappedStat } from "@/models/stat";
 import statService from "@/services/statService"
 import { isError } from "@/utils/response";
 
@@ -14,7 +14,18 @@ export function useStatistic() {
         return data;
     }
 
+    const getWrapped = async (year: number): Promise<WrappedStat> => {
+        const resp = await statService.getWrapped(year);
+        const data = await resp.json();
+
+        if (isError(resp.status))
+            throw new Error(data.message);
+
+        return data;
+    }
+
     return {
-        getStats
+        getStats,
+        getWrapped
     }
 }

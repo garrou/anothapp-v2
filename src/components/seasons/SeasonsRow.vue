@@ -4,7 +4,7 @@
 
     <card-grid :items="seasons" :loading="loading" :sm="4" :md="2" :lg="2">
         <template #default="{ item: season }">
-            <season-card :season="season" @show="$emit('showSeason', season, addable)">
+            <season-card :season="season" :serie-poster="seriePoster" @show="$emit('showSeason', season, addable)">
                 <template v-if="addable" #add>
                     <v-btn :color="MAIN_COLOR" :icon="ADD_ICON" variant="text" @click="$emit('addSeason', season)" />
                 </template>
@@ -24,7 +24,8 @@ import { MAIN_COLOR } from "@/constants/style";
 const props = defineProps({
     addable: { type: Boolean, default: false },
     seasons: { type: Array as PropType<Season[]>, required: true },
-    loading: { type: Boolean, required: true }
+    loading: { type: Boolean, required: true },
+    seriePoster: { type: String, default: undefined }
 });
 
 defineEmits<{

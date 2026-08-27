@@ -20,6 +20,8 @@ const getSeasonInfosBySerieIdByNumber = (id: number, num: number): Promise<Respo
 const getSeasonWatchedTime = (id: number, num: number): Promise<Response> =>
     httpClient.get(`${PREFIX}/${id}/seasons/${num}/time`);
 
+const getRecommendations = (): Promise<Response> => httpClient.get(`${PREFIX}/recommendations`);
+
 const getSerie = (id: number): Promise<Response> => httpClient.get(`${PREFIX}/${id}`);
 
 const getSeries = (title?: string, platforms?: string, kinds?: string, notes?: string): Promise<Response> =>
@@ -46,6 +48,7 @@ export default {
     getSeasonsBySerieId,
     getSeasonInfosBySerieIdByNumber,
     getSeasonWatchedTime,
+    getRecommendations,
     getSerie,
     getSeries,
     getSeriesByStatus,

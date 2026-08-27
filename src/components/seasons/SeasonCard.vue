@@ -1,5 +1,5 @@
 <template>
-    <poster-card :image="season.image" :to="serieLink" @click="$emit('show', season)">
+    <poster-card :image="season.image || seriePoster" :to="serieLink" @click="$emit('show', season)">
         <v-card-title>Saison {{ season.number }}</v-card-title>
 
         <v-chip class="ml-2" :color="MAIN_COLOR" size="small">
@@ -22,7 +22,8 @@ import { MAIN_COLOR } from "@/constants/style";
 
 const props = defineProps({
     season: { type: Object as PropType<Season>, required: true },
-    serieLink: { type: String, default: undefined }
+    serieLink: { type: String, default: undefined },
+    seriePoster: { type: String, default: undefined }
 });
 
 defineEmits<{

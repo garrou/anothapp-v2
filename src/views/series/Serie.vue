@@ -53,11 +53,12 @@
 
             <v-window v-model="tab" class="pa-1">
                 <v-window-item :value="1">
-                    <seasons-row :loading="loading" :seasons="infos.seasons" @show-season="showSeason" />
+                    <seasons-row :loading="loading" :seasons="infos.seasons" :serie-poster="infos.serie.poster"
+                        @show-season="showSeason" />
                 </v-window-item>
                 <v-window-item :value="2">
-                    <seasons-row addable :loading="loading" :seasons="seasons" @add-season="newSeason"
-                        @show-season="showSeason" />
+                    <seasons-row addable :loading="loading" :seasons="seasons" :serie-poster="infos.serie.poster"
+                        @add-season="newSeason" @show-season="showSeason" />
                 </v-window-item>
             </v-window>
         </v-container>

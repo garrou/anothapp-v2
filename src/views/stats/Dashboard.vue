@@ -2,6 +2,11 @@
     <base-app-bar v-if="showBar" />
 
     <v-container fluid class="px-0 px-sm-4">
+        <router-link v-if="!userId" to="/wrapped" class="wrapped-cta mb-6">
+            <v-icon icon="mdi-party-popper" class="me-2" />
+            Découvrir votre année en séries
+        </router-link>
+
         <v-card v-if="cardsConfig" class="kpi-strip mb-6">
             <template v-for="(obj, index) in cardsConfig" :key="index">
                 <div v-if="obj.display !== false" class="kpi-cell">
@@ -190,6 +195,19 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+.wrapped-cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 20px;
+    border-radius: 14px;
+    background: rgba(var(--v-theme-primary), 0.1);
+    color: rgb(var(--v-theme-primary));
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+}
+
 .kpi-strip {
     display: grid;
     grid-template-columns: repeat(2, 1fr);

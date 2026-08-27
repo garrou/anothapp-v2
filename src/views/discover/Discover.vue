@@ -1,5 +1,6 @@
 <template>
     <base-app-bar discover placeholder="Ajouter une série" search />
+    <friend-recommendations v-if="!searchStore.hasChanges()" />
     <series-row :loading="loading" :series="series" hide-details-button empty-title="Aucun résultat"
         empty-description="Essayez un autre titre, ou modifiez vos filtres." :empty-cta="false" />
 </template>
@@ -7,6 +8,7 @@
 <script lang="ts" setup>
 import BaseAppBar from "@/components/BaseAppBar.vue";
 import SeriesRow from "@/components/series/SeriesRow.vue";
+import FriendRecommendations from "@/components/friends/FriendRecommendations.vue";
 import type { Serie } from "@/models/serie";
 import { onMounted, ref, watch } from "vue";
 import { useSearch } from "@/composables/search";
@@ -18,7 +20,8 @@ import { useScrollStore } from "@/stores/scroll";
 const route = useRoute();
 const scrollStore = useScrollStore();
 const { getSeries } = useSearch();
-const { filterKinds, filterLimit, filterPlatforms, filterTitle } = storeToRefs(useSearchStore());
+const searchStore = useSearchStore();
+const { filterKinds, filterLimit, filterPlatforms, filterTitle } = storeToRefs(searchStore);
 
 const loading = ref(false);
 const series = ref<Serie[]>([]);

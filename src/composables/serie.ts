@@ -1,4 +1,4 @@
-import type { Serie, SerieInfo } from "@/models/serie";
+import type { Recommendation, Serie, SerieInfo } from "@/models/serie";
 import serieService from "@/services/serieService";
 import type { CacheSearchOptions, SerieSearchOptions } from "@/models/search";
 import { isError } from "@/utils/response";
@@ -91,6 +91,16 @@ export function useSerie() {
         return data;
     }
 
+    const getRecommendations = async (): Promise<Recommendation[]> => {
+        const resp = await serieService.getRecommendations();
+        const data = await resp.json();
+
+        if (isError(resp.status))
+            throw new Error(data.message);
+
+        return data;
+    }
+
     const getCountries = async (): Promise<string[]> => {
         const series = await getSeries();
         return [...new Set(series.map((serie) => serie.country))].sort((a, b) => a.localeCompare(b));
@@ -151,6 +161,7 @@ export function useSerie() {
         getSerieInfos,
         getSeries,
         getSeriesByStatus,
+        getRecommendations,
         updateField
     }
 }

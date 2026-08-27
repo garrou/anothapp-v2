@@ -70,6 +70,21 @@ export interface SerieInfo {
 
 export type Similar = Required<BaseSerie>;
 
+export interface Recommendation extends BaseSerie {
+
+    poster?: string;
+
+    kinds: string[];
+
+    duration: number;
+
+    country: string;
+
+    nbFriends: number;
+
+    avgNote: number;
+}
+
 export interface Kind {
 
     name: string;

@@ -30,6 +30,7 @@ export enum ChartGroupedType {
 export enum SerieStatus {
     Continue = "continue",
     Stopped = "stopped",
+    Finished = "finished",
     Favorite = "favorite",
     Watchlist = "watchlist",
     Shared = "shared",

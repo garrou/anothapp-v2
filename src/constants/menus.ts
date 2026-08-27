@@ -34,19 +34,24 @@ export const NAV_SERIES_STATUS: NavStatusMenuItem[] = [
         status: SerieStatus.Watchlist
     },
     {
-        title: "Séries à continuer",
-        icon: "mdi-play",
-        status: SerieStatus.Continue
-    },
-    {
         title: "Favoris",
         icon: FAVORITE_ICON,
         status: SerieStatus.Favorite
     },
     {
-        title: "Séries arrêtées",
+        title: "À continuer",
+        icon: "mdi-play",
+        status: SerieStatus.Continue
+    },
+    {
+        title: "Arrêtées",
         icon: "mdi-close-circle",
         status: SerieStatus.Stopped
+    },
+    {
+        title: "Terminées",
+        icon: "mdi-check-circle",
+        status: SerieStatus.Finished
     }
 ];
 

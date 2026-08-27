@@ -13,7 +13,7 @@
                             <v-btn v-bind="clearProps" aria-label="Vider" icon="mdi-close-circle" density="compact"
                                 size="small" variant="text" />
                         </template>
-                        <template #append-inner>
+                        <template v-if="!autoSearch" #append-inner>
                             <v-btn :icon="SEARCH_ICON" density="compact" size="small" variant="text"
                                 @click="filterTitle(title)" />
                         </template>

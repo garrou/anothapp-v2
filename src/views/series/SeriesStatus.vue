@@ -35,6 +35,8 @@ const emptyCopy = computed(() => {
             return { title: "Rien à continuer", description: "Les séries dont le visionnage est en cours apparaîtront ici." };
         case SerieStatus.Stopped:
             return { title: "Aucune série arrêtée", description: "Les séries que vous arrêtez de suivre apparaissent ici." };
+        case SerieStatus.Finished:
+            return { title: "Aucune série terminée", description: "Les séries terminées que vous avez entièrement vues apparaissent ici." };
         default:
             return { title: "Votre liste est vide", description: "Ajoutez une série depuis Découvrir pour commencer à la suivre." };
     }

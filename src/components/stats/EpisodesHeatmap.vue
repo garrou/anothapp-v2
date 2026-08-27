@@ -71,8 +71,11 @@ const chartOptions = computed(() => ({
         cellSize: ["auto", 22],
         itemStyle: { borderWidth: 2, borderColor: lineColor.value },
         yearLabel: { show: false },
-        dayLabel: { color: textColor.value },
-        monthLabel: { color: textColor.value },
+        dayLabel: { color: textColor.value, nameMap: ["D", "L", "M", "M", "J", "V", "S"] },
+        monthLabel: {
+            color: textColor.value,
+            nameMap: ["Janv", "Févr", "Mars", "Avr", "Mai", "Juin", "Juil", "Août", "Sept", "Oct", "Nov", "Déc"]
+        },
         splitLine: { lineStyle: { color: lineColor.value } }
     },
     series: {

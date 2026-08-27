@@ -38,6 +38,10 @@ export interface GlobalStat {
             
     seriesNotes: Stat[];
 
+    currentStreak: number;
+
+    longestStreak: number;
+
     episodesHeatmap?: { date: string; value: number }[];
 }
 

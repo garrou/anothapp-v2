@@ -110,6 +110,10 @@ onBeforeMount(load);
 </script>
 
 <style scoped>
+.v-expansion-panels {
+    margin-top: 16px;
+}
+
 .episode-entry {
     border: 1px solid rgb(var(--v-border-color));
     border-radius: 12px;

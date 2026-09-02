@@ -38,7 +38,7 @@
                 </div>
             </div>
 
-            <episodes-checklist v-if="episodeTrackingEnabled" class="mt-3" :key="`${subSeason.id}-${episodesRefreshKey}`"
+            <episodes-checklist v-if="episodeTrackingEnabled" :key="`${subSeason.id}-${episodesRefreshKey}`"
                 :user-season-id="subSeason.id" @refresh="onEpisodesRefresh" />
         </div>
     </template>

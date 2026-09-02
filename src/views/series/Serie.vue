@@ -57,7 +57,7 @@
                         @show-season="showSeason" />
                 </v-window-item>
                 <v-window-item :value="2">
-                    <seasons-row addable :loading="loading" :seasons="seasons" :serie-poster="infos.serie.poster"
+                    <seasons-row addable :loading="seasonsLoading" :seasons="seasons" :serie-poster="infos.serie.poster"
                         @add-season="newSeason" @show-season="showSeason" />
                 </v-window-item>
                 <v-window-item :value="3">
@@ -151,6 +151,8 @@ const infos = ref<SerieInfo>();
 const loading = ref(false);
 const modal = ref(false);
 const seasons = ref<Season[]>([]);
+const seasonsLoaded = ref(false);
+const seasonsLoading = ref(false);
 const selected = ref<Season>();
 const notes = ref<Note[]>([]);
 const tab = ref(1);
@@ -218,7 +220,6 @@ const load = async (): Promise<void> => {
             return;
         }
         infos.value = await getSerieInfos({ id: props.id });
-        seasons.value = await getSeasonsBySerieId(props.id);
         showInfo.isFavorite = infos.value?.serie.favorite ?? false;
         showInfo.isWatching = infos.value?.serie.watch ?? false;
 
@@ -227,6 +228,18 @@ const load = async (): Promise<void> => {
         }
     } finally {
         loading.value = false;
+    }
+}
+
+const loadSeasons = async (): Promise<void> => {
+    if (seasonsLoaded.value) return;
+    seasonsLoading.value = true;
+
+    try {
+        seasons.value = await getSeasonsBySerieId(props.id);
+        seasonsLoaded.value = true;
+    } finally {
+        seasonsLoading.value = false;
     }
 }
 
@@ -290,7 +303,13 @@ const loadNotes = async () => {
 watch(() => props.id, () => {
     tab.value = 1;
     friends.value = [];
+    seasons.value = [];
+    seasonsLoaded.value = false;
     load();
+});
+
+watch(tab, (value) => {
+    if (value === 2) loadSeasons();
 });
 
 onBeforeMount(async () => {

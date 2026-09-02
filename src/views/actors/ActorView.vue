@@ -3,6 +3,10 @@
         <serie-hero :poster="actor.poster" :title="actor.name" @back="goBack" />
 
         <v-container>
+            <div class="actions-row mb-4">
+                <button-favorite-actor :actor-id="actor.id" :actor-name="actor.name" />
+            </div>
+
             <actor-details :actor="actor" />
             <series-row :loading="loading" :series="actor.series" total empty-title="Aucune série connue"
                 empty-description="Aucune série n'est associée à cet acteur pour le moment." :empty-cta="false" />
@@ -12,6 +16,7 @@
 
 <script lang="ts" setup>
 import ActorDetails from "@/components/actors/ActorDetails.vue";
+import ButtonFavoriteActor from "@/components/buttons/ButtonFavoriteActor.vue";
 import SerieHero from "@/components/series/SerieHero.vue";
 import SeriesRow from "@/components/series/SeriesRow.vue";
 import { useSearch } from "@/composables/search";

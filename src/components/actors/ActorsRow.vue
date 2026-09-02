@@ -2,6 +2,10 @@
     <card-grid v-if="characters.length" :items="characters" :loading="loading">
         <template #default="{ item: character }">
             <poster-card :image="character.picture" :to="`/actor/${character.id}`">
+                <template #quick-actions>
+                    <button-favorite-actor :actor-id="character.id" :actor-name="character.actor" quick />
+                </template>
+
                 <v-card-title>
                     <router-link class="actor-card-title" :text="character.actor" :to="`/actor/${character.id}`" />
                 </v-card-title>
@@ -17,6 +21,7 @@
 import CardGrid from "@/components/CardGrid.vue";
 import EmptyState from "@/components/EmptyState.vue";
 import PosterCard from "@/components/PosterCard.vue";
+import ButtonFavoriteActor from "@/components/buttons/ButtonFavoriteActor.vue";
 import type { Character } from '@/models/person';
 import type { PropType } from 'vue';
 

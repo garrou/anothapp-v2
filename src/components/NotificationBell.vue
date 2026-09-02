@@ -107,6 +107,8 @@ const describe = (item: Notification): string => {
             return `${actor} a vu l'épisode ${meta.episodeCode} de "${show}"`;
         case "episode_bulk_watched":
             return `${actor} a vu ${buildPlural("épisode", Number(meta.count))} de la saison ${meta.seasonNumber} de "${show}"`;
+        case "actor_favorited":
+            return `${actor} a ajouté ${meta.actorName ?? "un acteur"} à ses favoris`;
         case "friend_request":
             return `${actor} vous a envoyé une demande d'ami`;
         case "friend_accepted":

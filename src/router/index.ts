@@ -146,6 +146,14 @@ const router = createRouter({
       }
     },
     {
+      path: "/actors/favorites",
+      name: "favorite-actors",
+      component: () => import("@/views/actors/FavoriteActors.vue"),
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
       path: "/:catchAll(.*)",
       redirect: "/",
     },

@@ -3,6 +3,7 @@ import { isError, isSuccess } from "@/utils/response";
 import { useSnackbar } from "./snackbar";
 import { useRouter } from "vue-router";
 import cache from "@/cache";
+import { useActorStore } from "@/stores/actor";
 
 let pendingCheckAuth: Promise<boolean> | null = null;
 let lastCheckAuth: { result: boolean, at: number } | null = null;
@@ -62,6 +63,7 @@ export function useAuth() {
         await cache.users.clearCache();
         await cache.userList.clearCache();
         await cache.userPlatforms.clearCache();
+        useActorStore().reset();
         router.replace("/login");
     }
 

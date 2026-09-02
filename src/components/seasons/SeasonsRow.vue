@@ -2,7 +2,7 @@
 
     <v-btn class="mb-2 ms-1" :icon="orderIcon" @click="orderSeasons" />
 
-    <card-grid :items="seasons" :loading="loading" :sm="4" :md="2" :lg="2">
+    <card-grid :items="seasons" :loading="loading" :sm="4" :md="3" :lg="3" :xl="3">
         <template #default="{ item: season }">
             <season-card :season="season" :serie-poster="seriePoster" @show="$emit('showSeason', season, addable)">
                 <template v-if="addable" #add>

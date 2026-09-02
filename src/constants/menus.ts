@@ -70,5 +70,10 @@ export const NAV_OTHERS: NavOthersMenuItem[] = [
         title: "Prochains épisodes",
         icon: "mdi-calendar",
         link: "/calendar"
+    },
+    {
+        title: "Acteurs favoris",
+        icon: "mdi-account-star-outline",
+        link: "/actors/favorites"
     }
 ];

@@ -4,6 +4,7 @@ export type NotificationType =
     | "season_watched"
     | "episode_watched"
     | "episode_bulk_watched"
+    | "actor_favorited"
     | "friend_request"
     | "friend_accepted"
     | "friend_declined"
@@ -20,6 +21,7 @@ export const NOTIFICATION_GROUPS: Record<NotificationType, NotificationGroup> = 
     season_watched: "activity",
     episode_watched: "activity",
     episode_bulk_watched: "activity",
+    actor_favorited: "activity",
     episode_upcoming: "reminders",
 };
 

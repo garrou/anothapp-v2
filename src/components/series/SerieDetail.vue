@@ -78,7 +78,7 @@ import StatTile from "@/components/StatTile.vue";
 import PlatformCard from "@/components/series/PlatformCard.vue";
 import { computed, type PropType } from "vue";
 import type { Serie } from "@/models/serie";
-import { minsToStringHoursDays } from "@/utils/format";
+import { formatLanguage, minsToStringHoursDays } from "@/utils/format";
 
 const props = defineProps({
     serie: { type: Object as PropType<Serie>, required: true }
@@ -86,15 +86,7 @@ const props = defineProps({
 
 const statusLabel = computed(() => props.serie.finished ? "Terminée" : "En cours");
 const totalDuration = computed(() => minsToStringHoursDays(props.serie.duration * (props.serie.episodes ?? 0)));
-const languageLabel = computed(() => {
-    if (!props.serie.language) return "";
-    try {
-        const label = new Intl.DisplayNames(["fr"], { type: "language" }).of(props.serie.language);
-        return label ? label.charAt(0).toUpperCase() + label.slice(1) : "";
-    } catch {
-        return "";
-    }
-});
+const languageLabel = computed(() => formatLanguage(props.serie.language));
 </script>
 
 <style scoped>

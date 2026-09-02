@@ -27,6 +27,25 @@
                 </div>
             </v-card>
 
+            <div v-if="hasMeta" class="serie-meta mb-6">
+                <div class="serie-meta-line">
+                    <template v-if="infos.serie.network">
+                        <span>{{ infos.serie.network }}</span>
+                        <span class="dot">•</span>
+                    </template>
+                    <span>{{ infos.serie.country }}</span>
+                    <template v-if="languageLabel">
+                        <span class="dot">•</span>
+                        <span>{{ languageLabel }}</span>
+                    </template>
+                    <template v-if="infos.serie.creation">
+                        <span class="dot">•</span>
+                        <span>Depuis {{ infos.serie.creation }}</span>
+                    </template>
+                </div>
+                <p v-if="infos.serie.description" class="serie-meta-description">{{ infos.serie.description }}</p>
+            </div>
+
             <div class="actions-row mb-6">
                 <button-watch-serie :serie="infos.serie" primary />
                 <button-favorite-serie :serie-id="id" />
@@ -59,9 +78,6 @@
                 <v-window-item :value="2">
                     <seasons-row addable :loading="seasonsLoading" :seasons="seasons" :serie-poster="infos.serie.poster"
                         @add-season="newSeason" @show-season="showSeason" />
-                </v-window-item>
-                <v-window-item :value="3">
-                    <serie-detail :serie="infos.serie" />
                 </v-window-item>
             </v-window>
         </v-container>
@@ -105,7 +121,6 @@ import SeasonEpisodes from "@/components/seasons/SeasonEpisodes.vue";
 import SeasonsRow from "@/components/seasons/SeasonsRow.vue";
 import FriendsRow from "@/components/friends/FriendsRow.vue";
 import SerieHero from "@/components/series/SerieHero.vue";
-import SerieDetail from "@/components/series/SerieDetail.vue";
 import PillTabs from "@/components/PillTabs.vue";
 import type { SerieInfo } from "@/models/serie";
 import { computed, onBeforeMount, reactive, ref, watch } from "vue";
@@ -113,7 +128,7 @@ import { useSeason } from "@/composables/season";
 import { useSearch } from "@/composables/search";
 import { useSerie } from "@/composables/serie";
 import type { Season } from "@/models/season";
-import { buildPlural, fromDatetimeLocalInput, toDatetimeLocalInput, minsToStringHoursDays } from "@/utils/format";
+import { buildPlural, formatLanguage, fromDatetimeLocalInput, toDatetimeLocalInput, minsToStringHoursDays } from "@/utils/format";
 import { NOTE_ICONS } from "@/constants/icons";
 import type { User } from "@/models/user";
 import { useFriend } from "@/composables/friend";
@@ -131,8 +146,7 @@ const props = defineProps({
 
 const SERIE_TABS = [
     { value: 1, label: "Mes saisons" },
-    { value: 2, label: "Ajouter" },
-    { value: 3, label: "Détails" }
+    { value: 2, label: "Ajouter" }
 ];
 
 const maxDate = toDatetimeLocalInput(new Date().toISOString());
@@ -197,6 +211,12 @@ const viewingPercent = computed(() => {
     return (Math.min(1, (infos.value?.seasons.length ?? 0) / serie.seasons) * 100).toFixed(0);
 });
 const ringOffset = computed(() => ringCircumference * (1 - Number(viewingPercent.value) / 100));
+
+const languageLabel = computed(() => formatLanguage(infos.value?.serie.language));
+const hasMeta = computed(() => {
+    const serie = infos.value?.serie;
+    return !!(serie?.network || serie?.description || languageLabel.value || serie?.creation);
+});
 
 const goBack = () => navigateBack(router, "/series");
 
@@ -377,6 +397,25 @@ onBeforeMount(async () => {
     flex-wrap: wrap;
     gap: 32px;
     flex: 1;
+}
+
+.serie-meta-line {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: rgb(var(--v-theme-on-surface-variant));
+}
+
+.serie-meta-line .dot {
+    opacity: 0.5;
+}
+
+.serie-meta-description {
+    margin: 8px 0 0;
+    font-size: 14.5px;
+    line-height: 1.6;
 }
 
 .actions-row {

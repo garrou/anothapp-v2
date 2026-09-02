@@ -77,3 +77,13 @@ export const buildHexColor = (): string => `#${Math.floor(Math.random() * 167772
 export const withoutAccentsIgnoreCase = (value?: string | null): string => {
     return (value ?? "").trim().toLocaleLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '');
 }
+
+export const formatLanguage = (code?: string): string => {
+    if (!code) return "";
+    try {
+        const label = new Intl.DisplayNames(["fr"], { type: "language" }).of(code);
+        return label ? label.charAt(0).toUpperCase() + label.slice(1) : "";
+    } catch {
+        return "";
+    }
+}

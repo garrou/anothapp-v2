@@ -3,7 +3,7 @@
         <template v-slot:activator="{ props }">
             <v-btn v-bind="props" class="fav-btn" :class="{ 'fav-btn--quick': quick }" :color="favoriteColor"
                 :icon="FAVORITE_ICON" :size="quick ? 32 : undefined" :variant="quick ? 'flat' : 'text'"
-                :loading="loading" @click="changeFavorite" />
+                :loading="loading" :disabled="loading" @click="changeFavorite" />
         </template>
     </v-tooltip>
 </template>

@@ -1,28 +1,38 @@
 import actorService from "@/services/actorService";
 import { useActorStore } from "@/stores/actor";
 import { useSnackbar } from "./snackbar";
-import type { Actor } from "@/models/person";
+import type { FavoriteActor } from "@/models/person";
 import { isError } from "@/utils/response";
+
+let pendingLoad: Promise<void> | null = null;
 
 export function useActor() {
 
     const actorStore = useActorStore();
     const { showSuccess } = useSnackbar();
 
-    const getFavoriteActors = async (): Promise<Actor[]> => {
+    const getFavoriteActors = async (): Promise<FavoriteActor[]> => {
         const resp = await actorService.getFavorites();
         const data = await resp.json();
 
         if (isError(resp.status))
             throw new Error(data.message);
 
-        actorStore.setFavoriteActorIds(data.map((actor: Actor) => actor.id));
+        actorStore.setFavoriteActorIds(data.map((actor: FavoriteActor) => actor.id));
         return data;
     }
 
     const loadFavoriteActorIds = async (): Promise<void> => {
         if (actorStore.loaded) return;
-        await getFavoriteActors();
+
+        if (!pendingLoad) {
+            pendingLoad = getFavoriteActors()
+                .then(() => undefined)
+                .finally(() => {
+                    pendingLoad = null;
+                });
+        }
+        await pendingLoad;
     }
 
     const addFavoriteActor = async (id: number, name: string): Promise<void> => {

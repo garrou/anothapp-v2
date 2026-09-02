@@ -21,12 +21,18 @@ export const useActorStore = defineStore("actor", () => {
 
     const isFavorite = (id: number): boolean => favoriteActorIds.value.has(id);
 
+    const reset = (): void => {
+        favoriteActorIds.value = new Set();
+        loaded.value = false;
+    }
+
     return {
         favoriteActorIds,
         loaded,
         setFavoriteActorIds,
         addFavoriteActorId,
         removeFavoriteActorId,
-        isFavorite
+        isFavorite,
+        reset
     };
 });

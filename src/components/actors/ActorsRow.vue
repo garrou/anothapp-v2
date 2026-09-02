@@ -1,5 +1,5 @@
 <template>
-    <card-grid v-if="characters.length" :items="characters" :loading="loading">
+    <card-grid v-if="characters.length" :items="characters" :loading="loading" :lg="3" :xl="3">
         <template #default="{ item: character }">
             <poster-card :image="character.picture" :to="`/actor/${character.id}`">
                 <template #quick-actions>

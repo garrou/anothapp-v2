@@ -2,7 +2,7 @@
     <base-app-bar />
 
     <v-container>
-        <card-grid v-if="actors.length" :items="actors" :loading="loading">
+        <card-grid v-if="actors.length" :items="actors" :loading="loading" :lg="3" :xl="3">
             <template #default="{ item: actor }">
                 <poster-card :image="actor.picture" :to="`/actor/${actor.id}`">
                     <template #quick-actions>
@@ -28,12 +28,12 @@ import CardGrid from "@/components/CardGrid.vue";
 import EmptyState from "@/components/EmptyState.vue";
 import PosterCard from "@/components/PosterCard.vue";
 import { useActor } from "@/composables/actor";
-import type { Actor } from "@/models/person";
+import type { FavoriteActor } from "@/models/person";
 import { onBeforeMount, ref } from "vue";
 
 const { getFavoriteActors } = useActor();
 
-const actors = ref<Actor[]>([]);
+const actors = ref<FavoriteActor[]>([]);
 const loading = ref(false);
 
 const removeFromList = (id: number): void => {

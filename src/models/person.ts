@@ -30,3 +30,16 @@ export interface Actor extends Person {
 
     movies: Serie[];
 }
+
+export interface FavoriteActor extends Person {
+
+    picture?: string;
+
+    birthday?: string;
+
+    deathday?: string;
+
+    nationality?: string;
+
+    description?: string;
+}

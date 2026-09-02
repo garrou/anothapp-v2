@@ -36,6 +36,10 @@
                     <span class="dot">•</span>
                 </template>
                 <span>{{ serie.country }}</span>
+                <template v-if="languageLabel">
+                    <span class="dot">•</span>
+                    <span>{{ languageLabel }}</span>
+                </template>
                 <template v-if="serie.note">
                     <span class="dot">•</span>
                     <span class="meta-note">
@@ -74,7 +78,7 @@ import StatTile from "@/components/StatTile.vue";
 import PlatformCard from "@/components/series/PlatformCard.vue";
 import { computed, type PropType } from "vue";
 import type { Serie } from "@/models/serie";
-import { minsToStringHoursDays } from "@/utils/format";
+import { formatLanguage, minsToStringHoursDays } from "@/utils/format";
 
 const props = defineProps({
     serie: { type: Object as PropType<Serie>, required: true }
@@ -82,6 +86,7 @@ const props = defineProps({
 
 const statusLabel = computed(() => props.serie.finished ? "Terminée" : "En cours");
 const totalDuration = computed(() => minsToStringHoursDays(props.serie.duration * (props.serie.episodes ?? 0)));
+const languageLabel = computed(() => formatLanguage(props.serie.language));
 </script>
 
 <style scoped>

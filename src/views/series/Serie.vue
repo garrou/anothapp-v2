@@ -15,7 +15,7 @@
                         <div class="ring-value">{{ viewingPercent }}%</div>
                         <div class="ring-label">
                             {{ buildPlural("Saison", infos.seasons.length, false, false) }}
-                            {{ infos.seasons.length }} / {{ seasons.length }}
+                            {{ infos.seasons.length }} / {{ infos.serie.seasons ?? 0 }}
                         </div>
                     </div>
                 </div>
@@ -26,6 +26,25 @@
                     <stat-tile label="Durée d'un épisode" :value="`${infos.serie.duration} min`" />
                 </div>
             </v-card>
+
+            <div v-if="hasMeta" class="serie-meta mb-6">
+                <div class="serie-meta-line">
+                    <template v-if="infos.serie.network">
+                        <span>{{ infos.serie.network }}</span>
+                        <span class="dot">•</span>
+                    </template>
+                    <span>{{ infos.serie.country }}</span>
+                    <template v-if="languageLabel">
+                        <span class="dot">•</span>
+                        <span>{{ languageLabel }}</span>
+                    </template>
+                    <template v-if="infos.serie.creation">
+                        <span class="dot">•</span>
+                        <span>Depuis {{ infos.serie.creation }}</span>
+                    </template>
+                </div>
+                <p v-if="infos.serie.description" class="serie-meta-description">{{ infos.serie.description }}</p>
+            </div>
 
             <div class="actions-row mb-6">
                 <button-watch-serie :serie="infos.serie" primary />
@@ -57,7 +76,7 @@
                         @show-season="showSeason" />
                 </v-window-item>
                 <v-window-item :value="2">
-                    <seasons-row addable :loading="loading" :seasons="seasons" :serie-poster="infos.serie.poster"
+                    <seasons-row addable :loading="seasonsLoading" :seasons="seasons" :serie-poster="infos.serie.poster"
                         @add-season="newSeason" @show-season="showSeason" />
                 </v-window-item>
             </v-window>
@@ -109,7 +128,7 @@ import { useSeason } from "@/composables/season";
 import { useSearch } from "@/composables/search";
 import { useSerie } from "@/composables/serie";
 import type { Season } from "@/models/season";
-import { buildPlural, fromDatetimeLocalInput, toDatetimeLocalInput, minsToStringHoursDays } from "@/utils/format";
+import { buildPlural, formatLanguage, fromDatetimeLocalInput, toDatetimeLocalInput, minsToStringHoursDays } from "@/utils/format";
 import { NOTE_ICONS } from "@/constants/icons";
 import type { User } from "@/models/user";
 import { useFriend } from "@/composables/friend";
@@ -146,6 +165,8 @@ const infos = ref<SerieInfo>();
 const loading = ref(false);
 const modal = ref(false);
 const seasons = ref<Season[]>([]);
+const seasonsLoaded = ref(false);
+const seasonsLoading = ref(false);
 const selected = ref<Season>();
 const notes = ref<Note[]>([]);
 const tab = ref(1);
@@ -161,31 +182,41 @@ const showInfo = reactive({
 const ringCircumference = 2 * Math.PI * 54;
 
 const missingTime = computed(() => {
-    const allSeasons = seasons.value;
-    const viewedSeasons = infos.value?.seasons ?? [];
-    let missingEpisodes = 0;
+    const serie = infos.value?.serie;
+    const watchedSeasons = infos.value?.seasons.length ?? 0;
 
-    for (const season of allSeasons) {
-        const viewed = viewedSeasons.find((s) => s.number === season.number);
-        if (viewed) continue;
-        missingEpisodes += season.episodes;
+    if (!serie) return minsToStringHoursDays(0);
+
+    if (infos.value?.distinctEpisodes !== undefined && serie.episodes) {
+        const missingEpisodes = Math.max(0, serie.episodes - infos.value.distinctEpisodes);
+        return minsToStringHoursDays(missingEpisodes * serie.duration);
     }
-    return minsToStringHoursDays(missingEpisodes * (infos.value?.serie.duration ?? 0));
+    const totalSeasons = serie.seasons ?? 0;
+    const missingSeasons = Math.max(0, totalSeasons - watchedSeasons);
+    const avgEpisodesPerSeason = totalSeasons ? (serie.episodes ?? 0) / totalSeasons : 0;
+    return minsToStringHoursDays(missingSeasons * avgEpisodesPerSeason * serie.duration);
 });
-const isMissingSeasons = computed(() => seasons.value.length - (infos.value?.seasons?.length ?? 0) > 0);
+const isMissingSeasons = computed(() => (infos.value?.serie.seasons ?? 0) - (infos.value?.seasons?.length ?? 0) > 0);
 const time = computed(() => minsToStringHoursDays(infos.value?.time));
-const totalEpisodes = computed(() => seasons.value.reduce((acc, season) => acc + season.episodes, 0));
 
 const viewingPercent = computed(() => {
-    if (infos.value?.distinctEpisodes !== undefined && totalEpisodes.value) {
-        return (Math.min(1, infos.value.distinctEpisodes / totalEpisodes.value) * 100).toFixed(0);
+    const serie = infos.value?.serie;
+
+    if (infos.value?.distinctEpisodes !== undefined && serie?.episodes) {
+        return (Math.min(1, infos.value.distinctEpisodes / serie.episodes) * 100).toFixed(0);
     }
-    if (!seasons.value.length) {
+    if (!serie?.seasons) {
         return "0";
     }
-    return (Math.min(1, (infos.value?.seasons.length ?? 0) / seasons.value.length) * 100).toFixed(0);
+    return (Math.min(1, (infos.value?.seasons.length ?? 0) / serie.seasons) * 100).toFixed(0);
 });
 const ringOffset = computed(() => ringCircumference * (1 - Number(viewingPercent.value) / 100));
+
+const languageLabel = computed(() => formatLanguage(infos.value?.serie.language));
+const hasMeta = computed(() => {
+    const serie = infos.value?.serie;
+    return !!(serie?.network || serie?.description || languageLabel.value || serie?.creation);
+});
 
 const goBack = () => navigateBack(router, "/series");
 
@@ -209,7 +240,6 @@ const load = async (): Promise<void> => {
             return;
         }
         infos.value = await getSerieInfos({ id: props.id });
-        seasons.value = await getSeasonsBySerieId(props.id);
         showInfo.isFavorite = infos.value?.serie.favorite ?? false;
         showInfo.isWatching = infos.value?.serie.watch ?? false;
 
@@ -218,6 +248,18 @@ const load = async (): Promise<void> => {
         }
     } finally {
         loading.value = false;
+    }
+}
+
+const loadSeasons = async (): Promise<void> => {
+    if (seasonsLoaded.value) return;
+    seasonsLoading.value = true;
+
+    try {
+        seasons.value = await getSeasonsBySerieId(props.id);
+        seasonsLoaded.value = true;
+    } finally {
+        seasonsLoading.value = false;
     }
 }
 
@@ -281,7 +323,13 @@ const loadNotes = async () => {
 watch(() => props.id, () => {
     tab.value = 1;
     friends.value = [];
+    seasons.value = [];
+    seasonsLoaded.value = false;
     load();
+});
+
+watch(tab, (value) => {
+    if (value === 2) loadSeasons();
 });
 
 onBeforeMount(async () => {
@@ -349,6 +397,25 @@ onBeforeMount(async () => {
     flex-wrap: wrap;
     gap: 32px;
     flex: 1;
+}
+
+.serie-meta-line {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: rgb(var(--v-theme-on-surface-variant));
+}
+
+.serie-meta-line .dot {
+    opacity: 0.5;
+}
+
+.serie-meta-description {
+    margin: 8px 0 0;
+    font-size: 14.5px;
+    line-height: 1.6;
 }
 
 .actions-row {

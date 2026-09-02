@@ -26,9 +26,9 @@
                 <v-btn block color="primary" rounded="pill" @click="changeSeason">Enregistrer</v-btn>
             </div>
 
-            <div v-if="bulkOfferSeasonId === subSeason.id" class="season-entry-edit">
+            <div v-if="bulkOfferSeasonId === subSeason.id" class="season-entry-edit mb-3">
                 <p class="mb-3">Marquer tous les épisodes diffusés de cette saison comme vus ?</p>
-                <div class="d-flex ga-2">
+                <div class="d-flex flex-wrap ga-2">
                     <v-btn class="flex-grow-1" color="primary" rounded="pill" @click="acceptBulkAdd(subSeason.id)">
                         Tout marquer
                     </v-btn>
@@ -38,7 +38,7 @@
                 </div>
             </div>
 
-            <episodes-checklist v-if="episodeTrackingEnabled" class="mt-3" :key="`${subSeason.id}-${episodesRefreshKey}`"
+            <episodes-checklist v-if="episodeTrackingEnabled" :key="`${subSeason.id}-${episodesRefreshKey}`"
                 :user-season-id="subSeason.id" @refresh="onEpisodesRefresh" />
         </div>
     </template>

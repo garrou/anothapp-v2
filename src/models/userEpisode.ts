@@ -14,5 +14,7 @@ export interface UserEpisode {
 
     date: string;
 
+    description?: string;
+
     watchedAt: string | null;
 }

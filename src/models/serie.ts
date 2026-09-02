@@ -28,7 +28,9 @@ export interface Serie extends BaseSerie {
     episodes?: number;
         
     network?: string;
-        
+
+    language?: string;
+
     note?: number;
         
     finished: boolean;

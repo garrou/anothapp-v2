@@ -23,6 +23,8 @@
                             variant="text" @click="addViewing(episode)" />
                     </div>
 
+                    <p v-if="episode.description" class="episode-entry-description">{{ episode.description }}</p>
+
                     <div v-if="isEdited(episode.episodeId)" class="episode-entry-edit">
                         <v-text-field v-model="watchedAtInput" class="mb-3" hide-details type="datetime-local" />
 
@@ -108,6 +110,10 @@ onBeforeMount(load);
 </script>
 
 <style scoped>
+.v-expansion-panels {
+    margin-top: 16px;
+}
+
 .episode-entry {
     border: 1px solid rgb(var(--v-border-color));
     border-radius: 12px;
@@ -146,6 +152,13 @@ onBeforeMount(load);
     font-size: 12px;
     white-space: nowrap;
     flex-shrink: 0;
+}
+
+.episode-entry-description {
+    margin: 6px 0 0;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: rgb(var(--v-theme-on-surface-variant));
 }
 
 .episode-entry-btn {

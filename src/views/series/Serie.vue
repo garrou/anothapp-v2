@@ -15,7 +15,7 @@
                         <div class="ring-value">{{ viewingPercent }}%</div>
                         <div class="ring-label">
                             {{ buildPlural("Saison", infos.seasons.length, false, false) }}
-                            {{ infos.seasons.length }} / {{ seasons.length }}
+                            {{ infos.seasons.length }} / {{ infos.serie.seasons ?? 0 }}
                         </div>
                     </div>
                 </div>
@@ -60,6 +60,9 @@
                     <seasons-row addable :loading="loading" :seasons="seasons" :serie-poster="infos.serie.poster"
                         @add-season="newSeason" @show-season="showSeason" />
                 </v-window-item>
+                <v-window-item :value="3">
+                    <serie-detail :serie="infos.serie" />
+                </v-window-item>
             </v-window>
         </v-container>
     </div>
@@ -102,6 +105,7 @@ import SeasonEpisodes from "@/components/seasons/SeasonEpisodes.vue";
 import SeasonsRow from "@/components/seasons/SeasonsRow.vue";
 import FriendsRow from "@/components/friends/FriendsRow.vue";
 import SerieHero from "@/components/series/SerieHero.vue";
+import SerieDetail from "@/components/series/SerieDetail.vue";
 import PillTabs from "@/components/PillTabs.vue";
 import type { SerieInfo } from "@/models/serie";
 import { computed, onBeforeMount, reactive, ref, watch } from "vue";
@@ -127,7 +131,8 @@ const props = defineProps({
 
 const SERIE_TABS = [
     { value: 1, label: "Mes saisons" },
-    { value: 2, label: "Ajouter" }
+    { value: 2, label: "Ajouter" },
+    { value: 3, label: "Détails" }
 ];
 
 const maxDate = toDatetimeLocalInput(new Date().toISOString());
@@ -161,29 +166,33 @@ const showInfo = reactive({
 const ringCircumference = 2 * Math.PI * 54;
 
 const missingTime = computed(() => {
-    const allSeasons = seasons.value;
-    const viewedSeasons = infos.value?.seasons ?? [];
-    let missingEpisodes = 0;
+    const serie = infos.value?.serie;
+    const watchedSeasons = infos.value?.seasons.length ?? 0;
 
-    for (const season of allSeasons) {
-        const viewed = viewedSeasons.find((s) => s.number === season.number);
-        if (viewed) continue;
-        missingEpisodes += season.episodes;
+    if (!serie) return minsToStringHoursDays(0);
+
+    if (infos.value?.distinctEpisodes !== undefined && serie.episodes) {
+        const missingEpisodes = Math.max(0, serie.episodes - infos.value.distinctEpisodes);
+        return minsToStringHoursDays(missingEpisodes * serie.duration);
     }
-    return minsToStringHoursDays(missingEpisodes * (infos.value?.serie.duration ?? 0));
+    const totalSeasons = serie.seasons ?? 0;
+    const missingSeasons = Math.max(0, totalSeasons - watchedSeasons);
+    const avgEpisodesPerSeason = totalSeasons ? (serie.episodes ?? 0) / totalSeasons : 0;
+    return minsToStringHoursDays(missingSeasons * avgEpisodesPerSeason * serie.duration);
 });
-const isMissingSeasons = computed(() => seasons.value.length - (infos.value?.seasons?.length ?? 0) > 0);
+const isMissingSeasons = computed(() => (infos.value?.serie.seasons ?? 0) - (infos.value?.seasons?.length ?? 0) > 0);
 const time = computed(() => minsToStringHoursDays(infos.value?.time));
-const totalEpisodes = computed(() => seasons.value.reduce((acc, season) => acc + season.episodes, 0));
 
 const viewingPercent = computed(() => {
-    if (infos.value?.distinctEpisodes !== undefined && totalEpisodes.value) {
-        return (Math.min(1, infos.value.distinctEpisodes / totalEpisodes.value) * 100).toFixed(0);
+    const serie = infos.value?.serie;
+
+    if (infos.value?.distinctEpisodes !== undefined && serie?.episodes) {
+        return (Math.min(1, infos.value.distinctEpisodes / serie.episodes) * 100).toFixed(0);
     }
-    if (!seasons.value.length) {
+    if (!serie?.seasons) {
         return "0";
     }
-    return (Math.min(1, (infos.value?.seasons.length ?? 0) / seasons.value.length) * 100).toFixed(0);
+    return (Math.min(1, (infos.value?.seasons.length ?? 0) / serie.seasons) * 100).toFixed(0);
 });
 const ringOffset = computed(() => ringCircumference * (1 - Number(viewingPercent.value) / 100));
 

@@ -36,6 +36,10 @@
                     <span class="dot">•</span>
                 </template>
                 <span>{{ serie.country }}</span>
+                <template v-if="languageLabel">
+                    <span class="dot">•</span>
+                    <span>{{ languageLabel }}</span>
+                </template>
                 <template v-if="serie.note">
                     <span class="dot">•</span>
                     <span class="meta-note">
@@ -82,6 +86,15 @@ const props = defineProps({
 
 const statusLabel = computed(() => props.serie.finished ? "Terminée" : "En cours");
 const totalDuration = computed(() => minsToStringHoursDays(props.serie.duration * (props.serie.episodes ?? 0)));
+const languageLabel = computed(() => {
+    if (!props.serie.language) return "";
+    try {
+        const label = new Intl.DisplayNames(["fr"], { type: "language" }).of(props.serie.language);
+        return label ? label.charAt(0).toUpperCase() + label.slice(1) : "";
+    } catch {
+        return "";
+    }
+});
 </script>
 
 <style scoped>

@@ -1,4 +1,3 @@
-import cache from "@/cache";
 import settingService from "@/services/settingService";
 
 export function useSettings() {
@@ -31,9 +30,7 @@ export function useSettings() {
     }
 
     const clearCaches = () => {
-        cache.reset().then(() => {
-            location.reload();
-        });
+        location.reload();
     }
 
     return {

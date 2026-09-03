@@ -1,7 +1,7 @@
 <template>
     <v-menu v-model="menu" location="bottom end" :close-on-content-click="false">
         <template #activator="{ props: menuProps }">
-            <v-badge class="bell-badge" :content="unreadCount" :model-value="unreadCount > 0" color="error">
+            <v-badge class="bell-badge" :content="badgeContent" :model-value="unreadCount > 0" color="error">
                 <v-btn v-bind="menuProps" icon="mdi-bell-outline" density="compact" size="small" variant="text" />
             </v-badge>
         </template>
@@ -81,6 +81,8 @@ const hasUnreadInView = computed(() => filteredNotifications.value.some((n) => !
 
 const emptyMessage = computed(() => activeGroup.value ? "Aucune notification dans cette catégorie" : "Aucune notification");
 
+const badgeContent = computed(() => unreadCount.value > 99 ? "99+" : unreadCount.value);
+
 const tabItems = computed(() => TABS.map((tab) => ({
     value: tab.value,
     label: tab.label,
@@ -132,6 +134,8 @@ const openNotification = async (item: Notification) => {
     }
     if (item.show) {
         router.push(`/discover/${item.show.id}`);
+    } else if (item.type === "actor_favorited" && item.metadata?.actorId) {
+        router.push(`/actor/${item.metadata.actorId}`);
     } else if (item.type.startsWith("friend_")) {
         router.push("/friends");
     }

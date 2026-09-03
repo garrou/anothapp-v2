@@ -9,11 +9,7 @@ import { useNotesStore } from "@/stores/notes";
 import { usePlatformsStore } from "@/stores/platforms";
 import { useSeriesCatalogStore } from "@/stores/seriesCatalog";
 import type { Note } from "@/models/note";
-
-let pendingKinds: Promise<void> | null = null;
-let pendingNotes: Promise<void> | null = null;
-let pendingPlatforms: Promise<void> | null = null;
-let pendingCatalog: Promise<void> | null = null;
+import { loadOnce } from "@/utils/loadOnce";
 
 export function useSearch() {
 
@@ -44,75 +40,53 @@ export function useSearch() {
     }
 
     const getKinds = async (): Promise<Kind[]> => {
-        if (!kindsStore.loaded) {
-            if (!pendingKinds) {
-                pendingKinds = (async () => {
-                    const resp = await searchService.getKinds();
-                    const data = await resp.json();
+        await loadOnce("kinds", () => kindsStore.loaded, async () => {
+            const resp = await searchService.getKinds();
+            const data = await resp.json();
 
-                    if (isError(resp.status)) {
-                        throw new Error(data.message);
-                    }
-                    kindsStore.setAll([...data].sort((a: Kind, b: Kind) => a.name.localeCompare(b.name)));
-                })().finally(() => { pendingKinds = null; });
+            if (isError(resp.status)) {
+                throw new Error(data.message);
             }
-            await pendingKinds;
-        }
+            kindsStore.setAll([...data].sort((a: Kind, b: Kind) => a.name.localeCompare(b.name)));
+        });
         return kindsStore.kinds;
     }
 
     const getNotes = async (): Promise<Note[]> => {
-        if (!notesStore.loaded) {
-            if (!pendingNotes) {
-                pendingNotes = (async () => {
-                    const resp = await searchService.getNotes();
-                    const data = await resp.json();
+        await loadOnce("notes", () => notesStore.loaded, async () => {
+            const resp = await searchService.getNotes();
+            const data = await resp.json();
 
-                    if (isError(resp.status)) {
-                        throw new Error(data.message);
-                    }
-                    notesStore.setAll([...data].sort((a: Note, b: Note) => a.id - b.id));
-                })().finally(() => { pendingNotes = null; });
+            if (isError(resp.status)) {
+                throw new Error(data.message);
             }
-            await pendingNotes;
-        }
+            notesStore.setAll([...data].sort((a: Note, b: Note) => a.id - b.id));
+        });
         return notesStore.notes;
     }
 
     const getPlatforms = async (): Promise<Platform[]> => {
-        if (!platformsStore.loaded) {
-            if (!pendingPlatforms) {
-                pendingPlatforms = (async () => {
-                    const resp = await searchService.getPlatforms();
-                    const data = await resp.json();
+        await loadOnce("platforms", () => platformsStore.loaded, async () => {
+            const resp = await searchService.getPlatforms();
+            const data = await resp.json();
 
-                    if (isError(resp.status)) {
-                        throw new Error(data.message);
-                    }
-                    platformsStore.setAll([...data].sort((a: Platform, b: Platform) => a.name.localeCompare(b.name)));
-                })().finally(() => { pendingPlatforms = null; });
+            if (isError(resp.status)) {
+                throw new Error(data.message);
             }
-            await pendingPlatforms;
-        }
+            platformsStore.setAll([...data].sort((a: Platform, b: Platform) => a.name.localeCompare(b.name)));
+        });
         return platformsStore.platforms;
     }
 
-    const ensureCatalogLoaded = async (): Promise<void> => {
-        if (seriesCatalogStore.loaded) return;
+    const ensureCatalogLoaded = (): Promise<void> => loadOnce("seriesCatalog", () => seriesCatalogStore.loaded, async () => {
+        const resp = await searchService.getSeries();
+        const data = await resp.json();
 
-        if (!pendingCatalog) {
-            pendingCatalog = (async () => {
-                const resp = await searchService.getSeries();
-                const data = await resp.json();
-
-                if (isError(resp.status)) {
-                    throw new Error(data.message);
-                }
-                seriesCatalogStore.setAll(data);
-            })().finally(() => { pendingCatalog = null; });
+        if (isError(resp.status)) {
+            throw new Error(data.message);
         }
-        await pendingCatalog;
-    }
+        seriesCatalogStore.setAll(data);
+    });
 
     const getSerie = async (id: number): Promise<Serie> => {
         const cached = seriesCatalogStore.series.get(id);

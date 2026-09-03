@@ -3,30 +3,22 @@ import { isError } from "@/utils/response";
 import { useSnackbar } from "./snackbar";
 import type { User } from "@/models/user";
 import { useUserStore } from "@/stores/user";
-
-let pendingProfile: Promise<void> | null = null;
+import { loadOnce } from "@/utils/loadOnce";
 
 export function useUser() {
 
     const { showSuccess } = useSnackbar();
     const userStore = useUserStore();
 
-    const ensureProfileLoaded = async (): Promise<void> => {
-        if (userStore.loaded) return;
+    const ensureProfileLoaded = (): Promise<void> => loadOnce("profile", () => userStore.loaded, async () => {
+        const resp = await userService.getProfile();
+        const data = await resp.json();
 
-        if (!pendingProfile) {
-            pendingProfile = (async () => {
-                const resp = await userService.getProfile();
-                const data = await resp.json();
-
-                if (isError(resp.status)) {
-                    throw new Error(data.message);
-                }
-                userStore.set(data);
-            })().finally(() => { pendingProfile = null; });
+        if (isError(resp.status)) {
+            throw new Error(data.message);
         }
-        await pendingProfile;
-    }
+        userStore.set(data);
+    });
 
     const changeImage = async (image: string): Promise<void> => {
         const resp = await userService.updateImage(image);

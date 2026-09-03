@@ -2,30 +2,22 @@ import { useSnackbar } from "./snackbar";
 import platformService from "@/services/platformService";
 import { isError } from "@/utils/response";
 import { useUserPlatformsStore } from "@/stores/userPlatforms";
-
-let pendingUserPlatforms: Promise<void> | null = null;
+import { loadOnce } from "@/utils/loadOnce";
 
 export function usePlatform() {
 
     const { showSuccess } = useSnackbar();
     const userPlatformsStore = useUserPlatformsStore();
 
-    const ensureUserPlatformsLoaded = async (): Promise<void> => {
-        if (userPlatformsStore.loaded) return;
+    const ensureUserPlatformsLoaded = (): Promise<void> => loadOnce("userPlatforms", () => userPlatformsStore.loaded, async () => {
+        const resp = await platformService.getUserPlatforms();
+        const data = await resp.json();
 
-        if (!pendingUserPlatforms) {
-            pendingUserPlatforms = (async () => {
-                const resp = await platformService.getUserPlatforms();
-                const data = await resp.json();
-
-                if (isError(resp.status)) {
-                    throw new Error(data.message);
-                }
-                userPlatformsStore.setAll(data);
-            })().finally(() => { pendingUserPlatforms = null; });
+        if (isError(resp.status)) {
+            throw new Error(data.message);
         }
-        await pendingUserPlatforms;
-    }
+        userPlatformsStore.setAll(data);
+    });
 
     const getUserPlatforms = async (): Promise<number[]> => {
         await ensureUserPlatformsLoaded();

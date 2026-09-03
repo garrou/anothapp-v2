@@ -20,6 +20,7 @@ export const useNotesStore = defineStore("notes", () => {
     const reset = (): void => {
         notes.value = [];
         loaded.value = false;
+        storageService.clearCachedList(STORAGE_KEY);
     }
 
     return { notes, loaded, setAll, reset };

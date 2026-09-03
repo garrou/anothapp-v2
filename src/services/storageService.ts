@@ -2,6 +2,7 @@ const DISPLAY_CHART = "displayChart";
 
 const THEME = "theme";
 
+/** Default TTL for a persisted reference-data list, for data with no periodic refresh of its own (kinds, notes). */
 const REFERENCE_DATA_TTL_MS = 31 * 24 * 60 * 60 * 1000;
 
 const getCachedList = <T>(key: string): T[] | null => {
@@ -17,11 +18,19 @@ const getCachedList = <T>(key: string): T[] | null => {
     }
 }
 
-const storeCachedList = <T>(key: string, data: T[]): void => {
+const storeCachedList = <T>(key: string, data: T[], ttlMs: number = REFERENCE_DATA_TTL_MS): void => {
     try {
-        localStorage.setItem(key, JSON.stringify({ data, expires: Date.now() + REFERENCE_DATA_TTL_MS }));
+        localStorage.setItem(key, JSON.stringify({ data, expires: Date.now() + ttlMs }));
     } catch {
         // storage unavailable or full - nothing persists, the next load just refetches
+    }
+}
+
+const clearCachedList = (key: string): void => {
+    try {
+        localStorage.removeItem(key);
+    } catch {
+        // storage unavailable - nothing was persisted in the first place
     }
 }
 
@@ -38,6 +47,7 @@ const getTheme = (): string | null => localStorage.getItem(THEME);
 const storeTheme = (value: string): void => localStorage.setItem(THEME, value);
 
 export default {
+    clearCachedList,
     getCachedList,
     getColorChart,
     getDisplayChart,

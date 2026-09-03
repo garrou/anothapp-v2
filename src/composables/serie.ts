@@ -11,9 +11,7 @@ import { useUserSeriesStore } from "@/stores/userSeries";
 import { useUserListStore } from "@/stores/userList";
 import { useSeriesCatalogStore } from "@/stores/seriesCatalog";
 import { withoutAccentsIgnoreCase } from "@/utils/format";
-
-let pendingUserSeries: Promise<void> | null = null;
-let pendingUserList: Promise<void> | null = null;
+import { loadOnce } from "@/utils/loadOnce";
 
 export function useSerie() {
 
@@ -25,39 +23,25 @@ export function useSerie() {
     const seriesCatalogStore = useSeriesCatalogStore();
     const router = useRouter();
 
-    const ensureUserSeriesLoaded = async (): Promise<void> => {
-        if (userSeriesStore.loaded) return;
+    const ensureUserSeriesLoaded = (): Promise<void> => loadOnce("userSeries", () => userSeriesStore.loaded, async () => {
+        const resp = await serieService.getSeries();
+        const data = await resp.json();
 
-        if (!pendingUserSeries) {
-            pendingUserSeries = (async () => {
-                const resp = await serieService.getSeries();
-                const data = await resp.json();
-
-                if (isError(resp.status)) {
-                    throw new Error(data.message);
-                }
-                userSeriesStore.setAll(data);
-            })().finally(() => { pendingUserSeries = null; });
+        if (isError(resp.status)) {
+            throw new Error(data.message);
         }
-        await pendingUserSeries;
-    }
+        userSeriesStore.setAll(data);
+    });
 
-    const ensureUserListLoaded = async (): Promise<void> => {
-        if (userListStore.loaded) return;
+    const ensureUserListLoaded = (): Promise<void> => loadOnce("userList", () => userListStore.loaded, async () => {
+        const resp = await serieService.getSeriesByStatus(SerieStatus.Watchlist);
+        const data = await resp.json();
 
-        if (!pendingUserList) {
-            pendingUserList = (async () => {
-                const resp = await serieService.getSeriesByStatus(SerieStatus.Watchlist);
-                const data = await resp.json();
-
-                if (isError(resp.status)) {
-                    throw new Error(data.message);
-                }
-                userListStore.setAll(data);
-            })().finally(() => { pendingUserList = null; });
+        if (isError(resp.status)) {
+            throw new Error(data.message);
         }
-        await pendingUserList;
-    }
+        userListStore.setAll(data);
+    });
 
     const addSerie = async (id: number, inList: boolean = false): Promise<void> => {
         const resp = await serieService.addSerie(id, inList);

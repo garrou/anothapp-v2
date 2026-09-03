@@ -20,6 +20,7 @@ export const useKindsStore = defineStore("kinds", () => {
     const reset = (): void => {
         kinds.value = [];
         loaded.value = false;
+        storageService.clearCachedList(STORAGE_KEY);
     }
 
     return { kinds, loaded, setAll, reset };

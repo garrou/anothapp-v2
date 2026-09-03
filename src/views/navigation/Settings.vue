@@ -18,15 +18,9 @@
                     </template>
                 </v-list-item>
                 <v-list-item prepend-icon="mdi-database" title="Exporter mes données" @click="settings.exportData" />
-                <v-list-item class="text-error" prepend-icon="mdi-refresh" title="Réinitialiser l'application"
-                    @click="confirmReset = true" />
             </v-list>
         </v-card>
     </v-container>
-
-    <base-confirm v-model="confirmReset" title="Réinitialiser l'application"
-        text="Les données mises en cache seront supprimées et l'application va recharger. Confirmez-vous ?"
-        confirm-text="Réinitialiser" persistent @cancel="confirmReset = false" @confirm="settings.clearCaches" />
 
     <base-confirm v-model="confirmEpisodeTracking" title="Activer le suivi des épisodes"
         text="Votre historique existant sera synchronisé au niveau des épisodes, ce qui peut prendre un moment selon le nombre de séries suivies. Confirmez-vous ?"
@@ -54,7 +48,6 @@ const { getProfile, updateEpisodeTracking } = useUser();
 const theme = useTheme();
 
 const isDark = ref(theme.global.name.value === THEME_ANOTHAPP_DARK);
-const confirmReset = ref(false);
 const confirmEpisodeTracking = ref(false);
 const confirmEpisodeTrackingDisable = ref(false);
 const episodeTrackingEnabled = ref(false);

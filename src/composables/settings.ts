@@ -29,13 +29,8 @@ export function useSettings() {
         window.URL.revokeObjectURL(url);
     }
 
-    const clearCaches = () => {
-        location.reload();
-    }
-
     return {
-        exportData,
-        clearCaches
+        exportData
     }
 }
 

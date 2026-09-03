@@ -1,7 +1,7 @@
 <template>
     <span v-if="total">{{ buildPlural("série", series.length) }}</span>
     <card-grid v-if="series.length || loading" class="mt-2" :items="series" :loading="loading" :sm="4" :md="3"
-        :lg="3" :xl="3">
+        :lg="2" :xl="2">
         <template #default="{ item: serie }">
             <serie-card :serie="serie" :watch-status="watchStatus" :hide-details-button="hideDetailsButton"
                 @refresh="(id: number, kind: 'favorite' | 'list' | 'watch') => $emit('refresh', id, kind)" />

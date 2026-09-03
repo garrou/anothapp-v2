@@ -2,7 +2,7 @@
     <base-app-bar />
 
     <v-container>
-        <card-grid v-if="actors.length" :items="actors" :loading="loading" :lg="3" :xl="3">
+        <card-grid v-if="actors.length" :items="actors" :loading="loading" :sm="4" :md="3" :lg="2" :xl="2">
             <template #default="{ item: actor }">
                 <poster-card :image="actor.picture" :to="`/actor/${actor.id}`">
                     <template #quick-actions>

@@ -22,6 +22,16 @@ export function useActor() {
         return data;
     }
 
+    const getFriendFavoriteActors = async (friendId: string): Promise<FavoriteActor[]> => {
+        const resp = await actorService.getFavorites(friendId);
+        const data = await resp.json();
+
+        if (isError(resp.status))
+            throw new Error(data.message);
+
+        return data;
+    }
+
     const loadFavoriteActorIds = async (): Promise<void> => {
         if (actorStore.loaded) return;
 
@@ -60,6 +70,7 @@ export function useActor() {
     return {
         addFavoriteActor,
         getFavoriteActors,
+        getFriendFavoriteActors,
         loadFavoriteActorIds,
         removeFavoriteActor
     }

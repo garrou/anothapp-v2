@@ -23,6 +23,8 @@
 
         <friend-platforms v-if="userId" :user-id="userId" />
 
+        <friend-favorite-actors v-if="userId" :user-id="userId" />
+
         <div class="dash-toolbar my-4 px-3 px-sm-0">
             <pill-tabs v-if="displayChart" v-model="tab" :tabs="DASHBOARD_TABS" />
             <span v-else class="text-body-2 text-medium-emphasis">Graphiques masqués</span>
@@ -113,6 +115,7 @@ import SeriesCountries from "@/components/stats/SeriesCountries.vue";
 import SeriesKinds from "@/components/stats/SeriesKinds.vue";
 import FriendSeries from "@/components/friends/FriendSeries.vue";
 import FriendPlatforms from "@/components/friends/FriendPlatforms.vue";
+import FriendFavoriteActors from "@/components/friends/FriendFavoriteActors.vue";
 import SeriesNotes from "@/components/stats/SeriesNotes.vue";
 import EpisodesHeatmap from "@/components/stats/EpisodesHeatmap.vue";
 import { useStatistic } from "@/composables/statistic";

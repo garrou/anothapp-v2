@@ -2,7 +2,7 @@ import { useSnackbar } from "./snackbar";
 import platformService from "@/services/platformService";
 import { isError } from "@/utils/response";
 import { useUserPlatformsStore } from "@/stores/userPlatforms";
-import { loadOnce } from "@/utils/loadOnce";
+import { currentEpoch, loadOnce } from "@/utils/loadOnce";
 
 export function usePlatform() {
 
@@ -10,13 +10,16 @@ export function usePlatform() {
     const userPlatformsStore = useUserPlatformsStore();
 
     const ensureUserPlatformsLoaded = (): Promise<void> => loadOnce("userPlatforms", () => userPlatformsStore.loaded, async () => {
+        const epoch = currentEpoch("userPlatforms");
         const resp = await platformService.getUserPlatforms();
         const data = await resp.json();
 
         if (isError(resp.status)) {
             throw new Error(data.message);
         }
-        userPlatformsStore.setAll(data);
+        if (currentEpoch("userPlatforms") === epoch) {
+            userPlatformsStore.setAll(data);
+        }
     });
 
     const getUserPlatforms = async (): Promise<number[]> => {

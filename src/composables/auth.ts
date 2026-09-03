@@ -7,6 +7,9 @@ import { useUserStore } from "@/stores/user";
 import { useUserSeriesStore } from "@/stores/userSeries";
 import { useUserListStore } from "@/stores/userList";
 import { useUserPlatformsStore } from "@/stores/userPlatforms";
+import { invalidateLoad } from "@/utils/loadOnce";
+
+const PER_USER_LOAD_KEYS = ["userSeries", "userList", "userPlatforms", "profile", "favoriteActorIds"];
 
 let pendingCheckAuth: Promise<boolean> | null = null;
 let lastCheckAuth: { result: boolean, at: number } | null = null;
@@ -54,6 +57,7 @@ export function useAuth() {
 
         authEpoch++;
         lastCheckAuth = { result: true, at: Date.now() };
+        PER_USER_LOAD_KEYS.forEach(invalidateLoad);
         useUserSeriesStore().reset();
         useUserListStore().reset();
         useUserPlatformsStore().reset();
@@ -66,6 +70,7 @@ export function useAuth() {
         authEpoch++;
         lastCheckAuth = { result: false, at: Date.now() };
         await authService.logout();
+        PER_USER_LOAD_KEYS.forEach(invalidateLoad);
         useUserSeriesStore().reset();
         useUserStore().reset();
         useUserListStore().reset();

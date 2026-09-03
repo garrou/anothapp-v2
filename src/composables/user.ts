@@ -3,7 +3,7 @@ import { isError } from "@/utils/response";
 import { useSnackbar } from "./snackbar";
 import type { User } from "@/models/user";
 import { useUserStore } from "@/stores/user";
-import { loadOnce } from "@/utils/loadOnce";
+import { currentEpoch, loadOnce } from "@/utils/loadOnce";
 
 export function useUser() {
 
@@ -11,13 +11,16 @@ export function useUser() {
     const userStore = useUserStore();
 
     const ensureProfileLoaded = (): Promise<void> => loadOnce("profile", () => userStore.loaded, async () => {
+        const epoch = currentEpoch("profile");
         const resp = await userService.getProfile();
         const data = await resp.json();
 
         if (isError(resp.status)) {
             throw new Error(data.message);
         }
-        userStore.set(data);
+        if (currentEpoch("profile") === epoch) {
+            userStore.set(data);
+        }
     });
 
     const changeImage = async (image: string): Promise<void> => {

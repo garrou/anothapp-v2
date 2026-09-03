@@ -54,6 +54,10 @@ export function useAuth() {
 
         authEpoch++;
         lastCheckAuth = { result: true, at: Date.now() };
+        useUserSeriesStore().reset();
+        useUserListStore().reset();
+        useUserPlatformsStore().reset();
+        useActorStore().reset();
         useUserStore().set(data);
         router.replace("/series");
     }

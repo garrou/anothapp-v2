@@ -1,4 +1,3 @@
-import cache from "@/cache";
 import settingService from "@/services/settingService";
 
 export function useSettings() {
@@ -30,15 +29,8 @@ export function useSettings() {
         window.URL.revokeObjectURL(url);
     }
 
-    const clearCaches = () => {
-        cache.reset().then(() => {
-            location.reload();
-        });
-    }
-
     return {
-        exportData,
-        clearCaches
+        exportData
     }
 }
 

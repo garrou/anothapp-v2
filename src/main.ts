@@ -12,7 +12,6 @@ import { createVuetify } from "vuetify";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
 import { useSnackbar } from "@/composables/snackbar";
-import cache from "./cache";
 import storageService from "@/services/storageService";
 import { THEME_ANOTHAPP, THEME_ANOTHAPP_DARK, applyThemeClass } from "@/utils/theme";
 
@@ -103,9 +102,4 @@ const snackbar = useSnackbar();
 
 app.config.errorHandler = (err: unknown) => snackbar.showError(err as Error);
 
-cache
-.initialize()
-.then(() => {
-    app.mount("#app");
-})
-.catch(() => snackbar.showError("Erreur durant l'initialisation de l'application"));
+app.mount("#app");

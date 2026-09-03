@@ -3,13 +3,21 @@ import type { Season } from "@/models/season";
 import type { Kind, Platform, Serie, Similar } from "@/models/serie";
 import searchService from "@/services/searchService";
 import { isError } from "@/utils/response";
-import cache from "@/cache";
 import { useSearchStore } from "@/stores/search";
+import { useKindsStore } from "@/stores/kinds";
+import { useNotesStore } from "@/stores/notes";
+import { usePlatformsStore } from "@/stores/platforms";
+import { useSeriesCatalogStore } from "@/stores/seriesCatalog";
 import type { Note } from "@/models/note";
+import { loadOnce } from "@/utils/loadOnce";
 
 export function useSearch() {
 
     const searchStore = useSearchStore();
+    const kindsStore = useKindsStore();
+    const notesStore = useNotesStore();
+    const platformsStore = usePlatformsStore();
+    const seriesCatalogStore = useSeriesCatalogStore();
 
     const getActor = async (id: number): Promise<Actor> => {
         const resp = await searchService.getActor(id);
@@ -32,19 +40,68 @@ export function useSearch() {
     }
 
     const getKinds = async (): Promise<Kind[]> => {
-        return cache.kinds.getKinds();
+        await loadOnce("kinds", () => kindsStore.loaded, async () => {
+            const resp = await searchService.getKinds();
+            const data = await resp.json();
+
+            if (isError(resp.status)) {
+                throw new Error(data.message);
+            }
+            kindsStore.setAll([...data].sort((a: Kind, b: Kind) => a.name.localeCompare(b.name)));
+        });
+        return kindsStore.kinds;
     }
 
     const getNotes = async (): Promise<Note[]> => {
-        return cache.notes.getNotes();
+        await loadOnce("notes", () => notesStore.loaded, async () => {
+            const resp = await searchService.getNotes();
+            const data = await resp.json();
+
+            if (isError(resp.status)) {
+                throw new Error(data.message);
+            }
+            notesStore.setAll([...data].sort((a: Note, b: Note) => a.id - b.id));
+        });
+        return notesStore.notes;
     }
 
     const getPlatforms = async (): Promise<Platform[]> => {
-        return cache.platforms.getPlatforms();
+        await loadOnce("platforms", () => platformsStore.loaded, async () => {
+            const resp = await searchService.getPlatforms();
+            const data = await resp.json();
+
+            if (isError(resp.status)) {
+                throw new Error(data.message);
+            }
+            platformsStore.setAll([...data].sort((a: Platform, b: Platform) => a.name.localeCompare(b.name)));
+        });
+        return platformsStore.platforms;
     }
 
+    const ensureCatalogLoaded = (): Promise<void> => loadOnce("seriesCatalog", () => seriesCatalogStore.loaded, async () => {
+        const resp = await searchService.getSeries();
+        const data = await resp.json();
+
+        if (isError(resp.status)) {
+            throw new Error(data.message);
+        }
+        seriesCatalogStore.setAll(data);
+    });
+
     const getSerie = async (id: number): Promise<Serie> => {
-        return cache.series.getSerieById(id);
+        const cached = seriesCatalogStore.series.get(id);
+
+        if (cached) {
+            return cached;
+        }
+        const resp = await searchService.getSerie(id);
+        const data = await resp.json();
+
+        if (isError(resp.status))
+            throw new Error(data.message);
+
+        seriesCatalogStore.upsert(data);
+        return data;
     }
 
     const getSerieImages = async (id: number): Promise<string[]> => {
@@ -71,7 +128,8 @@ export function useSearch() {
 
             return data;
         }
-        return cache.series.getSeries();
+        await ensureCatalogLoaded();
+        return Array.from(seriesCatalogStore.series.values());
     }
 
     const getSeasonsBySerieId = async (id: number): Promise<Season[]> => {

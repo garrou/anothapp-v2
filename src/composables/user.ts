@@ -2,11 +2,26 @@ import userService from "@/services/userService"
 import { isError } from "@/utils/response";
 import { useSnackbar } from "./snackbar";
 import type { User } from "@/models/user";
-import cache from "@/cache";
+import { useUserStore } from "@/stores/user";
+import { currentEpoch, loadOnce } from "@/utils/loadOnce";
 
 export function useUser() {
 
     const { showSuccess } = useSnackbar();
+    const userStore = useUserStore();
+
+    const ensureProfileLoaded = (): Promise<void> => loadOnce("profile", () => userStore.loaded, async () => {
+        const epoch = currentEpoch("profile");
+        const resp = await userService.getProfile();
+        const data = await resp.json();
+
+        if (isError(resp.status)) {
+            throw new Error(data.message);
+        }
+        if (currentEpoch("profile") === epoch) {
+            userStore.set(data);
+        }
+    });
 
     const changeImage = async (image: string): Promise<void> => {
         const resp = await userService.updateImage(image);
@@ -15,11 +30,8 @@ export function useUser() {
             const data = await resp.json();
             throw new Error(data.message);
         }
-        const user = await cache.users.getProfile();
-        await cache.users.addUser({
-            ...user,
-            picture: image
-        });
+        await ensureProfileLoaded();
+        userStore.patch({ picture: image });
         showSuccess("Image de profil modifiée");
     }
 
@@ -40,11 +52,8 @@ export function useUser() {
             const data = await resp.json();
             throw new Error(data.message);
         }
-        const user = await cache.users.getProfile();
-        await cache.users.addUser({
-            ...user,
-            email: newEmail
-        });
+        await ensureProfileLoaded();
+        userStore.patch({ email: newEmail });
         showSuccess("Email modifié");
     }
 
@@ -55,11 +64,8 @@ export function useUser() {
             const data = await resp.json();
             throw new Error(data.message);
         }
-        const user = await cache.users.getProfile();
-        await cache.users.addUser({
-            ...user,
-            episodeTrackingEnabled: enabled
-        });
+        await ensureProfileLoaded();
+        userStore.patch({ episodeTrackingEnabled: enabled });
         showSuccess(enabled ? "Suivi des épisodes activé" : "Suivi des épisodes désactivé");
     }
 
@@ -74,7 +80,8 @@ export function useUser() {
     }
 
     const getProfile = async (): Promise<User> => {
-        return cache.users.getProfile();
+        await ensureProfileLoaded();
+        return userStore.profile as User;
     }
 
     return { changeEmail, changePassword, changeImage, getUsers, getProfile, updateEpisodeTracking }

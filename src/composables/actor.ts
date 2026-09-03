@@ -3,8 +3,7 @@ import { useActorStore } from "@/stores/actor";
 import { useSnackbar } from "./snackbar";
 import type { FavoriteActor } from "@/models/person";
 import { isError } from "@/utils/response";
-
-let pendingLoad: Promise<void> | null = null;
+import { currentEpoch, loadOnce } from "@/utils/loadOnce";
 
 export function useActor() {
 
@@ -32,18 +31,18 @@ export function useActor() {
         return data;
     }
 
-    const loadFavoriteActorIds = async (): Promise<void> => {
-        if (actorStore.loaded) return;
+    const loadFavoriteActorIds = (): Promise<void> => loadOnce("favoriteActorIds", () => actorStore.loaded, async () => {
+        const epoch = currentEpoch("favoriteActorIds");
+        const resp = await actorService.getFavorites();
+        const data = await resp.json();
 
-        if (!pendingLoad) {
-            pendingLoad = getFavoriteActors()
-                .then(() => undefined)
-                .finally(() => {
-                    pendingLoad = null;
-                });
+        if (isError(resp.status)) {
+            throw new Error(data.message);
         }
-        await pendingLoad;
-    }
+        if (currentEpoch("favoriteActorIds") === epoch) {
+            actorStore.setFavoriteActorIds(data.map((actor: FavoriteActor) => actor.id));
+        }
+    });
 
     const addFavoriteActor = async (id: number, name: string): Promise<void> => {
         const resp = await actorService.addFavorite(id);

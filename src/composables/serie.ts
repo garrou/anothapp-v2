@@ -128,10 +128,8 @@ export function useSerie() {
         if (isError(resp.status)) {
             throw new Error(data.message);
         }
-        return {
-            ...data,
-            serie: await getSerie(options)
-        };
+        userSeriesStore.upsert(data.serie);
+        return data;
     }
 
     const filterAndSortUserSeries = (options: SerieSearchOptions): Serie[] => {

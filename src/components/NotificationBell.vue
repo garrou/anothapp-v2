@@ -1,7 +1,7 @@
 <template>
     <v-menu v-model="menu" location="bottom end" :close-on-content-click="false">
         <template #activator="{ props: menuProps }">
-            <v-badge class="bell-badge" :content="badgeContent" :model-value="unreadCount > 0" color="error">
+            <v-badge class="bell-badge" :content="unreadCount" :model-value="unreadCount > 0" color="error">
                 <v-btn v-bind="menuProps" icon="mdi-bell-outline" density="compact" size="small" variant="text" />
             </v-badge>
         </template>
@@ -81,8 +81,6 @@ const hasUnreadInView = computed(() => filteredNotifications.value.some((n) => !
 
 const emptyMessage = computed(() => activeGroup.value ? "Aucune notification dans cette catégorie" : "Aucune notification");
 
-const badgeContent = computed(() => unreadCount.value > 99 ? "99+" : unreadCount.value);
-
 const tabItems = computed(() => TABS.map((tab) => ({
     value: tab.value,
     label: tab.label,
@@ -158,8 +156,8 @@ onBeforeMount(async () => {
     loading.value = true;
     try {
         const [response, notes] = await Promise.all([getNotifications(), getNotes()]);
-        notifications.value = response.notifications;
-        unreadCount.value = response.unreadCount;
+        notifications.value = response.notifications ?? [];
+        unreadCount.value = notifications.value.filter((n) => !n.read).length;
         noteNames.value = Object.fromEntries(notes.map((note) => [note.id, note.name]));
     } finally {
         loading.value = false;

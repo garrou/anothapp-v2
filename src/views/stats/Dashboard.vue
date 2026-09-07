@@ -90,6 +90,10 @@
                             title="Saisons par plateformes" />
                     </v-col>
                     <v-col cols="12" md="6">
+                        <chart :data="stat?.topWatchedWithFriends" :type="ChartType.Pie" chart-id="top-watched-with"
+                            title="Vu le plus avec" />
+                    </v-col>
+                    <v-col cols="12" md="6">
                         <series-notes :data="stat?.seriesNotes" @click="handleChartClick" />
                     </v-col>
                     <v-col cols="12">

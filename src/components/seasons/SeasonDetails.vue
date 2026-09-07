@@ -9,6 +9,9 @@
                 <div class="season-entry-info">
                     <div class="season-entry-date">{{ formatDate(subSeason.addedAt) }}</div>
                     <div class="season-entry-subtitle">{{ subSeason.platform.name }}</div>
+                    <div v-if="subSeason.watchedWith.length" class="season-entry-subtitle">
+                        Vu avec {{ subSeason.watchedWith.map((friend) => friend.username).join(", ") }}
+                    </div>
                 </div>
 
                 <v-btn v-if="!isEdited(subSeason.id)" class="season-entry-btn" :icon="EDIT_ICON" size="32"
@@ -22,6 +25,11 @@
                 <v-select v-model="seasonInfo.platform" class="mb-3" :density="DENSITY" hide-details
                     :items="platforms" item-title="name" item-value="id" />
                 <v-text-field v-model="seasonInfo.viewedAt" class="mb-3" hide-details type="datetime-local" />
+
+                <v-label class="season-entry-label">Vu avec</v-label>
+                <v-autocomplete v-model="seasonInfo.watchedWith" class="mb-3" :density="DENSITY" hide-details
+                    multiple chips closable-chips :items="friends" item-title="username" item-value="id"
+                    :hint="`${seasonInfo.watchedWith.length} / ${MAX_WATCHED_WITH}`" />
 
                 <v-btn block color="primary" rounded="pill" @click="changeSeason">Enregistrer</v-btn>
             </div>
@@ -62,6 +70,9 @@ import type { Platform } from "@/models/serie";
 import { useSearch } from "@/composables/search";
 import { useUser } from "@/composables/user";
 import { usePlatform } from "@/composables/platform";
+import { useFriend } from "@/composables/friend";
+import type { User } from "@/models/user";
+import { MAX_WATCHED_WITH } from "@/constants/season";
 import PlatformCard from "../series/PlatformCard.vue";
 import EpisodesChecklist from "./EpisodesChecklist.vue";
 
@@ -78,10 +89,11 @@ const emit = defineEmits<{
 
 const { getPlatforms } = useSearch();
 const { getSerie } = useSerie();
-const { deleteSeason, getSeasonInfosBySerieIdByNumber, getSeasonWatchedTime, updateSeason } = useSeason();
+const { deleteSeason, getSeasonInfosBySerieIdByNumber, getSeasonWatchedTime, updateSeason, updateWatchedWith } = useSeason();
 const { addAllEpisodesViewing } = useEpisode();
 const { getProfile } = useUser();
 const { getUserPlatforms } = usePlatform();
+const { getFriends } = useFriend();
 
 const modal = ref(false);
 const seasons = ref<SeasonDetail[]>([]);
@@ -90,11 +102,13 @@ const time = ref(0);
 const toEdit = ref(-1);
 const episodeTrackingEnabled = ref(false);
 const platforms = ref<Platform[]>([]);
+const friends = ref<User[]>([]);
 const bulkOfferSeasonId = ref(-1);
 const episodesRefreshKey = ref(0);
 const seasonInfo = reactive({
     platform: 0,
-    viewedAt: ""
+    viewedAt: "",
+    watchedWith: [] as string[]
 });
 
 const isEdited = (id: number): boolean => toEdit.value === id;
@@ -134,8 +148,12 @@ const dropSeason = async (id: number) => {
 }
 
 const changeSeason = async () => {
+    if (seasonInfo.watchedWith.length > MAX_WATCHED_WITH) return;
+
     const updated = await updateSeason(toEdit.value, seasonInfo.platform, seasonInfo.viewedAt);
     if (!updated) return;
+
+    await updateWatchedWith(toEdit.value, seasonInfo.watchedWith);
 
     const idx = seasons.value.map((s) => s.id).indexOf(toEdit.value);
     if (idx < 0 || !seasonInfo.viewedAt || !seasonInfo.platform) return;
@@ -145,6 +163,7 @@ const changeSeason = async () => {
 
     seasons.value[idx].addedAt = seasonInfo.viewedAt;
     seasons.value[idx].platform = newPlatform;
+    seasons.value[idx].watchedWith = friends.value.filter((f) => seasonInfo.watchedWith.includes(f.id));
 }
 
 watch(toEdit, () => {
@@ -156,14 +175,18 @@ watch(toEdit, () => {
     };
     seasonInfo.platform = season.platform.id;
     seasonInfo.viewedAt = toDatetimeLocalInput(season.addedAt);
+    seasonInfo.watchedWith = season.watchedWith.map((friend) => friend.id);
 });
 
 onBeforeMount(async () => {
-    const [allPlatforms, userPlatformIds] = await Promise.all([getPlatforms(), getUserPlatforms()]);
+    const [allPlatforms, userPlatformIds, friendsResponse] = await Promise.all([
+        getPlatforms(), getUserPlatforms(), getFriends()
+    ]);
     platforms.value = [
         ...allPlatforms.filter((p) => userPlatformIds.includes(p.id)),
         ...allPlatforms.filter((p) => !userPlatformIds.includes(p.id))
     ];
+    friends.value = friendsResponse.friends;
     seasons.value = await getSeasonInfosBySerieIdByNumber(props.id, props.season.number);
     const user = await getProfile();
     episodeTrackingEnabled.value = user.episodeTrackingEnabled ?? false;

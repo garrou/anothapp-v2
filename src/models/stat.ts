@@ -43,6 +43,8 @@ export interface GlobalStat {
     longestStreak: number;
 
     episodesHeatmap?: { date: string; value: number }[];
+
+    topWatchedWithFriends: Stat[];
 }
 
 export interface Stat {

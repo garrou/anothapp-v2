@@ -1,4 +1,5 @@
 import type { Platform } from "./serie";
+import type { User } from "./user";
 
 export interface SeasonDetail {
 
@@ -7,6 +8,8 @@ export interface SeasonDetail {
     id: number;
 
     platform: Platform;
+
+    watchedWith: User[];
 }
 
 export interface Season {

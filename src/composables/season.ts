@@ -90,6 +90,15 @@ export function useSeason() {
         return true;
     }
 
+    const updateWatchedWith = async (id: number, friendIds: string[]): Promise<void> => {
+        const resp = await seasonService.updateWatchedWith(id, friendIds);
+
+        if (isError(resp.status)) {
+            const data = await resp.json();
+            throw new Error(data.message);
+        }
+    }
+
     return {
         addSeason,
         deleteSeason,
@@ -97,6 +106,7 @@ export function useSeason() {
         getSeasonsTimeline,
         getSeasonInfosBySerieIdByNumber,
         getSeasonWatchedTime,
-        updateSeason
+        updateSeason,
+        updateWatchedWith
     }
 }

@@ -27,9 +27,10 @@
                 <v-text-field v-model="seasonInfo.viewedAt" class="mb-3" hide-details type="datetime-local" />
 
                 <v-label class="season-entry-label">Vu avec</v-label>
-                <v-autocomplete v-model="seasonInfo.watchedWith" class="mb-3" :density="DENSITY" hide-details
+                <v-autocomplete v-model="seasonInfo.watchedWith" class="mb-3" :density="DENSITY"
                     multiple chips closable-chips :items="friends" item-title="username" item-value="id"
-                    :hint="`${seasonInfo.watchedWith.length} / ${MAX_WATCHED_WITH}`" />
+                    :hint="`${seasonInfo.watchedWith.length} / ${MAX_WATCHED_WITH}`" persistent-hint
+                    :rules="[(v: string[]) => v.length <= MAX_WATCHED_WITH || `Maximum ${MAX_WATCHED_WITH} amis`]" />
 
                 <v-btn block color="primary" rounded="pill" @click="changeSeason">Enregistrer</v-btn>
             </div>
@@ -71,6 +72,7 @@ import { useSearch } from "@/composables/search";
 import { useUser } from "@/composables/user";
 import { usePlatform } from "@/composables/platform";
 import { useFriend } from "@/composables/friend";
+import { useSnackbar } from "@/composables/snackbar";
 import type { User } from "@/models/user";
 import { MAX_WATCHED_WITH } from "@/constants/season";
 import PlatformCard from "../series/PlatformCard.vue";
@@ -94,6 +96,7 @@ const { addAllEpisodesViewing } = useEpisode();
 const { getProfile } = useUser();
 const { getUserPlatforms } = usePlatform();
 const { getFriends } = useFriend();
+const { showError } = useSnackbar();
 
 const modal = ref(false);
 const seasons = ref<SeasonDetail[]>([]);
@@ -148,7 +151,10 @@ const dropSeason = async (id: number) => {
 }
 
 const changeSeason = async () => {
-    if (seasonInfo.watchedWith.length > MAX_WATCHED_WITH) return;
+    if (seasonInfo.watchedWith.length > MAX_WATCHED_WITH) {
+        showError(`Vous ne pouvez pas taguer plus de ${MAX_WATCHED_WITH} amis`);
+        return;
+    }
 
     const updated = await updateSeason(toEdit.value, seasonInfo.platform, seasonInfo.viewedAt);
     if (!updated) return;

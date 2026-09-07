@@ -4,10 +4,13 @@ import friendService from "@/services/friendService"
 import type { FriendStatus } from "@/types/types";
 import { isError } from "@/utils/response";
 import { useSnackbar } from "./snackbar";
+import { useFriendsStore } from "@/stores/friends";
+import { currentEpoch, invalidateLoad, loadOnce } from "@/utils/loadOnce";
 
 export function useFriend() {
 
     const { showSuccess } = useSnackbar();
+    const friendsStore = useFriendsStore();
 
     const acceptFriendRequest = async (user: User): Promise<void> => {
         const resp = await friendService.acceptFriendRequest(user.id);
@@ -16,6 +19,7 @@ export function useFriend() {
             const data = await resp.json();
             throw new Error(data.message);
         }
+        invalidateLoad("friends");
         showSuccess(`Demande de ${user.username} acceptée`);
     }
 
@@ -46,6 +50,9 @@ export function useFriend() {
             const data = await resp.json();
             throw new Error(data.message);
         }
+        if (context === "friend") {
+            invalidateLoad("friends");
+        }
         const messages = {
             friend: `Amitié avec ${user.username} supprimée`,
             received: `Demande de ${user.username} refusée`,
@@ -54,5 +61,22 @@ export function useFriend() {
         showSuccess(messages[context]);
     }
 
-    return { acceptFriendRequest, deleteFriend, getFriends, sendFriendRequest }
+    /** Cached accepted-friends list: fetched at most once per session, reused across mounts. */
+    const getCachedFriends = async (): Promise<User[]> => {
+        await loadOnce("friends", () => friendsStore.loaded, async () => {
+            const epoch = currentEpoch("friends");
+            const resp = await friendService.getFriends();
+            const data = await resp.json();
+
+            if (isError(resp.status)) {
+                throw new Error(data.message);
+            }
+            if (currentEpoch("friends") === epoch) {
+                friendsStore.setAll(data.friends);
+            }
+        });
+        return friendsStore.friends;
+    }
+
+    return { acceptFriendRequest, deleteFriend, getCachedFriends, getFriends, sendFriendRequest }
 }

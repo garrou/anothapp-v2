@@ -106,7 +106,7 @@ const { deleteSeason, getSeasonInfosBySerieIdByNumber, getSeasonWatchedTime, upd
 const { addAllEpisodesViewing } = useEpisode();
 const { getProfile } = useUser();
 const { getUserPlatforms } = usePlatform();
-const { getFriends } = useFriend();
+const { getCachedFriends } = useFriend();
 const { showError } = useSnackbar();
 
 const modal = ref(false);
@@ -196,14 +196,14 @@ watch(toEdit, () => {
 });
 
 onBeforeMount(async () => {
-    const [allPlatforms, userPlatformIds, friendsResponse] = await Promise.all([
-        getPlatforms(), getUserPlatforms(), getFriends()
+    const [allPlatforms, userPlatformIds, cachedFriends] = await Promise.all([
+        getPlatforms(), getUserPlatforms(), getCachedFriends()
     ]);
     platforms.value = [
         ...allPlatforms.filter((p) => userPlatformIds.includes(p.id)),
         ...allPlatforms.filter((p) => !userPlatformIds.includes(p.id))
     ];
-    friends.value = friendsResponse.friends;
+    friends.value = cachedFriends;
     seasons.value = await getSeasonInfosBySerieIdByNumber(props.id, props.season.number);
     const user = await getProfile();
     episodeTrackingEnabled.value = user.episodeTrackingEnabled ?? false;

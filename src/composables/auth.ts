@@ -7,9 +7,10 @@ import { useUserStore } from "@/stores/user";
 import { useUserSeriesStore } from "@/stores/userSeries";
 import { useUserListStore } from "@/stores/userList";
 import { useUserPlatformsStore } from "@/stores/userPlatforms";
+import { useFriendsStore } from "@/stores/friends";
 import { invalidateLoad } from "@/utils/loadOnce";
 
-const PER_USER_LOAD_KEYS = ["userSeries", "userList", "userPlatforms", "profile", "favoriteActorIds"];
+const PER_USER_LOAD_KEYS = ["userSeries", "userList", "userPlatforms", "profile", "favoriteActorIds", "friends"];
 
 let pendingCheckAuth: Promise<boolean> | null = null;
 let lastCheckAuth: { result: boolean, at: number } | null = null;
@@ -62,6 +63,7 @@ export function useAuth() {
         useUserListStore().reset();
         useUserPlatformsStore().reset();
         useActorStore().reset();
+        useFriendsStore().reset();
         useUserStore().set(data);
         router.replace("/series");
     }
@@ -76,6 +78,7 @@ export function useAuth() {
         useUserListStore().reset();
         useUserPlatformsStore().reset();
         useActorStore().reset();
+        useFriendsStore().reset();
         router.replace("/login");
     }
 

@@ -17,11 +17,15 @@ const addEpisodeViewing = (id: number, episodeId: number): Promise<Response> =>
 
 const addAllEpisodesViewing = (id: number): Promise<Response> => httpClient.post(`${PREFIX}/${id}/episodes`);
 
+const updateWatchedWith = (id: number, friendIds: string[]): Promise<Response> =>
+    httpClient.patch(`${PREFIX}/${id}/watched-with`, { friendIds });
+
 export default {
     addAllEpisodesViewing,
     addEpisodeViewing,
     deleteSeasonById,
     getEpisodesBySeasonId,
     getSeasons,
-    updateSeason
+    updateSeason,
+    updateWatchedWith
 }

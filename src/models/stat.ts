@@ -75,6 +75,8 @@ export interface WrappedStat {
     bestMonth: Stat | null;
 
     bestStreak: number;
+
+    topWatchedWithFriend: Stat | null;
 }
 
 export interface ChartData {

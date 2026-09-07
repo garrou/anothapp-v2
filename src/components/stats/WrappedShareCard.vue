@@ -38,6 +38,10 @@
                 <span class="share-card-highlight-label">Plateforme préférée</span>
                 <span class="share-card-highlight-value">{{ wrapped.topPlatform.label }}</span>
             </div>
+            <div v-if="wrapped.topWatchedWithFriend" class="share-card-highlight">
+                <span class="share-card-highlight-label">Ami de l'année</span>
+                <span class="share-card-highlight-value">{{ wrapped.topWatchedWithFriend.label }}</span>
+            </div>
             <div v-if="wrapped.bestMonth" class="share-card-highlight">
                 <span class="share-card-highlight-label">Mois le plus actif</span>
                 <span class="share-card-highlight-value">{{ wrapped.bestMonth.label.trim() }}</span>

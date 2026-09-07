@@ -55,12 +55,17 @@
                     <div class="wrapped-card-label">plateforme préférée</div>
                 </div>
 
-                <div v-if="wrapped.bestMonth" class="wrapped-card" :style="cardStyle(6)">
+                <div v-if="wrapped.topWatchedWithFriend" class="wrapped-card" :style="cardStyle(6)">
+                    <div class="wrapped-card-value wrapped-card-value--text">{{ wrapped.topWatchedWithFriend.label }}</div>
+                    <div class="wrapped-card-label">ami de l'année</div>
+                </div>
+
+                <div v-if="wrapped.bestMonth" class="wrapped-card" :style="cardStyle(7)">
                     <div class="wrapped-card-value wrapped-card-value--text">{{ wrapped.bestMonth.label.trim() }}</div>
                     <div class="wrapped-card-label">mois le plus actif</div>
                 </div>
 
-                <div v-if="wrapped.bestStreak" class="wrapped-card" :style="cardStyle(7)">
+                <div v-if="wrapped.bestStreak" class="wrapped-card" :style="cardStyle(8)">
                     <v-icon icon="mdi-fire" size="20" class="wrapped-card-icon" />
                     <div class="wrapped-card-value">{{ wrapped.bestStreak }}</div>
                     <div class="wrapped-card-label">

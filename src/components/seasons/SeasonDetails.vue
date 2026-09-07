@@ -30,7 +30,18 @@
                 <v-autocomplete v-model="seasonInfo.watchedWith" class="mb-3" :density="DENSITY"
                     multiple chips closable-chips :items="friends" item-title="username" item-value="id"
                     :hint="`${seasonInfo.watchedWith.length} / ${MAX_WATCHED_WITH}`" persistent-hint
-                    :rules="[(v: string[]) => v.length <= MAX_WATCHED_WITH || `Maximum ${MAX_WATCHED_WITH} amis`]" />
+                    :rules="[(v: string[]) => v.length <= MAX_WATCHED_WITH || `Maximum ${MAX_WATCHED_WITH} amis`]">
+                    <template #item="{ item, props: itemProps }">
+                        <v-list-item v-bind="itemProps" :title="item.raw.username">
+                            <template #prepend>
+                                <v-avatar v-if="item.raw.picture" :image="item.raw.picture" size="32" />
+                                <v-avatar v-else color="surface-variant" size="32">
+                                    <v-icon icon="mdi-account" size="18" />
+                                </v-avatar>
+                            </template>
+                        </v-list-item>
+                    </template>
+                </v-autocomplete>
 
                 <v-btn block color="primary" rounded="pill" @click="changeSeason">Enregistrer</v-btn>
             </div>

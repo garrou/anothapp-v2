@@ -53,7 +53,7 @@
             </v-list>
         </v-navigation-drawer>
 
-        <v-navigation-drawer v-model="filters" location="right" width="320">
+        <v-navigation-drawer v-model="filters" location="right" width="320" temporary>
             <div class="d-flex flex-row mt-2">
                 <v-tabs v-model="tab" color="primary" direction="vertical">
                     <v-tab min-width="40" :value="1">

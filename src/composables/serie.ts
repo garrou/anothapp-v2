@@ -146,9 +146,9 @@ export function useSerie() {
     }
 
     const getSeries = async (): Promise<Serie[]> => {
-        const { filterCountries, filterKinds, filterNotes, filterTitle, filterPlatforms, formatPlatforms, formatKinds, formatNotes } = serieStore;
+        const { filterCountries, filterKinds, filterNotes, filterTitle, filterPlatforms, filterFriends, formatPlatforms, formatKinds, formatNotes, formatFriends } = serieStore;
 
-        if (!filterPlatforms.length) {
+        if (!filterPlatforms.length && !filterFriends.length) {
             await ensureUserSeriesLoaded();
             return filterAndSortUserSeries({
                 notes: filterNotes.length ? filterNotes.map((note) => note.id) : undefined,
@@ -157,7 +157,7 @@ export function useSerie() {
                 countries: filterCountries.length ? filterCountries : undefined,
             });
         }
-        const resp = await serieService.getSeries(filterTitle, formatPlatforms(), formatKinds(), formatNotes());
+        const resp = await serieService.getSeries(filterTitle, formatPlatforms(), formatKinds(), formatNotes(), formatFriends());
         const data = await resp.json();
 
         if (isError(resp.status))

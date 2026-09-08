@@ -2,6 +2,7 @@ import { ref } from "vue";
 import { defineStore } from "pinia";
 import type { Kind, Platform } from "@/models/serie";
 import type { Note } from "@/models/note";
+import type { User } from "@/models/user";
 
 export const useSerieStore = defineStore("serie", () => {
 
@@ -10,6 +11,7 @@ export const useSerieStore = defineStore("serie", () => {
     const filterPlatforms = ref<Platform[]>([]);
     const filterTitle = ref<string>();
     const filterNotes = ref<Note[]>([]);
+    const filterFriends = ref<User[]>([]);
 
     const reset = () => {
         filterKinds.value = [];
@@ -17,12 +19,14 @@ export const useSerieStore = defineStore("serie", () => {
         filterTitle.value = undefined;
         filterCountries.value = [];
         filterNotes.value = [];
+        filterFriends.value = [];
     }
 
-    const hasChanges = (): boolean => !!filterKinds.value.length 
+    const hasChanges = (): boolean => !!filterKinds.value.length
     || !!filterPlatforms.value.length
     || !!filterCountries.value.length
     || !!filterNotes.value.length
+    || !!filterFriends.value.length
     || !!filterTitle.value;
 
     const formatKinds = (): string|undefined => {
@@ -37,15 +41,21 @@ export const useSerieStore = defineStore("serie", () => {
         return filterNotes.value.length ? filterNotes.value.map((note) => `${note.id}`).join(",") : undefined;
     }
 
+    const formatFriends = (): string|undefined => {
+        return filterFriends.value.length ? filterFriends.value.map((friend) => friend.id).join(",") : undefined;
+    }
+
     return {
         filterCountries,
         filterNotes,
         filterKinds,
         filterPlatforms,
         filterTitle,
+        filterFriends,
         formatKinds,
         formatNotes,
         formatPlatforms,
+        formatFriends,
         hasChanges,
         reset
     };

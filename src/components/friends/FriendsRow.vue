@@ -52,6 +52,7 @@ const props = defineProps({
     accept: { type: Boolean, default: false },
     addable: { type: Boolean, default: false },
     consult: { type: Boolean, default: false },
+    existingIds: { type: Array as PropType<string[]>, default: () => [] },
     friends: { type: Array as PropType<User[]>, default: () => [] },
     loading: { type: Boolean, default: false },
     search: { type: Boolean, default: false },
@@ -72,7 +73,7 @@ const selected = ref<User>();
 const username = ref<string>("");
 const sentRequests = ref(new Set<string>());
 
-const isSent = (id: string): boolean => sentRequests.value.has(id);
+const isSent = (id: string): boolean => sentRequests.value.has(id) || props.existingIds.includes(id);
 
 const removeContext = computed<"friend" | "received" | "sent">(() => {
     if (props.accept) return "received";

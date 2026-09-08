@@ -57,11 +57,6 @@ export const NAV_SERIES_STATUS: NavStatusMenuItem[] = [
 
 export const NAV_OTHERS: NavOthersMenuItem[] = [
     {
-        title: "Classement",
-        icon: "mdi-trophy-outline",
-        link: "/leaderboard"
-    },
-    {
         title: "Historique",
         icon: "mdi-timeline-clock",
         link: "/history"

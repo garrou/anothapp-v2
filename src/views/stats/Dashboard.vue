@@ -125,7 +125,7 @@ import EpisodesHeatmap from "@/components/stats/EpisodesHeatmap.vue";
 import { useStatistic } from "@/composables/statistic";
 import { CATEGORICAL_COLORS, MAIN_COLOR } from "@/constants/style";
 import type { ChartData, GlobalStat } from "@/models/stat";
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, watch, type PropType } from "vue";
 import storageService from "@/services/storageService";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
 import { ChartGroupedType, ChartType, SerieStatus } from "@/types/types";
@@ -144,7 +144,8 @@ const DASHBOARD_TABS = [
 
 const props = defineProps({
     userId: { type: String, default: undefined },
-    showBar: { type: Boolean, default: true }
+    showBar: { type: Boolean, default: true },
+    preloadedStat: { type: Object as PropType<Promise<GlobalStat>>, default: undefined }
 });
 
 const url = props.userId ? "discover" : "series";
@@ -196,7 +197,7 @@ watch(modal, (value) => {
 
 onMounted(async () => {
     displayChart.value = storageService.getDisplayChart();
-    stat.value = await getStats(props.userId);
+    stat.value = await (props.preloadedStat ?? getStats(props.userId));
     useScrollStore().scrollToPosition(route.fullPath);
 });
 </script>

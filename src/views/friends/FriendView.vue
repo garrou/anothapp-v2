@@ -11,6 +11,7 @@
         </div>
 
         <v-container>
+            <friend-compare :friend-id="friend.id" :friend-username="friend.username" />
             <dashboard :user-id="friend.id" :show-bar="false" />
         </v-container>
     </div>
@@ -18,6 +19,7 @@
 
 <script lang="ts" setup>
 import Dashboard from "@/views/stats/Dashboard.vue";
+import FriendCompare from "@/components/friends/FriendCompare.vue";
 import { useFriendStore } from "@/stores/friend";
 import { goBack as navigateBack } from "@/utils/navigation";
 import { storeToRefs } from "pinia";

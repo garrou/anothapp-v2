@@ -1,37 +1,39 @@
 <template>
-    <div class="leaderboard-header">
-        <h2 class="leaderboard-title">Classement du mois</h2>
-        <p class="leaderboard-subtitle">Temps de visionnage entre amis, ce mois-ci</p>
+    <div>
+        <div class="leaderboard-header">
+            <h2 class="leaderboard-title">Classement du mois</h2>
+            <p class="leaderboard-subtitle">Temps de visionnage entre amis, ce mois-ci</p>
+        </div>
+
+        <div v-if="loading" class="leaderboard-loading">
+            <v-progress-circular color="primary" indeterminate size="32" />
+        </div>
+
+        <empty-state v-else-if="entries.length <= 1" icon="mdi-account-heart-outline" title="Aucun ami pour l'instant"
+            description="Ajoutez des amis pour comparer votre temps de visionnage." />
+
+        <v-list v-else class="leaderboard-list" lines="two">
+            <v-list-item v-for="(entry, index) in entries" :key="entry.id" class="leaderboard-item"
+                :class="{ 'leaderboard-item--me': entry.isMe }"
+                :link="!entry.isMe" @click="!entry.isMe && showFriend(entry)">
+                <template #prepend>
+                    <div class="leaderboard-rank">{{ index + 1 }}</div>
+                    <v-avatar v-if="entry.picture" :image="entry.picture" size="36" class="ms-2" />
+                    <v-avatar v-else color="surface-variant" size="36" class="ms-2">
+                        <v-icon icon="mdi-account" />
+                    </v-avatar>
+                </template>
+
+                <v-list-item-title class="leaderboard-username">
+                    {{ entry.username }}<span v-if="entry.isMe" class="leaderboard-you"> (vous)</span>
+                </v-list-item-title>
+
+                <template #append>
+                    <div class="leaderboard-value">{{ minsToStringHoursDays(entry.value) }}</div>
+                </template>
+            </v-list-item>
+        </v-list>
     </div>
-
-    <div v-if="loading" class="leaderboard-loading">
-        <v-progress-circular color="primary" indeterminate size="32" />
-    </div>
-
-    <empty-state v-else-if="entries.length <= 1" icon="mdi-account-heart-outline" title="Aucun ami pour l'instant"
-        description="Ajoutez des amis pour comparer votre temps de visionnage." />
-
-    <v-list v-else class="leaderboard-list" lines="two">
-        <v-list-item v-for="(entry, index) in entries" :key="entry.id" class="leaderboard-item"
-            :class="{ 'leaderboard-item--me': entry.isMe }"
-            :link="!entry.isMe" @click="!entry.isMe && showFriend(entry)">
-            <template #prepend>
-                <div class="leaderboard-rank">{{ index + 1 }}</div>
-                <v-avatar v-if="entry.picture" :image="entry.picture" size="36" class="ms-2" />
-                <v-avatar v-else color="surface-variant" size="36" class="ms-2">
-                    <v-icon icon="mdi-account" />
-                </v-avatar>
-            </template>
-
-            <v-list-item-title class="leaderboard-username">
-                {{ entry.username }}<span v-if="entry.isMe" class="leaderboard-you"> (vous)</span>
-            </v-list-item-title>
-
-            <template #append>
-                <div class="leaderboard-value">{{ minsToStringHoursDays(entry.value) }}</div>
-            </template>
-        </v-list-item>
-    </v-list>
 </template>
 
 <script lang="ts" setup>

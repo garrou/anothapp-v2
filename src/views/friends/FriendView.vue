@@ -11,7 +11,7 @@
         </div>
 
         <template v-if="theirsPromise">
-            <v-container fluid class="px-0 px-sm-4">
+            <v-container fluid class="px-0 px-sm-4 py-0">
                 <friend-compare :friend-username="friend.username" :theirs="theirsPromise" />
             </v-container>
 

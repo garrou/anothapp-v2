@@ -2,7 +2,6 @@ import { ref } from "vue";
 import { defineStore } from "pinia";
 import type { User } from "@/models/user";
 
-/** The current user's accepted friends list. */
 export const useFriendsStore = defineStore("friends", () => {
 
     const friends = ref<User[]>([]);

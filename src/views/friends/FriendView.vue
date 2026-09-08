@@ -36,8 +36,6 @@ const friendStore = useFriendStore();
 const { getStats } = useStatistic();
 const { friend } = storeToRefs(friendStore);
 
-// Shared by friend-compare and dashboard so the friend's stats are fetched once,
-// not twice - both just await the same in-flight promise.
 const theirsPromise = ref<Promise<GlobalStat>>();
 
 const goBack = () => {

@@ -39,9 +39,6 @@ use([
 const theme = useTheme();
 const colorRef = ref(props.color);
 
-// ECharts renders titles on a canvas, unaffected by the app's CSS theme
-// variables — the color has to be resolved and passed explicitly, otherwise
-// it defaults to a dark grey that's unreadable on dark surfaces.
 const textColor = computed(() => theme.current.value.colors["on-surface"]);
 
 const option = computed(() => ({

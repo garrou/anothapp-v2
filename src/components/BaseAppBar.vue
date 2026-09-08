@@ -150,8 +150,6 @@ import NotificationBell from "./NotificationBell.vue";
 
 const route = useRoute();
 
-// Exact or segment-boundary match: avoids a route whose path merely starts
-// with another link's characters being wrongly treated as active.
 const isMenuActive = (link: string) => route.path === link || route.path.startsWith(`${link}/`);
 
 const props = defineProps({

@@ -31,8 +31,6 @@ export function useSerie() {
         if (isError(resp.status)) {
             throw new Error(data.message);
         }
-        // A logout/login while this was in flight bumps the epoch - discard rather than
-        // overwrite a store that may already belong to a different user by now.
         if (currentEpoch("userSeries") === epoch) {
             userSeriesStore.setAll(data);
         }
@@ -224,14 +222,9 @@ export function useSerie() {
 
         switch (type) {
             case "userlist":
-                // Ensure loaded first: unlike the old persistent IDB cache, this store starts
-                // empty on every fresh load, so a deep link or refresh could otherwise race the
-                // app's own boot-time fetch and see "not found" before it's actually loaded.
                 await ensureUserListLoaded();
                 return userListStore.series.get(id);
             case "series":
-                // Not eagerly loaded anywhere and not currently used with this type - deliberately
-                // a raw check, not "ensure loaded", so it doesn't force a full catalog fetch.
                 return seriesCatalogStore.series.get(id);
             default:
                 await ensureUserSeriesLoaded();

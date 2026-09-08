@@ -5,7 +5,7 @@
 
     <v-window v-model="tab" class="pa-1">
         <v-window-item :value="1">
-            <leaderboard-list class="px-3 mb-4" />
+            <leaderboard-list v-if="friends?.friends?.length" class="px-3 mb-4" />
             <friends-row consult :friends="friends?.friends" :loading="loading" remove @refresh="fetchFriends" />
         </v-window-item>
 

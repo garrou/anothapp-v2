@@ -8,7 +8,7 @@
         <v-progress-circular color="primary" indeterminate size="32" />
     </div>
 
-    <empty-state v-else-if="!entries.length" icon="mdi-account-heart-outline" title="Aucun ami pour l'instant"
+    <empty-state v-else-if="entries.length <= 1" icon="mdi-account-heart-outline" title="Aucun ami pour l'instant"
         description="Ajoutez des amis pour comparer votre temps de visionnage." />
 
     <v-list v-else class="leaderboard-list" lines="two">

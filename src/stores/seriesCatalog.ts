@@ -2,10 +2,6 @@ import { ref } from "vue";
 import { defineStore } from "pinia";
 import type { Serie } from "@/models/serie";
 
-/**
- * The global discover catalog (not user-specific): the full searchable list of series,
- * plus individual series looked up by id while browsing discover.
- */
 export const useSeriesCatalogStore = defineStore("seriesCatalog", () => {
 
     const series = ref<Map<number, Serie>>(new Map());

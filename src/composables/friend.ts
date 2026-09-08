@@ -61,7 +61,6 @@ export function useFriend() {
         showSuccess(messages[context]);
     }
 
-    /** Cached accepted-friends list: fetched at most once per session, reused across mounts. */
     const getCachedFriends = async (): Promise<User[]> => {
         await loadOnce("friends", () => friendsStore.loaded, async () => {
             const epoch = currentEpoch("friends");

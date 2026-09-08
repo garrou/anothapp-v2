@@ -5,11 +5,14 @@
 
     <v-window v-model="tab" class="pa-1">
         <v-window-item :value="1">
-            <leaderboard-list v-if="friends?.friends?.length" class="px-3 mb-4" />
             <friends-row consult :friends="friends?.friends" :loading="loading" remove @refresh="fetchFriends" />
         </v-window-item>
 
         <v-window-item :value="2">
+            <leaderboard-list v-if="tab === 2" class="px-3" />
+        </v-window-item>
+
+        <v-window-item :value="3">
             <pill-tabs v-model="manageTab" class="mb-4 px-3" :tabs="manageTabs" />
 
             <v-window v-model="manageTab">
@@ -50,7 +53,8 @@ const manageTab = ref(1);
 
 const friendsTabs = computed(() => [
     { value: 1, label: "Amis" },
-    { value: 2, label: "Gérer", badge: friends.value?.received?.length }
+    { value: 2, label: "Classement" },
+    { value: 3, label: "Gérer", badge: friends.value?.received?.length }
 ]);
 
 const manageTabs = computed(() => [
@@ -59,8 +63,6 @@ const manageTabs = computed(() => [
     { value: 3, label: "Envoyées" }
 ]);
 
-// Anyone already in a relation (friend, pending sent, or pending received) with the
-// current user - the backend rejects a new request to any of them with a 409.
 const existingIds = computed<string[]>(() => [
     ...(friends.value?.friends?.map((f) => f.id) ?? []),
     ...(friends.value?.sent?.map((f) => f.id) ?? []),
@@ -88,9 +90,6 @@ const fetchFriends = async () => {
 onBeforeMount(async () => {
     await fetchFriends();
 
-    // Land straight on "Reçues" instead of the default "Ajouter" sub-tab when there's
-    // something pending - "Reçues" used to be one flat tab click away, now it's nested
-    // under "Gérer", so this keeps it just as fast to reach from the nav badge.
     if (friends.value?.received?.length) {
         manageTab.value = 2;
     }

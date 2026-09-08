@@ -1,7 +1,6 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
 
-/** The current user's subscribed platform ids. */
 export const useUserPlatformsStore = defineStore("userPlatforms", () => {
 
     const platformIds = ref<Set<number>>(new Set());

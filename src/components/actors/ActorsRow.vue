@@ -32,9 +32,6 @@ defineProps({
 </script>
 
 <style scoped>
-/* The global `a` link color reads poorly at v-card-title's reduced opacity
-   in dark theme, unlike plain text — match the surrounding text color
-   instead, consistent with other card titles in the app. */
 .actor-card-title {
     color: inherit;
 }

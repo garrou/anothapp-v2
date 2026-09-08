@@ -5,11 +5,8 @@ import storageService from "@/services/storageService";
 
 const STORAGE_KEY = "platforms";
 
-// Matches the nightly updatePlatforms cron - a shorter TTL wouldn't surface changes any faster,
-// since the underlying data on the backend itself only refreshes once a day.
 const PLATFORMS_TTL_MS = 24 * 60 * 60 * 1000;
 
-/** Global reference list of streaming platforms - persisted across reloads, refreshed daily like the backend sync. */
 export const usePlatformsStore = defineStore("platforms", () => {
 
     const stored = storageService.getCachedList<Platform>(STORAGE_KEY);

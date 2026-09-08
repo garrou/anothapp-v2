@@ -208,10 +208,6 @@ onBeforeMount(async () => {
     const user = await getProfile();
     episodeTrackingEnabled.value = user.episodeTrackingEnabled ?? false;
 
-    // Offer to bulk-mark the season's episodes right after adding it, so
-    // newcomers catching up on an already-aired season don't have to check
-    // every episode one by one. `seasons` is ordered by addedAt, so the
-    // viewing just created is the last entry.
     if (episodeTrackingEnabled.value && props.justAdded && seasons.value.length) {
         bulkOfferSeasonId.value = seasons.value[seasons.value.length - 1].id;
     }

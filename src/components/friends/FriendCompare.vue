@@ -30,13 +30,14 @@
 <script lang="ts" setup>
 import { useStatistic } from "@/composables/statistic";
 import { ELEVATION } from "@/constants/style";
+import { PLAY_ICON } from "@/constants/icons";
 import { minsToStringHoursDays } from "@/utils/format";
-import { computed, onBeforeMount, ref } from "vue";
+import { computed, onBeforeMount, ref, type PropType } from "vue";
 import type { GlobalStat } from "@/models/stat";
 
 const props = defineProps({
-    friendId: { type: String, required: true },
-    friendUsername: { type: String, required: true }
+    friendUsername: { type: String, required: true },
+    theirs: { type: Object as PropType<Promise<GlobalStat>>, required: true }
 });
 
 const { getStats } = useStatistic();
@@ -47,18 +48,19 @@ const loaded = computed(() => !!mine.value && !!theirs.value);
 
 const rows = computed(() => {
     if (!mine.value || !theirs.value) return [];
+    const theirStats = theirs.value;
 
     return [
-        { label: "Temps total", icon: "mdi-timer-sand-complete", mine: mine.value.totalTime, theirs: theirs.value.totalTime, format: minsToStringHoursDays },
-        { label: "Séries", icon: "mdi-play", mine: mine.value.nbSeries, theirs: theirs.value.nbSeries, format: String },
-        { label: "Saisons", icon: "mdi-play", mine: mine.value.nbSeasons, theirs: theirs.value.nbSeasons, format: String },
-        { label: "Episodes", icon: "mdi-play", mine: mine.value.nbEpisodes, theirs: theirs.value.nbEpisodes, format: String },
-        { label: "Jours d'affilés", icon: "mdi-fire", mine: mine.value.currentStreak, theirs: theirs.value.currentStreak, format: String },
+        { label: "Temps total", icon: "mdi-timer-sand-complete", mine: mine.value.totalTime, theirs: theirStats.totalTime, format: minsToStringHoursDays },
+        { label: "Séries", icon: PLAY_ICON, mine: mine.value.nbSeries, theirs: theirStats.nbSeries, format: String },
+        { label: "Saisons", icon: PLAY_ICON, mine: mine.value.nbSeasons, theirs: theirStats.nbSeasons, format: String },
+        { label: "Episodes", icon: PLAY_ICON, mine: mine.value.nbEpisodes, theirs: theirStats.nbEpisodes, format: String },
+        { label: "Jours d'affilés", icon: "mdi-fire", mine: mine.value.currentStreak, theirs: theirStats.currentStreak, format: String },
     ];
 });
 
 onBeforeMount(async () => {
-    [mine.value, theirs.value] = await Promise.all([getStats(), getStats(props.friendId)]);
+    [mine.value, theirs.value] = await Promise.all([getStats(), props.theirs]);
 });
 </script>
 

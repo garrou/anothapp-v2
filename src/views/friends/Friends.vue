@@ -8,7 +8,8 @@
             <friends-row consult :friends="friends?.friends" :loading="loading" remove @refresh="fetchFriends" />
         </v-window-item>
         <v-window-item :value="2">
-            <friends-row addable :friends="searched" search @search="searchUser" @refresh="fetchFriends" />
+            <friends-row addable :friends="searched" search :existing-ids="existingIds" @search="searchUser"
+                @refresh="fetchFriends" />
         </v-window-item>
         <v-window-item :value="3">
             <friends-row accept :friends="friends?.received" :loading="loading" remove @refresh="fetchFriends" />
@@ -42,6 +43,14 @@ const friendsTabs = computed(() => [
     { value: 2, label: "Ajouter" },
     { value: 3, label: "Reçues", badge: friends.value?.received?.length },
     { value: 4, label: "Envoyées" }
+]);
+
+// Anyone already in a relation (friend, pending sent, or pending received) with the
+// current user - the backend rejects a new request to any of them with a 409.
+const existingIds = computed<string[]>(() => [
+    ...(friends.value?.friends?.map((f) => f.id) ?? []),
+    ...(friends.value?.sent?.map((f) => f.id) ?? []),
+    ...(friends.value?.received?.map((f) => f.id) ?? []),
 ]);
 
 const searchUser = async (username: string) => {

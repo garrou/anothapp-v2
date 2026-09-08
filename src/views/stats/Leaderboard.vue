@@ -16,11 +16,12 @@
 
         <v-list v-else class="leaderboard-list" lines="two">
             <v-list-item v-for="(entry, index) in entries" :key="entry.id" class="leaderboard-item"
-                :class="{ 'leaderboard-item--me': entry.isMe }">
+                :class="{ 'leaderboard-item--me': entry.isMe }"
+                :link="!entry.isMe" @click="!entry.isMe && showFriend(entry)">
                 <template #prepend>
                     <div class="leaderboard-rank">{{ index + 1 }}</div>
-                    <v-avatar v-if="entry.picture" :image="entry.picture" size="40" class="ms-2" />
-                    <v-avatar v-else color="surface-variant" size="40" class="ms-2">
+                    <v-avatar v-if="entry.picture" :image="entry.picture" size="36" class="ms-2" />
+                    <v-avatar v-else color="surface-variant" size="36" class="ms-2">
                         <v-icon icon="mdi-account" />
                     </v-avatar>
                 </template>
@@ -41,14 +42,23 @@
 import BaseAppBar from "@/components/BaseAppBar.vue";
 import EmptyState from "@/components/EmptyState.vue";
 import { useStatistic } from "@/composables/statistic";
+import { useFriendStore } from "@/stores/friend";
 import type { LeaderboardEntry } from "@/models/stat";
 import { minsToStringHoursDays } from "@/utils/format";
 import { onBeforeMount, ref } from "vue";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
+const friendStore = useFriendStore();
 const { getLeaderboard } = useStatistic();
 
 const entries = ref<LeaderboardEntry[]>([]);
 const loading = ref(false);
+
+const showFriend = (entry: LeaderboardEntry) => {
+    friendStore.setFriend({ id: entry.id, username: entry.username, picture: entry.picture, current: false });
+    router.push('/friend');
+}
 
 onBeforeMount(async () => {
     loading.value = true;

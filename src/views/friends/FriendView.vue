@@ -10,10 +10,13 @@
             <div class="text-h6 font-weight-bold mt-3">{{ friend.username }}</div>
         </div>
 
-        <v-container>
-            <friend-compare :friend-id="friend.id" :friend-username="friend.username" />
-            <dashboard :user-id="friend.id" :show-bar="false" />
-        </v-container>
+        <template v-if="theirsPromise">
+            <v-container fluid class="px-0 px-sm-4">
+                <friend-compare :friend-username="friend.username" :theirs="theirsPromise" />
+            </v-container>
+
+            <dashboard :user-id="friend.id" :show-bar="false" :preloaded-stat="theirsPromise" />
+        </template>
     </div>
 </template>
 
@@ -21,14 +24,21 @@
 import Dashboard from "@/views/stats/Dashboard.vue";
 import FriendCompare from "@/components/friends/FriendCompare.vue";
 import { useFriendStore } from "@/stores/friend";
+import { useStatistic } from "@/composables/statistic";
+import type { GlobalStat } from "@/models/stat";
 import { goBack as navigateBack } from "@/utils/navigation";
 import { storeToRefs } from "pinia";
-import { onBeforeMount } from "vue";
+import { onBeforeMount, ref } from "vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
 const friendStore = useFriendStore();
+const { getStats } = useStatistic();
 const { friend } = storeToRefs(friendStore);
+
+// Shared by friend-compare and dashboard so the friend's stats are fetched once,
+// not twice - both just await the same in-flight promise.
+const theirsPromise = ref<Promise<GlobalStat>>();
 
 const goBack = () => {
     friendStore.reset();
@@ -36,7 +46,11 @@ const goBack = () => {
 }
 
 onBeforeMount(() => {
-    if (!friend.value) router.replace('/friends');
+    if (!friend.value) {
+        router.replace('/friends');
+        return;
+    }
+    theirsPromise.value = getStats(friend.value.id);
 });
 </script>
 

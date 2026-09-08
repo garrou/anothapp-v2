@@ -1,4 +1,4 @@
-import type { GlobalStat, WrappedStat } from "@/models/stat";
+import type { GlobalStat, LeaderboardEntry, WrappedStat } from "@/models/stat";
 import statService from "@/services/statService"
 import { isError } from "@/utils/response";
 
@@ -24,7 +24,18 @@ export function useStatistic() {
         return data;
     }
 
+    const getLeaderboard = async (): Promise<LeaderboardEntry[]> => {
+        const resp = await statService.getLeaderboard();
+        const data = await resp.json();
+
+        if (isError(resp.status))
+            throw new Error(data.message);
+
+        return data;
+    }
+
     return {
+        getLeaderboard,
         getStats,
         getWrapped
     }

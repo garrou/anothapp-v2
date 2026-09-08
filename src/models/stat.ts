@@ -79,6 +79,19 @@ export interface WrappedStat {
     topWatchedWithFriend: Stat | null;
 }
 
+export interface LeaderboardEntry {
+
+    id: string;
+
+    username: string;
+
+    picture?: string;
+
+    value: number;
+
+    isMe: boolean;
+}
+
 export interface ChartData {
 
     id: number;

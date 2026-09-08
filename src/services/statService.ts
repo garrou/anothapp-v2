@@ -8,7 +8,10 @@ const getStats = (userId?: string): Promise<Response> =>
 const getWrapped = (year: number): Promise<Response> =>
     httpClient.get(`${PREFIX}/wrapped`, [{ name: "year", value: year }]);
 
+const getLeaderboard = (): Promise<Response> => httpClient.get(`${PREFIX}/leaderboard`);
+
 export default {
+    getLeaderboard,
     getStats,
     getWrapped
 };

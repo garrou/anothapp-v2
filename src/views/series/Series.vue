@@ -20,7 +20,7 @@ import { useScrollStore } from "@/stores/scroll";
 const route = useRoute();
 const scrollStore = useScrollStore();
 const { getSeries } = useSerie();
-const { filterCountries, filterKinds, filterPlatforms, filterTitle, filterNotes } = storeToRefs(useSerieStore());
+const { filterCountries, filterKinds, filterPlatforms, filterTitle, filterNotes, filterFriends } = storeToRefs(useSerieStore());
 
 const loading = ref(false);
 const series = ref<Serie[]>([]);
@@ -34,7 +34,7 @@ const fetchSeries = async (): Promise<void> => {
     }
 }
 
-watch([filterTitle, filterKinds, filterPlatforms, filterCountries, filterNotes], () => {
+watch([filterTitle, filterKinds, filterPlatforms, filterCountries, filterNotes, filterFriends], () => {
     fetchSeries().then();
 });
 

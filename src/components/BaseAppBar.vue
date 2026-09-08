@@ -53,7 +53,7 @@
             </v-list>
         </v-navigation-drawer>
 
-        <v-navigation-drawer v-model="filters" location="right" width="320">
+        <v-navigation-drawer v-model="filters" location="right" width="320" temporary>
             <div class="d-flex flex-row mt-2">
                 <v-tabs v-model="tab" color="primary" direction="vertical">
                     <v-tab min-width="40" :value="1">
@@ -70,6 +70,9 @@
                     </v-tab>
                     <v-tab v-if="!discover" min-width="40" :value="5">
                         <v-icon icon="mdi-numeric" />
+                    </v-tab>
+                    <v-tab v-if="!discover" min-width="40" :value="6">
+                        <v-icon icon="mdi-account-multiple" />
                     </v-tab>
                 </v-tabs>
                 <v-window v-model="tab" class="w-100">
@@ -122,6 +125,23 @@
                                 :label="note.name" :value="note" @update:model-value="updateNotes(selectedNotes)" />
                         </v-list>
                     </v-window-item>
+
+                    <v-window-item class="px-3" :value="6">
+                        <v-list class="pt-0 mb-10">
+                            <v-list-item v-if="serieStore.filterFriends.length" title="Effacer les filtres"
+                                @click="serieStore.filterFriends = []" />
+                            <v-checkbox v-for="friend in friends" :key="friend.id" v-model="serieStore.filterFriends"
+                                hide-details :value="friend">
+                                <template #label>
+                                    <v-avatar v-if="friend.picture" :image="friend.picture" size="28" class="me-2" />
+                                    <v-avatar v-else color="surface-variant" size="28" class="me-2">
+                                        <v-icon icon="mdi-account" size="16" />
+                                    </v-avatar>
+                                    {{ friend.username }}
+                                </template>
+                            </v-checkbox>
+                        </v-list>
+                    </v-window-item>
                 </v-window>
             </div>
         </v-navigation-drawer>
@@ -144,6 +164,7 @@ import { useAuth } from "@/composables/auth";
 import { DEFAULT_LIMIT } from "@/constants/services";
 import { useSerie } from "@/composables/serie";
 import { usePlatform } from "@/composables/platform";
+import { useFriend } from "@/composables/friend";
 import type { Note } from "@/models/note";
 import PlatformCard from "./series/PlatformCard.vue";
 import NotificationBell from "./NotificationBell.vue";
@@ -163,6 +184,7 @@ const { getProfile } = useUser();
 const { logout } = useAuth();
 const { getCountries } = useSerie();
 const { getUserPlatforms } = usePlatform();
+const { getCachedFriends } = useFriend();
 const searchStore = useSearchStore();
 const serieStore = useSerieStore();
 
@@ -179,6 +201,7 @@ const tab = ref(1);
 const title = ref(props.discover ? searchStore.filterTitle : serieStore.filterTitle);
 const user = ref<User>();
 const countries = ref<string[]>([]);
+const friends = ref<User[]>([]);
 
 const hasChanges = computed(() => props.discover ? searchStore.hasChanges() : serieStore.hasChanges());
 
@@ -258,6 +281,7 @@ onBeforeMount(async () => {
     ];
     countries.value = await getCountries();
     notes.value = await getNotes();
+    friends.value = await getCachedFriends();
 });
 </script>
 

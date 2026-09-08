@@ -113,14 +113,6 @@ const router = createRouter({
       }
     },
     {
-      path: "/leaderboard",
-      name: "leaderboard",
-      component: () => import("@/views/stats/Leaderboard.vue"),
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
       path: "/profile",
       name: "profile",
       component: () => import("@/views/profile/Profile.vue"),

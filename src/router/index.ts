@@ -129,9 +129,10 @@ const router = createRouter({
       }
     },
     {
-      path: "/friend",
+      path: "/friends/:id",
       name: "friend",
       component: () => import("@/views/friends/FriendView.vue"),
+      props: (route) => ({ id: route.params.id as string }),
       meta: {
         requiresAuth: true
       }

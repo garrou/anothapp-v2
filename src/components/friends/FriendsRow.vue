@@ -45,7 +45,6 @@ import { ADD_ICON, DELETE_ICON, DETAILS_ICON, SEARCH_ICON } from "@/constants/ic
 import type { User } from "@/models/user";
 import { computed, ref, type PropType } from "vue";
 import { useFriend } from "@/composables/friend";
-import { useFriendStore } from "@/stores/friend";
 import { useRouter } from "vue-router";
 
 const props = defineProps({
@@ -65,7 +64,6 @@ const emit = defineEmits<{
 }>();
 
 const router = useRouter();
-const friendStore = useFriendStore();
 const { acceptFriendRequest, deleteFriend, sendFriendRequest } = useFriend();
 
 const confirm = ref(false);
@@ -106,8 +104,7 @@ const emptyCopy = computed(() => {
 });
 
 const showFriend = (user: User) => {
-    friendStore.setFriend(user);
-    router.push('/friend');
+    router.push(`/friends/${user.id}`);
 }
 
 const acceptFriend = async (user: User) => {

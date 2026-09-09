@@ -38,7 +38,7 @@
             <template #default="{ item: serie }">
                 <poster-card :image="serie.poster" :to="`/discover/${serie.id}`">
                     <template v-if="isOwner" #quick-actions>
-                        <v-btn :icon="DELETE_ICON" size="32" variant="tonal"
+                        <v-btn :icon="DELETE_ICON" color="on-surface-variant" size="32" variant="flat"
                             @click.stop.prevent="removeShow(serie.id)" />
                     </template>
 
@@ -51,7 +51,7 @@
         <empty-state v-else icon="mdi-movie-open-outline" title="Playlist vide"
             :description="isOwner ? 'Recherchez une série ci-dessus pour l\'ajouter.' : 'Cette playlist ne contient aucune série pour le moment.'" />
 
-        <playlist-form-modal v-if="editing" :playlist="detail.playlist" confirm-text="Enregistrer"
+        <playlist-form-modal v-model="editing" :playlist="detail.playlist" confirm-text="Enregistrer"
             title="Modifier la playlist" @cancel="editing = false" @save="onUpdate" />
 
         <base-confirm v-model="deleting" title="Supprimer" text="Supprimer cette playlist ?" persistent

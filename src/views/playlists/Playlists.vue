@@ -12,7 +12,7 @@
             <template #default="{ item: playlist }">
                 <v-card class="playlist-card" :to="`/playlists/${playlist.id}`">
                     <v-card-title>{{ playlist.name }}</v-card-title>
-                    <v-card-subtitle class="d-flex align-center ga-1">
+                    <v-card-subtitle class="d-flex align-center ga-1 pb-4">
                         {{ buildPlural("série", playlist.showsCount ?? 0) }}
                         <v-icon v-if="!playlist.visible" icon="mdi-lock-outline" size="14" />
                     </v-card-subtitle>

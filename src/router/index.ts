@@ -149,7 +149,7 @@ const router = createRouter({
       path: "/playlists/:id",
       name: "playlist",
       component: () => import("@/views/playlists/PlaylistView.vue"),
-      props: (route) => ({ id: Number(route.params.id) }),
+      props: (route) => ({ id: route.params.id as string }),
       meta: {
         requiresAuth: true
       }

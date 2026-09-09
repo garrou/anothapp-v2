@@ -17,7 +17,7 @@ export function usePlaylist() {
         return data;
     }
 
-    const getPlaylist = async (id: number): Promise<PlaylistDetail> => {
+    const getPlaylist = async (id: string): Promise<PlaylistDetail> => {
         const resp = await playlistService.getPlaylist(id);
         const data = await resp.json();
 
@@ -38,7 +38,7 @@ export function usePlaylist() {
         return data;
     }
 
-    const updatePlaylist = async (id: number, fields: { name?: string; visible?: boolean }): Promise<void> => {
+    const updatePlaylist = async (id: string, fields: { name?: string; visible?: boolean }): Promise<void> => {
         const resp = await playlistService.updatePlaylist(id, fields);
 
         if (isError(resp.status)) {
@@ -48,7 +48,7 @@ export function usePlaylist() {
         showSuccess("Playlist mise à jour");
     }
 
-    const deletePlaylist = async (id: number, name: string): Promise<void> => {
+    const deletePlaylist = async (id: string, name: string): Promise<void> => {
         const resp = await playlistService.deletePlaylist(id);
 
         if (isError(resp.status)) {
@@ -58,7 +58,7 @@ export function usePlaylist() {
         showSuccess(`Playlist "${name}" supprimée`);
     }
 
-    const addShowToPlaylist = async (id: number, showId: number): Promise<void> => {
+    const addShowToPlaylist = async (id: string, showId: number): Promise<void> => {
         const resp = await playlistService.addShowToPlaylist(id, showId);
 
         if (isError(resp.status)) {
@@ -68,7 +68,7 @@ export function usePlaylist() {
         showSuccess("Série ajoutée à la playlist");
     }
 
-    const removeShowFromPlaylist = async (id: number, showId: number): Promise<void> => {
+    const removeShowFromPlaylist = async (id: string, showId: number): Promise<void> => {
         const resp = await playlistService.removeShowFromPlaylist(id, showId);
 
         if (isError(resp.status)) {

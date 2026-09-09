@@ -44,7 +44,7 @@ const { showError } = useSnackbar();
 
 const dialog = ref(false);
 const playlists = ref<Playlist[]>([]);
-const addedPlaylistIds = ref<Set<number>>(new Set());
+const addedPlaylistIds = ref<Set<string>>(new Set());
 const loading = ref(false);
 
 const open = async (): Promise<void> => {
@@ -62,7 +62,7 @@ const open = async (): Promise<void> => {
     }
 }
 
-const add = async (playlistId: number): Promise<void> => {
+const add = async (playlistId: string): Promise<void> => {
     try {
         await addShowToPlaylist(playlistId, props.serieId);
         addedPlaylistIds.value = new Set([...addedPlaylistIds.value, playlistId]);

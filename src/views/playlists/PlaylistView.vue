@@ -80,7 +80,7 @@ import { computed, onBeforeMount, ref } from "vue";
 import { useRouter } from "vue-router";
 
 const props = defineProps({
-    id: { type: Number, required: true },
+    id: { type: String, required: true },
 });
 
 const router = useRouter();

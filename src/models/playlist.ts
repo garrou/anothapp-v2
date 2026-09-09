@@ -2,7 +2,7 @@ import type { Serie } from "./serie";
 
 export interface Playlist {
 
-    id: number;
+    id: string;
 
     userId: string;
 

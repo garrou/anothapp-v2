@@ -5,20 +5,20 @@ const PREFIX = "playlists";
 const getPlaylists = (friendId?: string): Promise<Response> =>
     httpClient.get(PREFIX, [{ name: "friendId", value: friendId }]);
 
-const getPlaylist = (id: number): Promise<Response> => httpClient.get(`${PREFIX}/${id}`);
+const getPlaylist = (id: string): Promise<Response> => httpClient.get(`${PREFIX}/${id}`);
 
 const createPlaylist = (name: string, visible: boolean): Promise<Response> =>
     httpClient.post(PREFIX, { name, visible });
 
-const updatePlaylist = (id: number, fields: { name?: string; visible?: boolean }): Promise<Response> =>
+const updatePlaylist = (id: string, fields: { name?: string; visible?: boolean }): Promise<Response> =>
     httpClient.patch(`${PREFIX}/${id}`, fields);
 
-const deletePlaylist = (id: number): Promise<Response> => httpClient.delete(`${PREFIX}/${id}`);
+const deletePlaylist = (id: string): Promise<Response> => httpClient.delete(`${PREFIX}/${id}`);
 
-const addShowToPlaylist = (id: number, showId: number): Promise<Response> =>
+const addShowToPlaylist = (id: string, showId: number): Promise<Response> =>
     httpClient.post(`${PREFIX}/${id}/shows`, { showId });
 
-const removeShowFromPlaylist = (id: number, showId: number): Promise<Response> =>
+const removeShowFromPlaylist = (id: string, showId: number): Promise<Response> =>
     httpClient.delete(`${PREFIX}/${id}/shows/${showId}`);
 
 export default {

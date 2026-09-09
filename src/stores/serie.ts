@@ -45,6 +45,10 @@ export const useSerieStore = defineStore("serie", () => {
         return filterFriends.value.length ? filterFriends.value.map((friend) => friend.id).join(",") : undefined;
     }
 
+    const formatCountries = (): string|undefined => {
+        return filterCountries.value.length ? filterCountries.value.join(",") : undefined;
+    }
+
     return {
         filterCountries,
         filterNotes,
@@ -56,6 +60,7 @@ export const useSerieStore = defineStore("serie", () => {
         formatNotes,
         formatPlatforms,
         formatFriends,
+        formatCountries,
         hasChanges,
         reset
     };

@@ -146,7 +146,7 @@ export function useSerie() {
     }
 
     const getSeries = async (): Promise<Serie[]> => {
-        const { filterCountries, filterKinds, filterNotes, filterTitle, filterPlatforms, filterFriends, formatPlatforms, formatKinds, formatNotes, formatFriends } = serieStore;
+        const { filterCountries, filterKinds, filterNotes, filterTitle, filterPlatforms, filterFriends, formatPlatforms, formatKinds, formatNotes, formatFriends, formatCountries } = serieStore;
 
         if (!filterPlatforms.length && !filterFriends.length) {
             await ensureUserSeriesLoaded();
@@ -157,7 +157,7 @@ export function useSerie() {
                 countries: filterCountries.length ? filterCountries : undefined,
             });
         }
-        const resp = await serieService.getSeries(filterTitle, formatPlatforms(), formatKinds(), formatNotes(), formatFriends());
+        const resp = await serieService.getSeries(filterTitle, formatPlatforms(), formatKinds(), formatNotes(), formatFriends(), formatCountries());
         const data = await resp.json();
 
         if (isError(resp.status))
@@ -177,7 +177,8 @@ export function useSerie() {
     }
 
     const getCountries = async (): Promise<string[]> => {
-        const series = await getSeries();
+        await ensureUserSeriesLoaded();
+        const series = Array.from(userSeriesStore.series.values());
         return [...new Set(series.map((serie) => serie.country))].sort((a, b) => a.localeCompare(b));
     }
 

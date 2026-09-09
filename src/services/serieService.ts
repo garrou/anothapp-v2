@@ -24,13 +24,14 @@ const getRecommendations = (): Promise<Response> => httpClient.get(`${PREFIX}/re
 
 const getSerie = (id: number): Promise<Response> => httpClient.get(`${PREFIX}/${id}`);
 
-const getSeries = (title?: string, platforms?: string, kinds?: string, notes?: string, watchedWith?: string): Promise<Response> =>
+const getSeries = (title?: string, platforms?: string, kinds?: string, notes?: string, watchedWith?: string, countries?: string): Promise<Response> =>
     httpClient.get(PREFIX, [
         { name: "title", value: title },
         { name: "platforms", value: platforms },
         { name: "kinds", value: kinds },
         { name: "notes", value: notes },
-        { name: "watchedWith", value: watchedWith }
+        { name: "watchedWith", value: watchedWith },
+        { name: "countries", value: countries }
     ]);
 
 const getSeriesByStatus = (status: SerieStatus, friendId?: string): Promise<Response> =>

@@ -15,21 +15,8 @@
                 <friend-compare :friend-username="friend.username" :theirs="theirsPromise" />
             </v-container>
 
-            <v-container v-if="playlists.length" fluid class="px-0 px-sm-4">
-                <h3 class="playlists-title">Playlists de {{ friend.username }}</h3>
-                <card-grid :items="playlists" :loading="false" :sm="6" :md="4" :lg="3">
-                    <template #default="{ item: playlist }">
-                        <v-card class="playlist-card" :to="`/playlists/${playlist.id}`">
-                            <v-card-title>{{ playlist.name }}</v-card-title>
-                            <v-card-subtitle class="pb-4">
-                                {{ buildPlural("série", playlist.showsCount ?? 0) }}
-                            </v-card-subtitle>
-                        </v-card>
-                    </template>
-                </card-grid>
-            </v-container>
-
-            <dashboard :user-id="friend.id" :show-bar="false" :preloaded-stat="theirsPromise" />
+            <dashboard :user-id="friend.id" :show-bar="false" :preloaded-stat="theirsPromise"
+                :friend-playlists="playlists" :friend-username="friend.username" />
         </template>
     </div>
 </template>
@@ -37,13 +24,11 @@
 <script lang="ts" setup>
 import Dashboard from "@/views/stats/Dashboard.vue";
 import FriendCompare from "@/components/friends/FriendCompare.vue";
-import CardGrid from "@/components/CardGrid.vue";
 import { useFriendStore } from "@/stores/friend";
 import { useStatistic } from "@/composables/statistic";
 import { usePlaylist } from "@/composables/playlist";
 import type { GlobalStat } from "@/models/stat";
 import type { Playlist } from "@/models/playlist";
-import { buildPlural } from "@/utils/format";
 import { goBack as navigateBack } from "@/utils/navigation";
 import { storeToRefs } from "pinia";
 import { onBeforeMount, ref } from "vue";
@@ -84,16 +69,5 @@ onBeforeMount(() => {
     align-items: center;
     padding: 8px 16px 24px;
     text-align: center;
-}
-
-.playlists-title {
-    font-family: "Space Grotesk", sans-serif;
-    font-size: 16px;
-    font-weight: 700;
-    margin-bottom: 12px;
-}
-
-.playlist-card {
-    height: 100%;
 }
 </style>

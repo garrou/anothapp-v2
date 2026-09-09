@@ -15,6 +15,20 @@
             </template>
         </v-card>
 
+        <div v-if="friendPlaylists?.length" class="mb-6">
+            <h3 class="playlists-title">Playlists de {{ friendUsername }}</h3>
+            <card-grid :items="friendPlaylists" :loading="false" :sm="6" :md="4" :lg="3">
+                <template #default="{ item: playlist }">
+                    <v-card class="playlist-card" :to="`/playlists/${playlist.id}`">
+                        <v-card-title>{{ playlist.name }}</v-card-title>
+                        <v-card-subtitle class="pb-4">
+                            {{ buildPlural("série", playlist.showsCount ?? 0) }}
+                        </v-card-subtitle>
+                    </v-card>
+                </template>
+            </card-grid>
+        </div>
+
         <friend-series v-if="userId" :user-id="userId" :type="SerieStatus.All" />
 
         <friend-series v-if="userId" :user-id="userId" :type="SerieStatus.Shared" />
@@ -112,6 +126,7 @@
 <script lang="ts" setup>
 import BaseAppBar from "@/components/BaseAppBar.vue";
 import BaseModal from "@/components/BaseModal.vue";
+import CardGrid from "@/components/CardGrid.vue";
 import PillTabs from "@/components/PillTabs.vue";
 import StatTile from "@/components/StatTile.vue";
 import SeriesLinkList from "@/components/series/SeriesLinkList.vue";
@@ -125,6 +140,7 @@ import EpisodesHeatmap from "@/components/stats/EpisodesHeatmap.vue";
 import { useStatistic } from "@/composables/statistic";
 import { CATEGORICAL_COLORS, MAIN_COLOR } from "@/constants/style";
 import type { ChartData, GlobalStat } from "@/models/stat";
+import type { Playlist } from "@/models/playlist";
 import { computed, onMounted, ref, watch, type PropType } from "vue";
 import storageService from "@/services/storageService";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
@@ -133,6 +149,7 @@ import { useSerieStore } from "@/stores/serie";
 import type { Serie } from "@/models/serie";
 import { useSerie } from "@/composables/serie";
 import { useScrollStore } from "@/stores/scroll";
+import { buildPlural } from "@/utils/format";
 import { useRoute } from "vue-router";
 import Chart from "@/components/stats/Chart.vue";
 
@@ -145,7 +162,9 @@ const DASHBOARD_TABS = [
 const props = defineProps({
     userId: { type: String, default: undefined },
     showBar: { type: Boolean, default: true },
-    preloadedStat: { type: Object as PropType<Promise<GlobalStat>>, default: undefined }
+    preloadedStat: { type: Object as PropType<Promise<GlobalStat>>, default: undefined },
+    friendPlaylists: { type: Array as PropType<Playlist[]>, default: undefined },
+    friendUsername: { type: String, default: undefined }
 });
 
 const url = props.userId ? "discover" : "series";
@@ -257,5 +276,16 @@ onMounted(async () => {
     justify-content: space-between;
     flex-wrap: wrap;
     gap: var(--sp-3, 12px);
+}
+
+.playlists-title {
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.playlist-card {
+    height: 100%;
 }
 </style>

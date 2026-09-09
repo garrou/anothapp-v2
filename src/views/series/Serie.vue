@@ -55,8 +55,7 @@
                     <button-update-serie :serie="infos.serie" menu-item @update="updateModal = true" />
                     <v-list-item prepend-icon="mdi-account-heart" title="Amis qui regardent cette série"
                         @click="openFriendsModal" />
-                    <v-list-item :prepend-icon="ADD_ICON" title="Ajouter à une playlist"
-                        @click="openPlaylistsModal" />
+                    <button-add-to-playlist :serie-id="id" menu-item />
                     <v-divider class="my-1" />
                     <button-remove-serie :serie="infos.serie" menu-item />
                 </base-menu>
@@ -99,21 +98,6 @@
         <friends-row consult :friends="friends" :loading="loading" />
     </base-modal>
 
-    <base-modal v-model="playlistsModal" title="Ajouter à une playlist">
-        <v-list v-if="playlists.length">
-            <v-list-item v-for="playlist in playlists" :key="playlist.id" :title="playlist.name"
-                :disabled="addedPlaylistIds.has(playlist.id)" @click="addToPlaylist(playlist.id)">
-                <template #append>
-                    <v-icon v-if="addedPlaylistIds.has(playlist.id)" icon="mdi-check" color="primary" />
-                </template>
-            </v-list-item>
-        </v-list>
-        <div v-else-if="!playlistsLoading" class="text-center text-medium-emphasis py-4">
-            Vous n'avez pas encore de playlist.
-            <router-link to="/playlists">Créez-en une</router-link>
-        </div>
-    </base-modal>
-
     <base-modal v-model="updateModal" title="Modifier la date d'ajout">
         <v-text-field v-model="showInfo.addedAt" type="datetime-local" :max="maxDate" />
 
@@ -131,6 +115,7 @@ import ButtonWatchSerie from "@/components/buttons/ButtonWatchSerie.vue";
 import ButtonFavoriteSerie from "@/components/buttons/ButtonFavoriteSerie.vue";
 import ButtonRemoveSerie from "@/components/buttons/ButtonRemoveSerie.vue";
 import ButtonDetailsSerie from "@/components/buttons/ButtonDetailsSerie.vue";
+import ButtonAddToPlaylist from "@/components/buttons/ButtonAddToPlaylist.vue";
 import BaseModal from "@/components/BaseModal.vue";
 import StatTile from "@/components/StatTile.vue";
 import SeasonDetails from "@/components/seasons/SeasonDetails.vue";
@@ -146,11 +131,9 @@ import { useSearch } from "@/composables/search";
 import { useSerie } from "@/composables/serie";
 import type { Season } from "@/models/season";
 import { buildPlural, formatLanguage, fromDatetimeLocalInput, toDatetimeLocalInput, minsToStringHoursDays } from "@/utils/format";
-import { ADD_ICON, NOTE_ICONS } from "@/constants/icons";
+import { NOTE_ICONS } from "@/constants/icons";
 import type { User } from "@/models/user";
 import { useFriend } from "@/composables/friend";
-import { usePlaylist } from "@/composables/playlist";
-import type { Playlist } from "@/models/playlist";
 import { useState } from "@/composables/state";
 import { FriendStatus } from "@/types/types";
 import { MAIN_COLOR, NOTE_COLORS } from "@/constants/style";
@@ -173,7 +156,6 @@ const maxDate = toDatetimeLocalInput(new Date().toISOString());
 const router = useRouter();
 const { confirmModal } = useState();
 const { getFriends } = useFriend();
-const { getPlaylists, addShowToPlaylist } = usePlaylist();
 const { addSeason } = useSeason();
 const { deleteSerie, getSerieInfos, updateField, getSerieFromCache } = useSerie();
 const { getSeasonsBySerieId, getPlatforms, getNotes } = useSearch();
@@ -181,10 +163,6 @@ const { showSuccess, showError } = useSnackbar();
 
 const friends = ref<User[]>([]);
 const friendsModal = ref(false);
-const playlists = ref<Playlist[]>([]);
-const playlistsModal = ref(false);
-const playlistsLoading = ref(false);
-const addedPlaylistIds = ref<Set<number>>(new Set());
 const infos = ref<SerieInfo>();
 const loading = ref(false);
 const modal = ref(false);
@@ -308,30 +286,6 @@ const openFriendsModal = async (): Promise<void> => {
     loading.value = true;
     friends.value = (await getFriends(FriendStatus.Viewed, props.id)).viewed;
     loading.value = false;
-}
-
-const openPlaylistsModal = async (): Promise<void> => {
-    playlistsModal.value = true;
-    addedPlaylistIds.value = new Set();
-
-    if (playlists.value.length) return;
-    playlistsLoading.value = true;
-    try {
-        playlists.value = await getPlaylists();
-    } catch (e) {
-        showError(e as Error);
-    } finally {
-        playlistsLoading.value = false;
-    }
-}
-
-const addToPlaylist = async (playlistId: number): Promise<void> => {
-    try {
-        await addShowToPlaylist(playlistId, props.id);
-        addedPlaylistIds.value = new Set([...addedPlaylistIds.value, playlistId]);
-    } catch (e) {
-        showError(e as Error);
-    }
 }
 
 const updateSerieDate = async (): Promise<void> => {

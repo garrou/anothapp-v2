@@ -1,5 +1,5 @@
 import type { NavStatusMenuItem, BottomNavMenuItem, NavOthersMenuItem } from "@/models/menu";
-import { ADD_ICON, FAVORITE_ICON } from "./icons";
+import { ADD_ICON, FAVORITE_ICON, PLAYLIST_PLAY_ICON } from "./icons";
 import { SerieStatus } from "@/types/types";
 
 export const PAGE_WITHOUT_BOTTOM_NAVBAR = ["home", "login", "register"]
@@ -73,7 +73,7 @@ export const NAV_OTHERS: NavOthersMenuItem[] = [
     },
     {
         title: "Playlists",
-        icon: "mdi-playlist-play",
+        icon: PLAYLIST_PLAY_ICON,
         link: "/playlists"
     },
     {

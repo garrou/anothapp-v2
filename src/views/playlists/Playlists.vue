@@ -20,7 +20,7 @@
                 </v-card>
             </template>
         </card-grid>
-        <empty-state v-else-if="!loading" icon="mdi-playlist-play" title="Aucune playlist"
+        <empty-state v-else-if="!loading" :icon="PLAYLIST_PLAY_ICON" title="Aucune playlist"
             description="Créez une playlist pour regrouper des séries à partager avec vos amis." />
 
         <playlist-form-modal v-model="creating" @cancel="creating = false" @save="onCreate" />
@@ -33,7 +33,7 @@ import CardGrid from "@/components/CardGrid.vue";
 import EmptyState from "@/components/EmptyState.vue";
 import PlaylistCover from "@/components/playlists/PlaylistCover.vue";
 import PlaylistFormModal from "@/components/playlists/PlaylistFormModal.vue";
-import { ADD_ICON } from "@/constants/icons";
+import { ADD_ICON, PLAYLIST_PLAY_ICON } from "@/constants/icons";
 import { usePlaylist } from "@/composables/playlist";
 import { useSnackbar } from "@/composables/snackbar";
 import type { Playlist } from "@/models/playlist";

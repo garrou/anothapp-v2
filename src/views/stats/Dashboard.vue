@@ -114,7 +114,7 @@
                         </v-card>
                     </template>
                 </card-grid>
-                <empty-state v-else-if="!playlistsLoading" icon="mdi-playlist-play" title="Aucune playlist"
+                <empty-state v-else-if="!playlistsLoading" :icon="PLAYLIST_PLAY_ICON" title="Aucune playlist"
                     description="Cet ami n'a pas encore de playlist visible." />
             </v-window-item>
         </v-window>
@@ -156,6 +156,7 @@ import { useScrollStore } from "@/stores/scroll";
 import { buildPlural } from "@/utils/format";
 import { useRoute } from "vue-router";
 import Chart from "@/components/stats/Chart.vue";
+import { PLAYLIST_PLAY_ICON } from "@/constants/icons";
 
 const DASHBOARD_TABS = [
     { value: 1, label: "Vue d'ensemble" },

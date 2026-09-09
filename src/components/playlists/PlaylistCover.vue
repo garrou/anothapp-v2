@@ -4,12 +4,13 @@
             <v-img v-for="(poster, index) in posters" :key="index" class="cover-tile" :src="poster" cover />
         </template>
         <div v-else class="cover-placeholder">
-            <v-icon icon="mdi-playlist-music" size="40" />
+            <v-icon :icon="PLAYLIST_PLAY_ICON" size="40" />
         </div>
     </div>
 </template>
 
 <script lang="ts" setup>
+import { PLAYLIST_PLAY_ICON } from "@/constants/icons";
 import { type PropType } from "vue";
 
 defineProps({

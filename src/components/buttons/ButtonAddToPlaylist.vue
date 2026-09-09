@@ -1,9 +1,9 @@
 <template>
-    <v-list-item v-if="menuItem" :prepend-icon="ADD_PLAYLIST_ICON" title="Ajouter à une playlist" @click="open" />
+    <v-list-item v-if="menuItem" :prepend-icon="PLAYLIST_ADD_ICON" title="Ajouter à une playlist" @click="open" />
 
     <v-tooltip v-else text="Ajouter à une playlist" :location="tooltipLocation">
         <template v-slot:activator="{ props: activatorProps }">
-            <v-btn v-bind="activatorProps" color="on-surface-variant" :icon="ADD_PLAYLIST_ICON" variant="text"
+            <v-btn v-bind="activatorProps" color="on-surface-variant" :icon="PLAYLIST_ADD_ICON" variant="text"
                 @click="open" />
         </template>
     </v-tooltip>
@@ -31,8 +31,7 @@ import { TOOLTIP_LOCATION } from "@/constants/style";
 import { usePlaylist } from "@/composables/playlist";
 import { useSnackbar } from "@/composables/snackbar";
 import type { Playlist } from "@/models/playlist";
-
-const ADD_PLAYLIST_ICON = "mdi-playlist-plus";
+import { PLAYLIST_ADD_ICON } from "@/constants/icons";
 
 const props = defineProps({
     menuItem: { type: Boolean, default: false },

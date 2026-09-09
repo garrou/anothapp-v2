@@ -127,7 +127,7 @@ export function useSerie() {
         let series = Array.from(userSeriesStore.series.values());
 
         if (kinds) {
-            series = series.filter((serie) => kinds.every((kind) => serie.kinds.includes(kind)));
+            series = series.filter((serie) => kinds.some((kind) => serie.kinds.includes(kind)));
         }
         if (countries) {
             series = series.filter((serie) => countries.includes(serie.country));
@@ -153,7 +153,7 @@ export function useSerie() {
             return filterAndSortUserSeries({
                 notes: filterNotes.length ? filterNotes.map((note) => note.id) : undefined,
                 title: filterTitle,
-                kinds: filterKinds.length ? filterKinds.map((kind) => kind.value) : undefined,
+                kinds: filterKinds.length ? filterKinds.map((kind) => kind.name) : undefined,
                 countries: filterCountries.length ? filterCountries : undefined,
             });
         }

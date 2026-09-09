@@ -13,6 +13,8 @@ export interface Playlist {
     visible: boolean;
 
     showsCount?: number;
+
+    posters?: string[];
 }
 
 export interface PlaylistDetail {

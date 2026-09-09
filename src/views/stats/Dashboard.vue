@@ -106,6 +106,7 @@
                     :lg="3">
                     <template #default="{ item: playlist }">
                         <v-card class="playlist-card" :to="`/playlists/${playlist.id}`">
+                            <playlist-cover :posters="playlist.posters ?? []" />
                             <v-card-title>{{ playlist.name }}</v-card-title>
                             <v-card-subtitle class="pb-4">
                                 {{ buildPlural("série", playlist.showsCount ?? 0) }}
@@ -130,6 +131,7 @@ import BaseModal from "@/components/BaseModal.vue";
 import CardGrid from "@/components/CardGrid.vue";
 import EmptyState from "@/components/EmptyState.vue";
 import PillTabs from "@/components/PillTabs.vue";
+import PlaylistCover from "@/components/playlists/PlaylistCover.vue";
 import StatTile from "@/components/StatTile.vue";
 import SeriesLinkList from "@/components/series/SeriesLinkList.vue";
 import SeriesCountries from "@/components/stats/SeriesCountries.vue";

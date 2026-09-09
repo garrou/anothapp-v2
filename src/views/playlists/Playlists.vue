@@ -11,6 +11,7 @@
         <card-grid v-if="playlists.length" :items="playlists" :loading="loading" :sm="6" :md="4" :lg="3">
             <template #default="{ item: playlist }">
                 <v-card class="playlist-card" :to="`/playlists/${playlist.id}`">
+                    <playlist-cover :posters="playlist.posters ?? []" />
                     <v-card-title>{{ playlist.name }}</v-card-title>
                     <v-card-subtitle class="d-flex align-center ga-1 pb-4">
                         {{ buildPlural("série", playlist.showsCount ?? 0) }}
@@ -30,6 +31,7 @@
 import BaseAppBar from "@/components/BaseAppBar.vue";
 import CardGrid from "@/components/CardGrid.vue";
 import EmptyState from "@/components/EmptyState.vue";
+import PlaylistCover from "@/components/playlists/PlaylistCover.vue";
 import PlaylistFormModal from "@/components/playlists/PlaylistFormModal.vue";
 import { ADD_ICON } from "@/constants/icons";
 import { usePlaylist } from "@/composables/playlist";

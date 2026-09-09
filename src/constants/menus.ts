@@ -72,6 +72,11 @@ export const NAV_OTHERS: NavOthersMenuItem[] = [
         link: "/calendar"
     },
     {
+        title: "Playlists",
+        icon: "mdi-playlist-play",
+        link: "/playlists"
+    },
+    {
         title: "Acteurs favoris",
         icon: "mdi-account-star-outline",
         link: "/actors/favorites"

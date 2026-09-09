@@ -15,8 +15,7 @@
                 <friend-compare :friend-username="friend.username" :theirs="theirsPromise" />
             </v-container>
 
-            <dashboard :user-id="friend.id" :show-bar="false" :preloaded-stat="theirsPromise"
-                :friend-playlists="playlists" :friend-username="friend.username" />
+            <dashboard :user-id="friend.id" :show-bar="false" :preloaded-stat="theirsPromise" />
         </template>
     </div>
 </template>
@@ -26,9 +25,7 @@ import Dashboard from "@/views/stats/Dashboard.vue";
 import FriendCompare from "@/components/friends/FriendCompare.vue";
 import { useFriendStore } from "@/stores/friend";
 import { useStatistic } from "@/composables/statistic";
-import { usePlaylist } from "@/composables/playlist";
 import type { GlobalStat } from "@/models/stat";
-import type { Playlist } from "@/models/playlist";
 import { goBack as navigateBack } from "@/utils/navigation";
 import { storeToRefs } from "pinia";
 import { onBeforeMount, ref } from "vue";
@@ -37,11 +34,9 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 const friendStore = useFriendStore();
 const { getStats } = useStatistic();
-const { getPlaylists } = usePlaylist();
 const { friend } = storeToRefs(friendStore);
 
 const theirsPromise = ref<Promise<GlobalStat>>();
-const playlists = ref<Playlist[]>([]);
 
 const goBack = () => {
     friendStore.reset();
@@ -54,7 +49,6 @@ onBeforeMount(() => {
         return;
     }
     theirsPromise.value = getStats(friend.value.id);
-    getPlaylists(friend.value.id).then((data) => playlists.value = data).catch(() => {});
 });
 </script>
 

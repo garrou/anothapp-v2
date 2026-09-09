@@ -30,7 +30,7 @@ export const useSerieStore = defineStore("serie", () => {
     || !!filterTitle.value;
 
     const formatKinds = (): string|undefined => {
-        return filterKinds.value.length ? filterKinds.value.map((kind) => kind.name).join(",") : undefined;
+        return filterKinds.value.length ? filterKinds.value.map((kind) => kind.value).join(",") : undefined;
     }
 
     const formatPlatforms = (): string|undefined => {

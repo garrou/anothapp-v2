@@ -4,6 +4,7 @@ import { mount, flushPromises } from "@vue/test-utils";
 import EpisodesChecklist from "./EpisodesChecklist.vue";
 import { vuetify } from "@/test/vuetify";
 import type { UserEpisode } from "@/models/userEpisode";
+import { formatDate, toDatetimeLocalInput } from "@/utils/format";
 
 const episodeComposableMocks = vi.hoisted(() => ({
     getEpisodesBySeasonId: vi.fn(),
@@ -60,7 +61,7 @@ describe("EpisodesChecklist", () => {
     it("shows the watched date and edit/delete buttons for a watched episode", async () => {
         const wrapper = await mountChecklist([watched]);
 
-        expect(wrapper.text()).toContain("01/01/2020");
+        expect(wrapper.text()).toContain(formatDate(PAST_DATE));
         expect(wrapper.findAll(".episode-entry-btn")).toHaveLength(2);
     });
 
@@ -99,7 +100,7 @@ describe("EpisodesChecklist", () => {
         await buttons[0].trigger("click");
 
         expect(wrapper.find(".episode-entry-edit").exists()).toBe(true);
-        expect((wrapper.find("input[type='datetime-local']").element as HTMLInputElement).value).toBe("2020-01-01T10:00");
+        expect((wrapper.find("input[type='datetime-local']").element as HTMLInputElement).value).toBe(toDatetimeLocalInput(PAST_DATE));
 
         await buttons[0].trigger("click");
         expect(wrapper.find(".episode-entry-edit").exists()).toBe(false);

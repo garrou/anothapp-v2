@@ -6,6 +6,7 @@ import { vuetify } from "@/test/vuetify";
 import type { SeasonDetail } from "@/models/season";
 import type { Platform } from "@/models/serie";
 import type { User } from "@/models/user";
+import { toDatetimeLocalInput } from "@/utils/format";
 
 const seasonComposableMocks = vi.hoisted(() => ({
     deleteSeason: vi.fn(),
@@ -187,7 +188,7 @@ describe("SeasonDetails", () => {
         await saveBtn!.trigger("click");
         await flushPromises();
 
-        expect(seasonComposableMocks.updateSeason).toHaveBeenCalledWith(501, 1, "2023-05-01T10:00");
+        expect(seasonComposableMocks.updateSeason).toHaveBeenCalledWith(501, 1, toDatetimeLocalInput(subSeason(501).addedAt));
         expect(seasonComposableMocks.updateWatchedWith).toHaveBeenCalledWith(501, ["f1"]);
     });
 

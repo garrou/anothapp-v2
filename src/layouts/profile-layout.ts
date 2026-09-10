@@ -2,11 +2,6 @@ import type { Layout } from "@/models/layout"
 
 export const ProfileLayout: Layout[] = [
     {
-        icon: "mdi-trophy-outline",
-        name: "Succès",
-        route: "/achievements"
-    },
-    {
         icon: "mdi-image",
         name: "Changer la photo de profil",
         value: "images"

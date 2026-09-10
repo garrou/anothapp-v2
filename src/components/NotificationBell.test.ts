@@ -196,7 +196,7 @@ describe("NotificationBell", () => {
         expect(routerMocks.push).toHaveBeenCalledWith("/friends");
     });
 
-    it("navigates to the achievements page for an achievement_unlocked notification", async () => {
+    it("navigates to the dashboard for an achievement_unlocked notification", async () => {
         const wrapper = await openMenu(await mountBell([
             notif(1, { type: "achievement_unlocked", metadata: { code: "streak", league: 3, subTier: 2 } }),
         ]));
@@ -204,7 +204,7 @@ describe("NotificationBell", () => {
         await wrapper.findComponent({ name: "VListItem" }).trigger("click");
         await flushPromises();
 
-        expect(routerMocks.push).toHaveBeenCalledWith("/achievements");
+        expect(routerMocks.push).toHaveBeenCalledWith("/dashboard");
     });
 
     it("does not call markAsRead again for an already-read notification", async () => {

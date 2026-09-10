@@ -8,7 +8,7 @@
                 <div class="text-caption text-medium-emphasis d-flex align-center ga-1">
                     {{ buildPlural("série", detail.shows.length) }}
                     <template v-if="!detail.playlist.visible">
-                        <v-icon icon="mdi-lock-outline" size="14" />
+                        <v-icon :icon="LOCK_ICON" size="14" />
                         Privée
                     </template>
                 </div>
@@ -48,7 +48,7 @@
                 </poster-card>
             </template>
         </card-grid>
-        <empty-state v-else icon="mdi-movie-open-outline" title="Playlist vide"
+        <empty-state v-else :icon="MOVIE_EMPTY_ICON" title="Playlist vide"
             :description="isOwner ? 'Recherchez une série ci-dessus pour l\'ajouter.' : 'Cette playlist ne contient aucune série pour le moment.'" />
 
         <playlist-form-modal v-model="editing" :playlist="detail.playlist" confirm-text="Enregistrer"
@@ -67,7 +67,7 @@ import CardGrid from "@/components/CardGrid.vue";
 import EmptyState from "@/components/EmptyState.vue";
 import PosterCard from "@/components/PosterCard.vue";
 import PlaylistFormModal from "@/components/playlists/PlaylistFormModal.vue";
-import { DELETE_ICON, EDIT_ICON, SEARCH_ICON } from "@/constants/icons";
+import { DELETE_ICON, EDIT_ICON, LOCK_ICON, MOVIE_EMPTY_ICON, SEARCH_ICON } from "@/constants/icons";
 import { usePlaylist } from "@/composables/playlist";
 import { useUser } from "@/composables/user";
 import { useSnackbar } from "@/composables/snackbar";

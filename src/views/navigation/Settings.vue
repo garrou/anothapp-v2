@@ -17,7 +17,7 @@
                             @update:model-value="toggleEpisodeTracking" />
                     </template>
                 </v-list-item>
-                <v-list-item prepend-icon="mdi-database" title="Exporter mes données" @click="settings.exportData" />
+                <v-list-item :prepend-icon="DATABASE_ICON" title="Exporter mes données" @click="settings.exportData" />
             </v-list>
         </v-card>
     </v-container>
@@ -38,6 +38,7 @@ import BaseAppBar from '@/components/BaseAppBar.vue';
 import BaseConfirm from '@/components/BaseConfirm.vue';
 import { useSettings } from '@/composables/settings';
 import { useUser } from '@/composables/user';
+import { DATABASE_ICON } from '@/constants/icons';
 import storageService from '@/services/storageService';
 import { THEME_ANOTHAPP, THEME_ANOTHAPP_DARK, applyThemeClass } from '@/utils/theme';
 import { useTheme } from 'vuetify';

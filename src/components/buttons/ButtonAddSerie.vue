@@ -1,5 +1,5 @@
 <template>
-    <v-btn v-if="primary && exists" class="add-btn--done" color="primary" disabled prepend-icon="mdi-check"
+    <v-btn v-if="primary && exists" class="add-btn--done" color="primary" disabled :prepend-icon="CHECK_ICON"
         rounded="pill" variant="tonal">
         Déjà ajoutée
     </v-btn>
@@ -9,7 +9,7 @@
         Ajouter
     </v-btn>
 
-    <v-list-item v-else-if="!exists && menuItem" prepend-icon="mdi-bookmark-plus" title="Ajouter à ma liste"
+    <v-list-item v-else-if="!exists && menuItem" :prepend-icon="BOOKMARK_ADD_ICON" title="Ajouter à ma liste"
         @click="addSerie(serieId)" />
 
     <v-tooltip v-else-if="!exists" text="Ajouter la série" :location="tooltipLocation">
@@ -23,7 +23,7 @@
 
 <script lang="ts" setup>
 import { useSerie } from '@/composables/serie';
-import { ADD_ICON } from '@/constants/icons';
+import { ADD_ICON, BOOKMARK_ADD_ICON, CHECK_ICON } from '@/constants/icons';
 import { TOOLTIP_LOCATION } from '@/constants/style';
 import { onBeforeMount, ref, type PropType } from 'vue';
 

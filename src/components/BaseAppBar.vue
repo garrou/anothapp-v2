@@ -10,7 +10,7 @@
                     <v-text-field v-model="title" class="mb-4 me-4" clearable hide-details :placeholder="placeholder"
                         single-line variant="plain" @input="onChange" @click:clear="filterTitle(undefined)">
                         <template #clear="{ props: clearProps }">
-                            <v-btn v-bind="clearProps" aria-label="Vider" icon="mdi-close-circle" density="compact"
+                            <v-btn v-bind="clearProps" aria-label="Vider" :icon="CLOSE_CIRCLE_ICON" density="compact"
                                 size="small" variant="text" />
                         </template>
                         <template v-if="!autoSearch" #append-inner>
@@ -135,7 +135,7 @@
                                 <template #label>
                                     <v-avatar v-if="friend.picture" :image="friend.picture" size="28" class="me-2" />
                                     <v-avatar v-else color="surface-variant" size="28" class="me-2">
-                                        <v-icon icon="mdi-account" size="16" />
+                                        <v-icon :icon="ACCOUNT_ICON" size="16" />
                                     </v-avatar>
                                     {{ friend.username }}
                                 </template>
@@ -150,7 +150,7 @@
 
 <script lang="ts" setup>
 import { DENSITY, ELEVATION } from "@/constants/style";
-import { FILTER_ICON, SEARCH_ICON } from "@/constants/icons";
+import { ACCOUNT_ICON, CLOSE_CIRCLE_ICON, FILTER_ICON, SEARCH_ICON } from "@/constants/icons";
 import { NAV_OTHERS } from "@/constants/menus";
 import { computed, onBeforeMount, ref, watch } from "vue";
 import { useRoute } from "vue-router";

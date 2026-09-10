@@ -19,5 +19,11 @@ export default defineConfig({
   test: {
     environment: "node",
     globals: false,
+    setupFiles: ["./src/test/setup.ts"],
+    server: {
+      deps: {
+        inline: ["vuetify"],
+      },
+    },
   }
 })

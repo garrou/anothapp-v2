@@ -1,4 +1,4 @@
-import { PLAY_ICON } from "@/constants/icons"
+import { FIRE_ICON, PLAY_ICON, TIME_ICON } from "@/constants/icons"
 import type { Layout } from "@/models/layout";
 import type { GlobalStat } from "@/models/stat"
 import { minsToStringHoursDays } from "@/utils/format"
@@ -10,7 +10,7 @@ export const DashboardLayout = (stat: GlobalStat): Layout[] => [
         value: minsToStringHoursDays(stat.monthTime),
     },
     {
-        icon: "mdi-timer-sand-complete",
+        icon: TIME_ICON,
         name: "Temps total",
         value: minsToStringHoursDays(stat.totalTime),
     },
@@ -36,7 +36,7 @@ export const DashboardLayout = (stat: GlobalStat): Layout[] => [
         display: !!stat.bestMonth
     },
     {
-        icon: "mdi-fire",
+        icon: FIRE_ICON,
         name: "Jours d'affilés",
         value: stat.currentStreak,
     },

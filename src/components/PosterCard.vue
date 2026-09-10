@@ -5,7 +5,7 @@
                 <base-image v-if="image" cover max-height="580" :src="image" />
                 <div v-else class="poster-placeholder">
                     <slot name="placeholder">
-                        <v-icon size="40" icon="mdi-image-off-outline" />
+                        <v-icon size="40" :icon="IMAGE_OFF_ICON" />
                     </slot>
                 </div>
             </router-link>
@@ -13,7 +13,7 @@
                 <base-image v-if="image" cover max-height="580" :src="image" />
                 <div v-else class="poster-placeholder">
                     <slot name="placeholder">
-                        <v-icon size="40" icon="mdi-image-off-outline" />
+                        <v-icon size="40" :icon="IMAGE_OFF_ICON" />
                     </slot>
                 </div>
             </template>
@@ -33,6 +33,7 @@
 
 <script lang="ts" setup>
 import BaseImage from "./BaseImage.vue";
+import { IMAGE_OFF_ICON } from "@/constants/icons";
 
 defineProps({
     image: { type: String, default: undefined },

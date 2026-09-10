@@ -1,7 +1,7 @@
 <template>
     <div class="hero" :style="heroStyle">
         <div class="hero-scrim"></div>
-        <v-btn class="back-btn" icon="mdi-chevron-left" color="white" variant="flat" density="comfortable"
+        <v-btn class="back-btn" :icon="BACK_ICON" color="white" variant="flat" density="comfortable"
             @click="$emit('back')" />
         <div class="hero-content">
             <div v-if="kinds.length" class="hero-tags">
@@ -15,6 +15,7 @@
 <script lang="ts" setup>
 import { computed, type PropType } from "vue";
 import BaseTag from "@/components/BaseTag.vue";
+import { BACK_ICON } from "@/constants/icons";
 
 const props = defineProps({
     kinds: { type: Array as PropType<string[]>, default: () => [] },

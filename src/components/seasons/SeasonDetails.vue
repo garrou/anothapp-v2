@@ -36,7 +36,7 @@
                             <template #prepend>
                                 <v-avatar v-if="item.raw.picture" :image="item.raw.picture" size="32" />
                                 <v-avatar v-else color="surface-variant" size="32">
-                                    <v-icon icon="mdi-account" size="18" />
+                                    <v-icon :icon="ACCOUNT_ICON" size="18" />
                                 </v-avatar>
                             </template>
                         </v-list-item>
@@ -76,7 +76,7 @@ import { useSeason } from "@/composables/season";
 import { useEpisode } from "@/composables/episode";
 import { formatDate, toDatetimeLocalInput, minsToStringHoursDays } from "@/utils/format";
 import { DENSITY } from "@/constants/style";
-import { EDIT_ICON, DELETE_ICON } from "@/constants/icons";
+import { ACCOUNT_ICON, EDIT_ICON, DELETE_ICON } from "@/constants/icons";
 import { useSerie } from "@/composables/serie";
 import type { Platform } from "@/models/serie";
 import { useSearch } from "@/composables/search";

@@ -17,6 +17,7 @@
 import { useSerie } from '@/composables/serie';
 import { useSnackbar } from '@/composables/snackbar';
 import { TOOLTIP_LOCATION } from '@/constants/style';
+import { CLOSE_CIRCLE_ICON, PLAY_ICON } from '@/constants/icons';
 import type { Serie } from '@/models/serie';
 import { computed, ref, watch, type PropType } from 'vue';
 
@@ -40,7 +41,7 @@ watch(() => props.serie.watch, (value) => { isWatching.value = value ?? false; }
 
 const watchText = computed(() => isWatching.value ? "Arrêter le visionnage" : "Reprendre le visionnage");
 const watchColor = computed(() => isWatching.value ? "red" : "green");
-const watchIcon = computed(() => isWatching.value ? "mdi-close-circle" : "mdi-play");
+const watchIcon = computed(() => isWatching.value ? CLOSE_CIRCLE_ICON : PLAY_ICON);
 
 const changeWatch = async (): Promise<void> => {
     isWatching.value = await updateField(props.serie, "watch", "update");

@@ -32,7 +32,7 @@ const ownedPlaylist = { id: "p1", userId: "user-1", name: "Mes séries", visible
 
 describe("usePlaylist.getPlaylists", () => {
     beforeEach(() => {
-        vi.clearAllMocks();
+        vi.resetAllMocks();
     });
 
     it("returns the playlists on success", async () => {
@@ -59,7 +59,7 @@ describe("usePlaylist.getPlaylists", () => {
 
 describe("usePlaylist.getPlaylist", () => {
     beforeEach(() => {
-        vi.clearAllMocks();
+        vi.resetAllMocks();
     });
 
     it("returns the playlist detail on success", async () => {
@@ -83,7 +83,7 @@ describe("usePlaylist.getPlaylist", () => {
 
 describe("usePlaylist.createPlaylist", () => {
     beforeEach(() => {
-        vi.clearAllMocks();
+        vi.resetAllMocks();
     });
 
     it("returns the created playlist and shows a success message naming it", async () => {
@@ -108,7 +108,7 @@ describe("usePlaylist.createPlaylist", () => {
 
 describe("usePlaylist.updatePlaylist", () => {
     beforeEach(() => {
-        vi.clearAllMocks();
+        vi.resetAllMocks();
     });
 
     it("shows a success message on success", async () => {
@@ -133,7 +133,7 @@ describe("usePlaylist.updatePlaylist", () => {
 
 describe("usePlaylist.deletePlaylist", () => {
     beforeEach(() => {
-        vi.clearAllMocks();
+        vi.resetAllMocks();
     });
 
     it("shows a success message naming the deleted playlist", async () => {
@@ -157,7 +157,7 @@ describe("usePlaylist.deletePlaylist", () => {
 
 describe("usePlaylist.addShowToPlaylist", () => {
     beforeEach(() => {
-        vi.clearAllMocks();
+        vi.resetAllMocks();
     });
 
     it("adds the show and shows a success message", async () => {
@@ -182,7 +182,7 @@ describe("usePlaylist.addShowToPlaylist", () => {
 
 describe("usePlaylist.removeShowFromPlaylist", () => {
     beforeEach(() => {
-        vi.clearAllMocks();
+        vi.resetAllMocks();
     });
 
     it("removes the show and shows a success message", async () => {

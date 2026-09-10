@@ -66,7 +66,7 @@
                 </div>
 
                 <div v-if="wrapped.bestStreak" class="wrapped-card" :style="cardStyle(8)">
-                    <v-icon icon="mdi-fire" size="20" class="wrapped-card-icon" />
+                    <v-icon :icon="FIRE_ICON" size="20" class="wrapped-card-icon" />
                     <div class="wrapped-card-value">{{ wrapped.bestStreak }}</div>
                     <div class="wrapped-card-label">
                         {{ wrapped.bestStreak > 1 ? "jours d'affilée (record)" : "jour d'affilée (record)" }}
@@ -95,7 +95,7 @@ import { useStatistic } from "@/composables/statistic";
 import { useSnackbar } from "@/composables/snackbar";
 import type { WrappedStat } from "@/models/stat";
 import { CATEGORICAL_COLORS, MAIN_COLOR } from "@/constants/style";
-import { SHARE_ICON } from "@/constants/icons";
+import { FIRE_ICON, SHARE_ICON } from "@/constants/icons";
 import { minsToStringHoursDays } from "@/utils/format";
 import { computed, ref, watch } from "vue";
 

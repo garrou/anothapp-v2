@@ -147,7 +147,7 @@ const openNotification = async (item: Notification) => {
     } else if (item.type.startsWith("friend_")) {
         router.push("/friends");
     } else if (item.type === "achievement_unlocked") {
-        router.push("/dashboard");
+        router.push({ path: "/dashboard", query: { tab: "achievements" } });
     }
 }
 

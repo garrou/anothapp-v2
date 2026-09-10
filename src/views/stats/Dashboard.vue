@@ -99,7 +99,7 @@
                         </v-row>
                     </v-window-item>
 
-                    <v-window-item v-if="!userId" :value="4">
+                    <v-window-item v-if="!userId" :value="TAB_ACHIEVEMENTS">
                         <badges-grid />
                     </v-window-item>
                 </v-window>
@@ -171,6 +171,7 @@ const SECTION_SERIES = 1;
 const SECTION_STATS = 2;
 const SECTION_PLAYLISTS = 3;
 const SECTION_ACHIEVEMENTS = 4;
+const TAB_ACHIEVEMENTS = 4;
 
 const props = defineProps({
     userId: { type: String, default: undefined },
@@ -184,7 +185,7 @@ const DASHBOARD_TABS = computed(() => [
     { value: 1, label: "En cours" },
     { value: 2, label: "Tendances" },
     { value: 3, label: "Répartition" },
-    ...(props.userId ? [] : [{ value: 4, label: "Succès" }]),
+    ...(props.userId ? [] : [{ value: TAB_ACHIEVEMENTS, label: "Succès" }]),
 ]);
 
 const url = props.userId ? "discover" : "series";
@@ -199,7 +200,7 @@ const modal = ref(false);
 const stat = ref<GlobalStat>();
 const modalTitle = ref<string>();
 const series = ref<Serie[]>([]);
-const tab = ref(1);
+const tab = ref(route.query.tab === "achievements" ? TAB_ACHIEVEMENTS : 1);
 const playlists = ref<Playlist[]>([]);
 const playlistsLoading = ref(false);
 const sectionTab = ref(props.userId ? SECTION_SERIES : SECTION_STATS);

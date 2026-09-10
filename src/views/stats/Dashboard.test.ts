@@ -19,7 +19,7 @@ const statisticComposableMocks = vi.hoisted(() => ({
 const playlistComposableMocks = vi.hoisted(() => ({
     getPlaylists: vi.fn(),
 }));
-const routeMock = vi.hoisted(() => ({ fullPath: "/dashboard" }));
+const routeMock = vi.hoisted(() => ({ fullPath: "/dashboard", query: {} as Record<string, string> }));
 
 vi.mock("@/composables/serie", () => ({ useSerie: () => serieComposableMocks }));
 vi.mock("@/composables/statistic", () => ({ useStatistic: () => statisticComposableMocks }));
@@ -73,6 +73,7 @@ beforeEach(() => {
     vi.resetAllMocks();
     setActivePinia(createPinia());
     playlistComposableMocks.getPlaylists.mockResolvedValue([]);
+    routeMock.query = {};
 });
 
 describe("Dashboard", () => {
@@ -175,5 +176,13 @@ describe("Dashboard", () => {
         const wrapper = await openStatsTab(await mountView({ userId: "friend-1" }), 4);
 
         expect(wrapper.findComponent({ name: "BadgesGrid" }).props("userId")).toBe("friend-1");
+    });
+
+    it("opens straight on the 'Succès' tab when the route asks for it (achievement_unlocked notification click)", async () => {
+        routeMock.query = { tab: "achievements" };
+
+        const wrapper = await mountView();
+
+        expect(wrapper.findComponent({ name: "BadgesGrid" }).exists()).toBe(true);
     });
 });

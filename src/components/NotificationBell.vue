@@ -50,6 +50,7 @@ import { useRouter } from "vue-router";
 import { useNotification } from "@/composables/notification";
 import { useSearch } from "@/composables/search";
 import { NOTIFICATION_GROUPS, type Notification, type NotificationGroup } from "@/models/notification";
+import { ACHIEVEMENT_NAMES, LEAGUE_NAMES, SUB_TIER_ROMAN } from "@/constants/achievements";
 import { ACCOUNT_ICON } from "@/constants/icons";
 import { formatDate, buildPlural } from "@/utils/format";
 import PillTabs from "@/components/PillTabs.vue";
@@ -120,6 +121,12 @@ const describe = (item: Notification): string => {
             return `${actor} a refusé votre demande d'ami`;
         case "episode_upcoming":
             return `Un nouvel épisode de "${show}" sort le ${formatDate(String(meta.date))}`;
+        case "achievement_unlocked": {
+            const name = ACHIEVEMENT_NAMES[String(meta.code)] ?? "un succès";
+            const league = LEAGUE_NAMES[Number(meta.league)];
+            const roman = SUB_TIER_ROMAN[Number(meta.subTier)];
+            return `Nouveau succès : ${name}${league ? ` — ${league} ${roman}` : ""}`;
+        }
         default:
             return actor;
     }
@@ -139,6 +146,8 @@ const openNotification = async (item: Notification) => {
         router.push(`/actor/${item.metadata.actorId}`);
     } else if (item.type.startsWith("friend_")) {
         router.push("/friends");
+    } else if (item.type === "achievement_unlocked") {
+        router.push("/achievements");
     }
 }
 

@@ -94,6 +94,14 @@ describe("NotificationBell", () => {
         expect(wrapper.text()).toContain('Dexter a vu 3 épisodes de la saison 2 de "Breaking Bad"');
     });
 
+    it("describes an achievement_unlocked notification with its league and sub-tier", async () => {
+        const wrapper = await openMenu(await mountBell([
+            notif(1, { type: "achievement_unlocked", metadata: { code: "streak", league: 3, subTier: 2 } }),
+        ]));
+
+        expect(wrapper.text()).toContain("Nouveau succès : Série de feu — Or II");
+    });
+
     it("falls back to the actor's name for unknown notification types", async () => {
         const wrapper = await openMenu(await mountBell([
             { ...notif(1), type: "unknown_type" as never },
@@ -169,6 +177,17 @@ describe("NotificationBell", () => {
         await flushPromises();
 
         expect(routerMocks.push).toHaveBeenCalledWith("/friends");
+    });
+
+    it("navigates to the achievements page for an achievement_unlocked notification", async () => {
+        const wrapper = await openMenu(await mountBell([
+            notif(1, { type: "achievement_unlocked", metadata: { code: "streak", league: 3, subTier: 2 } }),
+        ]));
+
+        await wrapper.findComponent({ name: "VListItem" }).trigger("click");
+        await flushPromises();
+
+        expect(routerMocks.push).toHaveBeenCalledWith("/achievements");
     });
 
     it("does not call markAsRead again for an already-read notification", async () => {

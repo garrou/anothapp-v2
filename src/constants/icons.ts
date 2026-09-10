@@ -16,6 +16,8 @@ export const FILTER_ICON = "mdi-filter";
 
 export const PLATFORM_ICON = "mdi-movie-open-play";
 
+export const ACHIEVEMENT_ICON = "mdi-trophy-outline";
+
 export const PLAY_ICON = "mdi-play";
 
 export const SEARCH_ICON = "mdi-magnify";

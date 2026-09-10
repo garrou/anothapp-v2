@@ -1,5 +1,3 @@
-import { PLATFORM_ICON } from '@/constants/icons';
-
 <template>
     <template v-if="platform">
         <v-avatar v-if="platform.logo" :image="platform.logo" />

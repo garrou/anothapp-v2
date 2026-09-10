@@ -1,3 +1,15 @@
+import { config } from "@vue/test-utils";
+
+// Components that mount <router-link>/<router-view> without a real Vue
+// Router instance (most component tests don't need actual navigation,
+// just the ability to render) would otherwise fail to resolve these tags.
+// Stubbing them globally avoids repeating this in every test file.
+config.global.stubs = {
+    ...config.global.stubs,
+    RouterLink: true,
+    RouterView: true,
+};
+
 // Polyfills Vuetify needs when mounting components under jsdom, which
 // doesn't implement these browser APIs. No-ops under the "node" test
 // environment (nothing calls them there), so this file is safe to load

@@ -44,7 +44,7 @@ describe("BadgesGrid", () => {
 
     it("renders one medallion per achievement", async () => {
         const wrapper = await mountGrid([
-            achievement("streak", "Série de feu"),
+            achievement("streak", "Série de visionnage"),
             achievement("watch_time", "Marathonien"),
         ]);
 

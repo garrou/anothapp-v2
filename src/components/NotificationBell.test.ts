@@ -99,7 +99,16 @@ describe("NotificationBell", () => {
             notif(1, { type: "achievement_unlocked", metadata: { code: "streak", league: 3, subTier: 2 } }),
         ]));
 
-        expect(wrapper.text()).toContain("Nouveau succès : Série de feu — Or II");
+        expect(wrapper.text()).toContain("Nouveau succès : Série de visionnage — Or II");
+    });
+
+    it("degrades gracefully when an achievement_unlocked notification has no sub-tier", async () => {
+        const wrapper = await openMenu(await mountBell([
+            notif(1, { type: "achievement_unlocked", metadata: { code: "streak", league: 3 } }),
+        ]));
+
+        expect(wrapper.text()).toContain("Nouveau succès : Série de visionnage — Or");
+        expect(wrapper.text()).not.toContain("undefined");
     });
 
     it("falls back to the actor's name for unknown notification types", async () => {

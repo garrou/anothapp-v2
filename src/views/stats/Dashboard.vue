@@ -123,7 +123,7 @@
                     </template>
                 </card-grid>
                 <empty-state v-else-if="!playlistsLoading" :icon="PLAYLIST_PLAY_ICON" title="Aucune playlist"
-                    description="Cet ami n'a pas encore de playlist visible." />
+                    description="Cet(te) ami(e) n'a pas encore de playlist visible." />
             </v-window-item>
         </v-window>
     </v-container>

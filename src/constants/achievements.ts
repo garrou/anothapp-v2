@@ -1,6 +1,5 @@
-// Mirrors the achievement catalog in anothapp-services (constants/achievements.js).
 export const ACHIEVEMENT_NAMES: Record<string, string> = {
-    streak: "Série de feu",
+    streak: "Série de visionnage",
     watch_time: "Marathonien",
     shows_started: "Collectionneur",
     shows_completed: "Complétionniste",
@@ -25,14 +24,19 @@ export const LEAGUE_NAMES: Record<number, string> = {
     7: "Titan",
 };
 
+// Chosen for contrast between adjacent leagues, not just a nice hue each: Bronze is
+// darkened/muted away from Or (both were close orange-browns before), Champion pushed
+// toward pure magenta and Titan toward a deep wine red so the two don't blend into each
+// other, and Titan deliberately avoids the app's own `error` red (#D6483A) so a top-tier
+// badge never reads as a warning.
 export const LEAGUE_COLORS: Record<number, string> = {
-    1: "#A9673A",
+    1: "#8C5A2B",
     2: "#9AA0AE",
     3: "#C98F2A",
-    4: "#4DC4D9",
+    4: "#22B8D9",
     5: "#6C5CE0",
-    6: "#C6519E",
-    7: "#E0483A",
+    6: "#C13584",
+    7: "#9B2242",
 };
 
 // sub_tier: 3 (entry of the league) down to 1 (top of the league)

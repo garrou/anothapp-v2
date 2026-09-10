@@ -124,8 +124,8 @@ const describe = (item: Notification): string => {
         case "achievement_unlocked": {
             const name = ACHIEVEMENT_NAMES[String(meta.code)] ?? "un succès";
             const league = LEAGUE_NAMES[Number(meta.league)];
-            const roman = SUB_TIER_ROMAN[Number(meta.subTier)];
-            return `Nouveau succès : ${name}${league ? ` — ${league} ${roman}` : ""}`;
+            const roman = meta.subTier !== undefined ? SUB_TIER_ROMAN[Number(meta.subTier)] : undefined;
+            return `Nouveau succès : ${name}${league ? ` — ${league}${roman ? ` ${roman}` : ""}` : ""}`;
         }
         default:
             return actor;

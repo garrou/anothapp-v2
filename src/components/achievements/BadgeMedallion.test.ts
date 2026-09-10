@@ -7,7 +7,7 @@ import type { Achievement } from "@/models/achievement";
 
 const achievement = (overrides: Partial<Achievement> = {}): Achievement => ({
     code: "streak",
-    name: "Série de feu",
+    name: "Série de visionnage",
     value: 0,
     league: null,
     subTier: null,

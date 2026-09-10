@@ -96,7 +96,7 @@ describe("NotificationBell", () => {
 
     it("describes an achievement_unlocked notification with its league and sub-tier", async () => {
         const wrapper = await openMenu(await mountBell([
-            notif(1, { type: "achievement_unlocked", metadata: { code: "streak", league: 3, subTier: 2 } }),
+            notif(1, { type: "achievement_unlocked", metadata: { code: "streak", name: "Série de visionnage", league: 3, subTier: 2 } }),
         ]));
 
         expect(wrapper.text()).toContain("Nouveau succès : Série de visionnage — Or II");
@@ -104,11 +104,19 @@ describe("NotificationBell", () => {
 
     it("degrades gracefully when an achievement_unlocked notification has no sub-tier", async () => {
         const wrapper = await openMenu(await mountBell([
-            notif(1, { type: "achievement_unlocked", metadata: { code: "streak", league: 3 } }),
+            notif(1, { type: "achievement_unlocked", metadata: { code: "streak", name: "Série de visionnage", league: 3 } }),
         ]));
 
         expect(wrapper.text()).toContain("Nouveau succès : Série de visionnage — Or");
         expect(wrapper.text()).not.toContain("undefined");
+    });
+
+    it("falls back to a generic label when an achievement_unlocked notification carries no name", async () => {
+        const wrapper = await openMenu(await mountBell([
+            notif(1, { type: "achievement_unlocked", metadata: { code: "streak", league: 3, subTier: 2 } }),
+        ]));
+
+        expect(wrapper.text()).toContain("Nouveau succès : un succès — Or II");
     });
 
     it("falls back to the actor's name for unknown notification types", async () => {

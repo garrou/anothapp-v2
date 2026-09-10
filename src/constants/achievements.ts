@@ -1,18 +1,3 @@
-export const ACHIEVEMENT_NAMES: Record<string, string> = {
-    streak: "Série de visionnage",
-    watch_time: "Marathonien",
-    shows_started: "Collectionneur",
-    shows_completed: "Complétionniste",
-    countries: "Cinéphile du monde",
-    kinds: "Explorateur de genres",
-    platforms: "Multi-plateforme",
-    friends_watched_with: "Ami fidèle",
-    friends_count: "Cercle d'amis",
-    notes_count: "Noteur assidu",
-    account_age: "Ancien de la maison",
-    leaderboard_top3: "Top 3 classement",
-};
-
 // league: 1=bronze 2=argent 3=or 4=diamant 5=master 6=champion 7=titan
 export const LEAGUE_NAMES: Record<number, string> = {
     1: "Bronze",

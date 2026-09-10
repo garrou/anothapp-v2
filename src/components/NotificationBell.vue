@@ -50,7 +50,7 @@ import { useRouter } from "vue-router";
 import { useNotification } from "@/composables/notification";
 import { useSearch } from "@/composables/search";
 import { NOTIFICATION_GROUPS, type Notification, type NotificationGroup } from "@/models/notification";
-import { ACHIEVEMENT_NAMES, LEAGUE_NAMES, SUB_TIER_ROMAN } from "@/constants/achievements";
+import { LEAGUE_NAMES, SUB_TIER_ROMAN } from "@/constants/achievements";
 import { ACCOUNT_ICON } from "@/constants/icons";
 import { formatDate, buildPlural } from "@/utils/format";
 import PillTabs from "@/components/PillTabs.vue";
@@ -122,7 +122,7 @@ const describe = (item: Notification): string => {
         case "episode_upcoming":
             return `Un nouvel épisode de "${show}" sort le ${formatDate(String(meta.date))}`;
         case "achievement_unlocked": {
-            const name = ACHIEVEMENT_NAMES[String(meta.code)] ?? "un succès";
+            const name = meta.name ? String(meta.name) : "un succès";
             const league = LEAGUE_NAMES[Number(meta.league)];
             const roman = meta.subTier !== undefined ? SUB_TIER_ROMAN[Number(meta.subTier)] : undefined;
             return `Nouveau succès : ${name}${league ? ` — ${league}${roman ? ` ${roman}` : ""}` : ""}`;

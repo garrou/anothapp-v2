@@ -8,14 +8,15 @@
 
 <script lang="ts" setup>
 import BasePieChart from "@/components/BasePieChart.vue";
-import SeriesCountriesMap from "@/components/stats/SeriesCountriesMap.vue";
 import type { ChartData, Stat } from "@/models/stat";
-import { ref } from "vue";
+import { defineAsyncComponent, ref } from "vue";
 import { MAIN_COLOR } from "@/constants/style";
 import { ChartGroupedType } from "@/types/types";
 
 const TITLE = "Pays des séries";
 const MIN_LIMIT = 10;
+
+const SeriesCountriesMap = defineAsyncComponent(() => import("@/components/stats/SeriesCountriesMap.vue"));
 
 const props = defineProps({
   data: { type: Array<Stat>, default: [] },

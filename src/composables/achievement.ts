@@ -4,8 +4,8 @@ import { isError } from "@/utils/response";
 
 export function useAchievement() {
 
-    const getAchievements = async (): Promise<Achievement[]> => {
-        const resp = await achievementService.getAchievements();
+    const getAchievements = async (userId?: string): Promise<Achievement[]> => {
+        const resp = await achievementService.getAchievements(userId);
         const data = await resp.json();
 
         if (isError(resp.status))

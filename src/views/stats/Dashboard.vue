@@ -98,7 +98,15 @@
                             </v-col>
                         </v-row>
                     </v-window-item>
+
+                    <v-window-item v-if="!userId" :value="4">
+                        <badges-grid />
+                    </v-window-item>
                 </v-window>
+            </v-window-item>
+
+            <v-window-item v-if="userId" :value="SECTION_ACHIEVEMENTS">
+                <badges-grid :user-id="userId" />
             </v-window-item>
 
             <v-window-item v-if="userId" :value="SECTION_PLAYLISTS">
@@ -156,23 +164,28 @@ import { useScrollStore } from "@/stores/scroll";
 import { buildPlural } from "@/utils/format";
 import { useRoute } from "vue-router";
 import Chart from "@/components/stats/Chart.vue";
+import BadgesGrid from "@/components/achievements/BadgesGrid.vue";
 import { PLAYLIST_PLAY_ICON } from "@/constants/icons";
-
-const DASHBOARD_TABS = [
-    { value: 1, label: "Vue d'ensemble" },
-    { value: 2, label: "Tendances" },
-    { value: 3, label: "Répartition" },
-];
 
 const SECTION_SERIES = 1;
 const SECTION_STATS = 2;
 const SECTION_PLAYLISTS = 3;
+const SECTION_ACHIEVEMENTS = 4;
 
 const props = defineProps({
     userId: { type: String, default: undefined },
     showBar: { type: Boolean, default: true },
     preloadedStat: { type: Object as PropType<Promise<GlobalStat>>, default: undefined }
 });
+
+// A friend's achievements get their own top-level tab (next to Playlists, unlocked-only);
+// your own dashboard has no such tab, so its full badge grid lives here instead.
+const DASHBOARD_TABS = computed(() => [
+    { value: 1, label: "Vue d'ensemble" },
+    { value: 2, label: "Tendances" },
+    { value: 3, label: "Répartition" },
+    ...(props.userId ? [] : [{ value: 4, label: "Succès" }]),
+]);
 
 const url = props.userId ? "discover" : "series";
 
@@ -195,7 +208,8 @@ const cardsConfig = computed(() => stat.value ? DashboardLayout(stat.value) : un
 const sectionTabs = computed(() => [
     { value: SECTION_SERIES, label: "Séries" },
     { value: SECTION_STATS, label: "Stats" },
-    { value: SECTION_PLAYLISTS, label: "Playlists" }
+    { value: SECTION_PLAYLISTS, label: "Playlists" },
+    { value: SECTION_ACHIEVEMENTS, label: "Succès" }
 ]);
 
 const loadPlaylists = async (): Promise<void> => {

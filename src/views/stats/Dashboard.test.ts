@@ -37,6 +37,7 @@ const stubs = {
     FriendPlatforms: true,
     FriendFavoriteActors: true,
     PlaylistCover: true,
+    BadgesGrid: true,
 };
 
 const stat = (overrides: Partial<GlobalStat> = {}): GlobalStat => ({
@@ -162,5 +163,17 @@ describe("Dashboard", () => {
         const wrapper = await openStatsTab(await mountView({ userId: "friend-1" }), 3);
 
         expect(wrapper.findAllComponents({ name: "PlaylistCover" })).toHaveLength(1);
+    });
+
+    it("shows a 'Succès' tab with the full badges grid on your own dashboard, after Répartition", async () => {
+        const wrapper = await openStatsTab(await mountView(), 4);
+
+        expect(wrapper.findComponent({ name: "BadgesGrid" }).props("userId")).toBeUndefined();
+    });
+
+    it("shows a top-level 'Succès' tab with the friend's unlocked-only badges grid, next to Playlists", async () => {
+        const wrapper = await openStatsTab(await mountView({ userId: "friend-1" }), 4);
+
+        expect(wrapper.findComponent({ name: "BadgesGrid" }).props("userId")).toBe("friend-1");
     });
 });

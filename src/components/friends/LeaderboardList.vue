@@ -9,7 +9,7 @@
             <v-progress-circular color="primary" indeterminate size="32" />
         </div>
 
-        <empty-state v-else-if="entries.length <= 1" icon="mdi-account-heart-outline" title="Aucun ami pour l'instant"
+        <empty-state v-else-if="entries.length <= 1" :icon="NO_FRIENDS_ICON" title="Aucun ami pour l'instant"
             description="Ajoutez des amis pour comparer votre temps de visionnage." />
 
         <v-list v-else class="leaderboard-list" lines="two">
@@ -20,7 +20,7 @@
                     <div class="leaderboard-rank">{{ index + 1 }}</div>
                     <v-avatar v-if="entry.picture" :image="entry.picture" size="36" class="ms-2" />
                     <v-avatar v-else color="surface-variant" size="36" class="ms-2">
-                        <v-icon icon="mdi-account" />
+                        <v-icon :icon="ACCOUNT_ICON" />
                     </v-avatar>
                 </template>
 
@@ -39,6 +39,7 @@
 <script lang="ts" setup>
 import EmptyState from "@/components/EmptyState.vue";
 import { useStatistic } from "@/composables/statistic";
+import { ACCOUNT_ICON, NO_FRIENDS_ICON } from "@/constants/icons";
 import type { LeaderboardEntry } from "@/models/stat";
 import { minsToStringHoursDays } from "@/utils/format";
 import { onBeforeMount, ref } from "vue";

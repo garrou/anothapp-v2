@@ -16,10 +16,10 @@
                     <template #quick-actions>
                         <v-btn v-if="consult" class="friend-quick-btn" :icon="DETAILS_ICON" size="32" variant="flat"
                             color="on-surface-variant" @click.stop="showFriend(friend)" />
-                        <v-btn v-if="addable" class="friend-quick-btn" :icon="isSent(friend.id) ? 'mdi-check' : ADD_ICON"
+                        <v-btn v-if="addable" class="friend-quick-btn" :icon="isSent(friend.id) ? CHECK_ICON : ADD_ICON"
                             size="32" variant="flat" :disabled="isSent(friend.id)" color="on-surface-variant"
                             @click.stop="addFriend(friend)" />
-                        <v-btn v-if="accept" class="friend-quick-btn" icon="mdi-check" size="32" variant="flat"
+                        <v-btn v-if="accept" class="friend-quick-btn" :icon="CHECK_ICON" size="32" variant="flat"
                             color="green" @click.stop="acceptFriend(friend)" />
                         <v-btn v-if="remove" class="friend-quick-btn" :icon="DELETE_ICON" size="32" variant="flat"
                             color="red" @click.stop="showConfirm(friend)" />
@@ -41,7 +41,7 @@ import BaseConfirm from "@/components/BaseConfirm.vue";
 import CardGrid from "@/components/CardGrid.vue";
 import EmptyState from "@/components/EmptyState.vue";
 import PosterCard from "@/components/PosterCard.vue";
-import { ADD_ICON, DELETE_ICON, DETAILS_ICON, SEARCH_ICON } from "@/constants/icons";
+import { ADD_ICON, CHECK_ICON, DELETE_ICON, DETAILS_ICON, NO_FRIENDS_ICON, SEARCH_ICON } from "@/constants/icons";
 import type { User } from "@/models/user";
 import { computed, ref, type PropType } from "vue";
 import { useFriend } from "@/composables/friend";
@@ -100,7 +100,7 @@ const emptyCopy = computed(() => {
     if (props.accept) return { icon: "mdi-account-clock-outline", title: "Aucune demande reçue", description: "Les demandes d'ami reçues apparaîtront ici." };
     if (props.remove && !props.consult) return { icon: "mdi-send-outline", title: "Aucune demande envoyée", description: "Les demandes que vous envoyez apparaîtront ici." };
     if (props.consult && !props.remove) return { icon: "mdi-account-eye-outline", title: "Aucun ami ne regarde cette série", description: "Vos amis apparaîtront ici s'ils l'ajoutent à leur collection." };
-    return { icon: "mdi-account-heart-outline", title: "Aucun ami pour l'instant", description: "Ajoutez des amis pour comparer vos séries et vos statistiques." };
+    return { icon: NO_FRIENDS_ICON, title: "Aucun ami pour l'instant", description: "Ajoutez des amis pour comparer vos séries et vos statistiques." };
 });
 
 const showFriend = (user: User) => {

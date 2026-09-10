@@ -16,7 +16,7 @@
                 <button v-for="opt in MONTHS" :key="opt.value" type="button" class="month-option"
                     :class="{ 'month-option--active': opt.value === month }" @click="selectMonth(opt.value)">
                     {{ opt.text }}
-                    <v-icon v-if="opt.value === month" icon="mdi-check" size="16" />
+                    <v-icon v-if="opt.value === month" :icon="CHECK_ICON" size="16" />
                 </button>
             </div>
         </v-menu>
@@ -36,7 +36,7 @@
                         class="history-card">
                         <base-image v-if="item.poster" class="history-poster" :src="item.poster" cover />
                         <div v-else class="history-poster history-poster--empty">
-                            <v-icon icon="mdi-movie-open-outline" size="16" />
+                            <v-icon :icon="MOVIE_EMPTY_ICON" size="16" />
                         </div>
 
                         <div class="history-info">
@@ -45,7 +45,7 @@
                         </div>
 
                         <platform-card class="history-platform" :platform="getSpecificPlatform(item.platformId)" />
-                        <v-icon icon="mdi-chevron-right" size="18" class="history-chevron" />
+                        <v-icon :icon="CHEVRON_RIGHT_ICON" size="18" class="history-chevron" />
                     </router-link>
                 </div>
             </div>
@@ -70,6 +70,7 @@ import type { EpisodeTimeline } from "@/models/episodeTimeline";
 import type { Platform } from "@/models/serie";
 import { buildPlural } from "@/utils/format";
 import { MONTHS_FR, WEEKDAYS_LONG, WEEKDAYS_SHORT, isSameDay, parseLocalDate, toLocalDateKey } from "@/utils/date";
+import { CHECK_ICON, CHEVRON_RIGHT_ICON, MOVIE_EMPTY_ICON } from "@/constants/icons";
 import { computed, onBeforeMount, ref } from "vue";
 import PlatformCard from "@/components/series/PlatformCard.vue";
 

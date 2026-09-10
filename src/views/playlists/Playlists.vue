@@ -15,7 +15,7 @@
                     <v-card-title>{{ playlist.name }}</v-card-title>
                     <v-card-subtitle class="d-flex align-center ga-1 pb-4">
                         {{ buildPlural("série", playlist.showsCount ?? 0) }}
-                        <v-icon v-if="!playlist.visible" icon="mdi-lock-outline" size="14" />
+                        <v-icon v-if="!playlist.visible" :icon="LOCK_ICON" size="14" />
                     </v-card-subtitle>
                 </v-card>
             </template>
@@ -33,7 +33,7 @@ import CardGrid from "@/components/CardGrid.vue";
 import EmptyState from "@/components/EmptyState.vue";
 import PlaylistCover from "@/components/playlists/PlaylistCover.vue";
 import PlaylistFormModal from "@/components/playlists/PlaylistFormModal.vue";
-import { ADD_ICON, PLAYLIST_PLAY_ICON } from "@/constants/icons";
+import { ADD_ICON, LOCK_ICON, PLAYLIST_PLAY_ICON } from "@/constants/icons";
 import { usePlaylist } from "@/composables/playlist";
 import { useSnackbar } from "@/composables/snackbar";
 import type { Playlist } from "@/models/playlist";

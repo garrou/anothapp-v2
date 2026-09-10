@@ -32,7 +32,7 @@
                     <template #prepend>
                         <v-avatar v-if="item.actor?.picture" :image="item.actor.picture" size="36" />
                         <v-avatar v-else color="surface-variant" size="36">
-                            <v-icon icon="mdi-account" />
+                            <v-icon :icon="ACCOUNT_ICON" />
                         </v-avatar>
                     </template>
 
@@ -50,6 +50,7 @@ import { useRouter } from "vue-router";
 import { useNotification } from "@/composables/notification";
 import { useSearch } from "@/composables/search";
 import { NOTIFICATION_GROUPS, type Notification, type NotificationGroup } from "@/models/notification";
+import { ACCOUNT_ICON } from "@/constants/icons";
 import { formatDate, buildPlural } from "@/utils/format";
 import PillTabs from "@/components/PillTabs.vue";
 

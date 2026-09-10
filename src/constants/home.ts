@@ -1,7 +1,9 @@
+import { CHART_BAR_ICON, CHECK_CIRCLE_ICON, DATABASE_ICON, SEARCH_ICON } from "./icons";
+
 export const HOME_FEATURES = [
     {
         id: 1,
-        icon: "mdi-check-circle",
+        icon: CHECK_CIRCLE_ICON,
         title: "Suivi des séries",
         description: "Ajoutez des séries, marquez les saisons comme regardées et ne perdez jamais le fil dans votre série."
     },
@@ -13,7 +15,7 @@ export const HOME_FEATURES = [
     },
     {
         id: 3,
-        icon: "mdi-magnify",
+        icon: SEARCH_ICON,
         title: "Découvrez des séries",
         description: "Trouver votre prochaine série à regarder grâce aux recommandations de séries similaires."
     },
@@ -25,13 +27,13 @@ export const HOME_FEATURES = [
     },
     {
         id: 5,
-        icon: "mdi-chart-bar",
+        icon: CHART_BAR_ICON,
         title: "Analysez vos données",
         description: "Visualisez vos habitudes de visionnage grâce à des statistiques détaillées."
     },
     {
         id: 6,
-        icon: "mdi-database",
+        icon: DATABASE_ICON,
         title: "Base de données complète",
         description: "Accédez à des informations complètes sur les séries, notammment le nombre d'épisodes, les durées et des métadonnées détaillées."
     }

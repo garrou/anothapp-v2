@@ -7,7 +7,7 @@
                 @refresh="(id: number, kind: 'favorite' | 'list' | 'watch') => $emit('refresh', id, kind)" />
         </template>
     </card-grid>
-    <empty-state v-else icon="mdi-movie-open-outline" :title="emptyTitle" :description="emptyDescription">
+    <empty-state v-else :icon="MOVIE_EMPTY_ICON" :title="emptyTitle" :description="emptyDescription">
         <v-btn v-if="emptyCta" color="primary" rounded="pill" to="/discover">Découvrir des séries</v-btn>
     </empty-state>
 </template>
@@ -16,6 +16,7 @@
 import CardGrid from "@/components/CardGrid.vue";
 import EmptyState from "@/components/EmptyState.vue";
 import SerieCard from "@/components/series/SerieCard.vue";
+import { MOVIE_EMPTY_ICON } from "@/constants/icons";
 import type { Serie } from "@/models/serie";
 import { buildPlural } from "@/utils/format";
 import type { PropType } from "vue";

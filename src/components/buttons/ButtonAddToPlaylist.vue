@@ -13,7 +13,7 @@
             <v-list-item v-for="playlist in playlists" :key="playlist.id" :title="playlist.name"
                 :disabled="addedPlaylistIds.has(playlist.id)" @click="add(playlist.id)">
                 <template #append>
-                    <v-icon v-if="addedPlaylistIds.has(playlist.id)" icon="mdi-check" color="primary" />
+                    <v-icon v-if="addedPlaylistIds.has(playlist.id)" :icon="CHECK_ICON" color="primary" />
                 </template>
             </v-list-item>
         </v-list>
@@ -31,7 +31,7 @@ import { TOOLTIP_LOCATION } from "@/constants/style";
 import { usePlaylist } from "@/composables/playlist";
 import { useSnackbar } from "@/composables/snackbar";
 import type { Playlist } from "@/models/playlist";
-import { PLAYLIST_ADD_ICON } from "@/constants/icons";
+import { CHECK_ICON, PLAYLIST_ADD_ICON } from "@/constants/icons";
 
 const props = defineProps({
     menuItem: { type: Boolean, default: false },

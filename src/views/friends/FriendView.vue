@@ -1,6 +1,6 @@
 <template>
     <div v-if="friend">
-        <v-btn class="back-btn" icon="mdi-chevron-left" variant="text" @click="goBack" />
+        <v-btn class="back-btn" :icon="BACK_ICON" variant="text" @click="goBack" />
 
         <div class="friend-hero">
             <v-avatar size="96" :color="friend.picture ? undefined : 'primary'">
@@ -25,6 +25,7 @@ import Dashboard from "@/views/stats/Dashboard.vue";
 import FriendCompare from "@/components/friends/FriendCompare.vue";
 import { useFriend } from "@/composables/friend";
 import { useStatistic } from "@/composables/statistic";
+import { BACK_ICON } from "@/constants/icons";
 import type { GlobalStat } from "@/models/stat";
 import type { User } from "@/models/user";
 import { goBack as navigateBack } from "@/utils/navigation";

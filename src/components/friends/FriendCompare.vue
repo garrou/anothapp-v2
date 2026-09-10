@@ -30,7 +30,7 @@
 <script lang="ts" setup>
 import { useStatistic } from "@/composables/statistic";
 import { ELEVATION } from "@/constants/style";
-import { PLAY_ICON } from "@/constants/icons";
+import { FIRE_ICON, PLAY_ICON, TIME_ICON } from "@/constants/icons";
 import { minsToStringHoursDays } from "@/utils/format";
 import { computed, onBeforeMount, ref, type PropType } from "vue";
 import type { GlobalStat } from "@/models/stat";
@@ -51,11 +51,11 @@ const rows = computed(() => {
     const theirStats = theirs.value;
 
     return [
-        { label: "Temps total", icon: "mdi-timer-sand-complete", mine: mine.value.totalTime, theirs: theirStats.totalTime, format: minsToStringHoursDays },
+        { label: "Temps total", icon: TIME_ICON, mine: mine.value.totalTime, theirs: theirStats.totalTime, format: minsToStringHoursDays },
         { label: "Séries", icon: PLAY_ICON, mine: mine.value.nbSeries, theirs: theirStats.nbSeries, format: String },
         { label: "Saisons", icon: PLAY_ICON, mine: mine.value.nbSeasons, theirs: theirStats.nbSeasons, format: String },
         { label: "Episodes", icon: PLAY_ICON, mine: mine.value.nbEpisodes, theirs: theirStats.nbEpisodes, format: String },
-        { label: "Jours d'affilés", icon: "mdi-fire", mine: mine.value.currentStreak, theirs: theirStats.currentStreak, format: String },
+        { label: "Jours d'affilés", icon: FIRE_ICON, mine: mine.value.currentStreak, theirs: theirStats.currentStreak, format: String },
     ];
 });
 

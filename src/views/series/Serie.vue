@@ -53,7 +53,7 @@
                 <base-menu open-on-click>
                     <button-details-serie :serie="infos.serie" menu-item />
                     <button-update-serie :serie="infos.serie" menu-item @update="updateModal = true" />
-                    <v-list-item prepend-icon="mdi-account-heart" title="Amis qui regardent cette série"
+                    <v-list-item :prepend-icon="FRIENDS_ICON" title="Amis qui regardent cette série"
                         @click="openFriendsModal" />
                     <button-add-to-playlist :serie-id="id" menu-item />
                     <v-divider class="my-1" />
@@ -131,7 +131,7 @@ import { useSearch } from "@/composables/search";
 import { useSerie } from "@/composables/serie";
 import type { Season } from "@/models/season";
 import { buildPlural, formatLanguage, fromDatetimeLocalInput, toDatetimeLocalInput, minsToStringHoursDays } from "@/utils/format";
-import { NOTE_ICONS } from "@/constants/icons";
+import { FRIENDS_ICON, NOTE_ICONS } from "@/constants/icons";
 import type { User } from "@/models/user";
 import { useFriend } from "@/composables/friend";
 import { useState } from "@/composables/state";

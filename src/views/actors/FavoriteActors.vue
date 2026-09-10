@@ -16,7 +16,7 @@
                 </poster-card>
             </template>
         </card-grid>
-        <empty-state v-else icon="mdi-account-star-outline" title="Aucun acteur favori"
+        <empty-state v-else :icon="FAVORITE_ACTOR_ICON" title="Aucun acteur favori"
             description="Ajoutez un acteur à vos favoris depuis sa fiche ou le casting d'une série." />
     </v-container>
 </template>
@@ -28,6 +28,7 @@ import CardGrid from "@/components/CardGrid.vue";
 import EmptyState from "@/components/EmptyState.vue";
 import PosterCard from "@/components/PosterCard.vue";
 import { useActor } from "@/composables/actor";
+import { FAVORITE_ACTOR_ICON } from "@/constants/icons";
 import type { FavoriteActor } from "@/models/person";
 import { onBeforeMount, ref } from "vue";
 

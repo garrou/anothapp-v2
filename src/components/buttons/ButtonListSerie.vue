@@ -13,6 +13,7 @@
 <script lang="ts" setup>
 import { useSerie } from '@/composables/serie';
 import { TOOLTIP_LOCATION, MAIN_COLOR } from '@/constants/style';
+import { BOOKMARK_ADD_ICON, BOOKMARK_REMOVE_ICON } from '@/constants/icons';
 import type { Serie } from '@/models/serie';
 import { computed, onBeforeMount, ref, type PropType } from 'vue';
 
@@ -31,7 +32,7 @@ const { addSerie, deleteSerieInList, getSerieFromCache } = useSerie();
 
 const existsInList = ref(false);
 
-const computedIcon = computed(() => existsInList.value ? "mdi-bookmark-minus" : "mdi-bookmark-plus");
+const computedIcon = computed(() => existsInList.value ? BOOKMARK_REMOVE_ICON : BOOKMARK_ADD_ICON);
 const computedColor = computed(() => existsInList.value ? MAIN_COLOR : "on-surface-variant");
 const computedText = computed(() => existsInList.value ? "Supprimer de ma liste" : "Ajouter dans ma liste");
 

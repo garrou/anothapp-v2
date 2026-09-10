@@ -1,5 +1,15 @@
 import type { NavStatusMenuItem, BottomNavMenuItem, NavOthersMenuItem } from "@/models/menu";
-import { ADD_ICON, FAVORITE_ICON, PLAYLIST_PLAY_ICON } from "./icons";
+import {
+    ADD_ICON,
+    CHART_BAR_ICON,
+    CHECK_CIRCLE_ICON,
+    CLOSE_CIRCLE_ICON,
+    FAVORITE_ACTOR_ICON,
+    FAVORITE_ICON,
+    FRIENDS_ICON,
+    PLAY_ICON,
+    PLAYLIST_PLAY_ICON
+} from "./icons";
 import { SerieStatus } from "@/types/types";
 
 export const PAGE_WITHOUT_BOTTOM_NAVBAR = ["home", "login", "register"]
@@ -17,12 +27,12 @@ export const NAV_MENU: BottomNavMenuItem[] = [
     },
     {
         title: "Amis",
-        icon: "mdi-account-heart",
+        icon: FRIENDS_ICON,
         link: "/friends"
     },
     {
         title: "Dashboard",
-        icon: "mdi-chart-bar",
+        icon: CHART_BAR_ICON,
         link: "/dashboard"
     }
 ];
@@ -40,17 +50,17 @@ export const NAV_SERIES_STATUS: NavStatusMenuItem[] = [
     },
     {
         title: "À continuer",
-        icon: "mdi-play",
+        icon: PLAY_ICON,
         status: SerieStatus.Continue
     },
     {
         title: "Arrêtées",
-        icon: "mdi-close-circle",
+        icon: CLOSE_CIRCLE_ICON,
         status: SerieStatus.Stopped
     },
     {
         title: "Terminées",
-        icon: "mdi-check-circle",
+        icon: CHECK_CIRCLE_ICON,
         status: SerieStatus.Finished
     }
 ];
@@ -78,7 +88,7 @@ export const NAV_OTHERS: NavOthersMenuItem[] = [
     },
     {
         title: "Acteurs favoris",
-        icon: "mdi-account-star-outline",
+        icon: FAVORITE_ACTOR_ICON,
         link: "/actors/favorites"
     }
 ];

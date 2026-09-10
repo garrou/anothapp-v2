@@ -17,13 +17,13 @@
                         class="upcoming-card">
                         <base-image v-if="serie.poster" class="upcoming-poster" :src="serie.poster" cover />
                         <div v-else class="upcoming-poster upcoming-poster--empty">
-                            <v-icon icon="mdi-movie-open-outline" size="16" />
+                            <v-icon :icon="MOVIE_EMPTY_ICON" size="16" />
                         </div>
                         <div class="upcoming-info">
                             <div class="upcoming-title">{{ serie.title }}</div>
                             <div v-if="serie.kinds?.length" class="upcoming-kinds">{{ serie.kinds.slice(0, 2).join(" · ") }}</div>
                         </div>
-                        <v-icon icon="mdi-chevron-right" size="18" class="upcoming-chevron" />
+                        <v-icon :icon="CHEVRON_RIGHT_ICON" size="18" class="upcoming-chevron" />
                     </router-link>
                 </div>
             </div>
@@ -40,6 +40,7 @@ import BaseImage from "@/components/BaseImage.vue";
 import DayBadge from "@/components/DayBadge.vue";
 import EmptyState from "@/components/EmptyState.vue";
 import { useSerie } from "@/composables/serie";
+import { CHEVRON_RIGHT_ICON, MOVIE_EMPTY_ICON } from "@/constants/icons";
 import type { Serie } from "@/models/serie";
 import { SerieStatus } from "@/types/types";
 import { MONTHS_FR, WEEKDAYS_LONG, WEEKDAYS_SHORT, isSameDay, parseLocalDate } from "@/utils/date";

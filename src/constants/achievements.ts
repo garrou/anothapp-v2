@@ -45,7 +45,7 @@ export const ACHIEVEMENT_ICONS: Record<string, string> = {
 export const ACHIEVEMENT_DESCRIPTIONS: Record<string, string> = {
     streak: "Enchaînez les jours de suite avec au moins un épisode ou une saison vue.",
     watch_time: "Cumulez du temps de visionnage total.",
-    shows_started: "Ajoutez des séries à votre liste.",
+    shows_started: "Ajoutez des séries à votre collection.",
     shows_completed: "Terminez des séries jusqu'au bout.",
     countries: "Regardez des séries de pays d'origine différents.",
     kinds: "Regardez des séries de genres différents.",

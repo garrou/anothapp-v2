@@ -200,7 +200,7 @@ const modal = ref(false);
 const stat = ref<GlobalStat>();
 const modalTitle = ref<string>();
 const series = ref<Serie[]>([]);
-const tab = ref(route.query.tab === "achievements" ? TAB_ACHIEVEMENTS : 1);
+const tab = ref(1);
 const playlists = ref<Playlist[]>([]);
 const playlistsLoading = ref(false);
 const sectionTab = ref(props.userId ? SECTION_SERIES : SECTION_STATS);
@@ -249,6 +249,15 @@ watch(modal, (value) => {
         serieStore.reset();
     }
 });
+
+// Reads live off the route (not just at setup) - clicking an achievement notification
+// while already on /dashboard navigates to the same route record, which Vue Router
+// reuses rather than remounting, so a one-shot ref() read here would miss it.
+watch(() => route.query.tab, (value) => {
+    if (value === "achievements") {
+        tab.value = TAB_ACHIEVEMENTS;
+    }
+}, { immediate: true });
 
 onMounted(async () => {
     if (props.userId) loadPlaylists();

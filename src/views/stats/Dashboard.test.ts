@@ -2,6 +2,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
+import { reactive } from "vue";
 import Dashboard from "./Dashboard.vue";
 import { vuetify } from "@/test/vuetify";
 import { useSerieStore } from "@/stores/serie";
@@ -19,7 +20,15 @@ const statisticComposableMocks = vi.hoisted(() => ({
 const playlistComposableMocks = vi.hoisted(() => ({
     getPlaylists: vi.fn(),
 }));
-const routeMock = vi.hoisted(() => ({ fullPath: "/dashboard", query: {} as Record<string, string> }));
+// Plain at first (vi.hoisted runs before the `vue` import below is available) then wrapped
+// reactive right after - the vue-router mock factory reads this `let` lazily, on each
+// useRoute() call, so it still gets the reactive version by the time any test mounts
+// Dashboard.vue. Reactive (not a plain object) so tests can simulate a same-route
+// re-navigation: Vue Router reuses the component instance in that case, and only a
+// reactive route lets Dashboard.vue's watch(() => route.query.tab, ...) observe it.
+// eslint-disable-next-line prefer-const
+let routeMock = vi.hoisted(() => ({ fullPath: "/dashboard", query: {} as Record<string, string> }));
+routeMock = reactive(routeMock);
 
 vi.mock("@/composables/serie", () => ({ useSerie: () => serieComposableMocks }));
 vi.mock("@/composables/statistic", () => ({ useStatistic: () => statisticComposableMocks }));
@@ -182,6 +191,19 @@ describe("Dashboard", () => {
         routeMock.query = { tab: "achievements" };
 
         const wrapper = await mountView();
+
+        expect(wrapper.findComponent({ name: "BadgesGrid" }).exists()).toBe(true);
+    });
+
+    it("switches to the 'Succès' tab on a same-route re-navigation, not just at mount", async () => {
+        // Vue Router reuses the component instance for a query-only re-navigation to the
+        // same route record - it never remounts, so this must react to the route changing
+        // after mount, not just read it once at setup.
+        const wrapper = await mountView();
+        expect(wrapper.findComponent({ name: "BadgesGrid" }).exists()).toBe(false);
+
+        routeMock.query = { tab: "achievements" };
+        await flushPromises();
 
         expect(wrapper.findComponent({ name: "BadgesGrid" }).exists()).toBe(true);
     });

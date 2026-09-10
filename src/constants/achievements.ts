@@ -40,5 +40,4 @@ export const ACHIEVEMENT_ICONS: Record<string, string> = {
     friends_count: '<circle cx="8.5" cy="8" r="3"/><circle cx="16" cy="9" r="2.6"/><path d="M2.5 20c.4-3.6 3-6 6-6s5.6 2.4 6 6M14.5 20c.3-2.7 2-4.7 4.3-4.7 1.8 0 3.3 1.1 4 2.9"/>',
     notes_count: '<path d="M12 3l2.6 5.9 6.4.6-4.8 4.3 1.4 6.3L12 17l-5.6 3.1 1.4-6.3-4.8-4.3 6.4-.6L12 3z"/>',
     account_age: '<path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/>',
-    leaderboard_top3: '<path d="M4 18h16l-1.4-8-4.1 3.2L12 6l-2.5 7.2L5.4 10 4 18z"/><path d="M4 20h16"/>',
 };

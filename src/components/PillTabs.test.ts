@@ -8,7 +8,7 @@ const tabs = [
     { value: 1, label: "En cours" },
     { value: 2, label: "Tendances" },
     { value: 3, label: "Répartition", badge: 2 },
-    { value: 3, label: "Succès" },
+    { value: 4, label: "Succès" },
 ];
 
 const mountTabs = (modelValue = 1) => mount(PillTabs, {

@@ -6,14 +6,13 @@
 
 <script setup lang="ts">
 import { computed, onMounted, type PropType } from "vue";
-import { use } from "echarts/core";
+import { registerMap, use } from "echarts/core";
 import { CanvasRenderer } from "echarts/renderers";
 import { MapChart } from "echarts/charts";
 import { TitleComponent, TooltipComponent, VisualMapComponent } from "echarts/components";
 import VChart from "vue-echarts";
 import { useTheme } from "vuetify";
 import worldGeoJSON from "@/assets/world.json";
-import * as echarts from "echarts";
 import type { GeoJSONSourceInput } from "echarts/types/src/coord/geo/geoTypes.js";
 import type { Stat } from "@/models/stat";
 import { SEQUENTIAL_COLORS } from "@/constants/style";
@@ -61,7 +60,7 @@ const chartOptions = computed(() => ({
 }));
 
 onMounted(() => {
-  echarts.registerMap("world", worldGeoJSON as GeoJSONSourceInput);
+  registerMap("world", worldGeoJSON as GeoJSONSourceInput);
 });
 </script>
 

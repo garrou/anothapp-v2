@@ -79,7 +79,7 @@ describe("Dashboard", () => {
     it("defaults to the stats section when there's no userId", async () => {
         const wrapper = await mountView();
 
-        expect(wrapper.text()).toContain("Vue d'ensemble");
+        expect(wrapper.text()).toContain("En cours");
     });
 
     it("defaults to the series section and loads playlists when a userId is given", async () => {

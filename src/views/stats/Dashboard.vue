@@ -181,7 +181,7 @@ const props = defineProps({
 // A friend's achievements get their own top-level tab (next to Playlists, unlocked-only);
 // your own dashboard has no such tab, so its full badge grid lives here instead.
 const DASHBOARD_TABS = computed(() => [
-    { value: 1, label: "Vue d'ensemble" },
+    { value: 1, label: "En cours" },
     { value: 2, label: "Tendances" },
     { value: 3, label: "Répartition" },
     ...(props.userId ? [] : [{ value: 4, label: "Succès" }]),

@@ -1,4 +1,3 @@
-// league: 1=bronze 2=argent 3=or 4=diamant 5=master 6=champion 7=titan
 export const LEAGUE_NAMES: Record<number, string> = {
     1: "Bronze",
     2: "Argent",
@@ -9,11 +8,6 @@ export const LEAGUE_NAMES: Record<number, string> = {
     7: "Titan",
 };
 
-// Chosen for contrast between adjacent leagues, not just a nice hue each: Bronze is
-// darkened/muted away from Or (both were close orange-browns before), Champion pushed
-// toward pure magenta and Titan toward a deep wine red so the two don't blend into each
-// other, and Titan deliberately avoids the app's own `error` red (#D6483A) so a top-tier
-// badge never reads as a warning.
 export const LEAGUE_COLORS: Record<number, string> = {
     1: "#8C5A2B",
     2: "#9AA0AE",

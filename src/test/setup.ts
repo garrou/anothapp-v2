@@ -36,6 +36,28 @@ if (typeof window !== "undefined") {
         window.IntersectionObserver = IntersectionObserverStub;
     }
 
+    if (!window.visualViewport) {
+        const visualViewportStub = {
+            width: window.innerWidth,
+            height: window.innerHeight,
+            offsetLeft: 0,
+            offsetTop: 0,
+            pageLeft: 0,
+            pageTop: 0,
+            scale: 1,
+            addEventListener: () => {},
+            removeEventListener: () => {},
+            dispatchEvent: () => false,
+        };
+        // @ts-expect-error minimal stub, not a full VisualViewport implementation
+        window.visualViewport = visualViewportStub;
+        // Vuetify's box/location-strategy code reads `visualViewport` as a bare
+        // global (matching real browsers, where window === globalThis), which
+        // some vitest/jsdom setups don't propagate from a window.* assignment.
+        // @ts-expect-error same stub, exposed as a bare global too
+        globalThis.visualViewport = visualViewportStub;
+    }
+
     if (!window.matchMedia) {
         window.matchMedia = (query: string) => ({
             matches: false,

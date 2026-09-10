@@ -119,6 +119,23 @@ describe("NotificationBell", () => {
         expect(wrapper.text()).toContain("Nouveau succès : un succès — Or II");
     });
 
+    it("describes an achievement_league_unlocked notification with the friend's name and the league", async () => {
+        const wrapper = await openMenu(await mountBell([
+            notif(1, { type: "achievement_league_unlocked", metadata: { code: "streak", name: "Série de visionnage", league: 3, subTier: 1 } }),
+        ]));
+
+        expect(wrapper.text()).toContain('Dexter a atteint la ligue Or I sur "Série de visionnage"');
+    });
+
+    it("degrades gracefully when an achievement_league_unlocked notification has no league", async () => {
+        const wrapper = await openMenu(await mountBell([
+            notif(1, { type: "achievement_league_unlocked", metadata: { code: "streak", name: "Série de visionnage" } }),
+        ]));
+
+        expect(wrapper.text()).toContain('Dexter a progressé sur "Série de visionnage"');
+        expect(wrapper.text()).not.toContain("undefined");
+    });
+
     it("falls back to the actor's name for unknown notification types", async () => {
         const wrapper = await openMenu(await mountBell([
             { ...notif(1), type: "unknown_type" as never },
@@ -205,6 +222,17 @@ describe("NotificationBell", () => {
         await flushPromises();
 
         expect(routerMocks.push).toHaveBeenCalledWith({ path: "/dashboard", query: { tab: "achievements" } });
+    });
+
+    it("navigates to the friend's Succès tab for an achievement_league_unlocked notification", async () => {
+        const wrapper = await openMenu(await mountBell([
+            notif(1, { type: "achievement_league_unlocked", actor: { id: "friend-1", username: "Dexter" }, metadata: { code: "streak", league: 3, subTier: 1 } }),
+        ]));
+
+        await wrapper.findComponent({ name: "VListItem" }).trigger("click");
+        await flushPromises();
+
+        expect(routerMocks.push).toHaveBeenCalledWith({ path: "/friends/friend-1", query: { tab: "achievements" } });
     });
 
     it("does not call markAsRead again for an already-read notification", async () => {

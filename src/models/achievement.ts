@@ -25,3 +25,17 @@ export interface AchievementsResponse {
 
     achievements: Achievement[];
 }
+
+export interface AchievementTier {
+
+    league: number;
+
+    subTier: number;
+
+    threshold: number;
+}
+
+export interface AchievementTiersResponse {
+
+    tiers: Record<string, AchievementTier[]>;
+}

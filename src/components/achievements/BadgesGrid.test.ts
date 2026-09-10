@@ -7,6 +7,7 @@ import type { Achievement } from "@/models/achievement";
 
 const achievementComposableMocks = vi.hoisted(() => ({
     getAchievements: vi.fn(),
+    getTiers: vi.fn(),
 }));
 
 vi.mock("@/composables/achievement", () => ({ useAchievement: () => achievementComposableMocks }));
@@ -17,8 +18,9 @@ const achievement = (code: string, name: string, overrides: Partial<Achievement>
     ...overrides,
 });
 
-const mountGrid = async (achievements: Achievement[], userId?: string) => {
+const mountGrid = async (achievements: Achievement[], userId?: string, tiers: Record<string, unknown> = {}) => {
     achievementComposableMocks.getAchievements.mockResolvedValue(achievements);
+    achievementComposableMocks.getTiers.mockResolvedValue(tiers);
     const wrapper = mount(BadgesGrid, { global: { plugins: [vuetify] }, props: { userId } });
     await flushPromises();
     return wrapper;
@@ -64,5 +66,26 @@ describe("BadgesGrid", () => {
 
         expect(wrapper.findComponent({ name: "EmptyState" }).exists()).toBe(true);
         expect(wrapper.findComponent({ name: "BadgeMedallion" }).exists()).toBe(false);
+    });
+
+    it("opens the detail modal for the clicked achievement, with its tiers", async () => {
+        const wrapper = await mountGrid([achievement("streak", "Série de visionnage")], undefined, {
+            streak: [{ league: 1, subTier: 3, threshold: 1 }],
+        });
+
+        await wrapper.findComponent({ name: "BadgeMedallion" }).vm.$emit("click");
+
+        const modal = wrapper.findComponent({ name: "AchievementDetailModal" });
+        expect(modal.props("achievement")?.code).toBe("streak");
+        expect(modal.props("tiers")).toEqual([{ league: 1, subTier: 3, threshold: 1 }]);
+    });
+
+    it("closes the detail modal", async () => {
+        const wrapper = await mountGrid([achievement("streak", "Série de visionnage")]);
+        await wrapper.findComponent({ name: "BadgeMedallion" }).vm.$emit("click");
+
+        await wrapper.findComponent({ name: "AchievementDetailModal" }).vm.$emit("close");
+
+        expect(wrapper.findComponent({ name: "AchievementDetailModal" }).props("achievement")).toBeNull();
     });
 });

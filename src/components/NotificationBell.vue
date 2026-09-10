@@ -127,6 +127,14 @@ const describe = (item: Notification): string => {
             const roman = meta.subTier !== undefined ? SUB_TIER_ROMAN[Number(meta.subTier)] : undefined;
             return `Nouveau succès : ${name}${league ? ` — ${league}${roman ? ` ${roman}` : ""}` : ""}`;
         }
+        case "achievement_league_unlocked": {
+            const name = meta.name ? String(meta.name) : "un succès";
+            const league = LEAGUE_NAMES[Number(meta.league)];
+            const roman = meta.subTier !== undefined ? SUB_TIER_ROMAN[Number(meta.subTier)] : undefined;
+            return league
+                ? `${actor} a atteint la ligue ${league}${roman ? ` ${roman}` : ""} sur "${name}"`
+                : `${actor} a progressé sur "${name}"`;
+        }
         default:
             return actor;
     }
@@ -148,6 +156,8 @@ const openNotification = async (item: Notification) => {
         router.push("/friends");
     } else if (item.type === "achievement_unlocked") {
         router.push({ path: "/dashboard", query: { tab: "achievements" } });
+    } else if (item.type === "achievement_league_unlocked" && item.actor) {
+        router.push({ path: `/friends/${item.actor.id}`, query: { tab: "achievements" } });
     }
 }
 

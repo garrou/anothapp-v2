@@ -10,7 +10,8 @@ export type NotificationType =
     | "friend_accepted"
     | "friend_declined"
     | "episode_upcoming"
-    | "achievement_unlocked";
+    | "achievement_unlocked"
+    | "achievement_league_unlocked";
 
 export type NotificationGroup = "friends" | "activity" | "reminders";
 
@@ -27,6 +28,7 @@ export const NOTIFICATION_GROUPS: Record<NotificationType, NotificationGroup> = 
     actor_favorited: "activity",
     episode_upcoming: "reminders",
     achievement_unlocked: "activity",
+    achievement_league_unlocked: "activity",
 };
 
 export interface NotificationActor {

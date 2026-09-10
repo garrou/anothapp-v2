@@ -62,4 +62,12 @@ describe("BadgeMedallion", () => {
 
         expect(streak.find(".badge-icon").html()).not.toBe(watchTime.find(".badge-icon").html());
     });
+
+    it("emits click when the badge is clicked", async () => {
+        const wrapper = mountBadge(achievement());
+
+        await wrapper.find(".badge").trigger("click");
+
+        expect(wrapper.emitted("click")).toHaveLength(1);
+    });
 });

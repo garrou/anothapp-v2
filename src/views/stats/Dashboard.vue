@@ -251,10 +251,17 @@ watch(modal, (value) => {
 });
 
 // Reads live off the route (not just at setup) - clicking an achievement notification
-// while already on /dashboard navigates to the same route record, which Vue Router
+// while already on this route navigates to the same route record, which Vue Router
 // reuses rather than remounting, so a one-shot ref() read here would miss it.
+// On a friend's profile the achievements grid lives in its own top-level section
+// (SECTION_ACHIEVEMENTS), not the inner Stats sub-tab (TAB_ACHIEVEMENTS) - only your
+// own dashboard has no such section and uses the sub-tab instead.
 watch(() => route.query.tab, (value) => {
-    if (value === "achievements") {
+    if (value !== "achievements") return;
+
+    if (props.userId) {
+        sectionTab.value = SECTION_ACHIEVEMENTS;
+    } else {
         tab.value = TAB_ACHIEVEMENTS;
     }
 }, { immediate: true });

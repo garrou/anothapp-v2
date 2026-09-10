@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { parseLocalDate, toLocalDateKey, isSameDay } from "./date";
+import { parseLocalDate, toLocalDateKey, isSameDay, formatMonthYear, MONTHS_FR } from "./date";
 
 describe("parseLocalDate", () => {
     it("parses a plain YYYY-MM-DD date into local date components", () => {
@@ -49,5 +49,14 @@ describe("isSameDay", () => {
         const b = new Date(2024, 2, 15);
 
         expect(isSameDay(a, b)).toBe(false);
+    });
+});
+
+describe("formatMonthYear", () => {
+    it("formats an ISO datetime as a local 'month year' string", () => {
+        const iso = "2019-06-15T12:00:00.000Z";
+        const expected = new Date(iso);
+
+        expect(formatMonthYear(iso)).toBe(`${MONTHS_FR[expected.getMonth()]} ${expected.getFullYear()}`);
     });
 });

@@ -5,6 +5,7 @@ import Profile from "./Profile.vue";
 import { vuetify } from "@/test/vuetify";
 import type { User } from "@/models/user";
 import type { Serie } from "@/models/serie";
+import { formatMonthYear } from "@/utils/date";
 
 const userComposableMocks = vi.hoisted(() => ({
     getProfile: vi.fn(),
@@ -50,6 +51,22 @@ describe("Profile", () => {
 
         expect(wrapper.text()).toContain("Dexter");
         expect(wrapper.text()).toContain("dexter@example.com");
+    });
+
+    it("shows the join date when the profile has a createdAt", async () => {
+        userComposableMocks.getProfile.mockResolvedValue(profile({ createdAt: "2019-06-15T12:00:00.000Z" }));
+        const wrapper = mount(Profile, {
+            global: { plugins: [vuetify], stubs: { BaseAppBar: true, Email: true, Password: true, ImagesRow: true } },
+        });
+        await flushPromises();
+
+        expect(wrapper.text()).toContain(`Membre depuis ${formatMonthYear("2019-06-15T12:00:00.000Z")}`);
+    });
+
+    it("does not show a join date when the profile has no createdAt", async () => {
+        const wrapper = await mountView();
+
+        expect(wrapper.text()).not.toContain("Membre depuis");
     });
 
     it("opens the email form when 'Modifier l'email' is clicked", async () => {

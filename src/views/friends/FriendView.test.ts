@@ -5,6 +5,7 @@ import FriendView from "./FriendView.vue";
 import { vuetify } from "@/test/vuetify";
 import type { User } from "@/models/user";
 import type { GlobalStat } from "@/models/stat";
+import { formatMonthYear } from "@/utils/date";
 
 const friendComposableMocks = vi.hoisted(() => ({
     getCachedFriends: vi.fn(),
@@ -44,6 +45,18 @@ describe("FriendView", () => {
 
         expect(wrapper.text()).toContain("Dexter");
         expect(routerMocks.replace).not.toHaveBeenCalled();
+    });
+
+    it("shows the friend's join date when they have a createdAt", async () => {
+        const wrapper = await mountView("f1", [{ ...friend("f1", "Dexter"), createdAt: "2020-01-10T00:00:00.000Z" }]);
+
+        expect(wrapper.text()).toContain(`Membre depuis ${formatMonthYear("2020-01-10T00:00:00.000Z")}`);
+    });
+
+    it("does not show a join date when the friend has no createdAt", async () => {
+        const wrapper = await mountView("f1", [friend("f1")]);
+
+        expect(wrapper.text()).not.toContain("Membre depuis");
     });
 
     it("redirects to /friends when the id doesn't match a cached friend", async () => {

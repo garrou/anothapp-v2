@@ -8,6 +8,9 @@
                 <span v-else class="text-h4 font-weight-bold">{{ friend.username.charAt(0).toUpperCase() }}</span>
             </v-avatar>
             <div class="text-h6 font-weight-bold mt-3">{{ friend.username }}</div>
+            <div v-if="friend.createdAt" class="text-caption text-medium-emphasis mt-1">
+                Membre depuis {{ formatMonthYear(friend.createdAt) }}
+            </div>
         </div>
 
         <template v-if="theirsPromise">
@@ -29,6 +32,7 @@ import { BACK_ICON } from "@/constants/icons";
 import type { GlobalStat } from "@/models/stat";
 import type { User } from "@/models/user";
 import { goBack as navigateBack } from "@/utils/navigation";
+import { formatMonthYear } from "@/utils/date";
 import { onBeforeMount, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 

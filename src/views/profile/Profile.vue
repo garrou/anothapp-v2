@@ -7,6 +7,9 @@
                 <v-avatar size="96" :image="profile.picture" />
                 <div class="text-h6 font-weight-bold mt-3">{{ profile.username }}</div>
                 <div class="text-body-2 text-medium-emphasis">{{ profile.email }}</div>
+                <div v-if="profile.createdAt" class="text-caption text-medium-emphasis mt-1">
+                    Membre depuis {{ formatMonthYear(profile.createdAt) }}
+                </div>
             </div>
 
             <v-list class="py-2 px-2">
@@ -56,6 +59,7 @@ import type { ProfileModal } from "@/types/types";
 import { ProfileLayout } from "@/layouts/profile-layout";
 import { SEARCH_ICON } from "@/constants/icons";
 import { withoutAccentsIgnoreCase } from "@/utils/format";
+import { formatMonthYear } from "@/utils/date";
 
 const { getProfile } = useUser();
 const { getSeries } = useSerie();

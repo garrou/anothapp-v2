@@ -19,3 +19,8 @@ export const toLocalDateKey = (iso: string): string => {
 
 export const isSameDay = (a: Date, b: Date): boolean =>
     a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+
+export const formatMonthYear = (iso: string): string => {
+    const date = new Date(iso);
+    return `${MONTHS_FR[date.getMonth()]} ${date.getFullYear()}`;
+}

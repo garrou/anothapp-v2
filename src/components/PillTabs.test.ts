@@ -5,9 +5,10 @@ import PillTabs from "./PillTabs.vue";
 import { vuetify } from "@/test/vuetify";
 
 const tabs = [
-    { value: 1, label: "Vue d'ensemble" },
+    { value: 1, label: "En cours" },
     { value: 2, label: "Tendances" },
     { value: 3, label: "Répartition", badge: 2 },
+    { value: 4, label: "Succès" },
 ];
 
 const mountTabs = (modelValue = 1) => mount(PillTabs, {
@@ -20,10 +21,11 @@ describe("PillTabs", () => {
         const wrapper = mountTabs();
 
         const tabEls = wrapper.findAllComponents({ name: "VTab" });
-        expect(tabEls).toHaveLength(3);
-        expect(wrapper.text()).toContain("Vue d'ensemble");
+        expect(tabEls).toHaveLength(4);
+        expect(wrapper.text()).toContain("En cours");
         expect(wrapper.text()).toContain("Tendances");
         expect(wrapper.text()).toContain("Répartition");
+        expect(wrapper.text()).toContain("Succès");
     });
 
     it("shows a badge when one is provided", () => {

@@ -127,6 +127,15 @@ describe("NotificationBell", () => {
         expect(wrapper.text()).toContain('Dexter a atteint la ligue Or I sur "Série de visionnage"');
     });
 
+    it("degrades gracefully when an achievement_league_unlocked notification has no league", async () => {
+        const wrapper = await openMenu(await mountBell([
+            notif(1, { type: "achievement_league_unlocked", metadata: { code: "streak", name: "Série de visionnage" } }),
+        ]));
+
+        expect(wrapper.text()).toContain('Dexter a progressé sur "Série de visionnage"');
+        expect(wrapper.text()).not.toContain("undefined");
+    });
+
     it("falls back to the actor's name for unknown notification types", async () => {
         const wrapper = await openMenu(await mountBell([
             { ...notif(1), type: "unknown_type" as never },

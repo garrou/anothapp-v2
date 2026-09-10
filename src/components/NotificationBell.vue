@@ -131,7 +131,9 @@ const describe = (item: Notification): string => {
             const name = meta.name ? String(meta.name) : "un succès";
             const league = LEAGUE_NAMES[Number(meta.league)];
             const roman = meta.subTier !== undefined ? SUB_TIER_ROMAN[Number(meta.subTier)] : undefined;
-            return `${actor} a atteint la ligue ${league}${roman ? ` ${roman}` : ""} sur "${name}"`;
+            return league
+                ? `${actor} a atteint la ligue ${league}${roman ? ` ${roman}` : ""} sur "${name}"`
+                : `${actor} a progressé sur "${name}"`;
         }
         default:
             return actor;

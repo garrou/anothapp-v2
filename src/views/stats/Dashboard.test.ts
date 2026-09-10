@@ -207,4 +207,25 @@ describe("Dashboard", () => {
 
         expect(wrapper.findComponent({ name: "BadgesGrid" }).exists()).toBe(true);
     });
+
+    it("opens straight on the friend's top-level 'Succès' section when the route asks for it (achievement_league_unlocked notification click)", async () => {
+        // A friend profile's achievements grid lives in its own top-level section
+        // (SECTION_ACHIEVEMENTS), not the inner Stats sub-tab used on your own dashboard -
+        // the route watcher has to pick the right ref depending on whether userId is set.
+        routeMock.query = { tab: "achievements" };
+
+        const wrapper = await mountView({ userId: "friend-1" });
+
+        expect(wrapper.findComponent({ name: "BadgesGrid" }).props("userId")).toBe("friend-1");
+    });
+
+    it("switches to the friend's 'Succès' section on a same-route re-navigation, not just at mount", async () => {
+        const wrapper = await mountView({ userId: "friend-1" });
+        expect(wrapper.findComponent({ name: "BadgesGrid" }).exists()).toBe(false);
+
+        routeMock.query = { tab: "achievements" };
+        await flushPromises();
+
+        expect(wrapper.findComponent({ name: "BadgesGrid" }).props("userId")).toBe("friend-1");
+    });
 });

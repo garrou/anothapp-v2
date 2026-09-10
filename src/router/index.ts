@@ -129,9 +129,27 @@ const router = createRouter({
       }
     },
     {
-      path: "/friend",
+      path: "/friends/:id",
       name: "friend",
       component: () => import("@/views/friends/FriendView.vue"),
+      props: (route) => ({ id: route.params.id as string }),
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: "/playlists",
+      name: "playlists",
+      component: () => import("@/views/playlists/Playlists.vue"),
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: "/playlists/:id",
+      name: "playlist",
+      component: () => import("@/views/playlists/PlaylistView.vue"),
+      props: (route) => ({ id: route.params.id as string }),
       meta: {
         requiresAuth: true
       }

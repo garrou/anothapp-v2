@@ -55,6 +55,7 @@
                     <button-update-serie :serie="infos.serie" menu-item @update="updateModal = true" />
                     <v-list-item prepend-icon="mdi-account-heart" title="Amis qui regardent cette série"
                         @click="openFriendsModal" />
+                    <button-add-to-playlist :serie-id="id" menu-item />
                     <v-divider class="my-1" />
                     <button-remove-serie :serie="infos.serie" menu-item />
                 </base-menu>
@@ -114,6 +115,7 @@ import ButtonWatchSerie from "@/components/buttons/ButtonWatchSerie.vue";
 import ButtonFavoriteSerie from "@/components/buttons/ButtonFavoriteSerie.vue";
 import ButtonRemoveSerie from "@/components/buttons/ButtonRemoveSerie.vue";
 import ButtonDetailsSerie from "@/components/buttons/ButtonDetailsSerie.vue";
+import ButtonAddToPlaylist from "@/components/buttons/ButtonAddToPlaylist.vue";
 import BaseModal from "@/components/BaseModal.vue";
 import StatTile from "@/components/StatTile.vue";
 import SeasonDetails from "@/components/seasons/SeasonDetails.vue";

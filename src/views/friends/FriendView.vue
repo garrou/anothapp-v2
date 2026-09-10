@@ -23,33 +23,40 @@
 <script lang="ts" setup>
 import Dashboard from "@/views/stats/Dashboard.vue";
 import FriendCompare from "@/components/friends/FriendCompare.vue";
-import { useFriendStore } from "@/stores/friend";
+import { useFriend } from "@/composables/friend";
 import { useStatistic } from "@/composables/statistic";
 import type { GlobalStat } from "@/models/stat";
+import type { User } from "@/models/user";
 import { goBack as navigateBack } from "@/utils/navigation";
-import { storeToRefs } from "pinia";
-import { onBeforeMount, ref } from "vue";
+import { onBeforeMount, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 
-const router = useRouter();
-const friendStore = useFriendStore();
-const { getStats } = useStatistic();
-const { friend } = storeToRefs(friendStore);
+const props = defineProps({
+    id: { type: String, required: true }
+});
 
+const router = useRouter();
+const { getCachedFriends } = useFriend();
+const { getStats } = useStatistic();
+
+const friend = ref<User>();
 const theirsPromise = ref<Promise<GlobalStat>>();
 
-const goBack = () => {
-    friendStore.reset();
-    navigateBack(router, "/friends");
-}
+const goBack = () => navigateBack(router, "/friends");
 
-onBeforeMount(() => {
+const load = async (): Promise<void> => {
+    friend.value = (await getCachedFriends()).find((user) => user.id === props.id);
+
     if (!friend.value) {
         router.replace('/friends');
         return;
     }
     theirsPromise.value = getStats(friend.value.id);
-});
+}
+
+watch(() => props.id, load);
+
+onBeforeMount(load);
 </script>
 
 <style scoped>

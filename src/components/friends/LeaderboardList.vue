@@ -39,22 +39,19 @@
 <script lang="ts" setup>
 import EmptyState from "@/components/EmptyState.vue";
 import { useStatistic } from "@/composables/statistic";
-import { useFriendStore } from "@/stores/friend";
 import type { LeaderboardEntry } from "@/models/stat";
 import { minsToStringHoursDays } from "@/utils/format";
 import { onBeforeMount, ref } from "vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
-const friendStore = useFriendStore();
 const { getLeaderboard } = useStatistic();
 
 const entries = ref<LeaderboardEntry[]>([]);
 const loading = ref(false);
 
 const showFriend = (entry: LeaderboardEntry) => {
-    friendStore.setFriend({ id: entry.id, username: entry.username, picture: entry.picture, current: false });
-    router.push('/friend');
+    router.push(`/friends/${entry.id}`);
 }
 
 onBeforeMount(async () => {

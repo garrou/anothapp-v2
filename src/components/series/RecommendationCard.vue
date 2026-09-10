@@ -30,7 +30,6 @@ import PosterCard from "@/components/PosterCard.vue";
 import ButtonAddSerie from "@/components/buttons/ButtonAddSerie.vue";
 import type { Recommendation, RecommendationFriend } from "@/models/serie";
 import { buildPlural } from "@/utils/format";
-import { useFriendStore } from "@/stores/friend";
 import { computed, type PropType } from "vue";
 import { useRouter } from "vue-router";
 
@@ -41,7 +40,6 @@ const props = defineProps({
 });
 
 const router = useRouter();
-const friendStore = useFriendStore();
 
 const link = `/discover/${props.recommendation.id}`;
 
@@ -51,8 +49,7 @@ const extraFriendsCount = computed(() => props.recommendation.friends.length - M
 const initial = (username: string): string => username.charAt(0).toUpperCase();
 
 const goToFriend = (friend: RecommendationFriend) => {
-    friendStore.setFriend({ id: friend.id, username: friend.username, picture: friend.picture, current: false });
-    router.push("/friend");
+    router.push(`/friends/${friend.id}`);
 }
 </script>
 

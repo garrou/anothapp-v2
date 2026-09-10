@@ -7,6 +7,7 @@
                 <button-add-serie :serie-id="serie.id" primary />
                 <button-favorite-serie :serie-id="serie.id" />
                 <button-list-serie :serie="serie" />
+                <button-add-to-playlist :serie-id="serie.id" />
             </div>
 
             <pill-tabs v-model="tab" class="mb-4" :tabs="DETAILS_TABS" />
@@ -51,6 +52,7 @@ import PillTabs from "@/components/PillTabs.vue";
 import ButtonAddSerie from "@/components/buttons/ButtonAddSerie.vue";
 import ButtonFavoriteSerie from "@/components/buttons/ButtonFavoriteSerie.vue";
 import ButtonListSerie from "@/components/buttons/ButtonListSerie.vue";
+import ButtonAddToPlaylist from "@/components/buttons/ButtonAddToPlaylist.vue";
 import { useFriend } from "@/composables/friend";
 import { useSearch } from "@/composables/search";
 import type { Character } from "@/models/person";

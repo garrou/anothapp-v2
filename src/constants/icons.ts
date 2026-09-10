@@ -29,3 +29,7 @@ export const NOTE_ICONS: Record<number, IconValue> = {
     4: "mdi-emoticon-excited-outline",
     5: "mdi-emoticon-cool-outline"
 }
+
+export const PLAYLIST_PLAY_ICON = "mdi-playlist-play";
+
+export const PLAYLIST_ADD_ICON = "mdi-playlist-plus";

@@ -203,7 +203,6 @@ const loadPlaylists = async (): Promise<void> => {
     try {
         playlists.value = await getPlaylists(props.userId);
     } catch {
-        // pas de playlist visible ou erreur réseau : la section reste vide
     } finally {
         playlistsLoading.value = false;
     }

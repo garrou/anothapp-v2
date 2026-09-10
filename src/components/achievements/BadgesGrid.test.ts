@@ -59,25 +59,6 @@ describe("BadgesGrid", () => {
         expect(wrapper.text()).toContain("Titan");
     });
 
-    it("counts unlocked and locked achievements in the subtitle for your own list", async () => {
-        const wrapper = await mountGrid([
-            achievement("streak", "Série de feu", { league: 1, subTier: 3 }),
-            achievement("watch_time", "Marathonien"),
-            achievement("countries", "Cinéphile du monde"),
-        ]);
-
-        expect(wrapper.text()).toContain("1 succès débloqué");
-        expect(wrapper.text()).toContain("2 verrouillés");
-    });
-
-    it("hides the subtitle when viewing a friend's list", async () => {
-        const wrapper = await mountGrid([
-            achievement("streak", "Série de feu", { league: 1, subTier: 3 }),
-        ], "friend-1");
-
-        expect(wrapper.find(".achievements-subtitle").exists()).toBe(false);
-    });
-
     it("shows an empty state when a friend has nothing unlocked yet", async () => {
         const wrapper = await mountGrid([], "friend-1");
 

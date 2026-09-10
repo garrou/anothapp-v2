@@ -4,8 +4,6 @@
     </div>
 
     <template v-else>
-        <div v-if="subtitle" class="achievements-subtitle text-body-2 text-medium-emphasis">{{ subtitle }}</div>
-
         <v-card class="legend-card">
             <div v-for="league in LEAGUES" :key="league" class="legend-item">
                 <span class="legend-dot" :style="{ background: LEAGUE_COLORS[league] }" />
@@ -32,8 +30,7 @@ import { useAchievement } from "@/composables/achievement";
 import { LEAGUE_COLORS, LEAGUE_NAMES } from "@/constants/achievements";
 import { ACHIEVEMENT_ICON } from "@/constants/icons";
 import type { Achievement } from "@/models/achievement";
-import { buildPlural } from "@/utils/format";
-import { computed, onBeforeMount, ref } from "vue";
+import { onBeforeMount, ref } from "vue";
 
 const LEAGUES = [1, 2, 3, 4, 5, 6, 7];
 
@@ -45,15 +42,6 @@ const { getAchievements } = useAchievement();
 
 const loading = ref(true);
 const achievements = ref<Achievement[]>([]);
-
-const unlockedCount = computed(() => achievements.value.filter((a) => a.league !== null).length);
-const lockedCount = computed(() => achievements.value.length - unlockedCount.value);
-
-// Locked/progress counts only make sense for your own full list - a friend's
-// response only ever contains what they've already unlocked.
-const subtitle = computed(() => props.userId
-    ? ""
-    : `${buildPlural("succès débloqué", unlockedCount.value)} · ${buildPlural("verrouillé", lockedCount.value)}`);
 
 onBeforeMount(async () => {
     loading.value = true;
@@ -70,10 +58,6 @@ onBeforeMount(async () => {
     display: flex;
     justify-content: center;
     padding: 64px 0;
-}
-
-.achievements-subtitle {
-    margin-bottom: 12px;
 }
 
 .legend-card {

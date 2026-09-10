@@ -1,5 +1,5 @@
 <template>
-    <div class="badge" :style="{ '--tier': tierColor }">
+    <div class="badge badge--clickable" :style="{ '--tier': tierColor }" @click="$emit('click')">
         <div class="badge-stage">
             <div v-if="showGlow" class="badge-glow" />
             <div class="badge-ring-wrap">
@@ -40,6 +40,10 @@ const props = defineProps({
     achievement: { type: Object as PropType<Achievement>, required: true }
 });
 
+defineEmits<{
+    click: []
+}>();
+
 const reached = computed(() => props.achievement.league !== null);
 
 // Colored by the league actually reached once there is one, so the caption's league
@@ -68,6 +72,10 @@ const iconMarkup = computed(() => ACHIEVEMENT_ICONS[props.achievement.code] ?? "
     flex-direction: column;
     align-items: center;
     gap: 9px;
+}
+
+.badge--clickable {
+    cursor: pointer;
 }
 
 .badge-stage {

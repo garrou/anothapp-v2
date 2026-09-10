@@ -17,20 +17,24 @@
         <v-card v-else class="badges-card">
             <div class="badges-grid">
                 <badge-medallion v-for="achievement in achievements" :key="achievement.code"
-                    :achievement="achievement" />
+                    :achievement="achievement" @click="selectedCode = achievement.code" />
             </div>
         </v-card>
     </template>
+
+    <achievement-detail-modal :achievement="selectedAchievement" :tiers="selectedTiers"
+        @close="selectedCode = null" />
 </template>
 
 <script lang="ts" setup>
 import EmptyState from "@/components/EmptyState.vue";
 import BadgeMedallion from "@/components/achievements/BadgeMedallion.vue";
+import AchievementDetailModal from "@/components/achievements/AchievementDetailModal.vue";
 import { useAchievement } from "@/composables/achievement";
 import { LEAGUE_COLORS, LEAGUE_NAMES } from "@/constants/achievements";
 import { ACHIEVEMENT_ICON } from "@/constants/icons";
-import type { Achievement } from "@/models/achievement";
-import { onBeforeMount, ref } from "vue";
+import type { Achievement, AchievementTier } from "@/models/achievement";
+import { computed, onBeforeMount, ref } from "vue";
 
 const LEAGUES = [1, 2, 3, 4, 5, 6, 7];
 
@@ -38,15 +42,25 @@ const props = defineProps({
     userId: { type: String, default: undefined }
 });
 
-const { getAchievements } = useAchievement();
+const { getAchievements, getTiers } = useAchievement();
 
 const loading = ref(true);
 const achievements = ref<Achievement[]>([]);
+const tierCatalog = ref<Record<string, AchievementTier[]>>({});
+const selectedCode = ref<string | null>(null);
+
+const selectedAchievement = computed(() =>
+    achievements.value.find((achievement) => achievement.code === selectedCode.value) ?? null);
+
+const selectedTiers = computed(() => selectedCode.value ? tierCatalog.value[selectedCode.value] ?? [] : []);
 
 onBeforeMount(async () => {
     loading.value = true;
     try {
-        achievements.value = await getAchievements(props.userId);
+        [achievements.value, tierCatalog.value] = await Promise.all([
+            getAchievements(props.userId),
+            getTiers(),
+        ]);
     } finally {
         loading.value = false;
     }

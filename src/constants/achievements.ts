@@ -41,3 +41,31 @@ export const ACHIEVEMENT_ICONS: Record<string, string> = {
     notes_count: '<path d="M12 3l2.6 5.9 6.4.6-4.8 4.3 1.4 6.3L12 17l-5.6 3.1 1.4-6.3-4.8-4.3 6.4-.6L12 3z"/>',
     account_age: '<path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/>',
 };
+
+export const ACHIEVEMENT_DESCRIPTIONS: Record<string, string> = {
+    streak: "Enchaînez les jours de suite avec au moins un épisode ou une saison vue.",
+    watch_time: "Cumulez du temps de visionnage total.",
+    shows_started: "Ajoutez des séries à votre liste.",
+    shows_completed: "Terminez des séries jusqu'au bout.",
+    countries: "Regardez des séries de pays d'origine différents.",
+    kinds: "Regardez des séries de genres différents.",
+    platforms: "Regardez des séries disponibles sur des plateformes différentes.",
+    friends_watched_with: "Regardez des saisons en compagnie d'amis différents.",
+    friends_count: "Ajoutez des amis sur l'application.",
+    notes_count: "Notez des séries que vous avez regardées.",
+    account_age: "Restez membre de l'application au fil des mois.",
+};
+
+export const ACHIEVEMENT_UNITS: Record<string, string> = {
+    streak: "jours",
+    watch_time: "h",
+    shows_started: "séries",
+    shows_completed: "séries",
+    countries: "pays",
+    kinds: "genres",
+    platforms: "plateformes",
+    friends_watched_with: "amis",
+    friends_count: "amis",
+    notes_count: "notes",
+    account_age: "mois",
+};

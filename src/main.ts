@@ -9,17 +9,11 @@ import { fr } from "vuetify/locale";
 import App from "./App.vue";
 import router from "./router";
 import { createVuetify } from "vuetify";
-import * as components from "vuetify/components";
-import * as directives from "vuetify/directives";
 import { useSnackbar } from "@/composables/snackbar";
 import storageService from "@/services/storageService";
 import { THEME_ANOTHAPP, THEME_ANOTHAPP_DARK, applyThemeClass } from "@/utils/theme";
 
 const vuetify = createVuetify({
-  components: {
-    ...components,
-  },
-  directives,
   locale: {
     locale: 'fr',
     messages: { fr }

@@ -1,4 +1,4 @@
-import { CHART_BAR_ICON, CHECK_CIRCLE_ICON, DATABASE_ICON, SEARCH_ICON } from "./icons";
+import { ACHIEVEMENT_ICON, CHART_BAR_ICON, CHECK_CIRCLE_ICON, DATABASE_ICON, SEARCH_ICON } from "./icons";
 
 export const HOME_FEATURES = [
     {
@@ -36,6 +36,12 @@ export const HOME_FEATURES = [
         icon: DATABASE_ICON,
         title: "Base de données complète",
         description: "Accédez à des informations complètes sur les séries, notammment le nombre d'épisodes, les durées et des métadonnées détaillées."
+    },
+    {
+        id: 7,
+        icon: ACHIEVEMENT_ICON,
+        title: "Succès et amis",
+        description: "Débloquez des badges au fil de votre progression, du Bronze au Titan, et comparez-les avec vos amis."
     }
 ];
 
@@ -63,6 +69,6 @@ export const HOME_STEPS = [
     {
         id: 5,
         title: "Comparer avec vos amis",
-        description: "Consultez les séries et les statistiques de vos amis"
+        description: "Consultez les séries et les statistiques de vos amis, et comparez vos succès débloqués"
     }
 ];

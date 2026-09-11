@@ -8,9 +8,39 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+      /* Static, JS-free boot state: shown while main.ts waits for the initial route
+         (including its async auth guard) to resolve, before Vue ever mounts. Vue's
+         mount replaces #app's content, so this is removed automatically once it does. */
+      body {
+        margin: 0;
+        background: #F6F6FA;
+      }
+      #app {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+      }
+      .boot-spinner {
+        width: 36px;
+        height: 36px;
+        border: 3px solid rgba(108, 92, 224, 0.18);
+        border-top-color: #6C5CE0;
+        border-radius: 50%;
+        animation: boot-spin 0.8s linear infinite;
+      }
+      @keyframes boot-spin {
+        to { transform: rotate(360deg); }
+      }
+      @media (prefers-color-scheme: dark) {
+        body { background: #131022; }
+        .boot-spinner { border-color: rgba(156, 140, 255, 0.18); border-top-color: #9C8CFF; }
+      }
+    </style>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app"><div class="boot-spinner" role="status" aria-label="Chargement"></div></div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

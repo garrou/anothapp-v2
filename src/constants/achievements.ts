@@ -37,12 +37,12 @@ export const ACHIEVEMENT_ICONS: Record<string, string> = {
     kinds: '<path d="M11 3H5a2 2 0 00-2 2v6l9.6 9.6a2 2 0 002.8 0l5.2-5.2a2 2 0 000-2.8L11 3z"/><circle cx="7.5" cy="7.5" r="1.2"/>',
     platforms: '<rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8M12 17v4"/>',
     friends_watched_with: '<circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6"/>',
-    friends_count: '<circle cx="8.5" cy="8" r="3"/><circle cx="16" cy="9" r="2.6"/><path d="M2.5 20c.4-3.6 3-6 6-6s5.6 2.4 6 6M14.5 20c.3-2.7 2-4.7 4.3-4.7 1.8 0 3.3 1.1 4 2.9"/>',
+    friends_count: '<circle cx="12" cy="6" r="3"/><circle cx="5" cy="8.5" r="2.3"/><circle cx="19" cy="8.5" r="2.3"/><path d="M6 20c.4-3.8 3-6.5 6-6.5s5.6 2.7 6 6.5"/><path d="M1.5 19c.3-2.7 1.8-4.5 3.5-4.8M22.5 19c-.3-2.7-1.8-4.5-3.5-4.8"/>',
     notes_count: '<path d="M12 3l2.6 5.9 6.4.6-4.8 4.3 1.4 6.3L12 17l-5.6 3.1 1.4-6.3-4.8-4.3 6.4-.6L12 3z"/>',
     account_age: '<path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/>',
     favorites_count: '<path d="M12 20.5c-4.5-3-8-6.5-8-10.5a4.5 4.5 0 018-2.8A4.5 4.5 0 0120 10c0 4-3.5 7.5-8 10.5z"/>',
     playlists_count: '<rect x="4" y="5" width="16" height="3" rx="1"/><rect x="4" y="10.5" width="16" height="3" rx="1"/><rect x="4" y="16" width="10" height="3" rx="1"/>',
-    duo: '<rect x="4" y="4" width="12" height="14" rx="3"/><rect x="8" y="6" width="12" height="14" rx="3" opacity=".55"/>',
+    duo: '<circle cx="8.5" cy="8" r="3"/><circle cx="16" cy="9" r="2.6"/><path d="M2.5 20c.4-3.6 3-6 6-6s5.6 2.4 6 6M14.5 20c.3-2.7 2-4.7 4.3-4.7 1.8 0 3.3 1.1 4 2.9"/>',
 };
 
 export const ACHIEVEMENT_DESCRIPTIONS: Record<string, string> = {

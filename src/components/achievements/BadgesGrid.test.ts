@@ -75,23 +75,49 @@ describe("BadgesGrid", () => {
         });
 
         await wrapper.findComponent({ name: "BadgeMedallion" }).vm.$emit("click");
+        await flushPromises();
 
         const modal = wrapper.findComponent({ name: "AchievementDetailModal" });
         expect(modal.props("achievement")?.code).toBe("streak");
         expect(modal.props("tiers")).toEqual([{ league: 1, subTier: 3, threshold: 1 }]);
     });
 
-    it("still shows already-unlocked achievements when only the tiers fetch fails", async () => {
+    it("does not fetch the tier catalog until a badge is clicked", async () => {
+        await mountGrid([achievement("streak", "Assidu")]);
+
+        expect(achievementComposableMocks.getTiers).not.toHaveBeenCalled();
+    });
+
+    it("only fetches the tier catalog once, even across multiple badge clicks", async () => {
+        const wrapper = await mountGrid([
+            achievement("streak", "Assidu"),
+            achievement("watch_time", "Marathonien"),
+        ], undefined, { streak: [], watch_time: [] });
+        const medallions = wrapper.findAllComponents({ name: "BadgeMedallion" });
+
+        await medallions[0].vm.$emit("click");
+        await flushPromises();
+        await medallions[1].vm.$emit("click");
+        await flushPromises();
+
+        expect(achievementComposableMocks.getTiers).toHaveBeenCalledTimes(1);
+    });
+
+    it("keeps achievements visible and shows an empty tier list if the lazy tiers fetch fails on click", async () => {
         achievementComposableMocks.getAchievements.mockResolvedValue([
             achievement("streak", "Assidu", { league: 1, subTier: 2 }),
         ]);
         achievementComposableMocks.getTiers.mockRejectedValue(new Error("boom"));
-
         const wrapper = mount(BadgesGrid, { global: { plugins: [vuetify] } });
         await flushPromises();
 
+        await wrapper.findComponent({ name: "BadgeMedallion" }).vm.$emit("click");
+        await flushPromises();
+
         expect(wrapper.findComponent({ name: "BadgeMedallion" }).exists()).toBe(true);
-        expect(wrapper.findComponent({ name: "EmptyState" }).exists()).toBe(false);
+        const modal = wrapper.findComponent({ name: "AchievementDetailModal" });
+        expect(modal.props("achievement")?.code).toBe("streak");
+        expect(modal.props("tiers")).toEqual([]);
     });
 
     it("closes the detail modal", async () => {

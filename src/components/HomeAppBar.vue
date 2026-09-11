@@ -7,11 +7,11 @@
             </v-app-bar-title>
 
             <template v-slot:append>
-                <div v-if="showAuthBtns" class="d-flex ga-2">
-                    <v-btn color="primary" variant="tonal" rounded="pill" @click="$router.push('/login')">
+                <div v-if="showAuthBtns" class="d-flex ga-2 auth-btns">
+                    <v-btn color="primary" variant="tonal" rounded="pill" class="auth-btn" @click="$router.push('/login')">
                         Se connecter
                     </v-btn>
-                    <v-btn color="primary" variant="flat" rounded="pill" @click="$router.push('/register')">
+                    <v-btn color="primary" variant="flat" rounded="pill" class="auth-btn" @click="$router.push('/register')">
                         S'inscrire
                     </v-btn>
                 </div>
@@ -45,5 +45,18 @@ const showAuthBtns = computed(() => route.name === "home");
     border-radius: 50%;
     background: rgb(var(--v-theme-primary));
     flex-shrink: 0;
+}
+
+.auth-btns {
+    flex-shrink: 0;
+}
+
+@media (max-width: 480px) {
+    .auth-btn {
+        min-width: 0 !important;
+        height: 32px !important;
+        padding: 0 10px !important;
+        font-size: 11.5px !important;
+    }
 }
 </style>

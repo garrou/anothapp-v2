@@ -54,7 +54,7 @@ export const HOME_STEPS = [
     {
         id: 2,
         title: "Marquer les progrès",
-        description: "Suivez les saisons que vous avez regardées et marquez les comme terminées"
+        description: "Suivez les épisodes et saisons que vous avez regardés et marquez les comme terminés"
     },
     {
         id: 3,

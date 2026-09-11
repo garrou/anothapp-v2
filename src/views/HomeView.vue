@@ -35,7 +35,7 @@
                 Tout ce dont vous avez besoin pour suivre vos séries
             </h2>
 
-            <v-row>
+            <v-row justify="center">
                 <v-col v-for="feature in HOME_FEATURES" :key="feature.id" cols="12" md="4" class="mb-4 d-flex">
                     <v-card class="pa-6 text-center feature-card" height="100%" width="100%">
                         <icon-badge :icon="feature.icon" class="mx-auto mb-4" />
@@ -78,6 +78,10 @@
         <div class="home-footer">
             <span class="brand-dot"></span>
             <span>anothapp</span>
+            <a href="https://github.com/garrou/anothapp-v2" target="_blank" rel="noopener noreferrer"
+                class="github-link" aria-label="Code source sur GitHub">
+                <v-icon :icon="GITHUB_ICON" size="18" />
+            </a>
         </div>
     </div>
 </template>
@@ -88,6 +92,7 @@ import { onBeforeMount, ref } from 'vue';
 import BaseImage from '@/components/BaseImage.vue';
 import IconBadge from '@/components/IconBadge.vue';
 import { HOME_FEATURES, HOME_STEPS } from '@/constants/home';
+import { GITHUB_ICON } from '@/constants/icons';
 
 const { getImages } = useSearch();
 
@@ -123,6 +128,12 @@ onBeforeMount(async () => {
     display: flex;
     flex-direction: column;
     align-items: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(56, 24, 95, 0.12);
 }
 
 .hero-actions {
@@ -232,5 +243,16 @@ onBeforeMount(async () => {
     border-radius: 50%;
     background: rgb(var(--v-theme-primary));
     display: inline-block;
+}
+
+.github-link {
+    display: inline-flex;
+    align-items: center;
+    color: rgb(var(--v-theme-on-surface-variant));
+    margin-left: 4px;
+}
+
+.github-link:hover {
+    color: rgb(var(--v-theme-primary));
 }
 </style>

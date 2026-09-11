@@ -96,4 +96,4 @@ const snackbar = useSnackbar();
 
 app.config.errorHandler = (err: unknown) => snackbar.showError(err as Error);
 
-app.mount("#app");
+router.isReady().then(() => app.mount("#app"));

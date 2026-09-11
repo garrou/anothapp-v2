@@ -73,3 +73,5 @@ export const FAVORITE_ACTOR_ICON = "mdi-account-star-outline";
 export const NO_FRIENDS_ICON = "mdi-account-heart-outline";
 
 export const FRIENDS_ICON = "mdi-account-heart";
+
+export const GITHUB_ICON = "mdi-github";

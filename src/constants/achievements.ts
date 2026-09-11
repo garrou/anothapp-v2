@@ -40,6 +40,9 @@ export const ACHIEVEMENT_ICONS: Record<string, string> = {
     friends_count: '<circle cx="8.5" cy="8" r="3"/><circle cx="16" cy="9" r="2.6"/><path d="M2.5 20c.4-3.6 3-6 6-6s5.6 2.4 6 6M14.5 20c.3-2.7 2-4.7 4.3-4.7 1.8 0 3.3 1.1 4 2.9"/>',
     notes_count: '<path d="M12 3l2.6 5.9 6.4.6-4.8 4.3 1.4 6.3L12 17l-5.6 3.1 1.4-6.3-4.8-4.3 6.4-.6L12 3z"/>',
     account_age: '<path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/>',
+    favorites_count: '<path d="M12 20.5c-4.5-3-8-6.5-8-10.5a4.5 4.5 0 018-2.8A4.5 4.5 0 0120 10c0 4-3.5 7.5-8 10.5z"/>',
+    playlists_count: '<rect x="4" y="5" width="16" height="3" rx="1"/><rect x="4" y="10.5" width="16" height="3" rx="1"/><rect x="4" y="16" width="10" height="3" rx="1"/>',
+    duo: '<rect x="4" y="4" width="12" height="14" rx="3"/><rect x="8" y="6" width="12" height="14" rx="3" opacity=".55"/>',
 };
 
 export const ACHIEVEMENT_DESCRIPTIONS: Record<string, string> = {
@@ -54,6 +57,9 @@ export const ACHIEVEMENT_DESCRIPTIONS: Record<string, string> = {
     friends_count: "Ajoutez des amis sur l'application.",
     notes_count: "Notez des séries que vous avez regardées.",
     account_age: "Restez membre de l'application au fil des mois.",
+    favorites_count: "Ajoutez des séries à vos favorites.",
+    playlists_count: "Créez des playlists.",
+    duo: "Regardez un maximum de saisons avec le même ami.",
 };
 
 export const ACHIEVEMENT_UNITS: Record<string, string> = {
@@ -68,4 +74,7 @@ export const ACHIEVEMENT_UNITS: Record<string, string> = {
     friends_count: "amis",
     notes_count: "notes",
     account_age: "mois",
+    favorites_count: "favoris",
+    playlists_count: "playlists",
+    duo: "saisons",
 };

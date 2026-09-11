@@ -17,7 +17,7 @@
         <v-card v-else class="badges-card">
             <div class="badges-grid">
                 <badge-medallion v-for="achievement in achievements" :key="achievement.code"
-                    :achievement="achievement" @click="selectedCode = achievement.code" />
+                    :achievement="achievement" @click="selectAchievement(achievement.code)" />
             </div>
         </v-card>
     </template>
@@ -54,13 +54,24 @@ const selectedAchievement = computed(() =>
 
 const selectedTiers = computed(() => selectedCode.value ? tierCatalog.value[selectedCode.value] ?? [] : []);
 
+let tiersLoaded = false;
+
+const selectAchievement = async (code: string) => {
+    selectedCode.value = code;
+
+    if (tiersLoaded) return;
+    tiersLoaded = true;
+    try {
+        tierCatalog.value = await getTiers();
+    } catch {
+        tiersLoaded = false;
+    }
+};
+
 onBeforeMount(async () => {
     loading.value = true;
     try {
-        [achievements.value, tierCatalog.value] = await Promise.all([
-            getAchievements(props.userId),
-            getTiers(),
-        ]);
+        achievements.value = await getAchievements(props.userId);
     } finally {
         loading.value = false;
     }

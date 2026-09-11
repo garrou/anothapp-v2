@@ -11,16 +11,20 @@
     <style>
       /* Static, JS-free boot state: shown while main.ts waits for the initial route
          (including its async auth guard) to resolve, before Vue ever mounts. Vue's
-         mount replaces #app's content, so this is removed automatically once it does. */
+         mount replaces #app's content wholesale, so this whole subtree - wrapper
+         included - is removed automatically once it does. The centering lives on
+         .boot-spinner-wrap, never on #app itself, so it can't outlive the spinner and
+         affect the real app's layout after mount. */
       body {
         margin: 0;
         background: #F6F6FA;
       }
-      #app {
+      .boot-spinner-wrap {
+        position: fixed;
+        inset: 0;
         display: flex;
         align-items: center;
         justify-content: center;
-        min-height: 100vh;
       }
       .boot-spinner {
         width: 36px;
@@ -40,7 +44,7 @@
     </style>
   </head>
   <body>
-    <div id="app"><div class="boot-spinner" role="status" aria-label="Chargement"></div></div>
+    <div id="app"><div class="boot-spinner-wrap"><div class="boot-spinner" role="status" aria-label="Chargement"></div></div></div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

@@ -33,6 +33,7 @@ beforeEach(() => {
 describe("BadgesGrid", () => {
     it("shows a loading state before the achievements resolve", () => {
         achievementComposableMocks.getAchievements.mockReturnValue(new Promise(() => {}));
+        achievementComposableMocks.getTiers.mockReturnValue(new Promise(() => {}));
         const wrapper = mount(BadgesGrid, { global: { plugins: [vuetify] } });
 
         expect(wrapper.find(".achievements-loading").exists()).toBe(true);
@@ -78,6 +79,19 @@ describe("BadgesGrid", () => {
         const modal = wrapper.findComponent({ name: "AchievementDetailModal" });
         expect(modal.props("achievement")?.code).toBe("streak");
         expect(modal.props("tiers")).toEqual([{ league: 1, subTier: 3, threshold: 1 }]);
+    });
+
+    it("still shows already-unlocked achievements when only the tiers fetch fails", async () => {
+        achievementComposableMocks.getAchievements.mockResolvedValue([
+            achievement("streak", "Assidu", { league: 1, subTier: 2 }),
+        ]);
+        achievementComposableMocks.getTiers.mockRejectedValue(new Error("boom"));
+
+        const wrapper = mount(BadgesGrid, { global: { plugins: [vuetify] } });
+        await flushPromises();
+
+        expect(wrapper.findComponent({ name: "BadgeMedallion" }).exists()).toBe(true);
+        expect(wrapper.findComponent({ name: "EmptyState" }).exists()).toBe(false);
     });
 
     it("closes the detail modal", async () => {

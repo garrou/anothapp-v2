@@ -56,14 +56,13 @@ const selectedTiers = computed(() => selectedCode.value ? tierCatalog.value[sele
 
 onBeforeMount(async () => {
     loading.value = true;
+    const tiersPromise = getTiers().catch(() => ({}));
     try {
-        [achievements.value, tierCatalog.value] = await Promise.all([
-            getAchievements(props.userId),
-            getTiers(),
-        ]);
+        achievements.value = await getAchievements(props.userId);
     } finally {
         loading.value = false;
     }
+    tierCatalog.value = await tiersPromise;
 });
 </script>
 

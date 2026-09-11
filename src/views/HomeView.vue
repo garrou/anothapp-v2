@@ -78,6 +78,10 @@
         <div class="home-footer">
             <span class="brand-dot"></span>
             <span>anothapp</span>
+            <a href="https://github.com/garrou/anothapp-v2" target="_blank" rel="noopener noreferrer"
+                class="github-link" aria-label="Code source sur GitHub">
+                <v-icon :icon="GITHUB_ICON" size="18" />
+            </a>
         </div>
     </div>
 </template>
@@ -88,6 +92,7 @@ import { onBeforeMount, ref } from 'vue';
 import BaseImage from '@/components/BaseImage.vue';
 import IconBadge from '@/components/IconBadge.vue';
 import { HOME_FEATURES, HOME_STEPS } from '@/constants/home';
+import { GITHUB_ICON } from '@/constants/icons';
 
 const { getImages } = useSearch();
 
@@ -238,5 +243,16 @@ onBeforeMount(async () => {
     border-radius: 50%;
     background: rgb(var(--v-theme-primary));
     display: inline-block;
+}
+
+.github-link {
+    display: inline-flex;
+    align-items: center;
+    color: rgb(var(--v-theme-on-surface-variant));
+    margin-left: 4px;
+}
+
+.github-link:hover {
+    color: rgb(var(--v-theme-primary));
 }
 </style>

@@ -12,7 +12,7 @@
                         Suivez chaque série, chaque saison, grâce à notre plateforme complète de suivi des séries.
                     </p>
 
-                    <div class="d-flex justify-center ga-3 mt-6">
+                    <div class="d-flex justify-center ga-3 mt-6 hero-actions">
                         <v-btn color="primary" rounded="pill" size="large" to="/register">
                             Commencer gratuitement
                         </v-btn>
@@ -123,6 +123,17 @@ onBeforeMount(async () => {
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+.hero-actions {
+    flex-wrap: wrap;
+}
+
+@media (max-width: 480px) {
+    .hero-actions :deep(.v-btn) {
+        width: 100%;
+        max-width: 320px;
+    }
 }
 
 .poster-collage {

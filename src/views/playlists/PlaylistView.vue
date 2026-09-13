@@ -2,6 +2,16 @@
     <base-app-bar />
 
     <v-container v-if="detail">
+        <v-alert v-if="isPending" class="mb-4" type="info" variant="tonal"
+            text="Vous êtes invité(e) à collaborer sur cette playlist.">
+            <template #append>
+                <div class="d-flex ga-2">
+                    <v-btn color="primary" size="small" variant="flat" @click="acceptInvite">Accepter</v-btn>
+                    <v-btn size="small" variant="outlined" @click="declineInvite">Refuser</v-btn>
+                </div>
+            </template>
+        </v-alert>
+
         <div class="d-flex align-center justify-space-between mb-2">
             <div>
                 <h1 class="playlist-title">{{ detail.playlist.name }}</h1>
@@ -20,7 +30,9 @@
             </base-menu>
         </div>
 
-        <div v-if="isOwner" class="mb-4">
+        <playlist-collaborators v-if="canEditShows" :playlist-id="props.id" :is-owner="isOwner" @left="onLeft" />
+
+        <div v-if="canEditShows" class="mb-4">
             <v-text-field v-model="query" clearable density="compact" hide-details :prepend-inner-icon="SEARCH_ICON"
                 placeholder="Ajouter une série..." @keyup.enter="search" @click:clear="results = []" />
             <v-list v-if="results.length" class="search-results" density="compact">
@@ -37,7 +49,7 @@
         <card-grid v-if="detail.shows.length" :items="detail.shows" :loading="false" :sm="6" :md="4" :lg="3">
             <template #default="{ item: serie }">
                 <poster-card :image="serie.poster" :to="`/discover/${serie.id}`">
-                    <template v-if="isOwner" #quick-actions>
+                    <template v-if="canEditShows" #quick-actions>
                         <v-btn :icon="DELETE_ICON" color="on-surface-variant" size="32" variant="flat"
                             @click.stop.prevent="removeShow(serie.id)" />
                     </template>
@@ -49,7 +61,7 @@
             </template>
         </card-grid>
         <empty-state v-else :icon="MOVIE_EMPTY_ICON" title="Playlist vide"
-            :description="isOwner ? 'Recherchez une série ci-dessus pour l\'ajouter.' : 'Cette playlist ne contient aucune série pour le moment.'" />
+            :description="canEditShows ? 'Recherchez une série ci-dessus pour l\'ajouter.' : 'Cette playlist ne contient aucune série pour le moment.'" />
 
         <playlist-form-modal v-model="editing" :playlist="detail.playlist" confirm-text="Enregistrer"
             title="Modifier la playlist" @cancel="editing = false" @save="onUpdate" />
@@ -67,6 +79,7 @@ import CardGrid from "@/components/CardGrid.vue";
 import EmptyState from "@/components/EmptyState.vue";
 import PosterCard from "@/components/PosterCard.vue";
 import PlaylistFormModal from "@/components/playlists/PlaylistFormModal.vue";
+import PlaylistCollaborators from "@/components/playlists/PlaylistCollaborators.vue";
 import { DELETE_ICON, EDIT_ICON, LOCK_ICON, MOVIE_EMPTY_ICON, SEARCH_ICON } from "@/constants/icons";
 import { usePlaylist } from "@/composables/playlist";
 import { useUser } from "@/composables/user";
@@ -84,7 +97,10 @@ const props = defineProps({
 });
 
 const router = useRouter();
-const { getPlaylist, updatePlaylist, deletePlaylist, addShowToPlaylist, removeShowFromPlaylist } = usePlaylist();
+const {
+    getPlaylist, updatePlaylist, deletePlaylist, addShowToPlaylist, removeShowFromPlaylist,
+    acceptCollaboratorInvite, removeCollaborator,
+} = usePlaylist();
 const { getProfile } = useUser();
 const { showError } = useSnackbar();
 
@@ -95,7 +111,9 @@ const results = ref<Serie[]>([]);
 const editing = ref(false);
 const deleting = ref(false);
 
-const isOwner = computed(() => detail.value?.playlist.userId === currentUserId.value);
+const isOwner = computed(() => detail.value?.playlist.role === "owner");
+const isPending = computed(() => detail.value?.playlist.role === "pending");
+const canEditShows = computed(() => isOwner.value || detail.value?.playlist.role === "collaborator");
 
 const search = async (): Promise<void> => {
     if (!query.value.trim()) {
@@ -154,6 +172,30 @@ const onDelete = async (): Promise<void> => {
     } finally {
         deleting.value = false;
     }
+}
+
+const acceptInvite = async (): Promise<void> => {
+    try {
+        await acceptCollaboratorInvite(props.id);
+        detail.value = await getPlaylist(props.id);
+    } catch (e) {
+        showError(e as Error);
+    }
+}
+
+const declineInvite = async (): Promise<void> => {
+    if (!currentUserId.value) return;
+
+    try {
+        await removeCollaborator(props.id, currentUserId.value, "Invitation refusée");
+        router.replace("/playlists");
+    } catch (e) {
+        showError(e as Error);
+    }
+}
+
+const onLeft = (): void => {
+    router.replace("/playlists");
 }
 
 onBeforeMount(async () => {

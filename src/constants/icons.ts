@@ -75,3 +75,7 @@ export const NO_FRIENDS_ICON = "mdi-account-heart-outline";
 export const FRIENDS_ICON = "mdi-account-heart";
 
 export const GITHUB_ICON = "mdi-github";
+
+export const ACCOUNT_MULTIPLE_ICON = "mdi-account-multiple";
+
+export const LOGOUT_ICON = "mdi-logout";

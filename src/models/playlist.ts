@@ -1,6 +1,6 @@
 import type { Serie } from "./serie";
 
-export type PlaylistRole = "owner" | "collaborator" | "viewer";
+export type PlaylistRole = "owner" | "collaborator" | "pending" | "viewer";
 
 export interface Playlist {
 

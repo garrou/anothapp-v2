@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
 import PlaylistView from "./PlaylistView.vue";
 import { vuetify } from "@/test/vuetify";
-import type { PlaylistDetail } from "@/models/playlist";
+import type { PlaylistDetail, Playlist } from "@/models/playlist";
 import type { Serie } from "@/models/serie";
 
 const playlistComposableMocks = vi.hoisted(() => ({
@@ -12,6 +12,8 @@ const playlistComposableMocks = vi.hoisted(() => ({
     deletePlaylist: vi.fn(),
     addShowToPlaylist: vi.fn(),
     removeShowFromPlaylist: vi.fn(),
+    acceptCollaboratorInvite: vi.fn(),
+    removeCollaborator: vi.fn(),
 }));
 const userComposableMocks = vi.hoisted(() => ({
     getProfile: vi.fn(),
@@ -34,8 +36,8 @@ vi.mock("vue-router", () => ({ useRouter: () => routerMocks }));
 
 const jsonResponse = (status: number, body: unknown) => ({ status, json: () => Promise.resolve(body) });
 
-const detail = (overrides: Partial<PlaylistDetail["playlist"]> = {}, shows: Partial<Serie>[] = []): PlaylistDetail => ({
-    playlist: { id: "p1", name: "My playlist", visible: true, userId: "owner-1", ...overrides } as PlaylistDetail["playlist"],
+const detail = (overrides: Partial<Playlist> = {}, shows: Partial<Serie>[] = []): PlaylistDetail => ({
+    playlist: { id: "p1", name: "My playlist", visible: true, userId: "owner-1", role: "owner", ...overrides } as Playlist,
     shows: shows as Serie[],
 });
 
@@ -51,7 +53,7 @@ const mountView = async (playlistDetail: PlaylistDetail, currentUserId = "owner-
     playlistComposableMocks.getPlaylist.mockResolvedValue(playlistDetail);
     userComposableMocks.getProfile.mockResolvedValue({ id: currentUserId });
     const wrapper = mount(PlaylistView, {
-        global: { plugins: [vuetify], stubs: { BaseAppBar: true, RouterLink: routerLinkStub } },
+        global: { plugins: [vuetify], stubs: { BaseAppBar: true, PlaylistCollaborators: true, RouterLink: routerLinkStub } },
         props: { id: "p1" },
     });
     await flushPromises();
@@ -64,19 +66,27 @@ beforeEach(() => {
 
 describe("PlaylistView", () => {
     it("shows the playlist owner's edit menu only when the current user owns it", async () => {
-        const owner = await mountView(detail(), "owner-1");
+        const owner = await mountView(detail({ role: "owner" }));
         expect(owner.findComponent({ name: "BaseMenu" }).exists()).toBe(true);
 
-        const visitor = await mountView(detail(), "someone-else");
+        const visitor = await mountView(detail({ role: "viewer" }));
         expect(visitor.findComponent({ name: "BaseMenu" }).exists()).toBe(false);
     });
 
-    it("shows the search field only for the owner", async () => {
-        const owner = await mountView(detail(), "owner-1");
+    it("shows the search field and the collaborators panel for the owner and for a collaborator", async () => {
+        const owner = await mountView(detail({ role: "owner" }));
         expect(owner.find("input").exists()).toBe(true);
+        expect(owner.findComponent({ name: "PlaylistCollaborators" }).exists()).toBe(true);
 
-        const visitor = await mountView(detail(), "someone-else");
+        const collaborator = await mountView(detail({ role: "collaborator" }));
+        expect(collaborator.find("input").exists()).toBe(true);
+        expect(collaborator.findComponent({ name: "PlaylistCollaborators" }).exists()).toBe(true);
+    });
+
+    it("hides the search field and the collaborators panel for a read-only viewer", async () => {
+        const visitor = await mountView(detail({ role: "viewer" }));
         expect(visitor.find("input").exists()).toBe(false);
+        expect(visitor.findComponent({ name: "PlaylistCollaborators" }).exists()).toBe(false);
     });
 
     it("searches series and clears results when the query is cleared", async () => {
@@ -172,5 +182,43 @@ describe("PlaylistView", () => {
 
         expect(snackbarMocks.showError).toHaveBeenCalledWith(error);
         expect(routerMocks.replace).toHaveBeenCalledWith("/playlists");
+    });
+
+    it("redirects to /playlists when the collaborators panel reports the user left", async () => {
+        const wrapper = await mountView(detail({ role: "collaborator" }));
+
+        await wrapper.findComponent({ name: "PlaylistCollaborators" }).vm.$emit("left");
+        await flushPromises();
+
+        expect(routerMocks.replace).toHaveBeenCalledWith("/playlists");
+    });
+
+    describe("pending invite", () => {
+        it("shows an accept/decline banner, and accepting reloads the playlist", async () => {
+            playlistComposableMocks.acceptCollaboratorInvite.mockResolvedValue(undefined);
+            const wrapper = await mountView(detail({ role: "pending" }));
+
+            expect(wrapper.text()).toContain("Vous êtes invité(e) à collaborer sur cette playlist.");
+
+            playlistComposableMocks.getPlaylist.mockResolvedValue(detail({ role: "collaborator" }));
+            const acceptBtn = wrapper.findAllComponents({ name: "VBtn" }).find((btn) => btn.text() === "Accepter");
+            await acceptBtn!.trigger("click");
+            await flushPromises();
+
+            expect(playlistComposableMocks.acceptCollaboratorInvite).toHaveBeenCalledWith("p1");
+            expect(wrapper.findComponent({ name: "PlaylistCollaborators" }).exists()).toBe(true);
+        });
+
+        it("declining removes the pending invite and redirects to /playlists", async () => {
+            playlistComposableMocks.removeCollaborator.mockResolvedValue(undefined);
+            const wrapper = await mountView(detail({ role: "pending" }), "invitee-1");
+
+            const declineBtn = wrapper.findAllComponents({ name: "VBtn" }).find((btn) => btn.text() === "Refuser");
+            await declineBtn!.trigger("click");
+            await flushPromises();
+
+            expect(playlistComposableMocks.removeCollaborator).toHaveBeenCalledWith("p1", "invitee-1", "Invitation refusée");
+            expect(routerMocks.replace).toHaveBeenCalledWith("/playlists");
+        });
     });
 });

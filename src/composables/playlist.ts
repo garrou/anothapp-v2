@@ -1,4 +1,4 @@
-import type { Playlist, PlaylistDetail } from "@/models/playlist";
+import type { Playlist, PlaylistCollaborator, PlaylistDetail } from "@/models/playlist";
 import playlistService from "@/services/playlistService";
 import { isError } from "@/utils/response";
 import { useSnackbar } from "./snackbar";
@@ -78,6 +78,46 @@ export function usePlaylist() {
         showSuccess("Série retirée de la playlist");
     }
 
+    const getCollaborators = async (id: string): Promise<PlaylistCollaborator[]> => {
+        const resp = await playlistService.getCollaborators(id);
+        const data = await resp.json();
+
+        if (isError(resp.status))
+            throw new Error(data.message);
+
+        return data;
+    }
+
+    const inviteCollaborator = async (id: string, userId: string, username: string): Promise<void> => {
+        const resp = await playlistService.inviteCollaborator(id, userId);
+
+        if (isError(resp.status)) {
+            const data = await resp.json();
+            throw new Error(data.message);
+        }
+        showSuccess(`Invitation envoyée à ${username}`);
+    }
+
+    const acceptCollaboratorInvite = async (id: string): Promise<void> => {
+        const resp = await playlistService.acceptCollaboratorInvite(id);
+
+        if (isError(resp.status)) {
+            const data = await resp.json();
+            throw new Error(data.message);
+        }
+        showSuccess("Invitation acceptée");
+    }
+
+    const removeCollaborator = async (id: string, userId: string, message: string): Promise<void> => {
+        const resp = await playlistService.removeCollaborator(id, userId);
+
+        if (isError(resp.status)) {
+            const data = await resp.json();
+            throw new Error(data.message);
+        }
+        showSuccess(message);
+    }
+
     return {
         getPlaylists,
         getPlaylist,
@@ -85,6 +125,10 @@ export function usePlaylist() {
         updatePlaylist,
         deletePlaylist,
         addShowToPlaylist,
-        removeShowFromPlaylist
+        removeShowFromPlaylist,
+        getCollaborators,
+        inviteCollaborator,
+        acceptCollaboratorInvite,
+        removeCollaborator
     }
 }

@@ -119,6 +119,12 @@ const describe = (item: Notification): string => {
             return `${actor} a accepté votre demande d'ami`;
         case "friend_declined":
             return `${actor} a refusé votre demande d'ami`;
+        case "playlist_collaborator_invited":
+            return `${actor} vous a invité à collaborer sur "${meta.playlistName}"`;
+        case "playlist_collaborator_accepted":
+            return `${actor} a accepté votre invitation sur "${meta.playlistName}"`;
+        case "playlist_collaborator_declined":
+            return `${actor} a refusé votre invitation sur "${meta.playlistName}"`;
         case "episode_upcoming":
             return `Un nouvel épisode de "${show}" sort le ${formatDate(String(meta.date))}`;
         case "achievement_unlocked": {
@@ -154,6 +160,8 @@ const openNotification = async (item: Notification) => {
         router.push(`/actor/${item.metadata.actorId}`);
     } else if (item.type.startsWith("friend_")) {
         router.push("/friends");
+    } else if (item.type.startsWith("playlist_collaborator_") && item.metadata?.playlistId) {
+        router.push(`/playlists/${item.metadata.playlistId}`);
     } else if (item.type === "achievement_unlocked") {
         router.push({ path: "/dashboard", query: { tab: "achievements" } });
     } else if (item.type === "achievement_league_unlocked" && item.actor) {

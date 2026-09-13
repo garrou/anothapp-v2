@@ -136,6 +136,30 @@ describe("NotificationBell", () => {
         expect(wrapper.text()).not.toContain("undefined");
     });
 
+    it("describes a playlist_collaborator_invited notification", async () => {
+        const wrapper = await openMenu(await mountBell([
+            notif(1, { type: "playlist_collaborator_invited", metadata: { playlistId: "p1", playlistName: "Mes séries" } }),
+        ]));
+
+        expect(wrapper.text()).toContain('Dexter vous a invité à collaborer sur "Mes séries"');
+    });
+
+    it("describes a playlist_collaborator_accepted notification", async () => {
+        const wrapper = await openMenu(await mountBell([
+            notif(1, { type: "playlist_collaborator_accepted", metadata: { playlistId: "p1", playlistName: "Mes séries" } }),
+        ]));
+
+        expect(wrapper.text()).toContain('Dexter a accepté votre invitation sur "Mes séries"');
+    });
+
+    it("describes a playlist_collaborator_declined notification", async () => {
+        const wrapper = await openMenu(await mountBell([
+            notif(1, { type: "playlist_collaborator_declined", metadata: { playlistId: "p1", playlistName: "Mes séries" } }),
+        ]));
+
+        expect(wrapper.text()).toContain('Dexter a refusé votre invitation sur "Mes séries"');
+    });
+
     it("falls back to the actor's name for unknown notification types", async () => {
         const wrapper = await openMenu(await mountBell([
             { ...notif(1), type: "unknown_type" as never },
@@ -211,6 +235,17 @@ describe("NotificationBell", () => {
         await flushPromises();
 
         expect(routerMocks.push).toHaveBeenCalledWith("/friends");
+    });
+
+    it("navigates to the playlist's page for a playlist_collaborator_* notification", async () => {
+        const wrapper = await openMenu(await mountBell([
+            notif(1, { type: "playlist_collaborator_invited", metadata: { playlistId: "p1", playlistName: "Mes séries" } }),
+        ]));
+
+        await wrapper.findComponent({ name: "VListItem" }).trigger("click");
+        await flushPromises();
+
+        expect(routerMocks.push).toHaveBeenCalledWith("/playlists/p1");
     });
 
     it("navigates to the dashboard's Succès tab for an achievement_unlocked notification", async () => {

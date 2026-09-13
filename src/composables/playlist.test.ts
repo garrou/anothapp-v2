@@ -9,6 +9,10 @@ const playlistServiceMocks = vi.hoisted(() => ({
     deletePlaylist: vi.fn(),
     addShowToPlaylist: vi.fn(),
     removeShowFromPlaylist: vi.fn(),
+    getCollaborators: vi.fn(),
+    inviteCollaborator: vi.fn(),
+    acceptCollaboratorInvite: vi.fn(),
+    removeCollaborator: vi.fn(),
 }));
 const snackbarMocks = vi.hoisted(() => ({
     showSuccess: vi.fn(),
@@ -201,6 +205,105 @@ describe("usePlaylist.removeShowFromPlaylist", () => {
         const { removeShowFromPlaylist } = usePlaylist();
 
         await expect(removeShowFromPlaylist("p1", 42)).rejects.toThrow("Playlist introuvable");
+        expect(snackbarMocks.showSuccess).not.toHaveBeenCalled();
+    });
+});
+
+describe("usePlaylist.getCollaborators", () => {
+    beforeEach(() => {
+        vi.resetAllMocks();
+    });
+
+    it("returns the collaborators on success", async () => {
+        const collaborators = [{ id: "user-2", username: "bob", accepted: true, invitedAt: "2024-01-01" }];
+        playlistServiceMocks.getCollaborators.mockResolvedValue(jsonResponse(200, collaborators));
+
+        const { getCollaborators } = usePlaylist();
+        const result = await getCollaborators("p1");
+
+        expect(result).toEqual(collaborators);
+    });
+
+    it("throws the server's message on failure", async () => {
+        playlistServiceMocks.getCollaborators.mockResolvedValue(jsonResponse(400, { message: "Playlist introuvable" }));
+
+        const { getCollaborators } = usePlaylist();
+
+        await expect(getCollaborators("p1")).rejects.toThrow("Playlist introuvable");
+    });
+});
+
+describe("usePlaylist.inviteCollaborator", () => {
+    beforeEach(() => {
+        vi.resetAllMocks();
+    });
+
+    it("invites the friend and shows a success message naming them", async () => {
+        playlistServiceMocks.inviteCollaborator.mockResolvedValue(jsonResponse(201, null));
+
+        const { inviteCollaborator } = usePlaylist();
+        await inviteCollaborator("p1", "user-2", "bob");
+
+        expect(playlistServiceMocks.inviteCollaborator).toHaveBeenCalledWith("p1", "user-2");
+        expect(snackbarMocks.showSuccess).toHaveBeenCalledWith("Invitation envoyée à bob");
+    });
+
+    it("throws on failure without showing a success message", async () => {
+        playlistServiceMocks.inviteCollaborator.mockResolvedValue(jsonResponse(400, { message: "Cette personne est déjà invitée sur cette playlist" }));
+
+        const { inviteCollaborator } = usePlaylist();
+
+        await expect(inviteCollaborator("p1", "user-2", "bob")).rejects.toThrow("Cette personne est déjà invitée sur cette playlist");
+        expect(snackbarMocks.showSuccess).not.toHaveBeenCalled();
+    });
+});
+
+describe("usePlaylist.acceptCollaboratorInvite", () => {
+    beforeEach(() => {
+        vi.resetAllMocks();
+    });
+
+    it("shows a success message on success", async () => {
+        playlistServiceMocks.acceptCollaboratorInvite.mockResolvedValue(jsonResponse(200, null));
+
+        const { acceptCollaboratorInvite } = usePlaylist();
+        await acceptCollaboratorInvite("p1");
+
+        expect(playlistServiceMocks.acceptCollaboratorInvite).toHaveBeenCalledWith("p1");
+        expect(snackbarMocks.showSuccess).toHaveBeenCalledWith("Invitation acceptée");
+    });
+
+    it("throws on failure without showing a success message", async () => {
+        playlistServiceMocks.acceptCollaboratorInvite.mockResolvedValue(jsonResponse(400, { message: "Invitation introuvable" }));
+
+        const { acceptCollaboratorInvite } = usePlaylist();
+
+        await expect(acceptCollaboratorInvite("p1")).rejects.toThrow("Invitation introuvable");
+        expect(snackbarMocks.showSuccess).not.toHaveBeenCalled();
+    });
+});
+
+describe("usePlaylist.removeCollaborator", () => {
+    beforeEach(() => {
+        vi.resetAllMocks();
+    });
+
+    it("shows the given success message on success", async () => {
+        playlistServiceMocks.removeCollaborator.mockResolvedValue(jsonResponse(204, null));
+
+        const { removeCollaborator } = usePlaylist();
+        await removeCollaborator("p1", "user-2", "Vous avez quitté la playlist");
+
+        expect(playlistServiceMocks.removeCollaborator).toHaveBeenCalledWith("p1", "user-2");
+        expect(snackbarMocks.showSuccess).toHaveBeenCalledWith("Vous avez quitté la playlist");
+    });
+
+    it("throws on failure without showing a success message", async () => {
+        playlistServiceMocks.removeCollaborator.mockResolvedValue(jsonResponse(400, { message: "Playlist introuvable" }));
+
+        const { removeCollaborator } = usePlaylist();
+
+        await expect(removeCollaborator("p1", "user-2", "message")).rejects.toThrow("Playlist introuvable");
         expect(snackbarMocks.showSuccess).not.toHaveBeenCalled();
     });
 });

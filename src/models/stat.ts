@@ -14,6 +14,8 @@ export interface GlobalStat {
 
     bestMonth?: { label: string, value: number };
 
+    bestDay?: { label: string, value: number };
+
     seasonsMonthCurrentYear: Stat[];
 
     episodesMonthCurrentYear: Stat[];

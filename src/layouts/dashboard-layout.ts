@@ -36,6 +36,12 @@ export const DashboardLayout = (stat: GlobalStat): Layout[] => [
         display: !!stat.bestMonth
     },
     {
+        icon: "mdi-star",
+        name: minsToStringHoursDays(stat.bestDay?.value),
+        value: stat.bestDay?.label,
+        display: !!stat.bestDay
+    },
+    {
         icon: FIRE_ICON,
         name: "Jours d'affilés",
         value: stat.currentStreak,

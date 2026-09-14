@@ -134,6 +134,12 @@ describe("Dashboard", () => {
         expect(wrapper.findAllComponents({ name: "StatTile" })).toHaveLength(8);
     });
 
+    it("shows the best-day tile when a best day is given", async () => {
+        const wrapper = await mountView({}, stat({ bestDay: { label: "12/03/2024", value: 420 } } as Partial<GlobalStat>));
+
+        expect(wrapper.findAllComponents({ name: "StatTile" })).toHaveLength(8);
+    });
+
     it.each([
         [ChartGroupedType.Countries, "Belgique", 'Séries du pays "Belgique"'],
         [ChartGroupedType.Kinds, "Drame", 'Séries du genre "Drame"'],

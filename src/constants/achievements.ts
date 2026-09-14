@@ -67,7 +67,7 @@ export const ACHIEVEMENT_DESCRIPTIONS: Record<string, string> = {
     actors_favorited: "Ajoutez des acteurs à vos favoris.",
     playlists_collaborated: "Collaborez sur des playlists partagées par vos amis.",
     rewatch: "Revoyez une même saison plusieurs fois.",
-    binge: "Enchaînez un maximum d'épisodes en une seule journée.",
+    binge: "Cumulez un maximum de temps de visionnage en une seule journée.",
 };
 
 export const ACHIEVEMENT_UNITS: Record<string, string> = {
@@ -88,5 +88,5 @@ export const ACHIEVEMENT_UNITS: Record<string, string> = {
     actors_favorited: "acteurs",
     playlists_collaborated: "playlists",
     rewatch: "fois",
-    binge: "épisodes",
+    binge: "h",
 };

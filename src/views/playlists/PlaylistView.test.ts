@@ -111,7 +111,10 @@ describe("PlaylistView", () => {
         await flushPromises();
         playlistComposableMocks.getPlaylist.mockResolvedValue(detail({}, [{ id: 1, title: "Breaking Bad" }]));
 
-        await wrapper.findComponent({ name: "VListItem" }).trigger("click");
+        // BaseMenu's own items ("Modifier"/"Supprimer") are also VListItems, mounted (if
+        // hidden) alongside the search result now that BaseMenu's v-menu is eager - match on
+        // title to target the search result specifically.
+        await wrapper.findAllComponents({ name: "VListItem" }).find((item) => item.props("title") === "Breaking Bad")!.trigger("click");
         await flushPromises();
 
         expect(playlistComposableMocks.addShowToPlaylist).toHaveBeenCalledWith("p1", 1);
@@ -128,7 +131,7 @@ describe("PlaylistView", () => {
         await wrapper.find("input").setValue("breaking");
         await wrapper.find("input").trigger("keyup.enter");
         await flushPromises();
-        await wrapper.findComponent({ name: "VListItem" }).trigger("click");
+        await wrapper.findAllComponents({ name: "VListItem" }).find((item) => item.props("title") === "Breaking Bad")!.trigger("click");
         await flushPromises();
 
         expect(snackbarMocks.showError).toHaveBeenCalledWith(error);

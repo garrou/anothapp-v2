@@ -21,6 +21,17 @@ const addShowToPlaylist = (id: string, showId: number): Promise<Response> =>
 const removeShowFromPlaylist = (id: string, showId: number): Promise<Response> =>
     httpClient.delete(`${PREFIX}/${id}/shows/${showId}`);
 
+const getCollaborators = (id: string): Promise<Response> => httpClient.get(`${PREFIX}/${id}/collaborators`);
+
+const inviteCollaborator = (id: string, userId: string): Promise<Response> =>
+    httpClient.post(`${PREFIX}/${id}/collaborators`, { userId });
+
+const acceptCollaboratorInvite = (id: string): Promise<Response> =>
+    httpClient.patch(`${PREFIX}/${id}/collaborators/accept`);
+
+const removeCollaborator = (id: string, userId: string): Promise<Response> =>
+    httpClient.delete(`${PREFIX}/${id}/collaborators/${userId}`);
+
 export default {
     getPlaylists,
     getPlaylist,
@@ -29,4 +40,8 @@ export default {
     deletePlaylist,
     addShowToPlaylist,
     removeShowFromPlaylist,
+    getCollaborators,
+    inviteCollaborator,
+    acceptCollaboratorInvite,
+    removeCollaborator,
 }

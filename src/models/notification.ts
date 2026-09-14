@@ -9,6 +9,11 @@ export type NotificationType =
     | "friend_request"
     | "friend_accepted"
     | "friend_declined"
+    | "playlist_collaborator_invited"
+    | "playlist_collaborator_accepted"
+    | "playlist_collaborator_declined"
+    | "playlist_show_added"
+    | "playlist_show_removed"
     | "episode_upcoming"
     | "achievement_unlocked"
     | "achievement_league_unlocked";
@@ -19,6 +24,11 @@ export const NOTIFICATION_GROUPS: Record<NotificationType, NotificationGroup> = 
     friend_request: "friends",
     friend_accepted: "friends",
     friend_declined: "friends",
+    playlist_collaborator_invited: "friends",
+    playlist_collaborator_accepted: "friends",
+    playlist_collaborator_declined: "friends",
+    playlist_show_added: "activity",
+    playlist_show_removed: "activity",
     show_started: "activity",
     show_rated: "activity",
     season_watched: "activity",

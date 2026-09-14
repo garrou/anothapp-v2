@@ -87,6 +87,6 @@ describe("FriendView", () => {
 
         await wrapper.find(".back-btn").trigger("click");
 
-        expect(routerMocks.push).toHaveBeenCalledWith("/friends");
+        expect(routerMocks.replace).toHaveBeenCalledWith("/friends");
     });
 });

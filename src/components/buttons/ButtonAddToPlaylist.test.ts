@@ -94,6 +94,21 @@ describe("ButtonAddToPlaylist", () => {
         expect(snackbarMocks.showError).toHaveBeenCalled();
     });
 
+    it("shows the backend's message (not a false success) when the show is already in that playlist", async () => {
+        const error = new Error("Cette série est déjà dans cette playlist");
+        playlistComposableMocks.addShowToPlaylist.mockRejectedValue(error);
+        const wrapper = mountButton();
+
+        await wrapper.find("button").trigger("click");
+        await flushPromises();
+        const items = wrapper.findAllComponents({ name: "VListItem" });
+        await items[0].trigger("click");
+        await flushPromises();
+
+        expect(snackbarMocks.showError).toHaveBeenCalledWith(error);
+        expect(items[0].props("disabled")).toBeFalsy();
+    });
+
     it("renders as a menu item when menuItem is set", () => {
         const wrapper = mountButton({ menuItem: true });
 

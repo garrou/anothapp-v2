@@ -51,6 +51,16 @@ describe("Playlists", () => {
         expect(wrapper.findAllComponents({ name: "PlaylistCover" })).toHaveLength(2);
     });
 
+    it("shows a collaborative badge only on playlists the user collaborates on", async () => {
+        const wrapper = await mountView([
+            { ...playlist("p1", "Mine"), role: "owner" },
+            { ...playlist("p2", "Shared"), role: "collaborator" },
+        ]);
+
+        const icons = wrapper.findAllComponents({ name: "VIcon" });
+        expect(icons.some((icon) => icon.props("icon") === "mdi-account-multiple")).toBe(true);
+    });
+
     it("opens the create-playlist modal when the button is clicked", async () => {
         const wrapper = await mountView();
 

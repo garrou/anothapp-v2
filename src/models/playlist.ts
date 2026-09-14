@@ -1,5 +1,7 @@
 import type { Serie } from "./serie";
 
+export type PlaylistRole = "owner" | "collaborator" | "pending" | "viewer";
+
 export interface Playlist {
 
     id: string;
@@ -15,6 +17,8 @@ export interface Playlist {
     showsCount?: number;
 
     posters?: string[];
+
+    role?: PlaylistRole;
 }
 
 export interface PlaylistDetail {
@@ -22,4 +26,17 @@ export interface PlaylistDetail {
     playlist: Playlist;
 
     shows: Serie[];
+}
+
+export interface PlaylistCollaborator {
+
+    id: string;
+
+    username: string;
+
+    picture?: string;
+
+    accepted: boolean;
+
+    invitedAt: string;
 }

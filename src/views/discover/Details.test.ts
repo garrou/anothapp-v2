@@ -16,7 +16,7 @@ const friendComposableMocks = vi.hoisted(() => ({
     getFriends: vi.fn(),
 }));
 const routerMocks = vi.hoisted(() => ({
-    push: vi.fn(),
+    replace: vi.fn(),
 }));
 
 vi.mock("@/composables/search", () => ({ useSearch: () => searchComposableMocks }));
@@ -130,6 +130,6 @@ describe("Details", () => {
 
         await wrapper.findComponent({ name: "SerieHero" }).vm.$emit("back");
 
-        expect(routerMocks.push).toHaveBeenCalledWith("/discover");
+        expect(routerMocks.replace).toHaveBeenCalledWith("/discover");
     });
 });

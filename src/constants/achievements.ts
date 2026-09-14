@@ -43,6 +43,8 @@ export const ACHIEVEMENT_ICONS: Record<string, string> = {
     favorites_count: '<path d="M12 20.5c-4.5-3-8-6.5-8-10.5a4.5 4.5 0 018-2.8A4.5 4.5 0 0120 10c0 4-3.5 7.5-8 10.5z"/>',
     playlists_count: '<rect x="4" y="5" width="16" height="3" rx="1"/><rect x="4" y="10.5" width="16" height="3" rx="1"/><rect x="4" y="16" width="10" height="3" rx="1"/>',
     duo: '<circle cx="8.5" cy="8" r="3"/><circle cx="16" cy="9" r="2.6"/><path d="M2.5 20c.4-3.6 3-6 6-6s5.6 2.4 6 6M14.5 20c.3-2.7 2-4.7 4.3-4.7 1.8 0 3.3 1.1 4 2.9"/>',
+    actors_favorited: '<circle cx="10.5" cy="7.5" r="4"/><path d="M3.5 20.5c.5-4.5 3.4-7.5 7-7.5"/><path d="M17 14.5c-.8 0-1.5.3-2 .9-.5-.6-1.2-.9-2-.9a2.4 2.4 0 00-1.7 4l3.7 3.5 3.7-3.5a2.4 2.4 0 00-1.7-4z"/>',
+    playlists_collaborated: '<rect x="3" y="5" width="12" height="2.8" rx="1"/><rect x="3" y="10" width="12" height="2.8" rx="1"/><rect x="3" y="15" width="8" height="2.8" rx="1"/><circle cx="18.5" cy="17" r="3.3"/><path d="M18.5 15.3v3.4M16.8 17h3.4"/>',
 };
 
 export const ACHIEVEMENT_DESCRIPTIONS: Record<string, string> = {
@@ -60,6 +62,8 @@ export const ACHIEVEMENT_DESCRIPTIONS: Record<string, string> = {
     favorites_count: "Ajoutez des séries à vos favorites.",
     playlists_count: "Créez des playlists.",
     duo: "Regardez un maximum de saisons avec le même ami.",
+    actors_favorited: "Ajoutez des acteurs à vos favoris.",
+    playlists_collaborated: "Collaborez sur des playlists partagées par vos amis.",
 };
 
 export const ACHIEVEMENT_UNITS: Record<string, string> = {
@@ -77,4 +81,6 @@ export const ACHIEVEMENT_UNITS: Record<string, string> = {
     favorites_count: "favoris",
     playlists_count: "playlists",
     duo: "saisons",
+    actors_favorited: "acteurs",
+    playlists_collaborated: "playlists",
 };

@@ -10,7 +10,7 @@ export const LEAGUE_NAMES: Record<number, string> = {
 
 export const LEAGUE_COLORS: Record<number, string> = {
     1: "#8C5A2B",
-    2: "#9AA0AE",
+    2: "#6E85A8",
     3: "#C98F2A",
     4: "#22B8D9",
     5: "#6C5CE0",

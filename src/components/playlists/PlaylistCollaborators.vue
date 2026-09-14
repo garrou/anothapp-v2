@@ -1,5 +1,5 @@
 <template>
-    <v-expansion-panels class="mb-4" variant="accordion">
+    <v-expansion-panels class="mb-4" rounded="lg" variant="accordion">
         <v-expansion-panel>
             <v-expansion-panel-title>
                 <span class="text-subtitle-2 font-weight-bold d-flex align-center ga-1">

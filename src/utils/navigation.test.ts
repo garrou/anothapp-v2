@@ -6,7 +6,7 @@ const freshNavigation = async () => {
     return import("./navigation");
 };
 
-const mockRouter = () => ({ push: vi.fn() }) as unknown as Router;
+const mockRouter = () => ({ replace: vi.fn() }) as unknown as Router;
 
 beforeEach(() => {
     vi.resetModules();
@@ -23,7 +23,7 @@ describe("navigation", () => {
 
         goBack(router, "/fallback");
 
-        expect(router.push).toHaveBeenCalledWith("/b");
+        expect(router.replace).toHaveBeenCalledWith("/b");
     });
 
     it("falls back to the given path when there's no previous page to go back to", async () => {
@@ -32,7 +32,7 @@ describe("navigation", () => {
 
         goBack(router, "/fallback");
 
-        expect(router.push).toHaveBeenCalledWith("/fallback");
+        expect(router.replace).toHaveBeenCalledWith("/fallback");
     });
 
     it("falls back when only the current page has been tracked", async () => {
@@ -42,10 +42,10 @@ describe("navigation", () => {
         trackNavigation("/a");
         goBack(router, "/fallback");
 
-        expect(router.push).toHaveBeenCalledWith("/fallback");
+        expect(router.replace).toHaveBeenCalledWith("/fallback");
     });
 
-    it("skips the next trackNavigation call triggered by goBack's own router.push", async () => {
+    it("skips the next trackNavigation call triggered by goBack's own router.replace", async () => {
         const { trackNavigation, goBack } = await freshNavigation();
         const router = mockRouter();
 
@@ -61,7 +61,7 @@ describe("navigation", () => {
         // still see the stack as [a, b], landing on "/a", not staying on "/b".
         goBack(router, "/fallback");
 
-        expect(router.push).toHaveBeenLastCalledWith("/a");
+        expect(router.replace).toHaveBeenLastCalledWith("/a");
     });
 
     it("tracks a path normally once the skip has been consumed", async () => {
@@ -76,6 +76,6 @@ describe("navigation", () => {
 
         goBack(router, "/fallback");
 
-        expect(router.push).toHaveBeenLastCalledWith("/a");
+        expect(router.replace).toHaveBeenLastCalledWith("/a");
     });
 });

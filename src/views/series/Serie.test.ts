@@ -111,7 +111,7 @@ describe("Serie", () => {
     it("redirects to /series when the serie isn't found in cache", async () => {
         await mountView(1, serieInfo(), false);
 
-        expect(routerMocks.push).toHaveBeenCalledWith("/series");
+        expect(routerMocks.replace).toHaveBeenCalledWith("/series");
         expect(serieComposableMocks.getSerieInfos).not.toHaveBeenCalled();
     });
 

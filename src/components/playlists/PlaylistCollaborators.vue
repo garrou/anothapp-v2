@@ -20,17 +20,17 @@
                     </v-avatar>
                 </template>
 
-                <template v-if="isOwner" #append>
-                    <v-btn :icon="DELETE_ICON" color="on-surface-variant" size="32" variant="text"
+                <template #append>
+                    <v-btn v-if="isMe(collaborator)" :icon="LOGOUT_ICON" color="on-surface-variant" size="32"
+                        variant="text" @click="leaving = true" />
+                    <v-btn v-else-if="isOwner" :icon="DELETE_ICON" color="on-surface-variant" size="32" variant="text"
                         @click="startRemoving(collaborator)" />
+                    <v-btn v-else-if="!isFriend(collaborator)" :icon="ADD_ICON" color="on-surface-variant" size="32"
+                        variant="text" title="Ajouter en ami" @click="addFriend(collaborator)" />
                 </template>
             </v-list-item>
         </v-list>
         <p v-else class="text-caption text-medium-emphasis mb-0">Aucun collaborateur pour le moment.</p>
-
-        <v-btn v-if="!isOwner" class="mt-2" size="small" variant="text" :prepend-icon="LOGOUT_ICON" @click="leaving = true">
-            Quitter la playlist
-        </v-btn>
 
         <v-dialog v-model="inviting" max-width="400">
             <v-card title="Inviter un collaborateur">
@@ -91,7 +91,7 @@ const emit = defineEmits<{
 }>();
 
 const { getCollaborators, inviteCollaborator, removeCollaborator } = usePlaylist();
-const { getCachedFriends } = useFriend();
+const { getCachedFriends, sendFriendRequest } = useFriend();
 const { getProfile } = useUser();
 const { showError } = useSnackbar();
 
@@ -103,10 +103,16 @@ const leaving = ref(false);
 const removing = ref<PlaylistCollaborator>();
 const removingOpen = ref(false);
 const selectedFriendId = ref<string>();
+const sentFriendRequestIds = ref<Set<string>>(new Set());
 
 const invitableFriends = computed(() => friends.value.filter(
     (friend) => !collaborators.value.some((collaborator) => collaborator.id === friend.id)
 ));
+
+const isMe = (collaborator: PlaylistCollaborator): boolean => collaborator.id === currentUserId.value;
+
+const isFriend = (collaborator: PlaylistCollaborator): boolean =>
+    friends.value.some((friend) => friend.id === collaborator.id) || sentFriendRequestIds.value.has(collaborator.id);
 
 const refresh = async (): Promise<void> => {
     collaborators.value = await getCollaborators(props.playlistId);
@@ -133,6 +139,15 @@ const leave = async (): Promise<void> => {
     try {
         await removeCollaborator(props.playlistId, currentUserId.value, "Vous avez quitté la playlist");
         emit("left");
+    } catch (e) {
+        showError(e as Error);
+    }
+}
+
+const addFriend = async (collaborator: PlaylistCollaborator): Promise<void> => {
+    try {
+        await sendFriendRequest({ id: collaborator.id, username: collaborator.username } as User);
+        sentFriendRequestIds.value = new Set([...sentFriendRequestIds.value, collaborator.id]);
     } catch (e) {
         showError(e as Error);
     }

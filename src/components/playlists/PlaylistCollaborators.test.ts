@@ -13,6 +13,7 @@ const playlistComposableMocks = vi.hoisted(() => ({
 }));
 const friendComposableMocks = vi.hoisted(() => ({
     getCachedFriends: vi.fn(),
+    sendFriendRequest: vi.fn(),
 }));
 const userComposableMocks = vi.hoisted(() => ({
     getProfile: vi.fn(),
@@ -65,22 +66,66 @@ describe("PlaylistCollaborators", () => {
         expect(wrapper.text()).toContain("Aucun collaborateur pour le moment");
     });
 
-    it("shows the invite button and per-row remove buttons only for the owner", async () => {
+    it("shows the invite button only for the owner", async () => {
         const owner = await mountPanel(true, [collaborator()]);
         expect(owner.findAllComponents({ name: "VBtn" }).some((btn) => btn.text() === "Inviter")).toBe(true);
-        expect(owner.findComponent({ name: "VListItem" }).findComponent({ name: "VBtn" }).exists()).toBe(true);
 
-        const member = await mountPanel(false, [collaborator()]);
+        const member = await mountPanel(false, [collaborator()], [friend({ id: "user-2", username: "bob" })]);
         expect(member.findAllComponents({ name: "VBtn" }).some((btn) => btn.text() === "Inviter")).toBe(false);
+    });
+
+    it("shows a delete button on other collaborators' rows only for the owner", async () => {
+        const owner = await mountPanel(true, [collaborator({ id: "user-2" })]);
+        const ownerBtn = owner.findComponent({ name: "VListItem" }).findComponent({ name: "VBtn" });
+        expect(ownerBtn.props("icon")).toBe("mdi-delete");
+
+        // Not owner, not the current user's own row, but already a friend: no action button at all.
+        const member = await mountPanel(false, [collaborator({ id: "user-2" })], [friend({ id: "user-2", username: "bob" })]);
         expect(member.findComponent({ name: "VListItem" }).findComponent({ name: "VBtn" }).exists()).toBe(false);
     });
 
-    it("shows a leave button only for a non-owner", async () => {
-        const owner = await mountPanel(true, [collaborator()]);
-        expect(owner.findAllComponents({ name: "VBtn" }).some((btn) => btn.text().includes("Quitter"))).toBe(false);
+    it("shows a leave button on the current user's own row when not owner", async () => {
+        const wrapper = await mountPanel(false, [collaborator({ id: "user-1", username: "me" })], [], "user-1");
 
-        const member = await mountPanel(false, [collaborator()]);
-        expect(member.findAllComponents({ name: "VBtn" }).some((btn) => btn.text().includes("Quitter"))).toBe(true);
+        const btn = wrapper.findComponent({ name: "VListItem" }).findComponent({ name: "VBtn" });
+        expect(btn.props("icon")).toBe("mdi-logout");
+    });
+
+    it("shows an add-friend button on another collaborator's row when they aren't already a friend", async () => {
+        const wrapper = await mountPanel(false, [collaborator({ id: "user-2", username: "bob" })], [], "user-1");
+
+        const btn = wrapper.findComponent({ name: "VListItem" }).findComponent({ name: "VBtn" });
+        expect(btn.exists()).toBe(true);
+        expect(btn.props("icon")).not.toBe("mdi-delete");
+        expect(btn.props("icon")).not.toBe("mdi-logout");
+    });
+
+    it("hides the add-friend button once already friends", async () => {
+        const wrapper = await mountPanel(false, [collaborator({ id: "user-2", username: "bob" })], [friend({ id: "user-2", username: "bob" })], "user-1");
+
+        expect(wrapper.findComponent({ name: "VListItem" }).findComponent({ name: "VBtn" }).exists()).toBe(false);
+    });
+
+    it("sends a friend request and hides the button once sent", async () => {
+        friendComposableMocks.sendFriendRequest.mockResolvedValue(undefined);
+        const wrapper = await mountPanel(false, [collaborator({ id: "user-2", username: "bob" })], [], "user-1");
+
+        await wrapper.findComponent({ name: "VListItem" }).findComponent({ name: "VBtn" }).trigger("click");
+        await flushPromises();
+
+        expect(friendComposableMocks.sendFriendRequest).toHaveBeenCalledWith({ id: "user-2", username: "bob" });
+        expect(wrapper.findComponent({ name: "VListItem" }).findComponent({ name: "VBtn" }).exists()).toBe(false);
+    });
+
+    it("shows an error toast when sending a friend request fails", async () => {
+        const error = new Error("boom");
+        friendComposableMocks.sendFriendRequest.mockRejectedValue(error);
+        const wrapper = await mountPanel(false, [collaborator({ id: "user-2", username: "bob" })], [], "user-1");
+
+        await wrapper.findComponent({ name: "VListItem" }).findComponent({ name: "VBtn" }).trigger("click");
+        await flushPromises();
+
+        expect(snackbarMocks.showError).toHaveBeenCalledWith(error);
     });
 
     it("excludes already-invited friends from the invite picker", async () => {
@@ -127,10 +172,9 @@ describe("PlaylistCollaborators", () => {
 
     it("leaves the playlist as the current user and emits left", async () => {
         playlistComposableMocks.removeCollaborator.mockResolvedValue(undefined);
-        const wrapper = await mountPanel(false, [], [], "user-1");
+        const wrapper = await mountPanel(false, [collaborator({ id: "user-1", username: "me" })], [], "user-1");
 
-        const leaveBtn = wrapper.findAllComponents({ name: "VBtn" }).find((btn) => btn.text().includes("Quitter"))!;
-        await leaveBtn.trigger("click");
+        await wrapper.findComponent({ name: "VListItem" }).findComponent({ name: "VBtn" }).trigger("click");
         const leaveConfirm = wrapper.findAllComponents({ name: "BaseConfirm" }).find((c) => c.props("title") === "Quitter")!;
         await leaveConfirm.vm.$emit("confirm");
         await flushPromises();
@@ -139,13 +183,12 @@ describe("PlaylistCollaborators", () => {
         expect(wrapper.emitted("left")).toBeTruthy();
     });
 
-    it("shows an error toast when an action fails", async () => {
+    it("shows an error toast when leaving fails", async () => {
         const error = new Error("boom");
         playlistComposableMocks.removeCollaborator.mockRejectedValue(error);
-        const wrapper = await mountPanel(false, [], [], "user-1");
+        const wrapper = await mountPanel(false, [collaborator({ id: "user-1", username: "me" })], [], "user-1");
 
-        const leaveBtn = wrapper.findAllComponents({ name: "VBtn" }).find((btn) => btn.text().includes("Quitter"))!;
-        await leaveBtn.trigger("click");
+        await wrapper.findComponent({ name: "VListItem" }).findComponent({ name: "VBtn" }).trigger("click");
         const leaveConfirm = wrapper.findAllComponents({ name: "BaseConfirm" }).find((c) => c.props("title") === "Quitter")!;
         await leaveConfirm.vm.$emit("confirm");
         await flushPromises();

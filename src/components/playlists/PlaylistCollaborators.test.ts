@@ -44,6 +44,9 @@ const mountPanel = async (isOwner: boolean, collaborators: PlaylistCollaborator[
         props: { playlistId: "p1", isOwner },
     });
     await flushPromises();
+    // The panel is collapsed by default; expand it so its content is in the DOM for these tests.
+    await wrapper.findComponent({ name: "VExpansionPanelTitle" }).trigger("click");
+    await flushPromises();
     return wrapper;
 };
 
@@ -52,6 +55,20 @@ beforeEach(() => {
 });
 
 describe("PlaylistCollaborators", () => {
+    it("starts collapsed, showing the collaborator count in the header without expanding", async () => {
+        playlistComposableMocks.getCollaborators.mockResolvedValue([collaborator({ username: "bob" }), collaborator({ id: "user-4", username: "carl" })]);
+        friendComposableMocks.getCachedFriends.mockResolvedValue([]);
+        userComposableMocks.getProfile.mockResolvedValue({ id: "user-1" });
+        const wrapper = mount(PlaylistCollaborators, {
+            global: { plugins: [vuetify] },
+            props: { playlistId: "p1", isOwner: true },
+        });
+        await flushPromises();
+
+        expect(wrapper.text()).toContain("Collaborateurs (2)");
+        expect(wrapper.text()).not.toContain("bob");
+    });
+
     it("lists collaborators, marking pending invites", async () => {
         const wrapper = await mountPanel(true, [collaborator({ username: "bob", accepted: true }), collaborator({ id: "user-4", username: "carl", accepted: false })]);
 

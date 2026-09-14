@@ -1,37 +1,45 @@
 <template>
-    <div class="mb-4">
-        <div class="d-flex align-center justify-space-between mb-2">
-            <span class="text-subtitle-2 font-weight-bold d-flex align-center ga-1">
-                <v-icon :icon="ACCOUNT_MULTIPLE_ICON" size="18" />
-                Collaborateurs
-            </span>
-            <v-btn v-if="isOwner" size="small" variant="text" :prepend-icon="ADD_ICON" @click="inviting = true">
-                Inviter
-            </v-btn>
-        </div>
+    <v-expansion-panels class="mb-4" variant="accordion">
+        <v-expansion-panel>
+            <v-expansion-panel-title>
+                <span class="text-subtitle-2 font-weight-bold d-flex align-center ga-1">
+                    <v-icon :icon="ACCOUNT_MULTIPLE_ICON" size="18" />
+                    Collaborateurs ({{ collaborators.length }})
+                </span>
+            </v-expansion-panel-title>
+            <v-expansion-panel-text>
+                <div v-if="isOwner" class="d-flex justify-end mb-2">
+                    <v-btn size="small" variant="text" :prepend-icon="ADD_ICON" @click="inviting = true">
+                        Inviter
+                    </v-btn>
+                </div>
 
-        <v-list v-if="collaborators.length" class="collaborators-list" density="compact">
-            <v-list-item v-for="collaborator in collaborators" :key="collaborator.id" :title="collaborator.username"
-                :subtitle="collaborator.accepted ? undefined : 'Invitation en attente'">
-                <template #prepend>
-                    <v-avatar v-if="collaborator.picture" :image="collaborator.picture" size="32" />
-                    <v-avatar v-else color="surface-variant" size="32">
-                        <v-icon :icon="ACCOUNT_ICON" size="18" />
-                    </v-avatar>
-                </template>
+                <v-list v-if="collaborators.length" class="collaborators-list" density="compact">
+                    <v-list-item v-for="collaborator in collaborators" :key="collaborator.id" :title="collaborator.username"
+                        :subtitle="collaborator.accepted ? undefined : 'Invitation en attente'">
+                        <template #prepend>
+                            <v-avatar v-if="collaborator.picture" :image="collaborator.picture" size="32" />
+                            <v-avatar v-else color="surface-variant" size="32">
+                                <v-icon :icon="ACCOUNT_ICON" size="18" />
+                            </v-avatar>
+                        </template>
 
-                <template #append>
-                    <v-btn v-if="isMe(collaborator)" :icon="LOGOUT_ICON" color="on-surface-variant" size="32"
-                        variant="text" @click="leaving = true" />
-                    <v-btn v-else-if="isOwner" :icon="DELETE_ICON" color="on-surface-variant" size="32" variant="text"
-                        @click="startRemoving(collaborator)" />
-                    <v-btn v-else-if="!isFriend(collaborator)" :icon="ADD_ICON" color="on-surface-variant" size="32"
-                        variant="text" title="Ajouter en ami" @click="addFriend(collaborator)" />
-                </template>
-            </v-list-item>
-        </v-list>
-        <p v-else class="text-caption text-medium-emphasis mb-0">Aucun collaborateur pour le moment.</p>
+                        <template #append>
+                            <v-btn v-if="isMe(collaborator)" :icon="LOGOUT_ICON" color="on-surface-variant" size="32"
+                                variant="text" @click="leaving = true" />
+                            <v-btn v-else-if="isOwner" :icon="DELETE_ICON" color="on-surface-variant" size="32" variant="text"
+                                @click="startRemoving(collaborator)" />
+                            <v-btn v-else-if="!isFriend(collaborator)" :icon="ADD_ICON" color="on-surface-variant" size="32"
+                                variant="text" title="Ajouter en ami" @click="addFriend(collaborator)" />
+                        </template>
+                    </v-list-item>
+                </v-list>
+                <p v-else class="text-caption text-medium-emphasis mb-0">Aucun collaborateur pour le moment.</p>
+            </v-expansion-panel-text>
+        </v-expansion-panel>
+    </v-expansion-panels>
 
+    <div>
         <v-dialog v-model="inviting" max-width="400">
             <v-card title="Inviter un collaborateur">
                 <v-card-text>

@@ -15,7 +15,7 @@ export const LEAGUE_COLORS: Record<number, string> = {
     4: "#22B8D9",
     5: "#6C5CE0",
     6: "#C13584",
-    7: "#9B2242",
+    7: "#F59E0B",
 };
 
 // sub_tier: 3 (entry of the league) down to 1 (top of the league)
@@ -46,6 +46,7 @@ export const ACHIEVEMENT_ICONS: Record<string, string> = {
     actors_favorited: '<circle cx="10.5" cy="7.5" r="4"/><path d="M3.5 20.5c.5-4.5 3.4-7.5 7-7.5"/><path d="M17 14.5c-.8 0-1.5.3-2 .9-.5-.6-1.2-.9-2-.9a2.4 2.4 0 00-1.7 4l3.7 3.5 3.7-3.5a2.4 2.4 0 00-1.7-4z"/>',
     playlists_collaborated: '<rect x="3" y="5" width="12" height="2.8" rx="1"/><rect x="3" y="10" width="12" height="2.8" rx="1"/><rect x="3" y="15" width="8" height="2.8" rx="1"/><circle cx="18.5" cy="17" r="3.3"/><path d="M18.5 15.3v3.4M16.8 17h3.4"/>',
     rewatch: '<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>',
+    binge: '<path d="M4 9h16"/><path d="M5 9l2 12a1 1 0 001 1h8a1 1 0 001-1l2-12"/><path d="M10 11.5l.8 8M14 11.5l-.8 8"/><circle cx="8" cy="6.5" r="1.8"/><circle cx="12" cy="5" r="2.2"/><circle cx="16" cy="6.5" r="1.8"/>',
 };
 
 export const ACHIEVEMENT_DESCRIPTIONS: Record<string, string> = {
@@ -66,6 +67,7 @@ export const ACHIEVEMENT_DESCRIPTIONS: Record<string, string> = {
     actors_favorited: "Ajoutez des acteurs à vos favoris.",
     playlists_collaborated: "Collaborez sur des playlists partagées par vos amis.",
     rewatch: "Revoyez une même saison plusieurs fois.",
+    binge: "Enchaînez un maximum d'épisodes en une seule journée.",
 };
 
 export const ACHIEVEMENT_UNITS: Record<string, string> = {
@@ -86,4 +88,5 @@ export const ACHIEVEMENT_UNITS: Record<string, string> = {
     actors_favorited: "acteurs",
     playlists_collaborated: "playlists",
     rewatch: "fois",
+    binge: "épisodes",
 };

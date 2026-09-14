@@ -1,5 +1,5 @@
 <template>
-    <v-menu :open-on-click="openOnClick" :open-on-hover="openOnHover">
+    <v-menu :open-on-click="openOnClick" :open-on-hover="openOnHover" eager>
         <template v-slot:activator="{ props }">
             <v-btn icon="mdi-dots-vertical" variant="text" v-bind="props"></v-btn>
         </template>

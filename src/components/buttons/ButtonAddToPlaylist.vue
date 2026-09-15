@@ -9,8 +9,9 @@
     </v-tooltip>
 
     <base-modal v-model="dialog" title="Ajouter à une playlist">
-        <v-list v-if="playlists.length">
-            <v-list-item v-for="playlist in playlists" :key="playlist.id" :title="playlist.name"
+        <v-list v-if="playlists.length" class="playlist-add-list">
+            <v-list-item v-for="playlist in playlists" :key="playlist.id" class="playlist-add-item"
+                :class="{ 'playlist-add-item--added': addedPlaylistIds.has(playlist.id) }" :title="playlist.name"
                 :disabled="addedPlaylistIds.has(playlist.id)" @click="add(playlist.id)">
                 <template #append>
                     <v-icon v-if="addedPlaylistIds.has(playlist.id)" :icon="CHECK_ICON" color="primary" />
@@ -71,3 +72,24 @@ const add = async (playlistId: string): Promise<void> => {
     }
 }
 </script>
+
+<style scoped>
+.playlist-add-list {
+    background: transparent;
+}
+
+.playlist-add-item {
+    border-radius: 14px;
+    margin-bottom: 8px;
+    border: 1px solid rgb(var(--v-border-color));
+}
+
+.playlist-add-item:last-child {
+    margin-bottom: 0;
+}
+
+.playlist-add-item--added {
+    border-color: rgb(var(--v-theme-primary));
+    background: rgba(var(--v-theme-primary), 0.06);
+}
+</style>

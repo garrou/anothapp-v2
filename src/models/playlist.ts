@@ -40,3 +40,18 @@ export interface PlaylistCollaborator {
 
     invitedAt: string;
 }
+
+export interface PlaylistInvitation {
+
+    playlistId: string;
+
+    playlistName: string;
+
+    invitedAt: string;
+
+    ownerId: string;
+
+    ownerUsername: string;
+
+    ownerPicture?: string;
+}

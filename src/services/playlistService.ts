@@ -5,6 +5,9 @@ const PREFIX = "playlists";
 const getPlaylists = (friendId?: string): Promise<Response> =>
     httpClient.get(PREFIX, [{ name: "friendId", value: friendId }]);
 
+const getPendingInvitations = (): Promise<Response> =>
+    httpClient.get(PREFIX, [{ name: "status", value: "pending" }]);
+
 const getPlaylist = (id: string): Promise<Response> => httpClient.get(`${PREFIX}/${id}`);
 
 const createPlaylist = (name: string, visible: boolean): Promise<Response> =>
@@ -34,6 +37,7 @@ const removeCollaborator = (id: string, userId: string): Promise<Response> =>
 
 export default {
     getPlaylists,
+    getPendingInvitations,
     getPlaylist,
     createPlaylist,
     updatePlaylist,

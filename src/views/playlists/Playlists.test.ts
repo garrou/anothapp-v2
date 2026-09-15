@@ -3,23 +3,36 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
 import Playlists from "./Playlists.vue";
 import { vuetify } from "@/test/vuetify";
-import type { Playlist } from "@/models/playlist";
+import type { Playlist, PlaylistInvitation } from "@/models/playlist";
 
 const playlistComposableMocks = vi.hoisted(() => ({
     getPlaylists: vi.fn(),
+    getPendingInvitations: vi.fn(),
     createPlaylist: vi.fn(),
+    acceptCollaboratorInvite: vi.fn(),
+    removeCollaborator: vi.fn(),
+}));
+const userComposableMocks = vi.hoisted(() => ({
+    getProfile: vi.fn(),
 }));
 const snackbarMocks = vi.hoisted(() => ({
     showError: vi.fn(),
 }));
 
 vi.mock("@/composables/playlist", () => ({ usePlaylist: () => playlistComposableMocks }));
+vi.mock("@/composables/user", () => ({ useUser: () => userComposableMocks }));
 vi.mock("@/composables/snackbar", () => ({ useSnackbar: () => snackbarMocks }));
 
 const playlist = (id: string, name: string): Playlist => ({ id, name, visible: true } as Playlist);
 
-const mountView = async (playlists: Playlist[] = []) => {
+const invitation = (playlistId: string, playlistName: string): PlaylistInvitation => ({
+    playlistId, playlistName, invitedAt: "2026-01-01", ownerId: "user-2", ownerUsername: "bob",
+});
+
+const mountView = async (playlists: Playlist[] = [], invitations: PlaylistInvitation[] = []) => {
     playlistComposableMocks.getPlaylists.mockResolvedValue(playlists);
+    playlistComposableMocks.getPendingInvitations.mockResolvedValue(invitations);
+    userComposableMocks.getProfile.mockResolvedValue({ id: "user-1" });
     const wrapper = mount(Playlists, {
         global: { plugins: [vuetify], stubs: { BaseAppBar: true } },
     });
@@ -102,5 +115,58 @@ describe("Playlists", () => {
         await wrapper.findComponent({ name: "PlaylistFormModal" }).vm.$emit("cancel");
 
         expect(wrapper.findComponent({ name: "VDialog" }).props("modelValue")).toBe(false);
+    });
+
+    describe("pending invitations", () => {
+        it("stays discoverable even if the notification that announced it is gone", async () => {
+            const wrapper = await mountView([], [invitation("p1", "Cosy")]);
+
+            expect(wrapper.text()).toContain("Cosy");
+            expect(wrapper.text()).toContain("bob");
+        });
+
+        it("shows nothing extra when there are no pending invitations", async () => {
+            const wrapper = await mountView([]);
+
+            expect(wrapper.findAllComponents({ name: "VListItem" })).toHaveLength(0);
+        });
+
+        it("accepts an invitation, removes it from the list, and refreshes the playlists", async () => {
+            playlistComposableMocks.acceptCollaboratorInvite.mockResolvedValue(undefined);
+            const wrapper = await mountView([], [invitation("p1", "Cosy")]);
+
+            const acceptBtn = wrapper.findAllComponents({ name: "VBtn" }).find((btn) => btn.text() === "Accepter");
+            await acceptBtn!.trigger("click");
+            await flushPromises();
+
+            expect(playlistComposableMocks.acceptCollaboratorInvite).toHaveBeenCalledWith("p1");
+            expect(playlistComposableMocks.getPlaylists).toHaveBeenCalledTimes(2);
+            expect(wrapper.text()).not.toContain("Cosy");
+        });
+
+        it("declines an invitation as itself and removes it from the list", async () => {
+            playlistComposableMocks.removeCollaborator.mockResolvedValue(undefined);
+            const wrapper = await mountView([], [invitation("p1", "Cosy")]);
+
+            const declineBtn = wrapper.findAllComponents({ name: "VBtn" }).find((btn) => btn.text() === "Refuser");
+            await declineBtn!.trigger("click");
+            await flushPromises();
+
+            expect(playlistComposableMocks.removeCollaborator).toHaveBeenCalledWith("p1", "user-1", "Invitation refusée");
+            expect(wrapper.text()).not.toContain("Cosy");
+        });
+
+        it("shows an error toast when accepting fails", async () => {
+            const error = new Error("Nope");
+            playlistComposableMocks.acceptCollaboratorInvite.mockRejectedValue(error);
+            const wrapper = await mountView([], [invitation("p1", "Cosy")]);
+
+            const acceptBtn = wrapper.findAllComponents({ name: "VBtn" }).find((btn) => btn.text() === "Accepter");
+            await acceptBtn!.trigger("click");
+            await flushPromises();
+
+            expect(snackbarMocks.showError).toHaveBeenCalledWith(error);
+            expect(wrapper.text()).toContain("Cosy");
+        });
     });
 });

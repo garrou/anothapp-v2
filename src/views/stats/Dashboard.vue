@@ -8,11 +8,14 @@
         </router-link>
 
         <v-card v-if="cardsConfig" class="kpi-strip mb-6">
-            <template v-for="(obj, index) in cardsConfig" :key="index">
-                <div v-if="obj.display !== false" class="kpi-cell">
-                    <stat-tile :icon="obj.icon" :label="obj.name" :value="obj.value" />
-                </div>
-            </template>
+            <div v-for="(group, groupIndex) in cardsConfig" :key="groupIndex" class="kpi-row"
+                :class="{ 'kpi-row--triple': group.length === 3 }">
+                <template v-for="(obj, index) in group" :key="index">
+                    <div v-if="obj.display !== false" class="kpi-cell">
+                        <stat-tile :icon="obj.icon" :label="obj.name" :value="obj.value" />
+                    </div>
+                </template>
+            </div>
         </v-card>
 
         <pill-tabs v-if="userId" v-model="sectionTab" class="mb-4" :tabs="sectionTabs" />
@@ -288,13 +291,24 @@ onMounted(async () => {
 }
 
 .kpi-strip {
+    display: flex;
+    flex-direction: column;
+}
+
+.kpi-row {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     row-gap: 16px;
 }
 
+.kpi-row + .kpi-row {
+    border-top: 1px solid rgb(var(--v-border-color));
+    margin-top: 16px;
+    padding-top: 16px;
+}
+
 @media (min-width: 600px) {
-    .kpi-strip {
+    .kpi-row--triple {
         grid-template-columns: repeat(3, 1fr);
     }
 }
@@ -309,11 +323,11 @@ onMounted(async () => {
 }
 
 @media (min-width: 600px) {
-    .kpi-cell:nth-child(2n) {
+    .kpi-row--triple .kpi-cell:nth-child(2n) {
         border-right: 1px solid rgb(var(--v-border-color));
     }
 
-    .kpi-cell:nth-child(3n) {
+    .kpi-row--triple .kpi-cell:nth-child(3n) {
         border-right: none;
     }
 }

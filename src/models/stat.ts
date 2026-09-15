@@ -16,6 +16,8 @@ export interface GlobalStat {
 
     bestDay?: { label: string, value: number };
 
+    mostRewatched?: { showTitle: string; seasonNumber: number; timesWatched: number };
+
     seasonsMonthCurrentYear: Stat[];
 
     episodesMonthCurrentYear: Stat[];

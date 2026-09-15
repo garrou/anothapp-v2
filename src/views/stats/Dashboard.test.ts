@@ -140,6 +140,16 @@ describe("Dashboard", () => {
         expect(wrapper.findAllComponents({ name: "StatTile" })).toHaveLength(8);
     });
 
+    it("shows the most-rewatched tile when one is given", async () => {
+        const wrapper = await mountView(
+            {}, stat({ mostRewatched: { showTitle: "Friends", seasonNumber: 3, timesWatched: 5 } } as Partial<GlobalStat>)
+        );
+
+        const tiles = wrapper.findAllComponents({ name: "StatTile" });
+        expect(tiles).toHaveLength(8);
+        expect(tiles.some((t) => t.props("value") === "Friends")).toBe(true);
+    });
+
     it.each([
         [ChartGroupedType.Countries, "Belgique", 'Séries du pays "Belgique"'],
         [ChartGroupedType.Kinds, "Drame", 'Séries du genre "Drame"'],

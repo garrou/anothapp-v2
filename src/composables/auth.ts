@@ -9,6 +9,7 @@ import { useUserListStore } from "@/stores/userList";
 import { useUserPlatformsStore } from "@/stores/userPlatforms";
 import { useFriendsStore } from "@/stores/friends";
 import { invalidateLoad } from "@/utils/loadOnce";
+import type { User } from "@/models/user";
 
 const PER_USER_LOAD_KEYS = ["userSeries", "userList", "userPlatforms", "profile", "favoriteActorIds", "friends"];
 
@@ -49,13 +50,7 @@ export function useAuth() {
         return pendingCheckAuth;
     }
 
-    const login = async (identifier: string, password: string): Promise<void> => {
-        const resp = await authService.login(identifier, password);
-        const data = await resp.json();
-
-        if (isError(resp.status))
-            throw new Error(data.message);
-
+    const establishSession = (user: User) => {
         authEpoch++;
         lastCheckAuth = { result: true, at: Date.now() };
         PER_USER_LOAD_KEYS.forEach(invalidateLoad);
@@ -64,8 +59,31 @@ export function useAuth() {
         useUserPlatformsStore().reset();
         useActorStore().reset();
         useFriendsStore().reset();
-        useUserStore().set(data);
+        useUserStore().set(user);
         router.replace("/series");
+    }
+
+    const login = async (identifier: string, password: string): Promise<{ pendingDeletion: true, cancellationToken: string } | void> => {
+        const resp = await authService.login(identifier, password);
+        const data = await resp.json();
+
+        if (isError(resp.status))
+            throw new Error(data.message);
+
+        if (data.pendingDeletion) {
+            return { pendingDeletion: true, cancellationToken: data.cancellationToken };
+        }
+        establishSession(data);
+    }
+
+    const cancelDeletion = async (cancellationToken: string): Promise<void> => {
+        const resp = await authService.cancelDeletion(cancellationToken);
+        const data = await resp.json();
+
+        if (isError(resp.status))
+            throw new Error(data.message);
+
+        establishSession(data);
     }
 
     const logout = async () => {
@@ -93,5 +111,5 @@ export function useAuth() {
         router.push("/login");
     }
 
-    return { checkAuth, login, logout, register }
+    return { checkAuth, login, logout, register, cancelDeletion }
 }

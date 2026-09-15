@@ -5,6 +5,7 @@ const authServiceMocks = vi.hoisted(() => ({
     login: vi.fn(),
     logout: vi.fn(),
     register: vi.fn(),
+    cancelDeletion: vi.fn(),
 }));
 const snackbarMocks = vi.hoisted(() => ({
     showSuccess: vi.fn(),
@@ -158,6 +159,39 @@ describe("useAuth.login", () => {
 
         expect(result).toBe(true);
         expect(authServiceMocks.checkAuth).not.toHaveBeenCalled();
+    });
+
+    it("returns the pending-deletion info instead of opening a session when the account is scheduled for deletion", async () => {
+        authServiceMocks.login.mockResolvedValue(
+            jsonResponse(200, { pendingDeletion: true, cancellationToken: "token-abc" })
+        );
+
+        const result = await (await freshUseAuth()).login("garrou@example.com", "password");
+
+        expect(result).toEqual({ pendingDeletion: true, cancellationToken: "token-abc" });
+        expect(userStoreSetMock).not.toHaveBeenCalled();
+        expect(routerMocks.replace).not.toHaveBeenCalled();
+    });
+});
+
+describe("useAuth.cancelDeletion", () => {
+    it("stores the user, resets stores, and redirects on success", async () => {
+        const profile = { id: "user-1", username: "garrou" };
+        authServiceMocks.cancelDeletion.mockResolvedValue(jsonResponse(200, profile));
+
+        await (await freshUseAuth()).cancelDeletion("token-abc");
+
+        expect(authServiceMocks.cancelDeletion).toHaveBeenCalledWith("token-abc");
+        expect(userStoreSetMock).toHaveBeenCalledWith(profile);
+        expect(routerMocks.replace).toHaveBeenCalledWith("/series");
+    });
+
+    it("throws the server's message on failure without touching stores or navigating", async () => {
+        authServiceMocks.cancelDeletion.mockResolvedValue(jsonResponse(401, { message: "Session invalide" }));
+
+        await expect((await freshUseAuth()).cancelDeletion("bad-token")).rejects.toThrow("Session invalide");
+        expect(userStoreSetMock).not.toHaveBeenCalled();
+        expect(routerMocks.replace).not.toHaveBeenCalled();
     });
 });
 

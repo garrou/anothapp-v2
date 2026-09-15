@@ -18,6 +18,8 @@
                     </template>
                 </v-list-item>
                 <v-list-item :prepend-icon="DATABASE_ICON" title="Exporter mes données" @click="settings.exportData" />
+                <v-list-item :prepend-icon="DELETE_ICON" title="Supprimer mon compte" base-color="error"
+                    @click="openDeleteAccount" />
             </v-list>
         </v-card>
     </v-container>
@@ -31,22 +33,58 @@
         text="Rien ne sera supprimé : vos épisodes déjà enregistrés restent disponibles et vous pourrez réactiver le suivi à tout moment. Confirmez-vous ?"
         confirm-text="Désactiver" persistent @cancel="cancelEpisodeTrackingDisable"
         @confirm="confirmEpisodeTrackingDisableConfirm" />
+
+    <v-dialog v-model="deleteAccountDialog" max-width="420" persistent>
+        <v-card title="Supprimer mon compte">
+            <v-card-text>
+                <p class="mb-4">
+                    Votre compte sera désactivé immédiatement. Vous avez 15 jours (deux semaines) pour vous
+                    reconnecter et annuler la suppression - passé ce délai, votre nom d'utilisateur, votre email
+                    et votre photo seront définitivement anonymisés.
+                </p>
+                <v-form v-model="deleteAccountValid" @submit="confirmDeleteAccount" @submit.prevent>
+                    <v-text-field v-model="deleteAccountPassword" label="Mot de passe" required type="password"
+                        :error-messages="deleteAccountError" />
+                </v-form>
+            </v-card-text>
+            <template #actions>
+                <v-spacer></v-spacer>
+                <v-btn variant="text" :disabled="deleteAccountLoading" @click="closeDeleteAccount">
+                    Annuler
+                </v-btn>
+                <v-btn color="error" variant="flat" :disabled="!deleteAccountValid" :loading="deleteAccountLoading"
+                    @click="confirmDeleteAccount">
+                    Supprimer
+                </v-btn>
+            </template>
+        </v-card>
+    </v-dialog>
 </template>
 
 <script lang="ts" setup>
 import BaseAppBar from '@/components/BaseAppBar.vue';
 import BaseConfirm from '@/components/BaseConfirm.vue';
+import { useAuth } from '@/composables/auth';
 import { useSettings } from '@/composables/settings';
+import { useSnackbar } from '@/composables/snackbar';
 import { useUser } from '@/composables/user';
-import { DATABASE_ICON } from '@/constants/icons';
+import { DATABASE_ICON, DELETE_ICON } from '@/constants/icons';
 import storageService from '@/services/storageService';
 import { THEME_ANOTHAPP, THEME_ANOTHAPP_DARK, applyThemeClass } from '@/utils/theme';
 import { useTheme } from 'vuetify';
 import { computed, onBeforeMount, ref } from 'vue';
 
 const settings = useSettings();
-const { getProfile, updateEpisodeTracking } = useUser();
+const { getProfile, updateEpisodeTracking, requestDeletion } = useUser();
+const { logout } = useAuth();
+const { showInfo } = useSnackbar();
 const theme = useTheme();
+
+const deleteAccountDialog = ref(false);
+const deleteAccountValid = ref(false);
+const deleteAccountPassword = ref("");
+const deleteAccountError = ref("");
+const deleteAccountLoading = ref(false);
 
 const isDark = ref(theme.global.name.value === THEME_ANOTHAPP_DARK);
 const confirmEpisodeTracking = ref(false);
@@ -106,6 +144,33 @@ const cancelEpisodeTrackingDisable = () => {
 const confirmEpisodeTrackingDisableConfirm = async () => {
     confirmEpisodeTrackingDisable.value = false;
     await applyEpisodeTracking(false);
+}
+
+const openDeleteAccount = () => {
+    deleteAccountPassword.value = "";
+    deleteAccountError.value = "";
+    deleteAccountDialog.value = true;
+}
+
+const closeDeleteAccount = () => {
+    deleteAccountDialog.value = false;
+}
+
+const confirmDeleteAccount = async () => {
+    deleteAccountLoading.value = true;
+    deleteAccountError.value = "";
+
+    try {
+        await requestDeletion(deleteAccountPassword.value);
+        deleteAccountPassword.value = "";
+        deleteAccountDialog.value = false;
+        showInfo("Compte programmé pour suppression. Reconnectez-vous dans les 15 jours pour l'annuler.");
+        await logout();
+    } catch (e) {
+        deleteAccountError.value = (e as Error).message;
+    } finally {
+        deleteAccountLoading.value = false;
+    }
 }
 
 onBeforeMount(async () => {

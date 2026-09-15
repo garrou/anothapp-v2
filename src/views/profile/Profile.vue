@@ -8,7 +8,7 @@
                 <div class="text-h6 font-weight-bold mt-3">{{ profile.username }}</div>
                 <div class="text-body-2 text-medium-emphasis">{{ profile.email }}</div>
                 <div v-if="profile.createdAt" class="text-caption text-medium-emphasis mt-1">
-                    Membre depuis {{ formatMonthYear(profile.createdAt) }}
+                    Membre depuis <b>{{ formatMonthYear(profile.createdAt) }}</b>
                 </div>
             </div>
 

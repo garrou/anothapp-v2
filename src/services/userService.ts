@@ -19,11 +19,15 @@ const updatePassword = (currentPassword: string, newPassword: string, confirmPas
 const updateEpisodeTracking = (episodeTrackingEnabled: boolean): Promise<Response> =>
     httpClient.patch(`${PREFIX}/me`, { episodeTrackingEnabled });
 
+const requestDeletion = (password: string): Promise<Response> =>
+    httpClient.delete(`${PREFIX}/me`, { password });
+
 export default {
     getUsers,
     getProfile,
     updateEpisodeTracking,
     updateImage,
     updateLogin,
-    updatePassword
+    updatePassword,
+    requestDeletion
 };

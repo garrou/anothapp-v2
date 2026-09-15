@@ -12,9 +12,13 @@ const logout = () => httpClient.post(`${PREFIX}/logout`, undefined, { skipRefres
 const register = (email: string, password: string, confirm: string, username: string): Promise<Response> =>
     httpClient.post(`${PREFIX}/register`, { email, confirm, username, password });
 
+const cancelDeletion = (cancellationToken: string): Promise<Response> =>
+    httpClient.post(`${PREFIX}/cancel-deletion`, { cancellationToken });
+
 export default {
     checkAuth,
     login,
     logout,
     register,
+    cancelDeletion,
 }

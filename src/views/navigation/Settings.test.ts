@@ -8,9 +8,16 @@ import { THEME_ANOTHAPP, THEME_ANOTHAPP_DARK } from "@/utils/theme";
 const userComposableMocks = vi.hoisted(() => ({
     getProfile: vi.fn(),
     updateEpisodeTracking: vi.fn(),
+    requestDeletion: vi.fn(),
 }));
 const settingsComposableMocks = vi.hoisted(() => ({
     exportData: vi.fn(),
+}));
+const authComposableMocks = vi.hoisted(() => ({
+    logout: vi.fn(),
+}));
+const snackbarMocks = vi.hoisted(() => ({
+    showInfo: vi.fn(),
 }));
 const storageServiceMocks = vi.hoisted(() => ({
     storeTheme: vi.fn(),
@@ -19,6 +26,8 @@ const storageServiceMocks = vi.hoisted(() => ({
 
 vi.mock("@/composables/user", () => ({ useUser: () => userComposableMocks }));
 vi.mock("@/composables/settings", () => ({ useSettings: () => settingsComposableMocks }));
+vi.mock("@/composables/auth", () => ({ useAuth: () => authComposableMocks }));
+vi.mock("@/composables/snackbar", () => ({ useSnackbar: () => snackbarMocks }));
 vi.mock("@/services/storageService", () => ({ default: storageServiceMocks }));
 
 const mountView = async (episodeTrackingEnabled = false) => {
@@ -116,5 +125,64 @@ describe("Settings", () => {
         await exportItem!.trigger("click");
 
         expect(settingsComposableMocks.exportData).toHaveBeenCalled();
+    });
+
+    describe("account deletion", () => {
+        const openDialog = async (wrapper: Awaited<ReturnType<typeof mountView>>) => {
+            const deleteItem = wrapper.findAllComponents({ name: "VListItem" })
+                .find((item) => item.text().includes("Supprimer mon compte"));
+            await deleteItem!.trigger("click");
+        };
+
+        it("opens the delete-account dialog with a password field", async () => {
+            const wrapper = await mountView();
+
+            await openDialog(wrapper);
+
+            expect(wrapper.text()).toContain("15 jours");
+        });
+
+        it("requests deletion, shows the grace-period info, then logs out on confirm", async () => {
+            userComposableMocks.requestDeletion.mockResolvedValue(undefined);
+            const wrapper = await mountView();
+            await openDialog(wrapper);
+
+            const passwordInput = wrapper.findAllComponents({ name: "VTextField" })
+                .find((f) => f.props("label") === "Mot de passe");
+            await passwordInput!.setValue("goodpassword");
+            const confirmBtn = wrapper.findAllComponents({ name: "VBtn" }).find((btn) => btn.text() === "Supprimer");
+            await confirmBtn!.trigger("click");
+            await flushPromises();
+
+            expect(userComposableMocks.requestDeletion).toHaveBeenCalledWith("goodpassword");
+            expect(snackbarMocks.showInfo).toHaveBeenCalled();
+            expect(authComposableMocks.logout).toHaveBeenCalled();
+        });
+
+        it("shows the server error and does not log out when the password is incorrect", async () => {
+            userComposableMocks.requestDeletion.mockRejectedValue(new Error("Mot de passe incorrect"));
+            const wrapper = await mountView();
+            await openDialog(wrapper);
+
+            const passwordInput = wrapper.findAllComponents({ name: "VTextField" })
+                .find((f) => f.props("label") === "Mot de passe");
+            await passwordInput!.setValue("wrongpassword");
+            const confirmBtn = wrapper.findAllComponents({ name: "VBtn" }).find((btn) => btn.text() === "Supprimer");
+            await confirmBtn!.trigger("click");
+            await flushPromises();
+
+            expect(wrapper.text()).toContain("Mot de passe incorrect");
+            expect(authComposableMocks.logout).not.toHaveBeenCalled();
+        });
+
+        it("closes the dialog without requesting deletion when cancelled", async () => {
+            const wrapper = await mountView();
+            await openDialog(wrapper);
+
+            const cancelBtn = wrapper.findAllComponents({ name: "VBtn" }).find((btn) => btn.text() === "Annuler");
+            await cancelBtn!.trigger("click");
+
+            expect(userComposableMocks.requestDeletion).not.toHaveBeenCalled();
+        });
     });
 });

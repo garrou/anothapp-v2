@@ -84,5 +84,14 @@ export function useUser() {
         return userStore.profile as User;
     }
 
-    return { changeEmail, changePassword, changeImage, getUsers, getProfile, updateEpisodeTracking }
+    const requestDeletion = async (password: string): Promise<void> => {
+        const resp = await userService.requestDeletion(password);
+
+        if (isError(resp.status)) {
+            const data = await resp.json();
+            throw new Error(data.message);
+        }
+    }
+
+    return { changeEmail, changePassword, changeImage, getUsers, getProfile, updateEpisodeTracking, requestDeletion }
 }

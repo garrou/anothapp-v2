@@ -9,7 +9,7 @@
             </v-avatar>
             <div class="text-h6 font-weight-bold mt-3">{{ friend.username }}</div>
             <div v-if="friend.createdAt" class="text-caption text-medium-emphasis mt-1">
-                Membre depuis {{ formatMonthYear(friend.createdAt) }}
+                Membre depuis <b>{{ formatMonthYear(friend.createdAt) }}</b>
             </div>
         </div>
 

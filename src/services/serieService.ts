@@ -10,7 +10,7 @@ const addSerie = (id: number, inList: boolean): Promise<Response> =>
     httpClient.post(PREFIX, { id, list: inList });
 
 const deleteSerie = (id: number, list = false): Promise<Response> =>
-    httpClient.delete(`${PREFIX}/${id}`, [{ name: "list", value: list }]);
+    httpClient.delete(`${PREFIX}/${id}`, undefined, [{ name: "list", value: list }]);
 
 const getSeasonsBySerieId = (id: number): Promise<Response> => httpClient.get(`${PREFIX}/${id}/seasons`);
 

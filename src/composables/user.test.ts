@@ -10,6 +10,7 @@ const userServiceMocks = vi.hoisted(() => ({
     updateLogin: vi.fn(),
     updateEpisodeTracking: vi.fn(),
     getUsers: vi.fn(),
+    requestDeletion: vi.fn(),
 }));
 const snackbarMocks = vi.hoisted(() => ({
     showSuccess: vi.fn(),
@@ -176,5 +177,25 @@ describe("useUser.getUsers", () => {
         userServiceMocks.getUsers.mockResolvedValue(jsonResponse(400, { message: "Requête invalide" }));
 
         await expect(useUser().getUsers("garrou")).rejects.toThrow("Requête invalide");
+    });
+});
+
+describe("useUser.requestDeletion", () => {
+    beforeEach(() => {
+        vi.resetAllMocks();
+        setActivePinia(createPinia());
+    });
+
+    it("resolves on success", async () => {
+        userServiceMocks.requestDeletion.mockResolvedValue(jsonResponse(204, null));
+
+        await expect(useUser().requestDeletion("goodpassword")).resolves.toBeUndefined();
+        expect(userServiceMocks.requestDeletion).toHaveBeenCalledWith("goodpassword");
+    });
+
+    it("throws the server's message on an incorrect password", async () => {
+        userServiceMocks.requestDeletion.mockResolvedValue(jsonResponse(400, { message: "Mot de passe incorrect" }));
+
+        await expect(useUser().requestDeletion("wrongpassword")).rejects.toThrow("Mot de passe incorrect");
     });
 });

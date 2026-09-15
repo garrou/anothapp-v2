@@ -3,7 +3,7 @@
         <div class="auth-glow"></div>
 
         <v-container class="d-flex align-center justify-center" style="min-height: 100vh">
-            <v-card class="pa-8" width="100%" max-width="420">
+            <v-card v-if="!pendingDeletion" class="pa-8" width="100%" max-width="420">
                 <div class="text-center mb-6">
                     <h1 class="text-h5 font-weight-bold">{{ TITLE }}</h1>
                     <p class="text-body-2 text-medium-emphasis mt-1">Retrouvez le fil de vos séries.</p>
@@ -22,6 +22,21 @@
                     </div>
                 </v-form>
             </v-card>
+
+            <v-card v-else class="pa-8" width="100%" max-width="420">
+                <div class="text-center mb-6">
+                    <h1 class="text-h5 font-weight-bold">Suppression en cours</h1>
+                    <p class="text-body-2 text-medium-emphasis mt-1">
+                        Votre compte est programmé pour suppression. Voulez-vous annuler et vous connecter ?
+                    </p>
+                </div>
+
+                <v-btn block class="mb-3" color="primary" rounded="pill" :loading="cancelLoading"
+                    text="Annuler la suppression et se connecter" @click="confirmCancelDeletion" />
+
+                <v-btn block variant="text" text="Non, laisser mon compte être supprimé"
+                    @click="pendingDeletion = null" />
+            </v-card>
         </v-container>
     </div>
 </template>
@@ -31,14 +46,30 @@ import { ref } from "vue";
 
 const TITLE = "Se connecter";
 
-const { login } = useAuth();
+const { login, cancelDeletion } = useAuth();
 
 const valid = ref(false);
 const identifier = ref("");
 const password = ref("");
+const pendingDeletion = ref<{ cancellationToken: string } | null>(null);
+const cancelLoading = ref(false);
 
 const authenticate = async () => {
-    await login(identifier.value, password.value);
+    const result = await login(identifier.value, password.value);
+    if (result?.pendingDeletion) {
+        pendingDeletion.value = { cancellationToken: result.cancellationToken };
+    }
+}
+
+const confirmCancelDeletion = async () => {
+    if (!pendingDeletion.value) return;
+    cancelLoading.value = true;
+
+    try {
+        await cancelDeletion(pendingDeletion.value.cancellationToken);
+    } finally {
+        cancelLoading.value = false;
+    }
 }
 </script>
 

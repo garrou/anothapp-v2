@@ -70,8 +70,8 @@ const post = (path: string, body?: unknown, options?: Omit<RequestOptions, "body
 const patch = (path: string, body?: unknown, params?: Param[]): Promise<Response> =>
     request(path, "PATCH", { body, params });
 
-const del = (path: string, params?: Param[]): Promise<Response> =>
-    request(path, "DELETE", { params });
+const del = (path: string, body?: unknown, params?: Param[]): Promise<Response> =>
+    request(path, "DELETE", { body, params });
 
 export default {
     get,

@@ -48,7 +48,7 @@ export const DashboardLayout = (stat: GlobalStat): Layout[][] => [
         },
         {
             icon: "mdi-repeat",
-            name: stat.mostRewatched ? `Saison ${stat.mostRewatched.seasonNumber} - vue ${stat.mostRewatched.timesWatched} fois` : undefined,
+            name: stat.mostRewatched ? `Saison ${stat.mostRewatched.seasonNumber} - vue ${stat.mostRewatched.timesWatched} fois` : "N/A",
             value: stat.mostRewatched?.showTitle,
             display: !!stat.mostRewatched
         },

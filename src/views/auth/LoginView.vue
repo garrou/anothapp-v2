@@ -34,6 +34,8 @@
                 <v-btn block class="mb-3" color="primary" rounded="pill" :loading="cancelLoading"
                     text="Annuler la suppression et se connecter" @click="confirmCancelDeletion" />
 
+                <p v-if="cancelError" class="text-error text-body-2 text-center mb-3">{{ cancelError }}</p>
+
                 <v-btn block variant="text" text="Non, laisser mon compte être supprimé"
                     @click="pendingDeletion = null" />
             </v-card>
@@ -53,6 +55,7 @@ const identifier = ref("");
 const password = ref("");
 const pendingDeletion = ref<{ cancellationToken: string } | null>(null);
 const cancelLoading = ref(false);
+const cancelError = ref("");
 
 const authenticate = async () => {
     const result = await login(identifier.value, password.value);
@@ -64,9 +67,12 @@ const authenticate = async () => {
 const confirmCancelDeletion = async () => {
     if (!pendingDeletion.value) return;
     cancelLoading.value = true;
+    cancelError.value = "";
 
     try {
         await cancelDeletion(pendingDeletion.value.cancellationToken);
+    } catch (e) {
+        cancelError.value = (e as Error).message;
     } finally {
         cancelLoading.value = false;
     }

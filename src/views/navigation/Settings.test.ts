@@ -139,7 +139,7 @@ describe("Settings", () => {
 
             await openDialog(wrapper);
 
-            expect(wrapper.text()).toContain("30 jours");
+            expect(wrapper.text()).toContain("15 jours");
         });
 
         it("requests deletion, shows the grace-period info, then logs out on confirm", async () => {

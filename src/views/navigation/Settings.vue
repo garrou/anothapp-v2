@@ -38,9 +38,9 @@
         <v-card title="Supprimer mon compte">
             <v-card-text>
                 <p class="mb-4">
-                    Votre compte sera désactivé immédiatement. Vous avez 30 jours pour vous reconnecter et annuler
-                    la suppression - passé ce délai, votre nom d'utilisateur, votre email et votre photo seront
-                    définitivement anonymisés.
+                    Votre compte sera désactivé immédiatement. Vous avez 15 jours (deux semaines) pour vous
+                    reconnecter et annuler la suppression - passé ce délai, votre nom d'utilisateur, votre email
+                    et votre photo seront définitivement anonymisés.
                 </p>
                 <v-form v-model="deleteAccountValid" @submit="confirmDeleteAccount" @submit.prevent>
                     <v-text-field v-model="deleteAccountPassword" label="Mot de passe" required type="password"
@@ -162,8 +162,9 @@ const confirmDeleteAccount = async () => {
 
     try {
         await requestDeletion(deleteAccountPassword.value);
+        deleteAccountPassword.value = "";
         deleteAccountDialog.value = false;
-        showInfo("Compte programmé pour suppression. Reconnectez-vous dans les 30 jours pour l'annuler.");
+        showInfo("Compte programmé pour suppression. Reconnectez-vous dans les 15 jours pour l'annuler.");
         await logout();
     } catch (e) {
         deleteAccountError.value = (e as Error).message;

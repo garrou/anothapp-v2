@@ -1,4 +1,4 @@
-import type { Playlist, PlaylistCollaborator, PlaylistDetail } from "@/models/playlist";
+import type { Playlist, PlaylistCollaborator, PlaylistDetail, PlaylistInvitation } from "@/models/playlist";
 import playlistService from "@/services/playlistService";
 import { isError } from "@/utils/response";
 import { useSnackbar } from "./snackbar";
@@ -9,6 +9,16 @@ export function usePlaylist() {
 
     const getPlaylists = async (friendId?: string): Promise<Playlist[]> => {
         const resp = await playlistService.getPlaylists(friendId);
+        const data = await resp.json();
+
+        if (isError(resp.status))
+            throw new Error(data.message);
+
+        return data;
+    }
+
+    const getPendingInvitations = async (): Promise<PlaylistInvitation[]> => {
+        const resp = await playlistService.getPendingInvitations();
         const data = await resp.json();
 
         if (isError(resp.status))
@@ -120,6 +130,7 @@ export function usePlaylist() {
 
     return {
         getPlaylists,
+        getPendingInvitations,
         getPlaylist,
         createPlaylist,
         updatePlaylist,

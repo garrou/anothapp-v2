@@ -2,6 +2,26 @@
     <base-app-bar />
 
     <v-container>
+        <v-list v-if="pendingInvitations.length" class="pending-invitations mb-4" density="compact" rounded="lg">
+            <v-list-item v-for="invitation in pendingInvitations" :key="invitation.playlistId"
+                :title="invitation.playlistName" :subtitle="`Invitation de ${invitation.ownerUsername}`">
+                <template #prepend>
+                    <v-avatar v-if="invitation.ownerPicture" :image="invitation.ownerPicture" size="32" />
+                    <v-avatar v-else color="surface-variant" size="32">
+                        <v-icon :icon="ACCOUNT_ICON" size="18" />
+                    </v-avatar>
+                </template>
+                <template #append>
+                    <div class="d-flex ga-2">
+                        <v-btn color="primary" size="small" variant="flat" @click="acceptInvitation(invitation)">
+                            Accepter
+                        </v-btn>
+                        <v-btn size="small" variant="outlined" @click="declineInvitation(invitation)">Refuser</v-btn>
+                    </div>
+                </template>
+            </v-list-item>
+        </v-list>
+
         <div class="d-flex justify-end mb-4">
             <v-btn color="primary" rounded="pill" :prepend-icon="ADD_ICON" @click="creating = true">
                 Nouvelle playlist
@@ -35,17 +55,21 @@ import CardGrid from "@/components/CardGrid.vue";
 import EmptyState from "@/components/EmptyState.vue";
 import PlaylistCover from "@/components/playlists/PlaylistCover.vue";
 import PlaylistFormModal from "@/components/playlists/PlaylistFormModal.vue";
-import { ACCOUNT_MULTIPLE_ICON, ADD_ICON, LOCK_ICON, PLAYLIST_PLAY_ICON } from "@/constants/icons";
+import { ACCOUNT_ICON, ACCOUNT_MULTIPLE_ICON, ADD_ICON, LOCK_ICON, PLAYLIST_PLAY_ICON } from "@/constants/icons";
 import { usePlaylist } from "@/composables/playlist";
+import { useUser } from "@/composables/user";
 import { useSnackbar } from "@/composables/snackbar";
-import type { Playlist } from "@/models/playlist";
+import type { Playlist, PlaylistInvitation } from "@/models/playlist";
 import { buildPlural } from "@/utils/format";
 import { onBeforeMount, ref } from "vue";
 
-const { getPlaylists, createPlaylist } = usePlaylist();
+const { getPlaylists, getPendingInvitations, createPlaylist, acceptCollaboratorInvite, removeCollaborator } = usePlaylist();
+const { getProfile } = useUser();
 const { showError } = useSnackbar();
 
 const playlists = ref<Playlist[]>([]);
+const pendingInvitations = ref<PlaylistInvitation[]>([]);
+const currentUserId = ref<string>();
 const loading = ref(false);
 const creating = ref(false);
 
@@ -58,6 +82,10 @@ const fetchPlaylists = async (): Promise<void> => {
     }
 }
 
+const fetchPendingInvitations = async (): Promise<void> => {
+    pendingInvitations.value = await getPendingInvitations();
+}
+
 const onCreate = async (name: string, visible: boolean): Promise<void> => {
     try {
         const playlist = await createPlaylist(name, visible);
@@ -68,7 +96,32 @@ const onCreate = async (name: string, visible: boolean): Promise<void> => {
     }
 }
 
-onBeforeMount(fetchPlaylists);
+const acceptInvitation = async (invitation: PlaylistInvitation): Promise<void> => {
+    try {
+        await acceptCollaboratorInvite(invitation.playlistId);
+        pendingInvitations.value = pendingInvitations.value.filter((i) => i.playlistId !== invitation.playlistId);
+        await fetchPlaylists();
+    } catch (e) {
+        showError(e as Error);
+    }
+}
+
+const declineInvitation = async (invitation: PlaylistInvitation): Promise<void> => {
+    if (!currentUserId.value) return;
+
+    try {
+        await removeCollaborator(invitation.playlistId, currentUserId.value, "Invitation refusée");
+        pendingInvitations.value = pendingInvitations.value.filter((i) => i.playlistId !== invitation.playlistId);
+    } catch (e) {
+        showError(e as Error);
+    }
+}
+
+onBeforeMount(async () => {
+    const profile = await getProfile();
+    currentUserId.value = profile.id;
+    await Promise.all([fetchPlaylists(), fetchPendingInvitations()]);
+});
 </script>
 
 <style scoped>

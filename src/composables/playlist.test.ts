@@ -3,6 +3,7 @@ import { usePlaylist } from "./playlist";
 
 const playlistServiceMocks = vi.hoisted(() => ({
     getPlaylists: vi.fn(),
+    getPendingInvitations: vi.fn(),
     getPlaylist: vi.fn(),
     createPlaylist: vi.fn(),
     updatePlaylist: vi.fn(),
@@ -58,6 +59,33 @@ describe("usePlaylist.getPlaylists", () => {
 
         await expect(getPlaylists("friend-1")).rejects.toThrow("Vous n'êtes pas en relation avec cette personne");
         expect(playlistServiceMocks.getPlaylists).toHaveBeenCalledWith("friend-1");
+    });
+});
+
+describe("usePlaylist.getPendingInvitations", () => {
+    beforeEach(() => {
+        vi.resetAllMocks();
+    });
+
+    it("returns the pending invitations on success", async () => {
+        const invitation = {
+            playlistId: "p1", playlistName: "Cosy", invitedAt: "2026-01-01",
+            ownerId: "user-2", ownerUsername: "bob",
+        };
+        playlistServiceMocks.getPendingInvitations.mockResolvedValue(jsonResponse(200, [invitation]));
+
+        const { getPendingInvitations } = usePlaylist();
+        const result = await getPendingInvitations();
+
+        expect(result).toEqual([invitation]);
+    });
+
+    it("throws the server's message on failure", async () => {
+        playlistServiceMocks.getPendingInvitations.mockResolvedValue(jsonResponse(500, { message: "Erreur serveur" }));
+
+        const { getPendingInvitations } = usePlaylist();
+
+        await expect(getPendingInvitations()).rejects.toThrow("Erreur serveur");
     });
 });
 

@@ -1,5 +1,6 @@
 import settingService from "@/services/settingService";
 import type { ImportSummary } from "@/models/importSummary";
+import type { ImportPayload, ImportPreview } from "@/models/importPayload";
 
 export function useSettings() {
 
@@ -30,14 +31,22 @@ export function useSettings() {
         window.URL.revokeObjectURL(url);
     }
 
-    const importData = async (file: File): Promise<ImportSummary> => {
-        let payload: unknown;
-
+    const readImportFile = async (file: File): Promise<ImportPayload> => {
         try {
-            payload = JSON.parse(await file.text());
+            return JSON.parse(await file.text());
         } catch {
             throw new Error("Fichier invalide : ce n'est pas un export JSON valide");
         }
+    }
+
+    const previewImportPayload = (payload: ImportPayload): ImportPreview => ({
+        shows: payload.shows?.length ?? 0,
+        playlists: payload.playlists?.length ?? 0,
+        favoriteActors: payload.favoriteActors?.length ?? 0,
+        platforms: payload.platforms?.length ?? 0,
+    });
+
+    const importData = async (payload: ImportPayload): Promise<ImportSummary> => {
         const resp = await settingService.importData(payload);
 
         if (!resp.ok) {
@@ -49,6 +58,8 @@ export function useSettings() {
 
     return {
         exportData,
+        readImportFile,
+        previewImportPayload,
         importData
     }
 }

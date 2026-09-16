@@ -12,6 +12,8 @@ const userComposableMocks = vi.hoisted(() => ({
 }));
 const settingsComposableMocks = vi.hoisted(() => ({
     exportData: vi.fn(),
+    readImportFile: vi.fn(),
+    previewImportPayload: vi.fn(),
     importData: vi.fn(),
 }));
 const authComposableMocks = vi.hoisted(() => ({
@@ -154,6 +156,7 @@ describe("Settings", () => {
         const selectFile = async (wrapper: Awaited<ReturnType<typeof mountView>>, file: File) => {
             const fileInput = wrapper.findComponent({ name: "VFileInput" });
             await fileInput.vm.$emit("update:modelValue", file);
+            await flushPromises();
         };
 
         it("opens the import dialog", async () => {
@@ -164,25 +167,71 @@ describe("Settings", () => {
             expect(wrapper.text()).toContain("Sélectionnez un fichier JSON");
         });
 
-        it("imports the selected file and shows a summary on success", async () => {
+        it("shows a preview summary once a valid file is selected, before importing", async () => {
+            const payload = { shows: [{}, {}], playlists: [{}], favoriteActors: [], platforms: [1] };
+            settingsComposableMocks.readImportFile.mockResolvedValue(payload);
+            settingsComposableMocks.previewImportPayload.mockReturnValue({
+                shows: 2, playlists: 1, favoriteActors: 0, platforms: 1,
+            });
+            const wrapper = await mountView();
+            await openImportDialog(wrapper);
+
+            await selectFile(wrapper, new File(["{}"], "export.json", { type: "application/json" }));
+
+            expect(settingsComposableMocks.previewImportPayload).toHaveBeenCalledWith(payload);
+            expect(wrapper.text()).toContain("2 série(s)");
+            expect(settingsComposableMocks.importData).not.toHaveBeenCalled();
+        });
+
+        it("keeps the import button disabled until the file has been parsed into a preview", async () => {
+            const wrapper = await mountView();
+            await openImportDialog(wrapper);
+
+            const importBtn = wrapper.findAllComponents({ name: "VBtn" }).find((btn) => btn.text() === "Importer");
+
+            expect(importBtn!.attributes("disabled")).toBeDefined();
+        });
+
+        it("shows the parse error and keeps import disabled for an invalid file", async () => {
+            settingsComposableMocks.readImportFile.mockRejectedValue(new Error("Fichier invalide"));
+            const wrapper = await mountView();
+            await openImportDialog(wrapper);
+
+            await selectFile(wrapper, new File(["not json"], "export.json", { type: "application/json" }));
+
+            expect(wrapper.text()).toContain("Fichier invalide");
+            const importBtn = wrapper.findAllComponents({ name: "VBtn" }).find((btn) => btn.text() === "Importer");
+            expect(importBtn!.attributes("disabled")).toBeDefined();
+        });
+
+        it("imports the parsed payload and shows a summary on success", async () => {
+            const payload = { shows: [{}], playlists: [], favoriteActors: [], platforms: [] };
+            settingsComposableMocks.readImportFile.mockResolvedValue(payload);
+            settingsComposableMocks.previewImportPayload.mockReturnValue({
+                shows: 1, playlists: 0, favoriteActors: 0, platforms: 0,
+            });
             settingsComposableMocks.importData.mockResolvedValue({
                 shows: { imported: 2, errors: 0 }, playlists: { imported: 1, errors: 0 },
                 favoriteActors: { imported: 0, errors: 0 }, platforms: { imported: 1, errors: 0 }, errors: [],
             });
             const wrapper = await mountView();
             await openImportDialog(wrapper);
-            const file = new File(["{}"], "export.json", { type: "application/json" });
-            await selectFile(wrapper, file);
+            await selectFile(wrapper, new File(["{}"], "export.json", { type: "application/json" }));
 
             const confirmBtn = wrapper.findAllComponents({ name: "VBtn" }).find((btn) => btn.text() === "Importer");
             await confirmBtn!.trigger("click");
             await flushPromises();
 
-            expect(settingsComposableMocks.importData).toHaveBeenCalledWith(file);
+            expect(settingsComposableMocks.importData).toHaveBeenCalledWith(payload);
             expect(snackbarMocks.showInfo).toHaveBeenCalledWith(expect.stringContaining("4"));
         });
 
-        it("shows the error and keeps the dialog open when the import fails", async () => {
+        it("shows the server error and keeps the dialog open when the import fails", async () => {
+            const payload = { shows: [] };
+            settingsComposableMocks.readImportFile.mockResolvedValue(payload);
+            settingsComposableMocks.previewImportPayload.mockReturnValue({
+                shows: 0, playlists: 0, favoriteActors: 0, platforms: 0,
+            });
             settingsComposableMocks.importData.mockRejectedValue(new Error("Requête invalide"));
             const wrapper = await mountView();
             await openImportDialog(wrapper);

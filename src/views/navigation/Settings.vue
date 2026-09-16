@@ -52,13 +52,18 @@
                 </p>
                 <v-file-input v-model="importFile" label="Fichier JSON" accept="application/json"
                     :error-messages="importError" :disabled="importLoading" />
+                <v-alert v-if="importPreview" type="info" variant="tonal" density="compact">
+                    {{ importPreview.shows }} série(s), {{ importPreview.playlists }} playlist(s),
+                    {{ importPreview.favoriteActors }} acteur(s) favori(s) et {{ importPreview.platforms }}
+                    plateforme(s) seront importés.
+                </v-alert>
             </v-card-text>
             <template #actions>
                 <v-spacer></v-spacer>
                 <v-btn variant="text" :disabled="importLoading" @click="closeImportDialog">
                     Annuler
                 </v-btn>
-                <v-btn color="primary" variant="flat" :disabled="!importFile" :loading="importLoading"
+                <v-btn color="primary" variant="flat" :disabled="!importPreview" :loading="importLoading"
                     @click="confirmImport">
                     Importer
                 </v-btn>
@@ -104,7 +109,8 @@ import { DATABASE_ICON, DATABASE_IMPORT_ICON, DELETE_ICON } from '@/constants/ic
 import storageService from '@/services/storageService';
 import { THEME_ANOTHAPP, THEME_ANOTHAPP_DARK, applyThemeClass } from '@/utils/theme';
 import { useTheme } from 'vuetify';
-import { computed, onBeforeMount, ref } from 'vue';
+import type { ImportPayload, ImportPreview } from '@/models/importPayload';
+import { computed, onBeforeMount, ref, watch } from 'vue';
 
 const settings = useSettings();
 const { getProfile, updateEpisodeTracking, requestDeletion } = useUser();
@@ -121,8 +127,27 @@ const deleteAccountLoading = ref(false);
 const confirmExportDialog = ref(false);
 const importDialog = ref(false);
 const importFile = ref<File>();
+const importPayload = ref<ImportPayload>();
+const importPreview = ref<ImportPreview>();
 const importError = ref("");
 const importLoading = ref(false);
+
+watch(importFile, async (file) => {
+    importPayload.value = undefined;
+    importPreview.value = undefined;
+    importError.value = "";
+
+    if (!file) {
+        return;
+    }
+    try {
+        const payload = await settings.readImportFile(file);
+        importPayload.value = payload;
+        importPreview.value = settings.previewImportPayload(payload);
+    } catch (e) {
+        importError.value = (e as Error).message;
+    }
+});
 
 const isDark = ref(theme.global.name.value === THEME_ANOTHAPP_DARK);
 const confirmEpisodeTracking = ref(false);
@@ -195,6 +220,8 @@ const confirmExport = () => {
 
 const openImportDialog = () => {
     importFile.value = undefined;
+    importPayload.value = undefined;
+    importPreview.value = undefined;
     importError.value = "";
     importDialog.value = true;
 }
@@ -204,14 +231,14 @@ const closeImportDialog = () => {
 }
 
 const confirmImport = async () => {
-    if (!importFile.value) {
+    if (!importPayload.value) {
         return;
     }
     importLoading.value = true;
     importError.value = "";
 
     try {
-        const summary = await settings.importData(importFile.value);
+        const summary = await settings.importData(importPayload.value);
         importDialog.value = false;
         const total = summary.shows.imported + summary.playlists.imported
             + summary.favoriteActors.imported + summary.platforms.imported;

@@ -53,7 +53,8 @@
                 <v-file-input v-model="importFile" label="Fichier JSON" accept="application/json"
                     :error-messages="importError" :disabled="importLoading" />
                 <v-alert v-if="importPreview" type="info" variant="tonal" density="compact">
-                    {{ importPreview.shows }} série(s), {{ importPreview.playlists }} playlist(s),
+                    {{ importPreview.shows }} série(s), {{ importPreview.seasons }} saison(s),
+                    {{ importPreview.episodes }} épisode(s), {{ importPreview.playlists }} playlist(s),
                     {{ importPreview.favoriteActors }} acteur(s) favori(s) et {{ importPreview.platforms }}
                     plateforme(s) seront importés.
                 </v-alert>
@@ -132,7 +133,10 @@ const importPreview = ref<ImportPreview>();
 const importError = ref("");
 const importLoading = ref(false);
 
+let importFileRequestId = 0;
+
 watch(importFile, async (file) => {
+    const requestId = ++importFileRequestId;
     importPayload.value = undefined;
     importPreview.value = undefined;
     importError.value = "";
@@ -142,9 +146,17 @@ watch(importFile, async (file) => {
     }
     try {
         const payload = await settings.readImportFile(file);
+        // A quicker second file selection can resolve before this one - ignore a stale result
+        // so the preview (and what "Importer" would send) always matches the visible selection.
+        if (requestId !== importFileRequestId) {
+            return;
+        }
         importPayload.value = payload;
         importPreview.value = settings.previewImportPayload(payload);
     } catch (e) {
+        if (requestId !== importFileRequestId) {
+            return;
+        }
         importError.value = (e as Error).message;
     }
 });

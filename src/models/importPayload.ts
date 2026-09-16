@@ -1,6 +1,6 @@
 export interface ImportPayload {
 
-    shows?: unknown[];
+    shows?: { seasons?: { episodes?: unknown[] }[] }[];
 
     playlists?: unknown[];
 
@@ -12,6 +12,10 @@ export interface ImportPayload {
 export interface ImportPreview {
 
     shows: number;
+
+    seasons: number;
+
+    episodes: number;
 
     playlists: number;
 

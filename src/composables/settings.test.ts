@@ -48,13 +48,35 @@ describe("useSettings.readImportFile", () => {
 
         expect(result).toEqual({ shows: [] });
     });
+
+    it("rejects valid JSON that isn't an object, e.g. a bare null or array", async () => {
+        await expect(useSettings().readImportFile(fileWith("null"))).rejects.toThrow(
+            "Fichier invalide : ce n'est pas un export JSON valide"
+        );
+        await expect(useSettings().readImportFile(fileWith("[1,2,3]"))).rejects.toThrow(
+            "Fichier invalide : ce n'est pas un export JSON valide"
+        );
+    });
 });
 
 describe("useSettings.previewImportPayload", () => {
     it("counts each category, defaulting missing ones to 0", () => {
         const result = useSettings().previewImportPayload({ shows: [{}, {}], platforms: [1] });
 
-        expect(result).toEqual({ shows: 2, playlists: 0, favoriteActors: 0, platforms: 1 });
+        expect(result).toEqual({ shows: 2, seasons: 0, episodes: 0, playlists: 0, favoriteActors: 0, platforms: 1 });
+    });
+
+    it("sums seasons and episodes across every show", () => {
+        const result = useSettings().previewImportPayload({
+            shows: [
+                { seasons: [{ episodes: [{}, {}] }, { episodes: [{}] }] },
+                { seasons: [{ episodes: [{}] }] },
+                {},
+            ],
+        });
+
+        expect(result.seasons).toBe(3);
+        expect(result.episodes).toBe(4);
     });
 });
 
@@ -86,6 +108,17 @@ describe("useSettings.importData", () => {
         settingServiceMocks.importData.mockResolvedValue({
             ok: false,
             json: async () => ({}),
+        });
+
+        await expect(useSettings().importData({ shows: [] })).rejects.toThrow(
+            "Erreur lors de l'import des données"
+        );
+    });
+
+    it("falls back to a default message when the error response isn't JSON", async () => {
+        settingServiceMocks.importData.mockResolvedValue({
+            ok: false,
+            json: async () => { throw new SyntaxError("Unexpected token <"); },
         });
 
         await expect(useSettings().importData({ shows: [] })).rejects.toThrow(

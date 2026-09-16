@@ -33,24 +33,36 @@ export function useSettings() {
 
     const readImportFile = async (file: File): Promise<ImportPayload> => {
         try {
-            return JSON.parse(await file.text());
+            const payload = JSON.parse(await file.text());
+            if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
+                throw new Error();
+            }
+            return payload;
         } catch {
             throw new Error("Fichier invalide : ce n'est pas un export JSON valide");
         }
     }
 
-    const previewImportPayload = (payload: ImportPayload): ImportPreview => ({
-        shows: payload.shows?.length ?? 0,
-        playlists: payload.playlists?.length ?? 0,
-        favoriteActors: payload.favoriteActors?.length ?? 0,
-        platforms: payload.platforms?.length ?? 0,
-    });
+    const previewImportPayload = (payload: ImportPayload): ImportPreview => {
+        const seasons = payload.shows?.flatMap((show) => show.seasons ?? []) ?? [];
+
+        return {
+            shows: payload.shows?.length ?? 0,
+            seasons: seasons.length,
+            episodes: seasons.reduce((total, season) => total + (season.episodes?.length ?? 0), 0),
+            playlists: payload.playlists?.length ?? 0,
+            favoriteActors: payload.favoriteActors?.length ?? 0,
+            platforms: payload.platforms?.length ?? 0,
+        };
+    }
 
     const importData = async (payload: ImportPayload): Promise<ImportSummary> => {
         const resp = await settingService.importData(payload);
 
         if (!resp.ok) {
-            const { message } = await resp.json();
+            // A large payload can be rejected upstream (proxy/gateway) with a non-JSON body
+            // before it ever reaches our own JSON error responses - fall back rather than throw.
+            const message = await resp.json().then((body) => body.message).catch(() => undefined);
             throw new Error(message ?? "Erreur lors de l'import des données");
         }
         return await resp.json();

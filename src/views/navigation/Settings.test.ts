@@ -171,7 +171,7 @@ describe("Settings", () => {
             const payload = { shows: [{}, {}], playlists: [{}], favoriteActors: [], platforms: [1] };
             settingsComposableMocks.readImportFile.mockResolvedValue(payload);
             settingsComposableMocks.previewImportPayload.mockReturnValue({
-                shows: 2, playlists: 1, favoriteActors: 0, platforms: 1,
+                shows: 2, seasons: 5, episodes: 20, playlists: 1, favoriteActors: 0, platforms: 1,
             });
             const wrapper = await mountView();
             await openImportDialog(wrapper);
@@ -180,7 +180,35 @@ describe("Settings", () => {
 
             expect(settingsComposableMocks.previewImportPayload).toHaveBeenCalledWith(payload);
             expect(wrapper.text()).toContain("2 série(s)");
+            expect(wrapper.text()).toContain("5 saison(s)");
+            expect(wrapper.text()).toContain("20 épisode(s)");
             expect(settingsComposableMocks.importData).not.toHaveBeenCalled();
+        });
+
+        it("ignores a stale read when a second file is selected before the first one resolves", async () => {
+            let resolveFirst!: (payload: unknown) => void;
+            const firstRead = new Promise((resolve) => { resolveFirst = resolve; });
+            const fileA = new File(["{}"], "a.json", { type: "application/json" });
+            const fileB = new File(["{}"], "b.json", { type: "application/json" });
+
+            settingsComposableMocks.readImportFile.mockImplementation((file: File) =>
+                file === fileA ? firstRead : Promise.resolve({ shows: [{}] })
+            );
+            settingsComposableMocks.previewImportPayload.mockImplementation(
+                (payload: { shows?: unknown[] }) => ({
+                    shows: payload.shows?.length ?? 0, seasons: 0, episodes: 0, playlists: 0, favoriteActors: 0, platforms: 0,
+                })
+            );
+            const wrapper = await mountView();
+            await openImportDialog(wrapper);
+
+            await selectFile(wrapper, fileA);
+            await selectFile(wrapper, fileB);
+            resolveFirst({ shows: [{}, {}, {}] });
+            await flushPromises();
+
+            expect(wrapper.text()).toContain("1 série(s)");
+            expect(wrapper.text()).not.toContain("3 série(s)");
         });
 
         it("keeps the import button disabled until the file has been parsed into a preview", async () => {
@@ -208,7 +236,7 @@ describe("Settings", () => {
             const payload = { shows: [{}], playlists: [], favoriteActors: [], platforms: [] };
             settingsComposableMocks.readImportFile.mockResolvedValue(payload);
             settingsComposableMocks.previewImportPayload.mockReturnValue({
-                shows: 1, playlists: 0, favoriteActors: 0, platforms: 0,
+                shows: 1, seasons: 0, episodes: 0, playlists: 0, favoriteActors: 0, platforms: 0,
             });
             settingsComposableMocks.importData.mockResolvedValue({
                 shows: { imported: 2, errors: 0 }, playlists: { imported: 1, errors: 0 },
@@ -230,7 +258,7 @@ describe("Settings", () => {
             const payload = { shows: [] };
             settingsComposableMocks.readImportFile.mockResolvedValue(payload);
             settingsComposableMocks.previewImportPayload.mockReturnValue({
-                shows: 0, playlists: 0, favoriteActors: 0, platforms: 0,
+                shows: 0, seasons: 0, episodes: 0, playlists: 0, favoriteActors: 0, platforms: 0,
             });
             settingsComposableMocks.importData.mockRejectedValue(new Error("Requête invalide"));
             const wrapper = await mountView();

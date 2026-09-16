@@ -54,7 +54,7 @@ export const INFO_ICON = "mdi-information";
 
 export const IMAGE_OFF_ICON = "mdi-image-off-outline";
 
-export const DATABASE_ICON = "mdi-database";
+export const DATABASE_ICON = "mdi-database-export";
 
 export const DATABASE_IMPORT_ICON = "mdi-database-import";
 

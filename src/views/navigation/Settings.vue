@@ -17,7 +17,9 @@
                             @update:model-value="toggleEpisodeTracking" />
                     </template>
                 </v-list-item>
-                <v-list-item :prepend-icon="DATABASE_ICON" title="Exporter mes données" @click="settings.exportData" />
+                <v-list-item :prepend-icon="DATABASE_ICON" title="Exporter mes données" @click="openExportConfirm" />
+                <v-list-item :prepend-icon="DATABASE_IMPORT_ICON" title="Importer mes données"
+                    @click="openImportDialog" />
                 <v-list-item :prepend-icon="DELETE_ICON" title="Supprimer mon compte" base-color="error"
                     @click="openDeleteAccount" />
             </v-list>
@@ -33,6 +35,36 @@
         text="Rien ne sera supprimé : vos épisodes déjà enregistrés restent disponibles et vous pourrez réactiver le suivi à tout moment. Confirmez-vous ?"
         confirm-text="Désactiver" persistent @cancel="cancelEpisodeTrackingDisable"
         @confirm="confirmEpisodeTrackingDisableConfirm" />
+
+    <base-confirm v-model="confirmExportDialog" title="Exporter mes données"
+        text="Un fichier JSON contenant vos séries, saisons, épisodes, playlists, acteurs favoris et plateformes sera téléchargé. Confirmez-vous ?"
+        confirm-text="Exporter" confirm-color="primary" @cancel="confirmExportDialog = false"
+        @confirm="confirmExport" />
+
+    <v-dialog v-model="importDialog" max-width="420" persistent>
+        <v-card title="Importer mes données">
+            <v-card-text>
+                <p class="mb-4">
+                    Sélectionnez un fichier JSON précédemment exporté depuis Anoth'app. Vos amis et les
+                    playlists partagées par d'autres ne sont pas réimportés : vous devrez les rétablir
+                    vous-même. Votre compte actuel (nom d'utilisateur, email, mot de passe) n'est jamais
+                    modifié par l'import.
+                </p>
+                <v-file-input v-model="importFile" label="Fichier JSON" accept="application/json"
+                    :error-messages="importError" :disabled="importLoading" />
+            </v-card-text>
+            <template #actions>
+                <v-spacer></v-spacer>
+                <v-btn variant="text" :disabled="importLoading" @click="closeImportDialog">
+                    Annuler
+                </v-btn>
+                <v-btn color="primary" variant="flat" :disabled="!importFile" :loading="importLoading"
+                    @click="confirmImport">
+                    Importer
+                </v-btn>
+            </template>
+        </v-card>
+    </v-dialog>
 
     <v-dialog v-model="deleteAccountDialog" max-width="420" persistent>
         <v-card title="Supprimer mon compte">
@@ -68,7 +100,7 @@ import { useAuth } from '@/composables/auth';
 import { useSettings } from '@/composables/settings';
 import { useSnackbar } from '@/composables/snackbar';
 import { useUser } from '@/composables/user';
-import { DATABASE_ICON, DELETE_ICON } from '@/constants/icons';
+import { DATABASE_ICON, DATABASE_IMPORT_ICON, DELETE_ICON } from '@/constants/icons';
 import storageService from '@/services/storageService';
 import { THEME_ANOTHAPP, THEME_ANOTHAPP_DARK, applyThemeClass } from '@/utils/theme';
 import { useTheme } from 'vuetify';
@@ -85,6 +117,12 @@ const deleteAccountValid = ref(false);
 const deleteAccountPassword = ref("");
 const deleteAccountError = ref("");
 const deleteAccountLoading = ref(false);
+
+const confirmExportDialog = ref(false);
+const importDialog = ref(false);
+const importFile = ref<File>();
+const importError = ref("");
+const importLoading = ref(false);
 
 const isDark = ref(theme.global.name.value === THEME_ANOTHAPP_DARK);
 const confirmEpisodeTracking = ref(false);
@@ -144,6 +182,45 @@ const cancelEpisodeTrackingDisable = () => {
 const confirmEpisodeTrackingDisableConfirm = async () => {
     confirmEpisodeTrackingDisable.value = false;
     await applyEpisodeTracking(false);
+}
+
+const openExportConfirm = () => {
+    confirmExportDialog.value = true;
+}
+
+const confirmExport = () => {
+    confirmExportDialog.value = false;
+    settings.exportData();
+}
+
+const openImportDialog = () => {
+    importFile.value = undefined;
+    importError.value = "";
+    importDialog.value = true;
+}
+
+const closeImportDialog = () => {
+    importDialog.value = false;
+}
+
+const confirmImport = async () => {
+    if (!importFile.value) {
+        return;
+    }
+    importLoading.value = true;
+    importError.value = "";
+
+    try {
+        const summary = await settings.importData(importFile.value);
+        importDialog.value = false;
+        const total = summary.shows.imported + summary.playlists.imported
+            + summary.favoriteActors.imported + summary.platforms.imported;
+        showInfo(`Import terminé : ${total} élément(s) importé(s).`);
+    } catch (e) {
+        importError.value = (e as Error).message;
+    } finally {
+        importLoading.value = false;
+    }
 }
 
 const openDeleteAccount = () => {

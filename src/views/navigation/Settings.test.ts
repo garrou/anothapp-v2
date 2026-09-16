@@ -12,6 +12,7 @@ const userComposableMocks = vi.hoisted(() => ({
 }));
 const settingsComposableMocks = vi.hoisted(() => ({
     exportData: vi.fn(),
+    importData: vi.fn(),
 }));
 const authComposableMocks = vi.hoisted(() => ({
     logout: vi.fn(),
@@ -117,14 +118,92 @@ describe("Settings", () => {
         expect((switches(wrapper)[1].element as HTMLInputElement).checked).toBe(false);
     });
 
-    it("exports data when the export item is clicked", async () => {
+    it("asks for confirmation before exporting, and only exports on confirm", async () => {
         settingsComposableMocks.exportData.mockResolvedValue(undefined);
         const wrapper = await mountView();
 
-        const exportItem = wrapper.findAllComponents({ name: "VListItem" }).find((item) => item.text().includes("Exporter"));
+        const exportItem = wrapper.findAllComponents({ name: "VListItem" }).find((item) => item.text().includes("Exporter mes données"));
         await exportItem!.trigger("click");
+        expect(settingsComposableMocks.exportData).not.toHaveBeenCalled();
+
+        const confirmBtn = wrapper.findAllComponents({ name: "VBtn" }).find((btn) => btn.text() === "Exporter");
+        await confirmBtn!.trigger("click");
 
         expect(settingsComposableMocks.exportData).toHaveBeenCalled();
+    });
+
+    it("closes the export confirm dialog without exporting when cancelled", async () => {
+        const wrapper = await mountView();
+
+        const exportItem = wrapper.findAllComponents({ name: "VListItem" }).find((item) => item.text().includes("Exporter mes données"));
+        await exportItem!.trigger("click");
+
+        const cancelBtn = wrapper.findAllComponents({ name: "VBtn" }).find((btn) => btn.text() === "Annuler");
+        await cancelBtn!.trigger("click");
+
+        expect(settingsComposableMocks.exportData).not.toHaveBeenCalled();
+    });
+
+    describe("data import", () => {
+        const openImportDialog = async (wrapper: Awaited<ReturnType<typeof mountView>>) => {
+            const importItem = wrapper.findAllComponents({ name: "VListItem" })
+                .find((item) => item.text().includes("Importer mes données"));
+            await importItem!.trigger("click");
+        };
+
+        const selectFile = async (wrapper: Awaited<ReturnType<typeof mountView>>, file: File) => {
+            const fileInput = wrapper.findComponent({ name: "VFileInput" });
+            await fileInput.vm.$emit("update:modelValue", file);
+        };
+
+        it("opens the import dialog", async () => {
+            const wrapper = await mountView();
+
+            await openImportDialog(wrapper);
+
+            expect(wrapper.text()).toContain("Sélectionnez un fichier JSON");
+        });
+
+        it("imports the selected file and shows a summary on success", async () => {
+            settingsComposableMocks.importData.mockResolvedValue({
+                shows: { imported: 2, errors: 0 }, playlists: { imported: 1, errors: 0 },
+                favoriteActors: { imported: 0, errors: 0 }, platforms: { imported: 1, errors: 0 }, errors: [],
+            });
+            const wrapper = await mountView();
+            await openImportDialog(wrapper);
+            const file = new File(["{}"], "export.json", { type: "application/json" });
+            await selectFile(wrapper, file);
+
+            const confirmBtn = wrapper.findAllComponents({ name: "VBtn" }).find((btn) => btn.text() === "Importer");
+            await confirmBtn!.trigger("click");
+            await flushPromises();
+
+            expect(settingsComposableMocks.importData).toHaveBeenCalledWith(file);
+            expect(snackbarMocks.showInfo).toHaveBeenCalledWith(expect.stringContaining("4"));
+        });
+
+        it("shows the error and keeps the dialog open when the import fails", async () => {
+            settingsComposableMocks.importData.mockRejectedValue(new Error("Requête invalide"));
+            const wrapper = await mountView();
+            await openImportDialog(wrapper);
+            await selectFile(wrapper, new File(["{}"], "export.json", { type: "application/json" }));
+
+            const confirmBtn = wrapper.findAllComponents({ name: "VBtn" }).find((btn) => btn.text() === "Importer");
+            await confirmBtn!.trigger("click");
+            await flushPromises();
+
+            expect(wrapper.text()).toContain("Requête invalide");
+        });
+
+        it("closes the dialog without importing when cancelled", async () => {
+            const wrapper = await mountView();
+            await openImportDialog(wrapper);
+
+            const cancelBtn = wrapper.findAllComponents({ name: "VBtn" }).find((btn) => btn.text() === "Annuler");
+            await cancelBtn!.trigger("click");
+
+            expect(settingsComposableMocks.importData).not.toHaveBeenCalled();
+        });
     });
 
     describe("account deletion", () => {

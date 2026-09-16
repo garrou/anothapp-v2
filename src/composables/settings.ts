@@ -1,4 +1,5 @@
 import settingService from "@/services/settingService";
+import type { ImportSummary } from "@/models/importSummary";
 
 export function useSettings() {
 
@@ -29,8 +30,26 @@ export function useSettings() {
         window.URL.revokeObjectURL(url);
     }
 
+    const importData = async (file: File): Promise<ImportSummary> => {
+        let payload: unknown;
+
+        try {
+            payload = JSON.parse(await file.text());
+        } catch {
+            throw new Error("Fichier invalide : ce n'est pas un export JSON valide");
+        }
+        const resp = await settingService.importData(payload);
+
+        if (!resp.ok) {
+            const { message } = await resp.json();
+            throw new Error(message ?? "Erreur lors de l'import des données");
+        }
+        return await resp.json();
+    }
+
     return {
-        exportData
+        exportData,
+        importData
     }
 }
 

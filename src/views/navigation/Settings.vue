@@ -17,7 +17,7 @@
                             @update:model-value="toggleEpisodeTracking" />
                     </template>
                 </v-list-item>
-                <v-list-item :prepend-icon="DATABASE_ICON" title="Exporter mes données" @click="openExportConfirm" />
+                <v-list-item :prepend-icon="DATABASE_EXPORT_ICON" title="Exporter mes données" @click="openExportConfirm" />
                 <v-list-item :prepend-icon="DATABASE_IMPORT_ICON" title="Importer mes données"
                     @click="openImportDialog" />
                 <v-list-item :prepend-icon="DELETE_ICON" title="Supprimer mon compte" base-color="error"
@@ -106,7 +106,7 @@ import { useAuth } from '@/composables/auth';
 import { useSettings } from '@/composables/settings';
 import { useSnackbar } from '@/composables/snackbar';
 import { useUser } from '@/composables/user';
-import { DATABASE_ICON, DATABASE_IMPORT_ICON, DELETE_ICON } from '@/constants/icons';
+import { DATABASE_EXPORT_ICON, DATABASE_IMPORT_ICON, DELETE_ICON } from '@/constants/icons';
 import storageService from '@/services/storageService';
 import { THEME_ANOTHAPP, THEME_ANOTHAPP_DARK, applyThemeClass } from '@/utils/theme';
 import { useTheme } from 'vuetify';

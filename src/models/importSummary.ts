@@ -5,11 +5,16 @@ export interface ImportCategorySummary {
     errors: number;
 }
 
+export interface ImportPlaylistsSummary extends ImportCategorySummary {
+
+    skipped: number;
+}
+
 export interface ImportSummary {
 
     shows: ImportCategorySummary;
 
-    playlists: ImportCategorySummary;
+    playlists: ImportPlaylistsSummary;
 
     favoriteActors: ImportCategorySummary;
 

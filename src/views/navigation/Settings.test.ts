@@ -22,6 +22,7 @@ const authComposableMocks = vi.hoisted(() => ({
 const snackbarMocks = vi.hoisted(() => ({
     showInfo: vi.fn(),
     showSuccess: vi.fn(),
+    showError: vi.fn(),
 }));
 const storageServiceMocks = vi.hoisted(() => ({
     storeTheme: vi.fn(),
@@ -240,7 +241,7 @@ describe("Settings", () => {
                 shows: 1, seasons: 0, episodes: 0, playlists: 0, favoriteActors: 0, platforms: 0,
             });
             settingsComposableMocks.importData.mockResolvedValue({
-                shows: { imported: 2, errors: 0 }, playlists: { imported: 1, errors: 0 },
+                shows: { imported: 2, errors: 0 }, playlists: { imported: 1, skipped: 0, errors: 0 },
                 favoriteActors: { imported: 0, errors: 0 }, platforms: { imported: 1, errors: 0 }, errors: [],
             });
             const wrapper = await mountView();
@@ -253,6 +254,29 @@ describe("Settings", () => {
 
             expect(settingsComposableMocks.importData).toHaveBeenCalledWith(payload);
             expect(snackbarMocks.showSuccess).toHaveBeenCalledWith(expect.stringContaining("4"));
+        });
+
+        it("shows an error summary instead of a plain success when the import partially fails", async () => {
+            const payload = { shows: [{}], playlists: [], favoriteActors: [], platforms: [] };
+            settingsComposableMocks.readImportFile.mockResolvedValue(payload);
+            settingsComposableMocks.previewImportPayload.mockReturnValue({
+                shows: 1, seasons: 0, episodes: 0, playlists: 0, favoriteActors: 0, platforms: 0,
+            });
+            settingsComposableMocks.importData.mockResolvedValue({
+                shows: { imported: 1, errors: 1 }, playlists: { imported: 0, skipped: 0, errors: 0 },
+                favoriteActors: { imported: 0, errors: 0 }, platforms: { imported: 0, errors: 0 },
+                errors: ["Série \"X\" : Saison invalide"],
+            });
+            const wrapper = await mountView();
+            await openImportDialog(wrapper);
+            await selectFile(wrapper, new File(["{}"], "export.json", { type: "application/json" }));
+
+            const confirmBtn = wrapper.findAllComponents({ name: "VBtn" }).find((btn) => btn.text() === "Importer");
+            await confirmBtn!.trigger("click");
+            await flushPromises();
+
+            expect(snackbarMocks.showSuccess).not.toHaveBeenCalled();
+            expect(snackbarMocks.showError).toHaveBeenCalledWith(expect.stringContaining("Saison invalide"));
         });
 
         it("shows the server error and keeps the dialog open when the import fails", async () => {

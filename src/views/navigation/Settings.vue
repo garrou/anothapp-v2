@@ -45,7 +45,7 @@
         <v-card title="Importer mes données">
             <v-card-text>
                 <p class="mb-4">
-                    Sélectionnez un fichier JSON précédemment exporté depuis Anoth'app. Vos amis et les
+                    Sélectionnez un fichier JSON précédemment exporté depuis Anothapp. Vos amis et les
                     playlists partagées par d'autres ne sont pas réimportés : vous devrez les rétablir
                     vous-même. Votre compte actuel (nom d'utilisateur, email, mot de passe) n'est jamais
                     modifié par l'import.

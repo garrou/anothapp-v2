@@ -21,6 +21,7 @@ const authComposableMocks = vi.hoisted(() => ({
 }));
 const snackbarMocks = vi.hoisted(() => ({
     showInfo: vi.fn(),
+    showSuccess: vi.fn(),
 }));
 const storageServiceMocks = vi.hoisted(() => ({
     storeTheme: vi.fn(),
@@ -251,7 +252,7 @@ describe("Settings", () => {
             await flushPromises();
 
             expect(settingsComposableMocks.importData).toHaveBeenCalledWith(payload);
-            expect(snackbarMocks.showInfo).toHaveBeenCalledWith(expect.stringContaining("4"));
+            expect(snackbarMocks.showSuccess).toHaveBeenCalledWith(expect.stringContaining("4"));
         });
 
         it("shows the server error and keeps the dialog open when the import fails", async () => {

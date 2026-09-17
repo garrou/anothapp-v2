@@ -116,7 +116,7 @@ import { computed, onBeforeMount, ref, watch } from 'vue';
 const settings = useSettings();
 const { getProfile, updateEpisodeTracking, requestDeletion } = useUser();
 const { logout } = useAuth();
-const { showInfo } = useSnackbar();
+const { showInfo, showSuccess } = useSnackbar();
 const theme = useTheme();
 
 const deleteAccountDialog = ref(false);
@@ -254,7 +254,7 @@ const confirmImport = async () => {
         importDialog.value = false;
         const total = summary.shows.imported + summary.playlists.imported
             + summary.favoriteActors.imported + summary.platforms.imported;
-        showInfo(`Import terminé : ${total} élément(s) importé(s).`);
+        showSuccess(`Import terminé : ${total} élément(s) importé(s).`);
     } catch (e) {
         importError.value = (e as Error).message;
     } finally {

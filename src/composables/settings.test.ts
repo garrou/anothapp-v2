@@ -66,6 +66,14 @@ describe("useSettings.previewImportPayload", () => {
         expect(result).toEqual({ shows: 2, seasons: 0, episodes: 0, playlists: 0, favoriteActors: 0, platforms: 1 });
     });
 
+    it("excludes shared playlists (role set and not \"owner\") from the count, since they aren't recreated", () => {
+        const result = useSettings().previewImportPayload({
+            playlists: [{}, { role: "owner" }, { role: "collaborator" }],
+        });
+
+        expect(result.playlists).toBe(2);
+    });
+
     it("sums seasons and episodes across every show", () => {
         const result = useSettings().previewImportPayload({
             shows: [

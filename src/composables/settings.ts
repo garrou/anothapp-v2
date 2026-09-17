@@ -45,12 +45,14 @@ export function useSettings() {
 
     const previewImportPayload = (payload: ImportPayload): ImportPreview => {
         const seasons = payload.shows?.flatMap((show) => show.seasons ?? []) ?? [];
+        const importablePlaylists = (payload.playlists ?? [])
+            .filter((playlist) => !playlist.role || playlist.role === "owner");
 
         return {
             shows: payload.shows?.length ?? 0,
             seasons: seasons.length,
             episodes: seasons.reduce((total, season) => total + (season.episodes?.length ?? 0), 0),
-            playlists: payload.playlists?.length ?? 0,
+            playlists: importablePlaylists.length,
             favoriteActors: payload.favoriteActors?.length ?? 0,
             platforms: payload.platforms?.length ?? 0,
         };

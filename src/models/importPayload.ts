@@ -2,7 +2,7 @@ export interface ImportPayload {
 
     shows?: { seasons?: { episodes?: unknown[] }[] }[];
 
-    playlists?: unknown[];
+    playlists?: { role?: string }[];
 
     favoriteActors?: unknown[];
 

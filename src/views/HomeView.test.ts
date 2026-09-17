@@ -25,7 +25,7 @@ describe("HomeView", () => {
     it("fetches up to 8 poster images on mount", async () => {
         await mountView([]);
 
-        expect(searchComposableMocks.getImages).toHaveBeenCalledWith(8);
+        expect(searchComposableMocks.getImages).toHaveBeenCalledWith(6);
     });
 
     it("caps the poster collage at 6 images even when more are returned", async () => {

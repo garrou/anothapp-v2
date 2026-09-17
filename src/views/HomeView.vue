@@ -99,7 +99,7 @@ const { getImages } = useSearch();
 const images = ref<string[]>([]);
 
 onBeforeMount(async () => {
-    images.value = await getImages(8);
+    images.value = await getImages(6);
 });
 </script>
 

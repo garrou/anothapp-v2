@@ -12,12 +12,17 @@ const userComposableMocks = vi.hoisted(() => ({
 }));
 const settingsComposableMocks = vi.hoisted(() => ({
     exportData: vi.fn(),
+    readImportFile: vi.fn(),
+    previewImportPayload: vi.fn(),
+    importData: vi.fn(),
 }));
 const authComposableMocks = vi.hoisted(() => ({
     logout: vi.fn(),
 }));
 const snackbarMocks = vi.hoisted(() => ({
     showInfo: vi.fn(),
+    showSuccess: vi.fn(),
+    showError: vi.fn(),
 }));
 const storageServiceMocks = vi.hoisted(() => ({
     storeTheme: vi.fn(),
@@ -117,14 +122,190 @@ describe("Settings", () => {
         expect((switches(wrapper)[1].element as HTMLInputElement).checked).toBe(false);
     });
 
-    it("exports data when the export item is clicked", async () => {
+    it("asks for confirmation before exporting, and only exports on confirm", async () => {
         settingsComposableMocks.exportData.mockResolvedValue(undefined);
         const wrapper = await mountView();
 
-        const exportItem = wrapper.findAllComponents({ name: "VListItem" }).find((item) => item.text().includes("Exporter"));
+        const exportItem = wrapper.findAllComponents({ name: "VListItem" }).find((item) => item.text().includes("Exporter mes données"));
         await exportItem!.trigger("click");
+        expect(settingsComposableMocks.exportData).not.toHaveBeenCalled();
+
+        const confirmBtn = wrapper.findAllComponents({ name: "VBtn" }).find((btn) => btn.text() === "Exporter");
+        await confirmBtn!.trigger("click");
 
         expect(settingsComposableMocks.exportData).toHaveBeenCalled();
+    });
+
+    it("closes the export confirm dialog without exporting when cancelled", async () => {
+        const wrapper = await mountView();
+
+        const exportItem = wrapper.findAllComponents({ name: "VListItem" }).find((item) => item.text().includes("Exporter mes données"));
+        await exportItem!.trigger("click");
+
+        const cancelBtn = wrapper.findAllComponents({ name: "VBtn" }).find((btn) => btn.text() === "Annuler");
+        await cancelBtn!.trigger("click");
+
+        expect(settingsComposableMocks.exportData).not.toHaveBeenCalled();
+    });
+
+    describe("data import", () => {
+        const openImportDialog = async (wrapper: Awaited<ReturnType<typeof mountView>>) => {
+            const importItem = wrapper.findAllComponents({ name: "VListItem" })
+                .find((item) => item.text().includes("Importer mes données"));
+            await importItem!.trigger("click");
+        };
+
+        const selectFile = async (wrapper: Awaited<ReturnType<typeof mountView>>, file: File) => {
+            const fileInput = wrapper.findComponent({ name: "VFileInput" });
+            await fileInput.vm.$emit("update:modelValue", file);
+            await flushPromises();
+        };
+
+        it("opens the import dialog", async () => {
+            const wrapper = await mountView();
+
+            await openImportDialog(wrapper);
+
+            expect(wrapper.text()).toContain("Sélectionnez un fichier JSON");
+        });
+
+        it("shows a preview summary once a valid file is selected, before importing", async () => {
+            const payload = { shows: [{}, {}], playlists: [{}], favoriteActors: [], platforms: [1] };
+            settingsComposableMocks.readImportFile.mockResolvedValue(payload);
+            settingsComposableMocks.previewImportPayload.mockReturnValue({
+                shows: 2, seasons: 5, episodes: 20, playlists: 1, favoriteActors: 0, platforms: 1,
+            });
+            const wrapper = await mountView();
+            await openImportDialog(wrapper);
+
+            await selectFile(wrapper, new File(["{}"], "export.json", { type: "application/json" }));
+
+            expect(settingsComposableMocks.previewImportPayload).toHaveBeenCalledWith(payload);
+            expect(wrapper.text()).toContain("2 série(s)");
+            expect(wrapper.text()).toContain("5 saison(s)");
+            expect(wrapper.text()).toContain("20 épisode(s)");
+            expect(settingsComposableMocks.importData).not.toHaveBeenCalled();
+        });
+
+        it("ignores a stale read when a second file is selected before the first one resolves", async () => {
+            let resolveFirst!: (payload: unknown) => void;
+            const firstRead = new Promise((resolve) => { resolveFirst = resolve; });
+            const fileA = new File(["{}"], "a.json", { type: "application/json" });
+            const fileB = new File(["{}"], "b.json", { type: "application/json" });
+
+            settingsComposableMocks.readImportFile.mockImplementation((file: File) =>
+                file === fileA ? firstRead : Promise.resolve({ shows: [{}] })
+            );
+            settingsComposableMocks.previewImportPayload.mockImplementation(
+                (payload: { shows?: unknown[] }) => ({
+                    shows: payload.shows?.length ?? 0, seasons: 0, episodes: 0, playlists: 0, favoriteActors: 0, platforms: 0,
+                })
+            );
+            const wrapper = await mountView();
+            await openImportDialog(wrapper);
+
+            await selectFile(wrapper, fileA);
+            await selectFile(wrapper, fileB);
+            resolveFirst({ shows: [{}, {}, {}] });
+            await flushPromises();
+
+            expect(wrapper.text()).toContain("1 série(s)");
+            expect(wrapper.text()).not.toContain("3 série(s)");
+        });
+
+        it("keeps the import button disabled until the file has been parsed into a preview", async () => {
+            const wrapper = await mountView();
+            await openImportDialog(wrapper);
+
+            const importBtn = wrapper.findAllComponents({ name: "VBtn" }).find((btn) => btn.text() === "Importer");
+
+            expect(importBtn!.attributes("disabled")).toBeDefined();
+        });
+
+        it("shows the parse error and keeps import disabled for an invalid file", async () => {
+            settingsComposableMocks.readImportFile.mockRejectedValue(new Error("Fichier invalide"));
+            const wrapper = await mountView();
+            await openImportDialog(wrapper);
+
+            await selectFile(wrapper, new File(["not json"], "export.json", { type: "application/json" }));
+
+            expect(wrapper.text()).toContain("Fichier invalide");
+            const importBtn = wrapper.findAllComponents({ name: "VBtn" }).find((btn) => btn.text() === "Importer");
+            expect(importBtn!.attributes("disabled")).toBeDefined();
+        });
+
+        it("imports the parsed payload and shows a summary on success", async () => {
+            const payload = { shows: [{}], playlists: [], favoriteActors: [], platforms: [] };
+            settingsComposableMocks.readImportFile.mockResolvedValue(payload);
+            settingsComposableMocks.previewImportPayload.mockReturnValue({
+                shows: 1, seasons: 0, episodes: 0, playlists: 0, favoriteActors: 0, platforms: 0,
+            });
+            settingsComposableMocks.importData.mockResolvedValue({
+                shows: { imported: 2, errors: 0 }, playlists: { imported: 1, skipped: 0, errors: 0 },
+                favoriteActors: { imported: 0, errors: 0 }, platforms: { imported: 1, errors: 0 }, errors: [],
+            });
+            const wrapper = await mountView();
+            await openImportDialog(wrapper);
+            await selectFile(wrapper, new File(["{}"], "export.json", { type: "application/json" }));
+
+            const confirmBtn = wrapper.findAllComponents({ name: "VBtn" }).find((btn) => btn.text() === "Importer");
+            await confirmBtn!.trigger("click");
+            await flushPromises();
+
+            expect(settingsComposableMocks.importData).toHaveBeenCalledWith(payload);
+            expect(snackbarMocks.showSuccess).toHaveBeenCalledWith(expect.stringContaining("4"));
+        });
+
+        it("shows an error summary instead of a plain success when the import partially fails", async () => {
+            const payload = { shows: [{}], playlists: [], favoriteActors: [], platforms: [] };
+            settingsComposableMocks.readImportFile.mockResolvedValue(payload);
+            settingsComposableMocks.previewImportPayload.mockReturnValue({
+                shows: 1, seasons: 0, episodes: 0, playlists: 0, favoriteActors: 0, platforms: 0,
+            });
+            settingsComposableMocks.importData.mockResolvedValue({
+                shows: { imported: 1, errors: 1 }, playlists: { imported: 0, skipped: 0, errors: 0 },
+                favoriteActors: { imported: 0, errors: 0 }, platforms: { imported: 0, errors: 0 },
+                errors: ["Série \"X\" : Saison invalide"],
+            });
+            const wrapper = await mountView();
+            await openImportDialog(wrapper);
+            await selectFile(wrapper, new File(["{}"], "export.json", { type: "application/json" }));
+
+            const confirmBtn = wrapper.findAllComponents({ name: "VBtn" }).find((btn) => btn.text() === "Importer");
+            await confirmBtn!.trigger("click");
+            await flushPromises();
+
+            expect(snackbarMocks.showSuccess).not.toHaveBeenCalled();
+            expect(snackbarMocks.showError).toHaveBeenCalledWith(expect.stringContaining("Saison invalide"));
+        });
+
+        it("shows the server error and keeps the dialog open when the import fails", async () => {
+            const payload = { shows: [] };
+            settingsComposableMocks.readImportFile.mockResolvedValue(payload);
+            settingsComposableMocks.previewImportPayload.mockReturnValue({
+                shows: 0, seasons: 0, episodes: 0, playlists: 0, favoriteActors: 0, platforms: 0,
+            });
+            settingsComposableMocks.importData.mockRejectedValue(new Error("Requête invalide"));
+            const wrapper = await mountView();
+            await openImportDialog(wrapper);
+            await selectFile(wrapper, new File(["{}"], "export.json", { type: "application/json" }));
+
+            const confirmBtn = wrapper.findAllComponents({ name: "VBtn" }).find((btn) => btn.text() === "Importer");
+            await confirmBtn!.trigger("click");
+            await flushPromises();
+
+            expect(wrapper.text()).toContain("Requête invalide");
+        });
+
+        it("closes the dialog without importing when cancelled", async () => {
+            const wrapper = await mountView();
+            await openImportDialog(wrapper);
+
+            const cancelBtn = wrapper.findAllComponents({ name: "VBtn" }).find((btn) => btn.text() === "Annuler");
+            await cancelBtn!.trigger("click");
+
+            expect(settingsComposableMocks.importData).not.toHaveBeenCalled();
+        });
     });
 
     describe("account deletion", () => {

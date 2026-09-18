@@ -21,8 +21,8 @@
                     <v-text-field v-model="confirmPassword" counter label="Confirmer le mot de passe" required
                         :rules="passwordRules" type="password" />
 
-                    <v-btn block class="mt-2 mb-4" color="primary" rounded="pill" :disabled="!valid" :text="TITLE"
-                        type="submit" />
+                    <v-btn block class="mt-2 mb-4" color="primary" rounded="pill" :disabled="!valid"
+                        :loading="loading" :text="TITLE" type="submit" />
 
                     <div class="text-center">
                         <router-link text="Déjà membre ? Se connecter" to="/login" />
@@ -47,9 +47,16 @@ const email = ref("");
 const password = ref("");
 const confirmPassword = ref("");
 const username = ref("");
+const loading = ref(false);
 
 const createAccount = async () => {
-    await register(email.value, password.value, confirmPassword.value, username.value);
+    loading.value = true;
+
+    try {
+        await register(email.value, password.value, confirmPassword.value, username.value);
+    } finally {
+        loading.value = false;
+    }
 }
 </script>
 

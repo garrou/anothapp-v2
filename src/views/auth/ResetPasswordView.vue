@@ -6,26 +6,22 @@
             <v-card class="pa-8" width="100%" max-width="420">
                 <div class="text-center mb-6">
                     <h1 class="text-h5 font-weight-bold">{{ TITLE }}</h1>
-                    <p class="text-body-2 text-medium-emphasis mt-1">Créez votre compte pour commencer à suivre vos
-                        séries.</p>
+                    <p class="text-body-2 text-medium-emphasis mt-1">Choisissez votre nouveau mot de passe.</p>
                 </div>
 
-                <v-form v-model="valid" @submit="createAccount" @submit.prevent>
-                    <v-text-field v-model="username" counter label="Username" required :rules="nameRules" />
-
-                    <v-text-field v-model="email" label="Email" required :rules="emailRules" />
-
-                    <v-text-field v-model="password" counter label="Mot de passe" required :rules="passwordRules"
-                        type="password" />
+                <v-form v-model="valid" @submit="submit" @submit.prevent>
+                    <v-text-field v-model="password" counter label="Nouveau mot de passe" required
+                        :rules="passwordRules" type="password" :disabled="loading" />
 
                     <v-text-field v-model="confirmPassword" counter label="Confirmer le mot de passe" required
-                        :rules="[...passwordRules, passwordsMatchRule(password)]" type="password" />
+                        :rules="[...passwordRules, passwordsMatchRule(password)]" :error-messages="error"
+                        :disabled="loading" type="password" />
 
                     <v-btn block class="mt-2 mb-4" color="primary" rounded="pill" :disabled="!valid || loading"
                         :loading="loading" :text="TITLE" type="submit" />
 
                     <div class="text-center">
-                        <router-link text="Déjà membre ? Se connecter" to="/login" />
+                        <router-link text="Retour à la connexion" to="/login" />
                     </div>
                 </v-form>
             </v-card>
@@ -35,29 +31,31 @@
 
 <script lang="ts" setup>
 import { useAuth } from "@/composables/auth";
-import { emailRules, nameRules, passwordRules, passwordsMatchRule } from "@/utils/validator";
+import { passwordRules, passwordsMatchRule } from "@/utils/validator";
 import { ref } from "vue";
 
-const TITLE = "S'inscrire";
+const TITLE = "Réinitialiser le mot de passe";
 
-const { register } = useAuth();
+const props = defineProps<{ token: string }>();
+
+const { resetPassword } = useAuth();
 
 const valid = ref(false);
-const email = ref("");
 const password = ref("");
 const confirmPassword = ref("");
-const username = ref("");
 const loading = ref(false);
+const error = ref("");
 
-const createAccount = async () => {
-    // v-form's @submit fires immediately, before its own async validation resolves - pressing
-    // Enter would otherwise bypass every :rules check (mismatched passwords included) that the
-    // disabled button only enforces for a mouse click
+const submit = async () => {
+    // see RegisterView.vue's createAccount for why this guard is needed
     if (!valid.value) return;
     loading.value = true;
+    error.value = "";
 
     try {
-        await register(email.value, password.value, confirmPassword.value, username.value);
+        await resetPassword(props.token, password.value, confirmPassword.value);
+    } catch (e) {
+        error.value = (e as Error).message;
     } finally {
         loading.value = false;
     }

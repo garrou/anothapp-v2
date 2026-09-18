@@ -64,6 +64,42 @@ describe("router guards", () => {
         expect(router.currentRoute.value.path).toBe("/login");
     });
 
+    it("keeps /verify-email reachable for a logged-in user, unlike other auth pages", async () => {
+        const router = await importRouter();
+        authComposableMocks.checkAuth.mockResolvedValue(true);
+
+        await router.push("/verify-email/some-token");
+
+        expect(router.currentRoute.value.path).toBe("/verify-email/some-token");
+    });
+
+    it("also keeps /verify-email reachable for a logged-out user", async () => {
+        const router = await importRouter();
+        authComposableMocks.checkAuth.mockResolvedValue(false);
+
+        await router.push("/verify-email/some-token");
+
+        expect(router.currentRoute.value.path).toBe("/verify-email/some-token");
+    });
+
+    it("keeps /forgot-password reachable for a logged-in user (e.g. a stale session in another tab)", async () => {
+        const router = await importRouter();
+        authComposableMocks.checkAuth.mockResolvedValue(true);
+
+        await router.push("/forgot-password");
+
+        expect(router.currentRoute.value.path).toBe("/forgot-password");
+    });
+
+    it("keeps /reset-password reachable for a logged-in user", async () => {
+        const router = await importRouter();
+        authComposableMocks.checkAuth.mockResolvedValue(true);
+
+        await router.push("/reset-password/some-token");
+
+        expect(router.currentRoute.value.path).toBe("/reset-password/some-token");
+    });
+
     it("saves the previous page's scroll position on navigation", async () => {
         const router = await importRouter();
         authComposableMocks.checkAuth.mockResolvedValue(true);

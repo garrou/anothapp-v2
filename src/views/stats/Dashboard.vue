@@ -182,8 +182,6 @@ const props = defineProps({
     preloadedStat: { type: Object as PropType<Promise<GlobalStat>>, default: undefined }
 });
 
-// A friend's achievements get their own top-level tab (next to Playlists, unlocked-only);
-// your own dashboard has no such tab, so its full badge grid lives here instead.
 const DASHBOARD_TABS = computed(() => [
     { value: 1, label: "En cours" },
     { value: 2, label: "Tendances" },
@@ -253,12 +251,6 @@ watch(modal, (value) => {
     }
 });
 
-// Reads live off the route (not just at setup) - clicking an achievement notification
-// while already on this route navigates to the same route record, which Vue Router
-// reuses rather than remounting, so a one-shot ref() read here would miss it.
-// On a friend's profile the achievements grid lives in its own top-level section
-// (SECTION_ACHIEVEMENTS), not the inner Stats sub-tab (TAB_ACHIEVEMENTS) - only your
-// own dashboard has no such section and uses the sub-tab instead.
 watch(() => route.query.tab, (value) => {
     if (value !== "achievements") return;
 

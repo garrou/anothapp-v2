@@ -15,10 +15,26 @@ const register = (email: string, password: string, confirm: string, username: st
 const cancelDeletion = (cancellationToken: string): Promise<Response> =>
     httpClient.post(`${PREFIX}/cancel-deletion`, { cancellationToken });
 
+const verifyEmail = (token: string): Promise<Response> =>
+    httpClient.post(`${PREFIX}/verify-email`, { token });
+
+const resendVerification = (email: string): Promise<Response> =>
+    httpClient.post(`${PREFIX}/resend-verification`, { email });
+
+const forgotPassword = (email: string): Promise<Response> =>
+    httpClient.post(`${PREFIX}/forgot-password`, { email });
+
+const resetPassword = (token: string, password: string, confirm: string): Promise<Response> =>
+    httpClient.post(`${PREFIX}/reset-password`, { token, password, confirm });
+
 export default {
     checkAuth,
     login,
     logout,
     register,
     cancelDeletion,
+    verifyEmail,
+    resendVerification,
+    forgotPassword,
+    resetPassword,
 }

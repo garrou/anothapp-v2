@@ -9,7 +9,7 @@
                 type="password" />
 
             <v-text-field v-model="confirmPassword" counter label="Confirmer le mot de passe" required
-                :rules="passwordRules" type="password" />
+                :rules="[...passwordRules, passwordsMatchRule(password)]" type="password" />
 
             <v-btn block class="my-5" color="primary" rounded="pill" :disabled="!valid" text="Sauvegarder"
                 type="submit" />
@@ -19,7 +19,7 @@
 
 <script lang="ts" setup>
 import { useUser } from "@/composables/user";
-import { passwordRules } from "@/utils/validator";
+import { passwordRules, passwordsMatchRule } from "@/utils/validator";
 import { ref } from "vue";
 
 const emit = defineEmits<{
@@ -34,6 +34,8 @@ const password = ref("");
 const confirmPassword = ref("");
 
 const updatePassword = async () => {
+    // see RegisterView.vue's createAccount for why this guard is needed
+    if (!valid.value) return;
     await changePassword(current.value, password.value, confirmPassword.value);
     emit("refresh");
 }

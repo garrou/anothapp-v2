@@ -45,8 +45,8 @@ export function useUser() {
         showSuccess("Mot de passe modifié");
     }
 
-    const changeEmail = async (oldEmail: string, newEmail: string): Promise<void> => {
-        const resp = await userService.updateLogin(oldEmail, newEmail);
+    const changeEmail = async (oldEmail: string, newEmail: string, currentPassword: string): Promise<void> => {
+        const resp = await userService.updateLogin(oldEmail, newEmail, currentPassword);
 
         if (isError(resp.status)) {
             const data = await resp.json();

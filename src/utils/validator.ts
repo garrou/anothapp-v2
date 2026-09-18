@@ -32,3 +32,14 @@ export const passwordRules = [
         return `Le mot de passe doit être valide (${MIN_PASSWORD} - ${MAX_PASSWORD})`;
     }
 ];
+
+/**
+ * A rule for a "confirm password" field, checked against the original password's current value.
+ * Pass it the ref's unwrapped value from the template (e.g. `passwordsMatchRule(password)` where
+ * `password` is a ref) - the template re-evaluates the `:rules` array on every re-render, so this
+ * always closes over the latest value even though the rule function itself is rebuilt each time.
+ */
+export const passwordsMatchRule = (password: string) => (value?: string) => {
+    if (value === password) return true;
+    return "Les mots de passe ne correspondent pas";
+};

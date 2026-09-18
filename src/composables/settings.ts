@@ -62,8 +62,6 @@ export function useSettings() {
         const resp = await settingService.importData(payload);
 
         if (!resp.ok) {
-            // A large payload can be rejected upstream (proxy/gateway) with a non-JSON body
-            // before it ever reaches our own JSON error responses - fall back rather than throw.
             const message = await resp.json().then((body) => body.message).catch(() => undefined);
             throw new Error(message ?? "Erreur lors de l'import des données");
         }

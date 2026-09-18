@@ -20,6 +20,7 @@ describe("ForgotPasswordView", () => {
         const wrapper = mount(ForgotPasswordView, { global: { plugins: [vuetify] } });
 
         await wrapper.find("input").setValue("dexter@example.com");
+        await flushPromises();
         await wrapper.find("form").trigger("submit");
 
         expect(authComposableMocks.forgotPassword).toHaveBeenCalledWith("dexter@example.com");
@@ -30,9 +31,20 @@ describe("ForgotPasswordView", () => {
         const wrapper = mount(ForgotPasswordView, { global: { plugins: [vuetify] } });
 
         await wrapper.find("input").setValue("unknown@example.com");
+        await flushPromises();
         await wrapper.find("form").trigger("submit");
         await flushPromises();
 
         expect(wrapper.text()).toContain("Aucun compte associé à cet email");
+    });
+
+    it("blocks submission when the email is invalid", async () => {
+        const wrapper = mount(ForgotPasswordView, { global: { plugins: [vuetify] } });
+
+        await wrapper.find("input").setValue("not-an-email");
+        await flushPromises();
+        await wrapper.find("form").trigger("submit");
+
+        expect(authComposableMocks.forgotPassword).not.toHaveBeenCalled();
     });
 });

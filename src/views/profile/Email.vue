@@ -32,6 +32,7 @@ const email = ref("");
 const password = ref("");
 
 const updateEmail = async () => {
+    if (!valid.value) return;
     await changeEmail(current.value, email.value, password.value);
     emit("refresh");
 }

@@ -42,6 +42,7 @@ const loading = ref(false);
 const error = ref("");
 
 const submit = async () => {
+    if (!valid.value) return;
     loading.value = true;
     error.value = "";
 

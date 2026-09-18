@@ -113,8 +113,9 @@ describe("useUser.changeEmail", () => {
         userServiceMocks.updateLogin.mockResolvedValue(jsonResponse(200, null));
         userServiceMocks.getProfile.mockResolvedValue(jsonResponse(200, profile));
 
-        await useUser().changeEmail("old@example.com", "new@example.com");
+        await useUser().changeEmail("old@example.com", "new@example.com", "s3cret-pass");
 
+        expect(userServiceMocks.updateLogin).toHaveBeenCalledWith("old@example.com", "new@example.com", "s3cret-pass");
         expect(useUserStore().profile?.email).toBe("new@example.com");
         expect(snackbarMocks.showSuccess).toHaveBeenCalledWith("Email modifié");
     });
@@ -122,7 +123,8 @@ describe("useUser.changeEmail", () => {
     it("throws on failure without showing a success toast", async () => {
         userServiceMocks.updateLogin.mockResolvedValue(jsonResponse(400, { message: "Requête invalide" }));
 
-        await expect(useUser().changeEmail("old@example.com", "new@example.com")).rejects.toThrow("Requête invalide");
+        await expect(useUser().changeEmail("old@example.com", "new@example.com", "s3cret-pass"))
+            .rejects.toThrow("Requête invalide");
     });
 });
 

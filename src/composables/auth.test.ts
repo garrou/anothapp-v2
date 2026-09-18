@@ -47,8 +47,6 @@ const jsonResponse = (status: number, body: unknown) => ({
     json: async () => body,
 });
 
-// auth.ts keeps its caching/dedup state (pendingCheckAuth, lastCheckAuth, authEpoch)
-// at module scope, so each test needs a fresh module instance.
 const freshUseAuth = async () => {
     vi.resetModules();
     const mod = await import("./auth");
@@ -248,17 +246,32 @@ describe("useAuth.register", () => {
 });
 
 describe("useAuth.verifyEmail", () => {
-    it("resolves on success", async () => {
+    it("redirects to /login when logged out, e.g. right after registering", async () => {
         authServiceMocks.verifyEmail.mockResolvedValue(jsonResponse(200, { message: "Email confirmé" }));
+        authServiceMocks.checkAuth.mockResolvedValue({ status: 401 });
 
-        await expect((await freshUseAuth()).verifyEmail("some-token")).resolves.toBeUndefined();
+        await (await freshUseAuth()).verifyEmail("some-token");
+
         expect(authServiceMocks.verifyEmail).toHaveBeenCalledWith("some-token");
+        expect(snackbarMocks.showSuccess).toHaveBeenCalledWith("Email confirmé, vous pouvez vous connecter");
+        expect(routerMocks.push).toHaveBeenCalledWith("/login");
     });
 
-    it("throws the server's message on failure", async () => {
+    it("redirects to /series when already logged in, e.g. confirming a changed email", async () => {
+        authServiceMocks.verifyEmail.mockResolvedValue(jsonResponse(200, { message: "Email confirmé" }));
+        authServiceMocks.checkAuth.mockResolvedValue({ status: 200 });
+
+        await (await freshUseAuth()).verifyEmail("some-token");
+
+        expect(snackbarMocks.showSuccess).toHaveBeenCalledWith("Email confirmé");
+        expect(routerMocks.push).toHaveBeenCalledWith("/series");
+    });
+
+    it("throws the server's message on failure, without redirecting", async () => {
         authServiceMocks.verifyEmail.mockResolvedValue(jsonResponse(401, { message: "Session invalide" }));
 
         await expect((await freshUseAuth()).verifyEmail("bad-token")).rejects.toThrow("Session invalide");
+        expect(routerMocks.push).not.toHaveBeenCalled();
     });
 });
 

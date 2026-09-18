@@ -46,9 +46,6 @@ defineEmits<{
 
 const reached = computed(() => props.achievement.league !== null);
 
-// Colored by the league actually reached once there is one, so the caption's league
-// name always matches its own color; only an unreached badge borrows the color of
-// the league its progress ring is climbing toward.
 const tierColor = computed(() =>
     LEAGUE_COLORS[props.achievement.league ?? props.achievement.nextLeague ?? 1]);
 

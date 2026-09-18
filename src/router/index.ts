@@ -26,8 +26,6 @@ const router = createRouter({
       name: "verify-email",
       component: () => import("@/views/auth/VerifyEmailView.vue"),
       props: true,
-      // reachable logged out (fresh registration - login is blocked until verified anyway) and
-      // logged in (confirming a new address after an email change), unlike the other auth pages
       meta: {
         allowAuthenticated: true
       }

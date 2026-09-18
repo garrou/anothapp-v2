@@ -9,12 +9,6 @@
                     <p class="text-body-2 text-medium-emphasis">Confirmation de votre email en cours…</p>
                 </template>
 
-                <template v-else-if="success">
-                    <h1 class="text-h5 font-weight-bold mb-2">Email confirmé</h1>
-                    <p class="text-body-2 text-medium-emphasis mb-4">Vous pouvez désormais vous connecter.</p>
-                    <v-btn block color="primary" rounded="pill" text="Se connecter" to="/login" />
-                </template>
-
                 <template v-else>
                     <h1 class="text-h5 font-weight-bold mb-2">Échec de la confirmation</h1>
                     <p class="text-body-2 text-medium-emphasis mb-4">{{ error }}</p>
@@ -37,18 +31,17 @@ const props = defineProps<{ token: string }>();
 const { verifyEmail, resendVerification } = useAuth();
 
 const loading = ref(true);
-const success = ref(false);
 const error = ref("");
 const email = ref("");
 const resendLoading = ref(false);
 
 onBeforeMount(async () => {
     try {
+        // navigates away on success (to /login or /series - see useAuth.verifyEmail), so this
+        // component never needs to render a success state itself
         await verifyEmail(props.token);
-        success.value = true;
     } catch (e) {
         error.value = (e as Error).message;
-    } finally {
         loading.value = false;
     }
 });

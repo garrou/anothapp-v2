@@ -146,8 +146,6 @@ watch(importFile, async (file) => {
     }
     try {
         const payload = await settings.readImportFile(file);
-        // A quicker second file selection can resolve before this one - ignore a stale result
-        // so the preview (and what "Importer" would send) always matches the visible selection.
         if (requestId !== importFileRequestId) {
             return;
         }

@@ -117,6 +117,16 @@ export function useAuth() {
 
         if (isError(resp.status))
             throw new Error(data.message);
+
+        const isLoggedIn = await checkAuth();
+
+        if (isLoggedIn) {
+            showSuccess("Email confirmé");
+            router.push("/series");
+        } else {
+            showSuccess("Email confirmé, vous pouvez vous connecter");
+            router.push("/login");
+        }
     }
 
     const resendVerification = async (email: string): Promise<void> => {

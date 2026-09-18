@@ -16,13 +16,13 @@ beforeEach(() => {
 });
 
 describe("VerifyEmailView", () => {
-    it("verifies the token from the route on mount and shows a success message", async () => {
+    it("verifies the token from the route on mount - the redirect and success toast are useAuth.verifyEmail's job", async () => {
         authComposableMocks.verifyEmail.mockResolvedValue(undefined);
         const wrapper = mount(VerifyEmailView, { props: { token: "some-token" }, global: { plugins: [vuetify] } });
         await flushPromises();
 
         expect(authComposableMocks.verifyEmail).toHaveBeenCalledWith("some-token");
-        expect(wrapper.text()).toContain("Email confirmé");
+        expect(wrapper.text()).not.toContain("Échec de la confirmation");
     });
 
     it("shows the error and a resend option when the token is invalid or expired", async () => {

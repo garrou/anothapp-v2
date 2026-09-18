@@ -10,8 +10,8 @@ const getProfile = (): Promise<Response> => httpClient.get(`${PREFIX}/profile`);
 const updateImage = (image: string): Promise<Response> =>
     httpClient.patch(`${PREFIX}/me`, { image });
 
-const updateLogin = (email: string, newEmail: string): Promise<Response> =>
-    httpClient.patch(`${PREFIX}/me`, { email, newEmail });
+const updateLogin = (email: string, newEmail: string, currentPassword: string): Promise<Response> =>
+    httpClient.patch(`${PREFIX}/me`, { email, newEmail, currentPassword });
 
 const updatePassword = (currentPassword: string, newPassword: string, confirmPassword: string): Promise<Response> =>
     httpClient.patch(`${PREFIX}/me`, { currentPassword, newPassword, confirmPassword });

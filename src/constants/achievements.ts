@@ -18,7 +18,6 @@ export const LEAGUE_COLORS: Record<number, string> = {
     7: "#F59E0B",
 };
 
-// sub_tier: 3 (entry of the league) down to 1 (top of the league)
 export const SUB_TIER_ROMAN: Record<number, string> = {
     3: "III",
     2: "II",
@@ -27,7 +26,6 @@ export const SUB_TIER_ROMAN: Record<number, string> = {
 
 export const TOP_LEAGUE = 7;
 
-// Inner markup for a 24x24 outline icon (stroke=currentColor), one per achievement code.
 export const ACHIEVEMENT_ICONS: Record<string, string> = {
     streak: '<path d="M12 3c1.2 2.4-1 3.8-1.6 5.8-.4 1.3.1 2.6 1.3 2.9 1.4.4 2.6-.7 2.3-2.1 1.3 1 2 2.6 2 4.4a5 5 0 11-9.6-1.9C6 10.2 8.6 8.4 9.4 6 9.8 4.7 10.8 3.6 12 3z"/>',
     watch_time: '<circle cx="12" cy="13" r="7.5"/><path d="M12 13V9M9 2h6M12 2v2"/>',

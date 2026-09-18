@@ -25,11 +25,14 @@
                             text="Renvoyer l'email de confirmation" @click="resend" />
                     </template>
 
-                    <div class="text-center mb-2">
-                        <router-link text="Mot de passe oublié ?" to="/forgot-password" />
-                    </div>
-                    <div class="text-center">
-                        <router-link text="Pas de compte ? S'inscrire" to="/register" />
+                    <div class="d-flex flex-column ma-3 ga-2">
+                        <div class="text-center">
+                            <router-link text="Pas de compte ? S'inscrire" to="/register" />
+                        </div>
+
+                        <div class="text-center">
+                            <router-link text="Mot de passe oublié ?" to="/forgot-password" />
+                        </div>
                     </div>
                 </v-form>
             </v-card>

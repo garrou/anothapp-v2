@@ -37,12 +37,8 @@ defineEmits<{
 
 const unit = computed(() => props.achievement ? ACHIEVEMENT_UNITS[props.achievement.code] : "");
 
-// watch_time is the only value that isn't already a whole number (minutes/60 on the backend).
 const formattedValue = computed(() => props.achievement ? Math.round(props.achievement.value) : 0);
 
-// A tier is reached once its threshold is crossed by the current value - true for every rung
-// below (and including) the one actually unlocked, since evaluate() always jumps straight to
-// the highest tier a value qualifies for rather than unlocking them one by one.
 const isReached = (tier: AchievementTier): boolean =>
     !!props.achievement && props.achievement.value >= tier.threshold;
 

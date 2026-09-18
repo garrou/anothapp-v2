@@ -129,8 +129,8 @@ export function useAuth() {
         }
     }
 
-    const resendVerification = async (email: string): Promise<void> => {
-        const resp = await authService.resendVerification(email);
+    const resendVerification = async (identifier: string): Promise<void> => {
+        const resp = await authService.resendVerification(identifier);
         const data = await resp.json();
 
         if (isError(resp.status))

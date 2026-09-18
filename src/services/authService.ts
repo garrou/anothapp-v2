@@ -18,8 +18,8 @@ const cancelDeletion = (cancellationToken: string): Promise<Response> =>
 const verifyEmail = (token: string): Promise<Response> =>
     httpClient.post(`${PREFIX}/verify-email`, { token });
 
-const resendVerification = (email: string): Promise<Response> =>
-    httpClient.post(`${PREFIX}/resend-verification`, { email });
+const resendVerification = (identifier: string): Promise<Response> =>
+    httpClient.post(`${PREFIX}/resend-verification`, { identifier });
 
 const forgotPassword = (email: string): Promise<Response> =>
     httpClient.post(`${PREFIX}/forgot-password`, { email });

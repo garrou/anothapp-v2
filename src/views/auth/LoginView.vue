@@ -18,12 +18,8 @@
                         type="submit" />
 
                     <template v-if="showResendVerification">
-                        <p class="text-caption text-medium-emphasis text-center mb-2">
-                            Si votre compte n'est pas encore confirmé, indiquez votre email :
-                        </p>
-                        <v-text-field v-model="resendEmail" label="Email" :disabled="resendLoading" />
-                        <v-btn block class="mb-4" variant="tonal" :disabled="!resendEmail || resendLoading"
-                            :loading="resendLoading" text="Renvoyer l'email de confirmation" @click="resend" />
+                        <v-btn block class="mb-4" variant="tonal" :disabled="resendLoading" :loading="resendLoading"
+                            text="Renvoyer l'email de confirmation" @click="resend" />
                     </template>
 
                     <div class="d-flex flex-column ma-3 ga-2">
@@ -59,10 +55,10 @@
 </template>
 <script lang="ts" setup>
 import { useAuth } from "@/composables/auth";
-import { EMAIL_PATTERN } from "@/constants/auth";
 import { ref } from "vue";
 
 const TITLE = "Se connecter";
+const EMAIL_NOT_VERIFIED = "Veuillez confirmer votre adresse email avant de vous connecter";
 
 const { login, cancelDeletion, resendVerification } = useAuth();
 
@@ -73,7 +69,6 @@ const pendingDeletion = ref<{ cancellationToken: string } | null>(null);
 const cancelLoading = ref(false);
 const cancelError = ref("");
 const showResendVerification = ref(false);
-const resendEmail = ref("");
 const resendLoading = ref(false);
 
 const authenticate = async () => {
@@ -85,12 +80,9 @@ const authenticate = async () => {
             pendingDeletion.value = { cancellationToken: result.cancellationToken };
         }
     } catch (e) {
-        // the backend never reveals *why* a login failed beyond "wrong credentials" - showing
-        // the resend option unconditionally avoids leaking whether the account exists or is
-        // unverified via a distinct error message. The identifier is only used to prefill the
-        // email field when it looks like one (the user may have logged in with a username).
-        showResendVerification.value = true;
-        resendEmail.value = EMAIL_PATTERN.test(identifier.value) ? identifier.value : "";
+        if ((e as Error).message === EMAIL_NOT_VERIFIED) {
+            showResendVerification.value = true;
+        }
         throw e;
     }
 }
@@ -99,7 +91,9 @@ const resend = async () => {
     resendLoading.value = true;
 
     try {
-        await resendVerification(resendEmail.value);
+        // resendVerification accepts a username or an email, exactly like login - the account's
+        // real email is resolved server-side, so whatever the user just typed to log in works
+        await resendVerification(identifier.value);
     } finally {
         resendLoading.value = false;
     }

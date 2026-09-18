@@ -74,16 +74,12 @@ describe("LoginView", () => {
         expect(wrapper.text()).toContain("Session expirée");
     });
 
-    it("always offers to resend the confirmation email after a failed login, prefilled when the identifier looks like an email", async () => {
-        // the backend deliberately never distinguishes "wrong password" from "correct password,
-        // unverified account" (that distinction would let login be used to confirm a guessed
-        // password), so the UI offers the resend option after any failure rather than trying to
-        // detect the specific reason from the error message
-        authComposableMocks.login.mockRejectedValue(new Error("Identifiant ou mot de passe incorrect"));
+    it("offers to resend the confirmation email when login fails because it's unverified (password was correct)", async () => {
+        authComposableMocks.login.mockRejectedValue(new Error("Veuillez confirmer votre adresse email avant de vous connecter"));
         const wrapper = mount(LoginView, { global: { plugins: [vuetify] } });
         wrapper.vm.$.appContext.app.config.errorHandler = () => {};
         const inputs = wrapper.findAll("input");
-        await inputs[0].setValue("dexter@example.com");
+        await inputs[0].setValue("dexter");
         await inputs[1].setValue("s3cret-pass");
         await wrapper.find("form").trigger("submit");
         await flushPromises();
@@ -94,10 +90,12 @@ describe("LoginView", () => {
 
         await resendBtn!.trigger("click");
 
-        expect(authComposableMocks.resendVerification).toHaveBeenCalledWith("dexter@example.com");
+        // resendVerification accepts a username or an email, like login itself, so whatever was
+        // typed to log in is reused directly - no second field needed
+        expect(authComposableMocks.resendVerification).toHaveBeenCalledWith("dexter");
     });
 
-    it("leaves the resend email blank when the identifier used to log in wasn't an email", async () => {
+    it("does not show the resend link for a wrong password (never confirmed correct)", async () => {
         authComposableMocks.login.mockRejectedValue(new Error("Identifiant ou mot de passe incorrect"));
         const wrapper = mount(LoginView, { global: { plugins: [vuetify] } });
         wrapper.vm.$.appContext.app.config.errorHandler = () => {};
@@ -107,12 +105,9 @@ describe("LoginView", () => {
         await wrapper.find("form").trigger("submit");
         await flushPromises();
 
-        const resendInputs = wrapper.findAll("input");
-        // 3rd input: identifier, password, then the resend section's own email field
-        expect(resendInputs[2].element.value).toBe("");
         const resendBtn = wrapper.findAllComponents({ name: "VBtn" })
             .find((btn) => btn.text() === "Renvoyer l'email de confirmation");
-        expect(resendBtn!.props("disabled")).toBe(true);
+        expect(resendBtn).toBeUndefined();
     });
 
     it("returns to the login form when the user declines to cancel the deletion", async () => {

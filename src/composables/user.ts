@@ -45,16 +45,17 @@ export function useUser() {
         showSuccess("Mot de passe modifié");
     }
 
-    const changeEmail = async (oldEmail: string, newEmail: string, currentPassword: string): Promise<void> => {
-        const resp = await userService.updateLogin(oldEmail, newEmail, currentPassword);
+    // the new address isn't active yet - it only becomes `email` once its confirmation link is
+    // used (see AuthService.verifyEmail) - so unlike the other change* methods here, this must
+    // NOT optimistically patch the store with it
+    const changeEmail = async (newEmail: string, confirmEmail: string, currentPassword: string): Promise<void> => {
+        const resp = await userService.updateLogin(newEmail, confirmEmail, currentPassword);
 
         if (isError(resp.status)) {
             const data = await resp.json();
             throw new Error(data.message);
         }
-        await ensureProfileLoaded();
-        userStore.patch({ email: newEmail });
-        showSuccess("Email modifié");
+        showSuccess("Vérifiez votre nouvelle adresse email pour confirmer le changement");
     }
 
     const updateEpisodeTracking = async (enabled: boolean): Promise<void> => {

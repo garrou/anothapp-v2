@@ -3,11 +3,11 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 const authServiceMocks = vi.hoisted(() => ({
     checkAuth: vi.fn(),
     login: vi.fn(),
+    confirmLogin: vi.fn(),
     logout: vi.fn(),
     register: vi.fn(),
     cancelDeletion: vi.fn(),
     verifyEmail: vi.fn(),
-    resendVerification: vi.fn(),
     forgotPassword: vi.fn(),
     resetPassword: vi.fn(),
 }));
@@ -128,12 +128,47 @@ describe("useAuth.checkAuth", () => {
 });
 
 describe("useAuth.login", () => {
+    it("returns the pending-approval info without opening a session or navigating", async () => {
+        authServiceMocks.login.mockResolvedValue(
+            jsonResponse(200, { pendingApproval: true, approvalToken: "approval-abc" })
+        );
+
+        const result = await (await freshUseAuth()).login("garrou@example.com", "password");
+
+        expect(result).toEqual({ pendingApproval: true, approvalToken: "approval-abc" });
+        expect(userStoreSetMock).not.toHaveBeenCalled();
+        expect(routerMocks.replace).not.toHaveBeenCalled();
+    });
+
+    it("throws the server's message on failure without touching stores or navigating", async () => {
+        authServiceMocks.login.mockResolvedValue(jsonResponse(400, { message: "Identifiants invalides" }));
+
+        await expect((await freshUseAuth()).login("garrou@example.com", "wrong")).rejects.toThrow("Identifiants invalides");
+        expect(userStoreSetMock).not.toHaveBeenCalled();
+        expect(routerMocks.replace).not.toHaveBeenCalled();
+    });
+
+    it("returns the pending-deletion info instead of a pending-approval response when the account is scheduled for deletion", async () => {
+        authServiceMocks.login.mockResolvedValue(
+            jsonResponse(200, { pendingDeletion: true, cancellationToken: "token-abc" })
+        );
+
+        const result = await (await freshUseAuth()).login("garrou@example.com", "password");
+
+        expect(result).toEqual({ pendingDeletion: true, cancellationToken: "token-abc" });
+        expect(userStoreSetMock).not.toHaveBeenCalled();
+        expect(routerMocks.replace).not.toHaveBeenCalled();
+    });
+});
+
+describe("useAuth.confirmLogin", () => {
     it("stores the user, invalidates per-user caches, resets stores, and redirects on success", async () => {
         const profile = { id: "user-1", username: "garrou" };
-        authServiceMocks.login.mockResolvedValue(jsonResponse(200, profile));
+        authServiceMocks.confirmLogin.mockResolvedValue(jsonResponse(200, profile));
 
-        await (await freshUseAuth()).login("garrou@example.com", "password");
+        await (await freshUseAuth()).confirmLogin("approval-abc", "123456");
 
+        expect(authServiceMocks.confirmLogin).toHaveBeenCalledWith("approval-abc", "123456");
         expect(userStoreSetMock).toHaveBeenCalledWith(profile);
         expect(storeResetMocks.userSeries).toHaveBeenCalled();
         expect(storeResetMocks.userList).toHaveBeenCalled();
@@ -145,34 +180,22 @@ describe("useAuth.login", () => {
     });
 
     it("throws the server's message on failure without touching stores or navigating", async () => {
-        authServiceMocks.login.mockResolvedValue(jsonResponse(400, { message: "Identifiants invalides" }));
+        authServiceMocks.confirmLogin.mockResolvedValue(jsonResponse(401, { message: "Session invalide" }));
 
-        await expect((await freshUseAuth()).login("garrou@example.com", "wrong")).rejects.toThrow("Identifiants invalides");
+        await expect((await freshUseAuth()).confirmLogin("approval-abc", "000000")).rejects.toThrow("Session invalide");
         expect(userStoreSetMock).not.toHaveBeenCalled();
         expect(routerMocks.replace).not.toHaveBeenCalled();
     });
 
-    it("makes checkAuth return true immediately after login, without a network call", async () => {
-        authServiceMocks.login.mockResolvedValue(jsonResponse(200, { id: "user-1" }));
+    it("makes checkAuth return true immediately after confirmation, without a network call", async () => {
+        authServiceMocks.confirmLogin.mockResolvedValue(jsonResponse(200, { id: "user-1" }));
         const auth = await freshUseAuth();
 
-        await auth.login("garrou@example.com", "password");
+        await auth.confirmLogin("approval-abc", "123456");
         const result = await auth.checkAuth();
 
         expect(result).toBe(true);
         expect(authServiceMocks.checkAuth).not.toHaveBeenCalled();
-    });
-
-    it("returns the pending-deletion info instead of opening a session when the account is scheduled for deletion", async () => {
-        authServiceMocks.login.mockResolvedValue(
-            jsonResponse(200, { pendingDeletion: true, cancellationToken: "token-abc" })
-        );
-
-        const result = await (await freshUseAuth()).login("garrou@example.com", "password");
-
-        expect(result).toEqual({ pendingDeletion: true, cancellationToken: "token-abc" });
-        expect(userStoreSetMock).not.toHaveBeenCalled();
-        expect(routerMocks.replace).not.toHaveBeenCalled();
     });
 });
 
@@ -231,7 +254,7 @@ describe("useAuth.register", () => {
 
         await (await freshUseAuth()).register("garrou@example.com", "password", "password", "garrou");
 
-        expect(snackbarMocks.showSuccess).toHaveBeenCalledWith("Compte créé, vérifiez vos emails pour confirmer votre adresse");
+        expect(snackbarMocks.showSuccess).toHaveBeenCalledWith("Compte créé, connectez-vous pour confirmer votre email");
         expect(routerMocks.push).toHaveBeenCalledWith("/login");
     });
 
@@ -272,23 +295,6 @@ describe("useAuth.verifyEmail", () => {
 
         await expect((await freshUseAuth()).verifyEmail("bad-token")).rejects.toThrow("Session invalide");
         expect(routerMocks.push).not.toHaveBeenCalled();
-    });
-});
-
-describe("useAuth.resendVerification", () => {
-    it("shows a success toast", async () => {
-        authServiceMocks.resendVerification.mockResolvedValue(jsonResponse(200, { message: "ok" }));
-
-        await (await freshUseAuth()).resendVerification("garrou@example.com");
-
-        expect(snackbarMocks.showSuccess).toHaveBeenCalledWith("Email de confirmation envoyé");
-    });
-
-    it("throws the server's message on failure", async () => {
-        authServiceMocks.resendVerification.mockResolvedValue(jsonResponse(400, { message: "Aucun compte associé à cet email" }));
-
-        await expect((await freshUseAuth()).resendVerification("unknown@example.com"))
-            .rejects.toThrow("Aucun compte associé à cet email");
     });
 });
 

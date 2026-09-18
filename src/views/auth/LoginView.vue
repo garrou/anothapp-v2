@@ -3,7 +3,28 @@
         <div class="auth-glow"></div>
 
         <v-container class="d-flex align-center justify-center" style="min-height: 100vh">
-            <v-card v-if="!pendingDeletion" class="pa-8" width="100%" max-width="420">
+            <v-card v-if="pendingApproval" class="pa-8" width="100%" max-width="420">
+                <div class="text-center mb-6">
+                    <h1 class="text-h5 font-weight-bold">Confirmez votre connexion</h1>
+                    <p class="text-body-2 text-medium-emphasis mt-1">
+                        Un code à 6 chiffres vous a été envoyé par email. Saisissez-le pour continuer.
+                    </p>
+                </div>
+
+                <v-form v-model="codeValid" @submit="confirm" @submit.prevent>
+                    <v-text-field v-model="code" label="Code de connexion" required maxlength="6"
+                        :disabled="confirmLoading" />
+
+                    <v-btn block class="mt-2 mb-4" color="primary" rounded="pill" :disabled="!codeValid || confirmLoading"
+                        :loading="confirmLoading" text="Confirmer" type="submit" />
+
+                    <div class="text-center">
+                        <v-btn variant="text" text="Retour" @click="pendingApproval = null" />
+                    </div>
+                </v-form>
+            </v-card>
+
+            <v-card v-else-if="!pendingDeletion" class="pa-8" width="100%" max-width="420">
                 <div class="text-center mb-6">
                     <h1 class="text-h5 font-weight-bold">{{ TITLE }}</h1>
                     <p class="text-body-2 text-medium-emphasis mt-1">Retrouvez le fil de vos séries.</p>
@@ -14,17 +35,8 @@
 
                     <v-text-field v-model="password" label="Mot de passe" required type="password" />
 
-                    <v-btn block class="mt-2 mb-4" color="primary" rounded="pill" :disabled="!valid" :text="TITLE"
-                        type="submit" />
-
-                    <template v-if="showResendVerification">
-                        <p class="text-caption text-medium-emphasis text-center mb-2">
-                            Si votre compte n'est pas encore confirmé, indiquez votre email :
-                        </p>
-                        <v-text-field v-model="resendEmail" label="Email" :disabled="resendLoading" />
-                        <v-btn block class="mb-4" variant="tonal" :disabled="!resendEmail || resendLoading"
-                            :loading="resendLoading" text="Renvoyer l'email de confirmation" @click="resend" />
-                    </template>
+                    <v-btn block class="mt-2 mb-4" color="primary" rounded="pill" :disabled="!valid || loginLoading"
+                        :loading="loginLoading" :text="TITLE" type="submit" />
 
                     <div class="d-flex flex-column ma-3 ga-2">
                         <div class="text-center">
@@ -59,49 +71,48 @@
 </template>
 <script lang="ts" setup>
 import { useAuth } from "@/composables/auth";
-import { EMAIL_PATTERN } from "@/constants/auth";
 import { ref } from "vue";
 
 const TITLE = "Se connecter";
 
-const { login, cancelDeletion, resendVerification } = useAuth();
+const { login, confirmLogin, cancelDeletion } = useAuth();
 
 const valid = ref(false);
 const identifier = ref("");
 const password = ref("");
+const loginLoading = ref(false);
 const pendingDeletion = ref<{ cancellationToken: string } | null>(null);
 const cancelLoading = ref(false);
 const cancelError = ref("");
-const showResendVerification = ref(false);
-const resendEmail = ref("");
-const resendLoading = ref(false);
+const pendingApproval = ref<{ approvalToken: string } | null>(null);
+const codeValid = ref(false);
+const code = ref("");
+const confirmLoading = ref(false);
 
 const authenticate = async () => {
-    showResendVerification.value = false;
+    loginLoading.value = true;
 
     try {
         const result = await login(identifier.value, password.value);
-        if (result?.pendingDeletion) {
+
+        if ("pendingDeletion" in result) {
             pendingDeletion.value = { cancellationToken: result.cancellationToken };
+            return;
         }
-    } catch (e) {
-        // the backend never reveals *why* a login failed beyond "wrong credentials" - showing
-        // the resend option unconditionally avoids leaking whether the account exists or is
-        // unverified via a distinct error message. The identifier is only used to prefill the
-        // email field when it looks like one (the user may have logged in with a username).
-        showResendVerification.value = true;
-        resendEmail.value = EMAIL_PATTERN.test(identifier.value) ? identifier.value : "";
-        throw e;
+        pendingApproval.value = { approvalToken: result.approvalToken };
+    } finally {
+        loginLoading.value = false;
     }
 }
 
-const resend = async () => {
-    resendLoading.value = true;
+const confirm = async () => {
+    if (!pendingApproval.value) return;
+    confirmLoading.value = true;
 
     try {
-        await resendVerification(resendEmail.value);
+        await confirmLogin(pendingApproval.value.approvalToken, code.value);
     } finally {
-        resendLoading.value = false;
+        confirmLoading.value = false;
     }
 }
 

@@ -63,7 +63,12 @@ export function useAuth() {
         router.replace("/series");
     }
 
-    const login = async (identifier: string, password: string): Promise<{ pendingDeletion: true, cancellationToken: string } | void> => {
+    // a correct password never opens a session directly anymore - every login (a brand-new
+    // unverified account's first one included) needs its code confirmed through confirmLogin,
+    // unless the account is scheduled for deletion instead
+    const login = async (
+        identifier: string, password: string
+    ): Promise<{ pendingDeletion: true, cancellationToken: string } | { pendingApproval: true, approvalToken: string }> => {
         const resp = await authService.login(identifier, password);
         const data = await resp.json();
 
@@ -73,6 +78,16 @@ export function useAuth() {
         if (data.pendingDeletion) {
             return { pendingDeletion: true, cancellationToken: data.cancellationToken };
         }
+        return { pendingApproval: true, approvalToken: data.approvalToken };
+    }
+
+    const confirmLogin = async (approvalToken: string, code: string): Promise<void> => {
+        const resp = await authService.confirmLogin(approvalToken, code);
+        const data = await resp.json();
+
+        if (isError(resp.status))
+            throw new Error(data.message);
+
         establishSession(data);
     }
 
@@ -107,7 +122,7 @@ export function useAuth() {
             const data = await resp.json();
             throw new Error(data.message);
         }
-        showSuccess("Compte créé, vérifiez vos emails pour confirmer votre adresse");
+        showSuccess("Compte créé, connectez-vous pour confirmer votre email");
         router.push("/login");
     }
 
@@ -127,16 +142,6 @@ export function useAuth() {
             showSuccess("Email confirmé, vous pouvez vous connecter");
             router.push("/login");
         }
-    }
-
-    const resendVerification = async (email: string): Promise<void> => {
-        const resp = await authService.resendVerification(email);
-        const data = await resp.json();
-
-        if (isError(resp.status))
-            throw new Error(data.message);
-
-        showSuccess("Email de confirmation envoyé");
     }
 
     const forgotPassword = async (email: string): Promise<void> => {
@@ -161,7 +166,7 @@ export function useAuth() {
     }
 
     return {
-        checkAuth, login, logout, register, cancelDeletion,
-        verifyEmail, resendVerification, forgotPassword, resetPassword,
+        checkAuth, login, confirmLogin, logout, register, cancelDeletion,
+        verifyEmail, forgotPassword, resetPassword,
     }
 }

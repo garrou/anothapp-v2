@@ -6,8 +6,8 @@ import { vuetify } from "@/test/vuetify";
 
 const authComposableMocks = vi.hoisted(() => ({
     login: vi.fn(),
+    confirmLogin: vi.fn(),
     cancelDeletion: vi.fn(),
-    resendVerification: vi.fn(),
 }));
 
 vi.mock("@/composables/auth", () => ({ useAuth: () => authComposableMocks }));
@@ -18,7 +18,7 @@ beforeEach(() => {
 
 describe("LoginView", () => {
     it("logs in with the entered identifier and password", async () => {
-        authComposableMocks.login.mockResolvedValue(undefined);
+        authComposableMocks.login.mockResolvedValue({ pendingApproval: true, approvalToken: "approval-abc" });
         const wrapper = mount(LoginView, { global: { plugins: [vuetify] } });
         const inputs = wrapper.findAll("input");
 
@@ -74,47 +74,6 @@ describe("LoginView", () => {
         expect(wrapper.text()).toContain("Session expirée");
     });
 
-    it("always offers to resend the confirmation email after a failed login, prefilled when the identifier looks like an email", async () => {
-        // the backend deliberately never distinguishes "wrong password" from "correct password,
-        // unverified account" (that distinction would let login be used to confirm a guessed
-        // password), so the UI offers the resend option after any failure rather than trying to
-        // detect the specific reason from the error message
-        authComposableMocks.login.mockRejectedValue(new Error("Identifiant ou mot de passe incorrect"));
-        const wrapper = mount(LoginView, { global: { plugins: [vuetify] } });
-        wrapper.vm.$.appContext.app.config.errorHandler = () => {};
-        const inputs = wrapper.findAll("input");
-        await inputs[0].setValue("dexter@example.com");
-        await inputs[1].setValue("s3cret-pass");
-        await wrapper.find("form").trigger("submit");
-        await flushPromises();
-
-        const resendBtn = wrapper.findAllComponents({ name: "VBtn" })
-            .find((btn) => btn.text() === "Renvoyer l'email de confirmation");
-        expect(resendBtn).toBeDefined();
-
-        await resendBtn!.trigger("click");
-
-        expect(authComposableMocks.resendVerification).toHaveBeenCalledWith("dexter@example.com");
-    });
-
-    it("leaves the resend email blank when the identifier used to log in wasn't an email", async () => {
-        authComposableMocks.login.mockRejectedValue(new Error("Identifiant ou mot de passe incorrect"));
-        const wrapper = mount(LoginView, { global: { plugins: [vuetify] } });
-        wrapper.vm.$.appContext.app.config.errorHandler = () => {};
-        const inputs = wrapper.findAll("input");
-        await inputs[0].setValue("dexter");
-        await inputs[1].setValue("wrong");
-        await wrapper.find("form").trigger("submit");
-        await flushPromises();
-
-        const resendInputs = wrapper.findAll("input");
-        // 3rd input: identifier, password, then the resend section's own email field
-        expect(resendInputs[2].element.value).toBe("");
-        const resendBtn = wrapper.findAllComponents({ name: "VBtn" })
-            .find((btn) => btn.text() === "Renvoyer l'email de confirmation");
-        expect(resendBtn!.props("disabled")).toBe(true);
-    });
-
     it("returns to the login form when the user declines to cancel the deletion", async () => {
         authComposableMocks.login.mockResolvedValue({ pendingDeletion: true, cancellationToken: "token-abc" });
         const wrapper = mount(LoginView, { global: { plugins: [vuetify] } });
@@ -129,5 +88,90 @@ describe("LoginView", () => {
 
         expect(wrapper.text()).toContain("Se connecter");
         expect(authComposableMocks.cancelDeletion).not.toHaveBeenCalled();
+    });
+
+    it("shows a spinner on the submit button while the login request is pending", async () => {
+        let resolveLogin: (v: unknown) => void = () => {};
+        authComposableMocks.login.mockImplementation(() => new Promise((resolve) => {
+            resolveLogin = resolve;
+        }));
+        const wrapper = mount(LoginView, { global: { plugins: [vuetify] } });
+        const inputs = wrapper.findAll("input");
+        await inputs[0].setValue("dexter");
+        await inputs[1].setValue("s3cret-pass");
+        await wrapper.find("form").trigger("submit");
+
+        const submitBtn = wrapper.findAllComponents({ name: "VBtn" }).find((btn) => btn.text() === "Se connecter");
+        expect(submitBtn!.props("loading")).toBe(true);
+
+        resolveLogin({ pendingApproval: true, approvalToken: "approval-abc" });
+        await flushPromises();
+
+        expect(wrapper.text()).toContain("Confirmez votre connexion");
+    });
+
+    it("shows the code confirmation screen after a successful password check", async () => {
+        authComposableMocks.login.mockResolvedValue({ pendingApproval: true, approvalToken: "approval-abc" });
+        const wrapper = mount(LoginView, { global: { plugins: [vuetify] } });
+        const inputs = wrapper.findAll("input");
+        await inputs[0].setValue("dexter");
+        await inputs[1].setValue("s3cret-pass");
+        await wrapper.find("form").trigger("submit");
+        await flushPromises();
+
+        expect(wrapper.text()).toContain("Confirmez votre connexion");
+    });
+
+    it("confirms the login with the approval token and the entered code", async () => {
+        authComposableMocks.login.mockResolvedValue({ pendingApproval: true, approvalToken: "approval-abc" });
+        authComposableMocks.confirmLogin.mockResolvedValue(undefined);
+        const wrapper = mount(LoginView, { global: { plugins: [vuetify] } });
+        const loginInputs = wrapper.findAll("input");
+        await loginInputs[0].setValue("dexter");
+        await loginInputs[1].setValue("s3cret-pass");
+        await wrapper.find("form").trigger("submit");
+        await flushPromises();
+
+        await wrapper.find("input").setValue("123456");
+        await wrapper.find("form").trigger("submit");
+
+        expect(authComposableMocks.confirmLogin).toHaveBeenCalledWith("approval-abc", "123456");
+    });
+
+    it("returns to the login form when the user goes back from the code screen", async () => {
+        authComposableMocks.login.mockResolvedValue({ pendingApproval: true, approvalToken: "approval-abc" });
+        const wrapper = mount(LoginView, { global: { plugins: [vuetify] } });
+        const inputs = wrapper.findAll("input");
+        await inputs[0].setValue("dexter");
+        await inputs[1].setValue("s3cret-pass");
+        await wrapper.find("form").trigger("submit");
+        await flushPromises();
+
+        const backBtn = wrapper.findAllComponents({ name: "VBtn" })
+            .find((btn) => btn.text() === "Retour");
+        await backBtn!.trigger("click");
+
+        expect(wrapper.text()).toContain("Se connecter");
+        expect(wrapper.text()).not.toContain("Confirmez votre connexion");
+    });
+
+    it("propagates a wrong-code error to the caller (shown via the global error handler)", async () => {
+        authComposableMocks.login.mockResolvedValue({ pendingApproval: true, approvalToken: "approval-abc" });
+        authComposableMocks.confirmLogin.mockRejectedValue(new Error("Session invalide"));
+        const wrapper = mount(LoginView, { global: { plugins: [vuetify] } });
+        wrapper.vm.$.appContext.app.config.errorHandler = () => {};
+        const loginInputs = wrapper.findAll("input");
+        await loginInputs[0].setValue("dexter");
+        await loginInputs[1].setValue("s3cret-pass");
+        await wrapper.find("form").trigger("submit");
+        await flushPromises();
+
+        await wrapper.find("input").setValue("000000");
+        await wrapper.find("form").trigger("submit");
+        await flushPromises();
+
+        expect(authComposableMocks.confirmLogin).toHaveBeenCalledWith("approval-abc", "000000");
+        // still on the code screen - the error was surfaced globally, not swallowed here
+        expect(wrapper.text()).toContain("Confirmez votre connexion");
     });
 });

@@ -43,3 +43,12 @@ export const passwordsMatchRule = (password: string) => (value?: string) => {
     if (value === password) return true;
     return "Les mots de passe ne correspondent pas";
 };
+
+/**
+ * Same idea as passwordsMatchRule, for a "confirm new email" field - see its comment for how to
+ * pass the ref's value from the template.
+ */
+export const emailsMatchRule = (email: string) => (value?: string) => {
+    if (value === email) return true;
+    return "Les emails ne correspondent pas";
+};

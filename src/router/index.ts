@@ -22,6 +22,28 @@ const router = createRouter({
       component: () => import("@/views/auth/RegisterView.vue")
     },
     {
+      path: "/verify-email/:token",
+      name: "verify-email",
+      component: () => import("@/views/auth/VerifyEmailView.vue"),
+      props: true,
+      // reachable logged out (fresh registration - login is blocked until verified anyway) and
+      // logged in (confirming a new address after an email change), unlike the other auth pages
+      meta: {
+        allowAuthenticated: true
+      }
+    },
+    {
+      path: "/forgot-password",
+      name: "forgot-password",
+      component: () => import("@/views/auth/ForgotPasswordView.vue")
+    },
+    {
+      path: "/reset-password/:token",
+      name: "reset-password",
+      component: () => import("@/views/auth/ResetPasswordView.vue"),
+      props: true
+    },
+    {
       path: "/series",
       name: "series",
       component: () => import("@/views/series/Series.vue"),
@@ -188,7 +210,7 @@ router.beforeEach(async (to, from) => {
   if (to.meta.requiresAuth && !isLoggedIn) {
     return { path: "/login", query: { redirect: to.fullPath } };
   }
-  if (!to.meta.requiresAuth && isLoggedIn) {
+  if (!to.meta.requiresAuth && !to.meta.allowAuthenticated && isLoggedIn) {
     return { path: "/series" };
   }
 });

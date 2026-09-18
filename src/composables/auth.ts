@@ -107,9 +107,51 @@ export function useAuth() {
             const data = await resp.json();
             throw new Error(data.message);
         }
-        showSuccess("Compte créé");
+        showSuccess("Compte créé, vérifiez vos emails pour confirmer votre adresse");
         router.push("/login");
     }
 
-    return { checkAuth, login, logout, register, cancelDeletion }
+    const verifyEmail = async (token: string): Promise<void> => {
+        const resp = await authService.verifyEmail(token);
+        const data = await resp.json();
+
+        if (isError(resp.status))
+            throw new Error(data.message);
+    }
+
+    const resendVerification = async (email: string): Promise<void> => {
+        const resp = await authService.resendVerification(email);
+        const data = await resp.json();
+
+        if (isError(resp.status))
+            throw new Error(data.message);
+
+        showSuccess("Email de confirmation envoyé");
+    }
+
+    const forgotPassword = async (email: string): Promise<void> => {
+        const resp = await authService.forgotPassword(email);
+        const data = await resp.json();
+
+        if (isError(resp.status))
+            throw new Error(data.message);
+
+        showSuccess("Email de réinitialisation envoyé");
+    }
+
+    const resetPassword = async (token: string, password: string, confirm: string): Promise<void> => {
+        const resp = await authService.resetPassword(token, password, confirm);
+        const data = await resp.json();
+
+        if (isError(resp.status))
+            throw new Error(data.message);
+
+        showSuccess("Mot de passe réinitialisé, vous pouvez vous connecter");
+        router.push("/login");
+    }
+
+    return {
+        checkAuth, login, logout, register, cancelDeletion,
+        verifyEmail, resendVerification, forgotPassword, resetPassword,
+    }
 }

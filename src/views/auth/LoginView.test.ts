@@ -7,6 +7,7 @@ import { vuetify } from "@/test/vuetify";
 const authComposableMocks = vi.hoisted(() => ({
     login: vi.fn(),
     cancelDeletion: vi.fn(),
+    resendVerification: vi.fn(),
 }));
 
 vi.mock("@/composables/auth", () => ({ useAuth: () => authComposableMocks }));
@@ -71,6 +72,40 @@ describe("LoginView", () => {
         await flushPromises();
 
         expect(wrapper.text()).toContain("Session expirée");
+    });
+
+    it("shows a link to resend the confirmation email when login fails because it's unverified", async () => {
+        authComposableMocks.login.mockRejectedValue(new Error("Veuillez confirmer votre adresse email avant de vous connecter"));
+        const wrapper = mount(LoginView, { global: { plugins: [vuetify] } });
+        wrapper.vm.$.appContext.app.config.errorHandler = () => {};
+        const inputs = wrapper.findAll("input");
+        await inputs[0].setValue("dexter@example.com");
+        await inputs[1].setValue("s3cret-pass");
+        await wrapper.find("form").trigger("submit");
+        await flushPromises();
+
+        const resendBtn = wrapper.findAllComponents({ name: "VBtn" })
+            .find((btn) => btn.text() === "Renvoyer l'email de confirmation");
+        expect(resendBtn).toBeDefined();
+
+        await resendBtn!.trigger("click");
+
+        expect(authComposableMocks.resendVerification).toHaveBeenCalledWith("dexter@example.com");
+    });
+
+    it("does not show the resend link for an unrelated login failure", async () => {
+        authComposableMocks.login.mockRejectedValue(new Error("Identifiant ou mot de passe incorrect"));
+        const wrapper = mount(LoginView, { global: { plugins: [vuetify] } });
+        wrapper.vm.$.appContext.app.config.errorHandler = () => {};
+        const inputs = wrapper.findAll("input");
+        await inputs[0].setValue("dexter@example.com");
+        await inputs[1].setValue("wrong");
+        await wrapper.find("form").trigger("submit");
+        await flushPromises();
+
+        const resendBtn = wrapper.findAllComponents({ name: "VBtn" })
+            .find((btn) => btn.text() === "Renvoyer l'email de confirmation");
+        expect(resendBtn).toBeUndefined();
     });
 
     it("returns to the login form when the user declines to cancel the deletion", async () => {

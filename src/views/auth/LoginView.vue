@@ -17,6 +17,17 @@
                     <v-btn block class="mt-2 mb-4" color="primary" rounded="pill" :disabled="!valid" :text="TITLE"
                         type="submit" />
 
+                    <template v-if="showResendVerification">
+                        <p class="text-caption text-medium-emphasis text-center mb-2">
+                            Utilisez votre adresse email ci-dessus, puis :
+                        </p>
+                        <v-btn block class="mb-4" variant="tonal" :loading="resendLoading"
+                            text="Renvoyer l'email de confirmation" @click="resend" />
+                    </template>
+
+                    <div class="text-center mb-2">
+                        <router-link text="Mot de passe oublié ?" to="/forgot-password" />
+                    </div>
                     <div class="text-center">
                         <router-link text="Pas de compte ? S'inscrire" to="/register" />
                     </div>
@@ -47,8 +58,9 @@ import { useAuth } from "@/composables/auth";
 import { ref } from "vue";
 
 const TITLE = "Se connecter";
+const EMAIL_NOT_VERIFIED = "Veuillez confirmer votre adresse email avant de vous connecter";
 
-const { login, cancelDeletion } = useAuth();
+const { login, cancelDeletion, resendVerification } = useAuth();
 
 const valid = ref(false);
 const identifier = ref("");
@@ -56,11 +68,32 @@ const password = ref("");
 const pendingDeletion = ref<{ cancellationToken: string } | null>(null);
 const cancelLoading = ref(false);
 const cancelError = ref("");
+const showResendVerification = ref(false);
+const resendLoading = ref(false);
 
 const authenticate = async () => {
-    const result = await login(identifier.value, password.value);
-    if (result?.pendingDeletion) {
-        pendingDeletion.value = { cancellationToken: result.cancellationToken };
+    showResendVerification.value = false;
+
+    try {
+        const result = await login(identifier.value, password.value);
+        if (result?.pendingDeletion) {
+            pendingDeletion.value = { cancellationToken: result.cancellationToken };
+        }
+    } catch (e) {
+        if ((e as Error).message === EMAIL_NOT_VERIFIED) {
+            showResendVerification.value = true;
+        }
+        throw e;
+    }
+}
+
+const resend = async () => {
+    resendLoading.value = true;
+
+    try {
+        await resendVerification(identifier.value);
+    } finally {
+        resendLoading.value = false;
     }
 }
 

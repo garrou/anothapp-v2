@@ -6,6 +6,10 @@ const authServiceMocks = vi.hoisted(() => ({
     logout: vi.fn(),
     register: vi.fn(),
     cancelDeletion: vi.fn(),
+    verifyEmail: vi.fn(),
+    resendVerification: vi.fn(),
+    forgotPassword: vi.fn(),
+    resetPassword: vi.fn(),
 }));
 const snackbarMocks = vi.hoisted(() => ({
     showSuccess: vi.fn(),
@@ -224,12 +228,12 @@ describe("useAuth.logout", () => {
 });
 
 describe("useAuth.register", () => {
-    it("shows a success toast and redirects to /login on success", async () => {
+    it("shows a success toast asking to confirm the email, and redirects to /login on success", async () => {
         authServiceMocks.register.mockResolvedValue(jsonResponse(200, null));
 
         await (await freshUseAuth()).register("garrou@example.com", "password", "password", "garrou");
 
-        expect(snackbarMocks.showSuccess).toHaveBeenCalledWith("Compte créé");
+        expect(snackbarMocks.showSuccess).toHaveBeenCalledWith("Compte créé, vérifiez vos emails pour confirmer votre adresse");
         expect(routerMocks.push).toHaveBeenCalledWith("/login");
     });
 
@@ -239,6 +243,74 @@ describe("useAuth.register", () => {
         await expect(
             (await freshUseAuth()).register("garrou@example.com", "password", "password", "garrou")
         ).rejects.toThrow("Requête invalide");
+        expect(routerMocks.push).not.toHaveBeenCalled();
+    });
+});
+
+describe("useAuth.verifyEmail", () => {
+    it("resolves on success", async () => {
+        authServiceMocks.verifyEmail.mockResolvedValue(jsonResponse(200, { message: "Email confirmé" }));
+
+        await expect((await freshUseAuth()).verifyEmail("some-token")).resolves.toBeUndefined();
+        expect(authServiceMocks.verifyEmail).toHaveBeenCalledWith("some-token");
+    });
+
+    it("throws the server's message on failure", async () => {
+        authServiceMocks.verifyEmail.mockResolvedValue(jsonResponse(401, { message: "Session invalide" }));
+
+        await expect((await freshUseAuth()).verifyEmail("bad-token")).rejects.toThrow("Session invalide");
+    });
+});
+
+describe("useAuth.resendVerification", () => {
+    it("shows a success toast", async () => {
+        authServiceMocks.resendVerification.mockResolvedValue(jsonResponse(200, { message: "ok" }));
+
+        await (await freshUseAuth()).resendVerification("garrou@example.com");
+
+        expect(snackbarMocks.showSuccess).toHaveBeenCalledWith("Email de confirmation envoyé");
+    });
+
+    it("throws the server's message on failure", async () => {
+        authServiceMocks.resendVerification.mockResolvedValue(jsonResponse(400, { message: "Aucun compte associé à cet email" }));
+
+        await expect((await freshUseAuth()).resendVerification("unknown@example.com"))
+            .rejects.toThrow("Aucun compte associé à cet email");
+    });
+});
+
+describe("useAuth.forgotPassword", () => {
+    it("shows a success toast", async () => {
+        authServiceMocks.forgotPassword.mockResolvedValue(jsonResponse(200, { message: "ok" }));
+
+        await (await freshUseAuth()).forgotPassword("garrou@example.com");
+
+        expect(snackbarMocks.showSuccess).toHaveBeenCalledWith("Email de réinitialisation envoyé");
+    });
+
+    it("throws the server's message on failure", async () => {
+        authServiceMocks.forgotPassword.mockResolvedValue(jsonResponse(400, { message: "Aucun compte associé à cet email" }));
+
+        await expect((await freshUseAuth()).forgotPassword("unknown@example.com"))
+            .rejects.toThrow("Aucun compte associé à cet email");
+    });
+});
+
+describe("useAuth.resetPassword", () => {
+    it("shows a success toast and redirects to /login", async () => {
+        authServiceMocks.resetPassword.mockResolvedValue(jsonResponse(200, { message: "ok" }));
+
+        await (await freshUseAuth()).resetPassword("some-token", "NewPassword1", "NewPassword1");
+
+        expect(snackbarMocks.showSuccess).toHaveBeenCalledWith("Mot de passe réinitialisé, vous pouvez vous connecter");
+        expect(routerMocks.push).toHaveBeenCalledWith("/login");
+    });
+
+    it("throws the server's message on failure without navigating", async () => {
+        authServiceMocks.resetPassword.mockResolvedValue(jsonResponse(400, { message: "Mot de passe incorrect" }));
+
+        await expect((await freshUseAuth()).resetPassword("some-token", "bad", "bad"))
+            .rejects.toThrow("Mot de passe incorrect");
         expect(routerMocks.push).not.toHaveBeenCalled();
     });
 });

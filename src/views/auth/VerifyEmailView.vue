@@ -12,9 +12,6 @@
                 <template v-else>
                     <h1 class="text-h5 font-weight-bold mb-2">Échec de la confirmation</h1>
                     <p class="text-body-2 text-medium-emphasis mb-4">{{ error }}</p>
-                    <v-text-field v-model="email" label="Email" class="text-start" :disabled="resendLoading" />
-                    <v-btn block class="mb-3" color="primary" rounded="pill" :disabled="!email"
-                        :loading="resendLoading" text="Renvoyer l'email de confirmation" @click="resend" />
                     <router-link text="Retour à la connexion" to="/login" />
                 </template>
             </v-card>
@@ -28,12 +25,10 @@ import { onBeforeMount, ref } from "vue";
 
 const props = defineProps<{ token: string }>();
 
-const { verifyEmail, resendVerification } = useAuth();
+const { verifyEmail } = useAuth();
 
 const loading = ref(true);
 const error = ref("");
-const email = ref("");
-const resendLoading = ref(false);
 
 onBeforeMount(async () => {
     try {
@@ -45,18 +40,6 @@ onBeforeMount(async () => {
         loading.value = false;
     }
 });
-
-const resend = async () => {
-    resendLoading.value = true;
-
-    try {
-        await resendVerification(email.value);
-    } catch (e) {
-        error.value = (e as Error).message;
-    } finally {
-        resendLoading.value = false;
-    }
-}
 </script>
 
 <style scoped>

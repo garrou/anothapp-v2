@@ -6,8 +6,8 @@ import { vuetify } from "@/test/vuetify";
 
 const authComposableMocks = vi.hoisted(() => ({
     login: vi.fn(),
+    confirmLogin: vi.fn(),
     cancelDeletion: vi.fn(),
-    resendVerification: vi.fn(),
 }));
 
 vi.mock("@/composables/auth", () => ({ useAuth: () => authComposableMocks }));
@@ -18,7 +18,7 @@ beforeEach(() => {
 
 describe("LoginView", () => {
     it("logs in with the entered identifier and password", async () => {
-        authComposableMocks.login.mockResolvedValue(undefined);
+        authComposableMocks.login.mockResolvedValue({ pendingApproval: true, approvalToken: "approval-abc" });
         const wrapper = mount(LoginView, { global: { plugins: [vuetify] } });
         const inputs = wrapper.findAll("input");
 
@@ -74,42 +74,6 @@ describe("LoginView", () => {
         expect(wrapper.text()).toContain("Session expirée");
     });
 
-    it("offers to resend the confirmation email when login fails because it's unverified (password was correct)", async () => {
-        authComposableMocks.login.mockRejectedValue(new Error("Veuillez confirmer votre adresse email avant de vous connecter"));
-        const wrapper = mount(LoginView, { global: { plugins: [vuetify] } });
-        wrapper.vm.$.appContext.app.config.errorHandler = () => {};
-        const inputs = wrapper.findAll("input");
-        await inputs[0].setValue("dexter");
-        await inputs[1].setValue("s3cret-pass");
-        await wrapper.find("form").trigger("submit");
-        await flushPromises();
-
-        const resendBtn = wrapper.findAllComponents({ name: "VBtn" })
-            .find((btn) => btn.text() === "Renvoyer l'email de confirmation");
-        expect(resendBtn).toBeDefined();
-
-        await resendBtn!.trigger("click");
-
-        // resendVerification accepts a username or an email, like login itself, so whatever was
-        // typed to log in is reused directly - no second field needed
-        expect(authComposableMocks.resendVerification).toHaveBeenCalledWith("dexter");
-    });
-
-    it("does not show the resend link for a wrong password (never confirmed correct)", async () => {
-        authComposableMocks.login.mockRejectedValue(new Error("Identifiant ou mot de passe incorrect"));
-        const wrapper = mount(LoginView, { global: { plugins: [vuetify] } });
-        wrapper.vm.$.appContext.app.config.errorHandler = () => {};
-        const inputs = wrapper.findAll("input");
-        await inputs[0].setValue("dexter");
-        await inputs[1].setValue("wrong");
-        await wrapper.find("form").trigger("submit");
-        await flushPromises();
-
-        const resendBtn = wrapper.findAllComponents({ name: "VBtn" })
-            .find((btn) => btn.text() === "Renvoyer l'email de confirmation");
-        expect(resendBtn).toBeUndefined();
-    });
-
     it("returns to the login form when the user declines to cancel the deletion", async () => {
         authComposableMocks.login.mockResolvedValue({ pendingDeletion: true, cancellationToken: "token-abc" });
         const wrapper = mount(LoginView, { global: { plugins: [vuetify] } });
@@ -124,5 +88,70 @@ describe("LoginView", () => {
 
         expect(wrapper.text()).toContain("Se connecter");
         expect(authComposableMocks.cancelDeletion).not.toHaveBeenCalled();
+    });
+
+    it("shows the code confirmation screen after a successful password check", async () => {
+        authComposableMocks.login.mockResolvedValue({ pendingApproval: true, approvalToken: "approval-abc" });
+        const wrapper = mount(LoginView, { global: { plugins: [vuetify] } });
+        const inputs = wrapper.findAll("input");
+        await inputs[0].setValue("dexter");
+        await inputs[1].setValue("s3cret-pass");
+        await wrapper.find("form").trigger("submit");
+        await flushPromises();
+
+        expect(wrapper.text()).toContain("Confirmez votre connexion");
+    });
+
+    it("confirms the login with the approval token and the entered code", async () => {
+        authComposableMocks.login.mockResolvedValue({ pendingApproval: true, approvalToken: "approval-abc" });
+        authComposableMocks.confirmLogin.mockResolvedValue(undefined);
+        const wrapper = mount(LoginView, { global: { plugins: [vuetify] } });
+        const loginInputs = wrapper.findAll("input");
+        await loginInputs[0].setValue("dexter");
+        await loginInputs[1].setValue("s3cret-pass");
+        await wrapper.find("form").trigger("submit");
+        await flushPromises();
+
+        await wrapper.find("input").setValue("123456");
+        await wrapper.find("form").trigger("submit");
+
+        expect(authComposableMocks.confirmLogin).toHaveBeenCalledWith("approval-abc", "123456");
+    });
+
+    it("returns to the login form when the user goes back from the code screen", async () => {
+        authComposableMocks.login.mockResolvedValue({ pendingApproval: true, approvalToken: "approval-abc" });
+        const wrapper = mount(LoginView, { global: { plugins: [vuetify] } });
+        const inputs = wrapper.findAll("input");
+        await inputs[0].setValue("dexter");
+        await inputs[1].setValue("s3cret-pass");
+        await wrapper.find("form").trigger("submit");
+        await flushPromises();
+
+        const backBtn = wrapper.findAllComponents({ name: "VBtn" })
+            .find((btn) => btn.text() === "Retour");
+        await backBtn!.trigger("click");
+
+        expect(wrapper.text()).toContain("Se connecter");
+        expect(wrapper.text()).not.toContain("Confirmez votre connexion");
+    });
+
+    it("propagates a wrong-code error to the caller (shown via the global error handler)", async () => {
+        authComposableMocks.login.mockResolvedValue({ pendingApproval: true, approvalToken: "approval-abc" });
+        authComposableMocks.confirmLogin.mockRejectedValue(new Error("Session invalide"));
+        const wrapper = mount(LoginView, { global: { plugins: [vuetify] } });
+        wrapper.vm.$.appContext.app.config.errorHandler = () => {};
+        const loginInputs = wrapper.findAll("input");
+        await loginInputs[0].setValue("dexter");
+        await loginInputs[1].setValue("s3cret-pass");
+        await wrapper.find("form").trigger("submit");
+        await flushPromises();
+
+        await wrapper.find("input").setValue("000000");
+        await wrapper.find("form").trigger("submit");
+        await flushPromises();
+
+        expect(authComposableMocks.confirmLogin).toHaveBeenCalledWith("approval-abc", "000000");
+        // still on the code screen - the error was surfaced globally, not swallowed here
+        expect(wrapper.text()).toContain("Confirmez votre connexion");
     });
 });

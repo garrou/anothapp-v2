@@ -7,6 +7,9 @@ const checkAuth = (): Promise<Response> => httpClient.get(`${PREFIX}/me`);
 const login = (identifier: string, password: string): Promise<Response> =>
     httpClient.post(`${PREFIX}/login`, { identifier, password });
 
+const confirmLogin = (approvalToken: string, code: string): Promise<Response> =>
+    httpClient.post(`${PREFIX}/confirm-login`, { approvalToken, code });
+
 const logout = () => httpClient.post(`${PREFIX}/logout`, undefined, { skipRefresh: true });
 
 const register = (email: string, password: string, confirm: string, username: string): Promise<Response> =>
@@ -18,9 +21,6 @@ const cancelDeletion = (cancellationToken: string): Promise<Response> =>
 const verifyEmail = (token: string): Promise<Response> =>
     httpClient.post(`${PREFIX}/verify-email`, { token });
 
-const resendVerification = (identifier: string): Promise<Response> =>
-    httpClient.post(`${PREFIX}/resend-verification`, { identifier });
-
 const forgotPassword = (email: string): Promise<Response> =>
     httpClient.post(`${PREFIX}/forgot-password`, { email });
 
@@ -30,11 +30,11 @@ const resetPassword = (token: string, password: string, confirm: string): Promis
 export default {
     checkAuth,
     login,
+    confirmLogin,
     logout,
     register,
     cancelDeletion,
     verifyEmail,
-    resendVerification,
     forgotPassword,
     resetPassword,
 }

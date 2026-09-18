@@ -3,7 +3,28 @@
         <div class="auth-glow"></div>
 
         <v-container class="d-flex align-center justify-center" style="min-height: 100vh">
-            <v-card v-if="!pendingDeletion" class="pa-8" width="100%" max-width="420">
+            <v-card v-if="pendingApproval" class="pa-8" width="100%" max-width="420">
+                <div class="text-center mb-6">
+                    <h1 class="text-h5 font-weight-bold">Confirmez votre connexion</h1>
+                    <p class="text-body-2 text-medium-emphasis mt-1">
+                        Un code à 6 chiffres vous a été envoyé par email. Saisissez-le pour continuer.
+                    </p>
+                </div>
+
+                <v-form v-model="codeValid" @submit="confirm" @submit.prevent>
+                    <v-text-field v-model="code" label="Code de connexion" required maxlength="6"
+                        :disabled="confirmLoading" />
+
+                    <v-btn block class="mt-2 mb-4" color="primary" rounded="pill" :disabled="!codeValid || confirmLoading"
+                        :loading="confirmLoading" text="Confirmer" type="submit" />
+
+                    <div class="text-center">
+                        <v-btn variant="text" text="Retour" @click="pendingApproval = null" />
+                    </div>
+                </v-form>
+            </v-card>
+
+            <v-card v-else-if="!pendingDeletion" class="pa-8" width="100%" max-width="420">
                 <div class="text-center mb-6">
                     <h1 class="text-h5 font-weight-bold">{{ TITLE }}</h1>
                     <p class="text-body-2 text-medium-emphasis mt-1">Retrouvez le fil de vos séries.</p>
@@ -16,11 +37,6 @@
 
                     <v-btn block class="mt-2 mb-4" color="primary" rounded="pill" :disabled="!valid" :text="TITLE"
                         type="submit" />
-
-                    <template v-if="showResendVerification">
-                        <v-btn block class="mb-4" variant="tonal" :disabled="resendLoading" :loading="resendLoading"
-                            text="Renvoyer l'email de confirmation" @click="resend" />
-                    </template>
 
                     <div class="d-flex flex-column ma-3 ga-2">
                         <div class="text-center">
@@ -58,9 +74,8 @@ import { useAuth } from "@/composables/auth";
 import { ref } from "vue";
 
 const TITLE = "Se connecter";
-const EMAIL_NOT_VERIFIED = "Veuillez confirmer votre adresse email avant de vous connecter";
 
-const { login, cancelDeletion, resendVerification } = useAuth();
+const { login, confirmLogin, cancelDeletion } = useAuth();
 
 const valid = ref(false);
 const identifier = ref("");
@@ -68,34 +83,29 @@ const password = ref("");
 const pendingDeletion = ref<{ cancellationToken: string } | null>(null);
 const cancelLoading = ref(false);
 const cancelError = ref("");
-const showResendVerification = ref(false);
-const resendLoading = ref(false);
+const pendingApproval = ref<{ approvalToken: string } | null>(null);
+const codeValid = ref(false);
+const code = ref("");
+const confirmLoading = ref(false);
 
 const authenticate = async () => {
-    showResendVerification.value = false;
+    const result = await login(identifier.value, password.value);
 
-    try {
-        const result = await login(identifier.value, password.value);
-        if (result?.pendingDeletion) {
-            pendingDeletion.value = { cancellationToken: result.cancellationToken };
-        }
-    } catch (e) {
-        if ((e as Error).message === EMAIL_NOT_VERIFIED) {
-            showResendVerification.value = true;
-        }
-        throw e;
+    if ("pendingDeletion" in result) {
+        pendingDeletion.value = { cancellationToken: result.cancellationToken };
+        return;
     }
+    pendingApproval.value = { approvalToken: result.approvalToken };
 }
 
-const resend = async () => {
-    resendLoading.value = true;
+const confirm = async () => {
+    if (!pendingApproval.value) return;
+    confirmLoading.value = true;
 
     try {
-        // resendVerification accepts a username or an email, exactly like login - the account's
-        // real email is resolved server-side, so whatever the user just typed to log in works
-        await resendVerification(identifier.value);
+        await confirmLogin(pendingApproval.value.approvalToken, code.value);
     } finally {
-        resendLoading.value = false;
+        confirmLoading.value = false;
     }
 }
 

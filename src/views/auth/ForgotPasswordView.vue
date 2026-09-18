@@ -42,6 +42,8 @@ const loading = ref(false);
 const error = ref("");
 
 const submit = async () => {
+    // v-form's @submit fires before its own async validation resolves - pressing Enter would
+    // otherwise bypass the email :rules check that the disabled button only enforces on click
     if (!valid.value) return;
     loading.value = true;
     error.value = "";

@@ -15,7 +15,7 @@
 
                     <v-text-field v-model="confirmPassword" counter label="Confirmer le mot de passe" required
                         :rules="[...passwordRules, passwordsMatchRule(password)]" :error-messages="error"
-                        :disabled="loading" />
+                        :disabled="loading" type="password" />
 
                     <v-btn block class="mt-2 mb-4" color="primary" rounded="pill" :disabled="!valid || loading"
                         :loading="loading" :text="TITLE" type="submit" />

@@ -43,6 +43,20 @@ describe("usePendingFriendRequests", () => {
         expect(getFriendsMock).not.toHaveBeenCalled();
     });
 
+    it.each(["verify-email", "forgot-password", "reset-password"])(
+        "doesn't fetch on the anonymous %s page (no session to authenticate the call with)",
+        async (name) => {
+            routeMock.name = name;
+            getFriendsMock.mockResolvedValue({ received: [{ id: "1" }] });
+
+            const pendingRequests = await freshUsePendingFriendRequests();
+            await flushPromises();
+
+            expect(pendingRequests.value).toBe(0);
+            expect(getFriendsMock).not.toHaveBeenCalled();
+        }
+    );
+
     it("stays at 0 when there is no received list", async () => {
         getFriendsMock.mockResolvedValue({});
 

@@ -12,7 +12,9 @@ import {
 } from "./icons";
 import { SerieStatus } from "@/types/types";
 
-export const PAGE_WITHOUT_BOTTOM_NAVBAR = ["home", "login", "register"]
+export const PAGE_WITHOUT_BOTTOM_NAVBAR = [
+    "home", "login", "register", "verify-email", "forgot-password", "reset-password"
+]
 
 export const NAV_MENU: BottomNavMenuItem[] = [
     {

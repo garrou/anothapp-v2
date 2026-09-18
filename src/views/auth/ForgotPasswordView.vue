@@ -15,8 +15,8 @@
                     <v-text-field v-model="email" label="Email" required :rules="emailRules"
                         :error-messages="error" :disabled="loading" />
 
-                    <v-btn block class="mt-2 mb-4" color="primary" rounded="pill" :disabled="!valid" :loading="loading"
-                        :text="TITLE" type="submit" />
+                    <v-btn block class="mt-2 mb-4" color="primary" rounded="pill" :disabled="!valid || loading"
+                        :loading="loading" :text="TITLE" type="submit" />
 
                     <div class="text-center">
                         <router-link text="Retour à la connexion" to="/login" />

@@ -19,9 +19,9 @@
                         type="password" />
 
                     <v-text-field v-model="confirmPassword" counter label="Confirmer le mot de passe" required
-                        :rules="passwordRules" type="password" />
+                        :rules="[...passwordRules, passwordsMatchRule(password)]" type="password" />
 
-                    <v-btn block class="mt-2 mb-4" color="primary" rounded="pill" :disabled="!valid"
+                    <v-btn block class="mt-2 mb-4" color="primary" rounded="pill" :disabled="!valid || loading"
                         :loading="loading" :text="TITLE" type="submit" />
 
                     <div class="text-center">
@@ -35,7 +35,7 @@
 
 <script lang="ts" setup>
 import { useAuth } from "@/composables/auth";
-import { emailRules, nameRules, passwordRules } from "@/utils/validator";
+import { emailRules, nameRules, passwordRules, passwordsMatchRule } from "@/utils/validator";
 import { ref } from "vue";
 
 const TITLE = "S'inscrire";
@@ -50,6 +50,10 @@ const username = ref("");
 const loading = ref(false);
 
 const createAccount = async () => {
+    // v-form's @submit fires immediately, before its own async validation resolves - pressing
+    // Enter would otherwise bypass every :rules check (mismatched passwords included) that the
+    // disabled button only enforces for a mouse click
+    if (!valid.value) return;
     loading.value = true;
 
     try {

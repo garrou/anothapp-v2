@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { mount } from "@vue/test-utils";
+import { mount, flushPromises } from "@vue/test-utils";
 import Password from "./Password.vue";
 import { vuetify } from "@/test/vuetify";
 
@@ -25,6 +25,7 @@ describe("Password", () => {
         await inputs[0].setValue("oldPassword1");
         await inputs[1].setValue("newPassword1");
         await inputs[2].setValue("newPassword1");
+        await flushPromises();
         await wrapper.find("form").trigger("submit");
 
         expect(userComposableMocks.changePassword).toHaveBeenCalledWith("oldPassword1", "newPassword1", "newPassword1");

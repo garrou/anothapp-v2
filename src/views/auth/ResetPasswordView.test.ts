@@ -22,6 +22,7 @@ describe("ResetPasswordView", () => {
 
         await inputs[0].setValue("NewPassword1");
         await inputs[1].setValue("NewPassword1");
+        await flushPromises();
         await wrapper.find("form").trigger("submit");
 
         expect(authComposableMocks.resetPassword).toHaveBeenCalledWith("some-token", "NewPassword1", "NewPassword1");
@@ -34,6 +35,7 @@ describe("ResetPasswordView", () => {
 
         await inputs[0].setValue("NewPassword1");
         await inputs[1].setValue("NewPassword1");
+        await flushPromises();
         await wrapper.find("form").trigger("submit");
         await flushPromises();
 

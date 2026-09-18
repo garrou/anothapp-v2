@@ -14,9 +14,10 @@
                         :rules="passwordRules" type="password" :disabled="loading" />
 
                     <v-text-field v-model="confirmPassword" counter label="Confirmer le mot de passe" required
-                        :rules="passwordRules" type="password" :error-messages="error" :disabled="loading" />
+                        :rules="[...passwordRules, passwordsMatchRule(password)]" :error-messages="error"
+                        :disabled="loading" />
 
-                    <v-btn block class="mt-2 mb-4" color="primary" rounded="pill" :disabled="!valid"
+                    <v-btn block class="mt-2 mb-4" color="primary" rounded="pill" :disabled="!valid || loading"
                         :loading="loading" :text="TITLE" type="submit" />
 
                     <div class="text-center">
@@ -30,7 +31,7 @@
 
 <script lang="ts" setup>
 import { useAuth } from "@/composables/auth";
-import { passwordRules } from "@/utils/validator";
+import { passwordRules, passwordsMatchRule } from "@/utils/validator";
 import { ref } from "vue";
 
 const TITLE = "Réinitialiser le mot de passe";
@@ -46,6 +47,8 @@ const loading = ref(false);
 const error = ref("");
 
 const submit = async () => {
+    // see RegisterView.vue's createAccount for why this guard is needed
+    if (!valid.value) return;
     loading.value = true;
     error.value = "";
 

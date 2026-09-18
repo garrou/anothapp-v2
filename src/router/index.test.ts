@@ -82,6 +82,24 @@ describe("router guards", () => {
         expect(router.currentRoute.value.path).toBe("/verify-email/some-token");
     });
 
+    it("keeps /forgot-password reachable for a logged-in user (e.g. a stale session in another tab)", async () => {
+        const router = await importRouter();
+        authComposableMocks.checkAuth.mockResolvedValue(true);
+
+        await router.push("/forgot-password");
+
+        expect(router.currentRoute.value.path).toBe("/forgot-password");
+    });
+
+    it("keeps /reset-password reachable for a logged-in user", async () => {
+        const router = await importRouter();
+        authComposableMocks.checkAuth.mockResolvedValue(true);
+
+        await router.push("/reset-password/some-token");
+
+        expect(router.currentRoute.value.path).toBe("/reset-password/some-token");
+    });
+
     it("saves the previous page's scroll position on navigation", async () => {
         const router = await importRouter();
         authComposableMocks.checkAuth.mockResolvedValue(true);

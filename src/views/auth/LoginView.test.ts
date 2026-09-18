@@ -90,6 +90,26 @@ describe("LoginView", () => {
         expect(authComposableMocks.cancelDeletion).not.toHaveBeenCalled();
     });
 
+    it("shows a spinner on the submit button while the login request is pending", async () => {
+        let resolveLogin: (v: unknown) => void = () => {};
+        authComposableMocks.login.mockImplementation(() => new Promise((resolve) => {
+            resolveLogin = resolve;
+        }));
+        const wrapper = mount(LoginView, { global: { plugins: [vuetify] } });
+        const inputs = wrapper.findAll("input");
+        await inputs[0].setValue("dexter");
+        await inputs[1].setValue("s3cret-pass");
+        await wrapper.find("form").trigger("submit");
+
+        const submitBtn = wrapper.findAllComponents({ name: "VBtn" }).find((btn) => btn.text() === "Se connecter");
+        expect(submitBtn!.props("loading")).toBe(true);
+
+        resolveLogin({ pendingApproval: true, approvalToken: "approval-abc" });
+        await flushPromises();
+
+        expect(wrapper.text()).toContain("Confirmez votre connexion");
+    });
+
     it("shows the code confirmation screen after a successful password check", async () => {
         authComposableMocks.login.mockResolvedValue({ pendingApproval: true, approvalToken: "approval-abc" });
         const wrapper = mount(LoginView, { global: { plugins: [vuetify] } });

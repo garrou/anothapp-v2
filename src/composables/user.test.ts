@@ -109,21 +109,21 @@ describe("useUser.changeEmail", () => {
         setActivePinia(createPinia());
     });
 
-    it("patches the store's email and shows a success toast", async () => {
+    it("shows a success toast without touching the store - the new address isn't active until its confirmation link is used", async () => {
         userServiceMocks.updateLogin.mockResolvedValue(jsonResponse(200, null));
-        userServiceMocks.getProfile.mockResolvedValue(jsonResponse(200, profile));
 
-        await useUser().changeEmail("old@example.com", "new@example.com", "s3cret-pass");
+        await useUser().changeEmail("new@example.com", "new@example.com", "s3cret-pass");
 
-        expect(userServiceMocks.updateLogin).toHaveBeenCalledWith("old@example.com", "new@example.com", "s3cret-pass");
-        expect(useUserStore().profile?.email).toBe("new@example.com");
-        expect(snackbarMocks.showSuccess).toHaveBeenCalledWith("Email modifié");
+        expect(userServiceMocks.updateLogin).toHaveBeenCalledWith("new@example.com", "new@example.com", "s3cret-pass");
+        expect(useUserStore().profile?.email).not.toBe("new@example.com");
+        expect(userServiceMocks.getProfile).not.toHaveBeenCalled();
+        expect(snackbarMocks.showSuccess).toHaveBeenCalledWith("Vérifiez votre nouvelle adresse email pour confirmer le changement");
     });
 
     it("throws on failure without showing a success toast", async () => {
         userServiceMocks.updateLogin.mockResolvedValue(jsonResponse(400, { message: "Requête invalide" }));
 
-        await expect(useUser().changeEmail("old@example.com", "new@example.com", "s3cret-pass"))
+        await expect(useUser().changeEmail("new@example.com", "new@example.com", "s3cret-pass"))
             .rejects.toThrow("Requête invalide");
     });
 });

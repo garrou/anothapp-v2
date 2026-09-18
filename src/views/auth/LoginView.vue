@@ -35,8 +35,8 @@
 
                     <v-text-field v-model="password" label="Mot de passe" required type="password" />
 
-                    <v-btn block class="mt-2 mb-4" color="primary" rounded="pill" :disabled="!valid" :text="TITLE"
-                        type="submit" />
+                    <v-btn block class="mt-2 mb-4" color="primary" rounded="pill" :disabled="!valid || loginLoading"
+                        :loading="loginLoading" :text="TITLE" type="submit" />
 
                     <div class="d-flex flex-column ma-3 ga-2">
                         <div class="text-center">
@@ -80,6 +80,7 @@ const { login, confirmLogin, cancelDeletion } = useAuth();
 const valid = ref(false);
 const identifier = ref("");
 const password = ref("");
+const loginLoading = ref(false);
 const pendingDeletion = ref<{ cancellationToken: string } | null>(null);
 const cancelLoading = ref(false);
 const cancelError = ref("");
@@ -89,13 +90,19 @@ const code = ref("");
 const confirmLoading = ref(false);
 
 const authenticate = async () => {
-    const result = await login(identifier.value, password.value);
+    loginLoading.value = true;
 
-    if ("pendingDeletion" in result) {
-        pendingDeletion.value = { cancellationToken: result.cancellationToken };
-        return;
+    try {
+        const result = await login(identifier.value, password.value);
+
+        if ("pendingDeletion" in result) {
+            pendingDeletion.value = { cancellationToken: result.cancellationToken };
+            return;
+        }
+        pendingApproval.value = { approvalToken: result.approvalToken };
+    } finally {
+        loginLoading.value = false;
     }
-    pendingApproval.value = { approvalToken: result.approvalToken };
 }
 
 const confirm = async () => {

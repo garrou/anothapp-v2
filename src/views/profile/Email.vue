@@ -7,7 +7,7 @@
             <v-text-field v-model="confirmEmail" label="Confirmation de l'email" required
                 :rules="[...emailRules, emailsMatchRule(email)]" suffix="@xyz.com" />
 
-            <v-text-field v-model="password" label="Mot de passe actuel" required :rules="passwordRules"
+            <v-text-field v-model="password" label="Mot de passe" required :rules="passwordRules"
                 type="password" />
 
             <v-btn block class="my-5" color="primary" rounded="pill" :disabled="!valid" text="Sauvegarder"

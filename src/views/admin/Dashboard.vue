@@ -23,22 +23,28 @@
             </div>
         </v-card>
 
-        <v-row v-if="dashboard">
-            <v-col cols="12" md="6">
+        <v-card class="pa-4" v-if="dashboard">
+            <div class="text-subtitle-1 font-weight-bold mb-4">
+                Dépendances externes
+            </div>
+
+            <v-row>
+                <v-col cols="12" sm="6">
+                    <v-list-item :prepend-icon="healthIcon(dashboard.health.betaseries)" title="BetaSeries"
+                        :subtitle="healthSubtitle(dashboard.health.betaseries)" />
+                </v-col>
+
+                <v-col cols="12" sm="6">
+                    <v-list-item :prepend-icon="healthIcon(dashboard.health.mailer)" title="Email (SMTP)"
+                        :subtitle="healthSubtitle(dashboard.health.mailer)" />
+                </v-col>
+            </v-row>
+        </v-card>
+
+        <v-row class="mt-3" v-if="dashboard">
+            <v-col cols="12">
                 <chart :data="newUsersChartData" :type="ChartType.Bar" chart-id="admin-new-users"
                     :default-color="CATEGORICAL_COLORS[0]" title="Nouveaux comptes (14 derniers jours)" />
-            </v-col>
-
-            <v-col cols="12" md="6">
-                <v-card class="pa-4 h-100">
-                    <div class="text-subtitle-1 font-weight-bold mb-4">Dépendances externes</div>
-                    <v-list density="compact">
-                        <v-list-item :prepend-icon="healthIcon(dashboard.health.betaseries)" title="BetaSeries"
-                            :subtitle="healthSubtitle(dashboard.health.betaseries)" />
-                        <v-list-item :prepend-icon="healthIcon(dashboard.health.mailer)" title="Email (SMTP)"
-                            :subtitle="healthSubtitle(dashboard.health.mailer)" />
-                    </v-list>
-                </v-card>
             </v-col>
         </v-row>
 
@@ -58,8 +64,7 @@
                 title="Aucun compte trouvé" />
 
             <v-list v-else-if="searchResults.length > 0" class="mt-2" lines="two">
-                <v-list-item v-for="user in searchResults" :key="user.id" :title="user.username"
-                    :subtitle="user.email">
+                <v-list-item v-for="user in searchResults" :key="user.id" :title="user.username" :subtitle="user.email">
                     <template #append>
                         <v-btn color="error" size="small" variant="tonal" @click="openRevokeConfirm(user)">
                             Révoquer les sessions
@@ -74,7 +79,8 @@
                 <v-card class="pa-4 mt-6 h-100">
                     <div class="text-subtitle-1 font-weight-bold mb-2">Activité de connexion suspecte</div>
                     <empty-state v-if="dashboard.sessions.loginAttemptLimit.length === 0" :icon="CHECK_CIRCLE_ICON"
-                        title="Rien à signaler" description="Aucun compte n'a atteint le nombre maximal de tentatives récemment." />
+                        title="Rien à signaler"
+                        description="Aucun compte n'a atteint le nombre maximal de tentatives récemment." />
                     <v-list v-else density="compact">
                         <v-list-item v-for="entry in dashboard.sessions.loginAttemptLimit" :key="entry.userId"
                             :title="entry.username"
@@ -98,7 +104,7 @@
     </v-container>
 
     <base-confirm v-model="revokeConfirmOpen" title="Révoquer les sessions"
-        :text="`Toutes les sessions de ${userToRevoke?.username} seront immédiatement invalidées. Confirmez-vous ?`"
+        :text="`Toutes les sessions de ${userToRevoke?.username} seront immédiatement invalidées`"
         confirm-text="Révoquer" @cancel="revokeConfirmOpen = false" @confirm="confirmRevoke" />
 </template>
 

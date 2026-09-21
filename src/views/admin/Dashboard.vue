@@ -5,20 +5,20 @@
         <v-card v-if="dashboard" class="kpi-strip mb-6">
             <div class="kpi-row">
                 <div class="kpi-cell">
-                    <stat-tile icon="mdi-account-group" label="Utilisateurs" :value="dashboard.userCount" />
+                    <stat-tile icon="mdi-account-group" label="Utilisateurs" :value="dashboard.users.total" />
                 </div>
                 <div class="kpi-cell">
-                    <stat-tile icon="mdi-database" label="Taille de la base" :value="dashboard.databaseSize" />
+                    <stat-tile icon="mdi-database" label="Taille de la base" :value="dashboard.database.size" />
                 </div>
                 <div class="kpi-cell">
-                    <stat-tile icon="mdi-shield-key" label="Sessions actives" :value="dashboard.activeSessions" />
+                    <stat-tile icon="mdi-shield-key" label="Sessions actives" :value="dashboard.sessions.active" />
                 </div>
                 <div class="kpi-cell">
                     <stat-tile icon="mdi-account-clock" label="Suppressions en attente"
-                        :value="dashboard.pendingDeletions" />
+                        :value="dashboard.users.pendingDeletions" />
                 </div>
                 <div class="kpi-cell">
-                    <stat-tile icon="mdi-account-off" label="Comptes anonymisés" :value="dashboard.anonymizedAccounts" />
+                    <stat-tile icon="mdi-account-off" label="Comptes anonymisés" :value="dashboard.users.anonymized" />
                 </div>
             </div>
         </v-card>
@@ -66,10 +66,10 @@
             <v-col cols="12" md="6">
                 <v-card class="pa-4 mt-6 h-100">
                     <div class="text-subtitle-1 font-weight-bold mb-2">Activité de connexion suspecte</div>
-                    <empty-state v-if="dashboard.suspiciousLogins.length === 0" :icon="CHECK_CIRCLE_ICON"
+                    <empty-state v-if="dashboard.sessions.loginAttemptLimit.length === 0" :icon="CHECK_CIRCLE_ICON"
                         title="Rien à signaler" description="Aucun compte n'a atteint le nombre maximal de tentatives récemment." />
                     <v-list v-else density="compact">
-                        <v-list-item v-for="entry in dashboard.suspiciousLogins" :key="entry.userId"
+                        <v-list-item v-for="entry in dashboard.sessions.loginAttemptLimit" :key="entry.userId"
                             :title="entry.username"
                             :subtitle="`${entry.maxedOutCount} challenge(s) épuisé(s) · dernier essai le ${formatDateTime(entry.lastAttemptAt)}`" />
                     </v-list>
@@ -121,7 +121,7 @@ const revokeConfirmOpen = ref(false);
 const userToRevoke = ref<AdminUserSearchResult>();
 let searchEpoch = 0;
 
-const newUsersChartData = computed((): Stat[] => (dashboard.value?.newUsersByDay ?? []).map((entry, index): Stat => ({
+const newUsersChartData = computed((): Stat[] => (dashboard.value?.users.newByDay ?? []).map((entry, index): Stat => ({
     id: index,
     label: new Date(entry.day).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" }),
     value: entry.count

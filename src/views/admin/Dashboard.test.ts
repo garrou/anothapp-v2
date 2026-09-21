@@ -25,13 +25,9 @@ const stubs = {
 };
 
 const dashboard = (overrides: Partial<AdminDashboard> = {}): AdminDashboard => ({
-    userCount: 12,
-    databaseSize: "42 MB",
-    newUsersByDay: [{ day: "2024-01-01", count: 3 }],
-    pendingDeletions: 1,
-    anonymizedAccounts: 2,
-    activeSessions: 5,
-    suspiciousLogins: [],
+    users: { total: 12, newByDay: [{ day: "2024-01-01", count: 3 }], pendingDeletions: 1, anonymized: 2 },
+    sessions: { active: 5, loginAttemptLimit: [] },
+    database: { size: "42 MB" },
     recentActions: [],
     health: {
         betaseries: { reachable: true, latencyMs: 120 },
@@ -73,7 +69,10 @@ describe("Dashboard.vue", () => {
 
     it("shows suspicious login entries when present", async () => {
         const wrapper = await mountView(dashboard({
-            suspiciousLogins: [{ userId: "user-1", username: "bob", maxedOutCount: 2, lastAttemptAt: "2024-01-01T00:00:00.000Z" }],
+            sessions: {
+                active: 5,
+                loginAttemptLimit: [{ userId: "user-1", username: "bob", maxedOutCount: 2, lastAttemptAt: "2024-01-01T00:00:00.000Z" }],
+            },
         }));
 
         expect(wrapper.text()).toContain("bob");

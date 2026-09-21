@@ -23,7 +23,7 @@ export interface AdminNewUsersByDay {
     count: number;
 }
 
-export interface AdminSuspiciousLogin {
+export interface AdminLoginAttemptLimitEntry {
 
     userId: string;
 
@@ -47,25 +47,40 @@ export interface AdminAction {
     createdAt: string;
 }
 
-export interface AdminDashboard {
+export interface AdminUsersSummary {
 
-    userCount: number;
+    total: number;
 
-    databaseSize: string;
-
-    newUsersByDay: AdminNewUsersByDay[];
+    newByDay: AdminNewUsersByDay[];
 
     pendingDeletions: number;
 
-    anonymizedAccounts: number;
+    anonymized: number;
+}
 
-    activeSessions: number;
+export interface AdminSessionsSummary {
 
-    suspiciousLogins: AdminSuspiciousLogin[];
+    active: number;
 
-    recentActions: AdminAction[];
+    loginAttemptLimit: AdminLoginAttemptLimitEntry[];
+}
+
+export interface AdminDatabaseSummary {
+
+    size: string;
+}
+
+export interface AdminDashboard {
+
+    users: AdminUsersSummary;
+
+    sessions: AdminSessionsSummary;
+
+    database: AdminDatabaseSummary;
 
     health: AdminHealth;
+
+    recentActions: AdminAction[];
 }
 
 export interface AdminUserSearchResult {

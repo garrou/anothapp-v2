@@ -23,13 +23,21 @@ const active = computed(() => route.name === "series-status" ? (route.query.stat
 <style scoped>
 .pill-tabs {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 4px;
     padding-top: 20px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.pill-tabs::-webkit-scrollbar {
+    display: none;
 }
 
 .pill-tab {
     display: inline-flex;
+    flex-shrink: 0;
     align-items: center;
     border-radius: 999px;
     padding: 7px 18px;

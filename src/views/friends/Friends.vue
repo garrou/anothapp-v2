@@ -29,10 +29,6 @@
                 <v-window-item :value="4">
                     <watch-together-invites-row :invites="pendingInvites" :loading="loading" @refresh="fetchPendingInvites" />
                 </v-window-item>
-                <v-window-item :value="5">
-                    <watch-together-invites-row active :invites="activeWatchedWith" :loading="loading"
-                        @refresh="fetchActiveWatchedWith" />
-                </v-window-item>
             </v-window>
         </v-window-item>
     </v-window>
@@ -62,7 +58,6 @@ const { getWatchedWith } = useSeason();
 const friends = ref<FriendResponse>();
 const searched = ref<User[]>([]);
 const pendingInvites = ref<WatchTogetherInvite[]>([]);
-const activeWatchedWith = ref<WatchTogetherInvite[]>([]);
 const loading = ref(false);
 const tab = ref(1);
 const manageTab = ref(1);
@@ -77,8 +72,7 @@ const manageTabs = computed(() => [
     { value: 1, label: "Ajouter" },
     { value: 2, label: "Reçues", badge: friends.value?.received?.length },
     { value: 3, label: "Envoyées" },
-    { value: 4, label: "Invitations", badge: pendingInvites.value.length },
-    { value: 5, label: "Actifs" }
+    { value: 4, label: "Invitations", badge: pendingInvites.value.length }
 ]);
 
 const existingIds = computed<string[]>(() => [
@@ -114,17 +108,8 @@ const fetchPendingInvites = async () => {
     }
 }
 
-const fetchActiveWatchedWith = async () => {
-    loading.value = true;
-    try {
-        activeWatchedWith.value = await getWatchedWith("active");
-    } finally {
-        loading.value = false;
-    }
-}
-
 onBeforeMount(async () => {
-    await Promise.all([fetchFriends(), fetchPendingInvites(), fetchActiveWatchedWith()]);
+    await Promise.all([fetchFriends(), fetchPendingInvites()]);
 
     // an explicit link (e.g. the season_watched_with notification) always wins over the
     // auto-select heuristic below, so it reliably lands on the tab it points to

@@ -6,16 +6,25 @@ import SeriesStatus from "./SeriesStatus.vue";
 import { vuetify } from "@/test/vuetify";
 import { SerieStatus } from "@/types/types";
 import type { Serie } from "@/models/serie";
+import type { WatchTogetherInvite } from "@/models/season";
 
 const serieComposableMocks = vi.hoisted(() => ({
     getSeriesByStatus: vi.fn(),
 }));
+const seasonComposableMocks = vi.hoisted(() => ({
+    getWatchedWith: vi.fn(),
+}));
 const routeMock = vi.hoisted(() => ({ fullPath: "/series-status" }));
 
 vi.mock("@/composables/serie", () => ({ useSerie: () => serieComposableMocks }));
+vi.mock("@/composables/season", () => ({ useSeason: () => seasonComposableMocks }));
 vi.mock("vue-router", () => ({ useRoute: () => routeMock }));
 
 const serie = (id: number): Partial<Serie> => ({ id, title: "Serie " + id });
+
+const invite = (userSeasonId: number): WatchTogetherInvite => ({
+    userSeasonId, showId: 10, showTitle: "Dexter", seasonNumber: 1, actor: { id: "user-2", username: "bob" },
+});
 
 const mountView = async (status: SerieStatus, series: Partial<Serie>[] = [serie(1)]) => {
     serieComposableMocks.getSeriesByStatus.mockResolvedValue(series);
@@ -86,5 +95,37 @@ describe("SeriesStatus", () => {
         await wrapper.findComponent({ name: "SeriesRow" }).vm.$emit("refresh", 1, "list");
 
         expect(wrapper.findComponent({ name: "SeriesRow" }).props("series")).toEqual([serie(1)]);
+    });
+
+    describe("WatchTogether status", () => {
+        it("renders WatchTogetherInvitesRow instead of SeriesRow", async () => {
+            seasonComposableMocks.getWatchedWith.mockResolvedValue([invite(1)]);
+            const wrapper = mount(SeriesStatus, {
+                global: { plugins: [vuetify], stubs: { BaseAppBar: true, SerieCard: true } },
+                props: { status: SerieStatus.WatchTogether },
+            });
+            await flushPromises();
+
+            expect(seasonComposableMocks.getWatchedWith).toHaveBeenCalledWith("active");
+            expect(serieComposableMocks.getSeriesByStatus).not.toHaveBeenCalled();
+            expect(wrapper.findComponent({ name: "WatchTogetherInvitesRow" }).exists()).toBe(true);
+            expect(wrapper.findComponent({ name: "WatchTogetherInvitesRow" }).props("active")).toBe(true);
+            expect(wrapper.findComponent({ name: "WatchTogetherInvitesRow" }).props("invites")).toEqual([invite(1)]);
+            expect(wrapper.findComponent({ name: "SeriesRow" }).exists()).toBe(false);
+        });
+
+        it("re-fetches when WatchTogetherInvitesRow emits refresh", async () => {
+            seasonComposableMocks.getWatchedWith.mockResolvedValue([invite(1)]);
+            const wrapper = mount(SeriesStatus, {
+                global: { plugins: [vuetify], stubs: { BaseAppBar: true, SerieCard: true } },
+                props: { status: SerieStatus.WatchTogether },
+            });
+            await flushPromises();
+
+            await wrapper.findComponent({ name: "WatchTogetherInvitesRow" }).vm.$emit("refresh");
+            await flushPromises();
+
+            expect(seasonComposableMocks.getWatchedWith).toHaveBeenCalledTimes(2);
+        });
     });
 });

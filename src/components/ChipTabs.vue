@@ -30,12 +30,20 @@ defineEmits<{
 <style scoped>
 .pill-tabs {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.pill-tabs::-webkit-scrollbar {
+    display: none;
 }
 
 .pill-tab {
     display: inline-flex;
+    flex-shrink: 0;
     align-items: center;
     gap: 6px;
     border: none;

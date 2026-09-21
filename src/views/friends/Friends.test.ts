@@ -30,14 +30,9 @@ const invite = (userSeasonId: number): WatchTogetherInvite => ({
     userSeasonId, showId: 10, showTitle: "Dexter", seasonNumber: 1, actor: { id: "user-2", username: "bob" },
 });
 
-const mountView = async (
-    response: Omit<FriendResponse, "viewed">,
-    invites: WatchTogetherInvite[] = [],
-    active: WatchTogetherInvite[] = [],
-) => {
+const mountView = async (response: Omit<FriendResponse, "viewed">, invites: WatchTogetherInvite[] = []) => {
     friendComposableMocks.getFriends.mockResolvedValue({ viewed: [], ...response });
-    seasonComposableMocks.getWatchedWith.mockImplementation((status: string) =>
-        Promise.resolve(status === "active" ? active : invites));
+    seasonComposableMocks.getWatchedWith.mockResolvedValue(invites);
     const wrapper = mount(Friends, {
         global: { plugins: [vuetify], stubs: { BaseAppBar: true, LeaderboardList: true } },
     });
@@ -109,27 +104,6 @@ describe("Friends", () => {
         await flushPromises();
 
         expect(seasonComposableMocks.getWatchedWith.mock.calls.filter(([s]) => s === "pending")).toHaveLength(2);
-    });
-
-    it("passes the active watch-together links to the 'Actifs' tab, without a badge", async () => {
-        const wrapper = await openManageTab(await mountView({ friends: [], sent: [], received: [] }, [], [invite(1), invite(2)]));
-
-        const manageTabs = wrapper.findComponent({ name: "ChipTabs" }).props("tabs") as { label: string; badge?: number }[];
-        expect(manageTabs.find((t) => t.label === "Actifs")!.badge).toBeUndefined();
-        const rows = wrapper.findAllComponents({ name: "WatchTogetherInvitesRow" });
-        const activeRow = rows.find((row) => row.props("active"));
-        expect(activeRow!.props("invites")).toHaveLength(2);
-    });
-
-    it("re-fetches active links when the 'Actifs' WatchTogetherInvitesRow emits refresh", async () => {
-        const wrapper = await openManageTab(await mountView({ friends: [], sent: [], received: [] }, [], [invite(1)]));
-
-        const rows = wrapper.findAllComponents({ name: "WatchTogetherInvitesRow" });
-        const activeRow = rows.find((row) => row.props("active"));
-        await activeRow!.vm.$emit("refresh");
-        await flushPromises();
-
-        expect(seasonComposableMocks.getWatchedWith.mock.calls.filter(([s]) => s === "active")).toHaveLength(2);
     });
 
     it("auto-switches to the 'received requests' management tab when there are pending requests", async () => {

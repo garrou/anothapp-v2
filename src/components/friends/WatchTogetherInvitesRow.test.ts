@@ -67,6 +67,20 @@ describe("WatchTogetherInvitesRow", () => {
         expect(wrapper.emitted("refresh")).toHaveLength(1);
     });
 
+    it("does not make the card clickable for a pending invitation", () => {
+        const wrapper = mountRow({ invites: [invite(1)] });
+
+        expect(wrapper.findComponent({ name: "PosterCard" }).props("to")).toBeUndefined();
+        expect(wrapper.findComponent({ name: "RouterLink" }).exists()).toBe(false);
+    });
+
+    it("links the card and title to the show's page when active is true", () => {
+        const wrapper = mountRow({ invites: [invite(1)], active: true });
+
+        expect(wrapper.findComponent({ name: "PosterCard" }).props("to")).toBe("/series/10");
+        expect(wrapper.findComponent({ name: "RouterLink" }).props("to")).toBe("/series/10");
+    });
+
     it("shows an active-specific empty state when active is true", () => {
         const wrapper = mountRow({ invites: [], active: true });
 

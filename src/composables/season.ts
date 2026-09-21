@@ -1,4 +1,4 @@
-import type { Season, SeasonDetail, SeasonTimeline } from "@/models/season";
+import type { Season, SeasonDetail } from "@/models/season";
 import type { Serie } from "@/models/serie";
 import serieService from "@/services/serieService";
 import type { SeasonSearchOptions } from "@/models/search";
@@ -19,16 +19,6 @@ export function useSeason() {
             throw new Error(data.message);
         }
         showSuccess("Visionnage supprimé");
-    }
-
-    const getSeasonsTimeline = async (month: number): Promise<SeasonTimeline[]> => {
-        const resp = await seasonService.getSeasons(undefined, month);
-        const data = await resp.json();
-
-        if (isError(resp.status))
-            throw new Error(data.message);
-
-        return data;
     }
 
     const getSeasonsBySerieId = async (options: SeasonSearchOptions): Promise<Season[]> => {
@@ -56,7 +46,7 @@ export function useSeason() {
         return data;
     }
 
-    const getSeasonWatchedTime = async (id: number, num: number): Promise<number | null> => {
+    const getSeasonWatchedTime = async (id: number, num: number): Promise<number> => {
         const resp = await serieService.getSeasonWatchedTime(id, num);
         const data = await resp.json();
 
@@ -103,7 +93,6 @@ export function useSeason() {
         addSeason,
         deleteSeason,
         getSeasonsBySerieId,
-        getSeasonsTimeline,
         getSeasonInfosBySerieIdByNumber,
         getSeasonWatchedTime,
         updateSeason,

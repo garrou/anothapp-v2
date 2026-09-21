@@ -58,7 +58,7 @@
                 </div>
             </div>
 
-            <episodes-checklist v-if="episodeTrackingEnabled" :key="`${subSeason.id}-${episodesRefreshKey}`"
+            <episodes-checklist :key="`${subSeason.id}-${episodesRefreshKey}`"
                 :user-season-id="subSeason.id" @refresh="onEpisodesRefresh" />
         </div>
     </template>
@@ -77,10 +77,8 @@ import { useEpisode } from "@/composables/episode";
 import { formatDate, toDatetimeLocalInput, minsToStringHoursDays } from "@/utils/format";
 import { DENSITY } from "@/constants/style";
 import { ACCOUNT_ICON, EDIT_ICON, DELETE_ICON } from "@/constants/icons";
-import { useSerie } from "@/composables/serie";
 import type { Platform } from "@/models/serie";
 import { useSearch } from "@/composables/search";
-import { useUser } from "@/composables/user";
 import { usePlatform } from "@/composables/platform";
 import { useFriend } from "@/composables/friend";
 import { useSnackbar } from "@/composables/snackbar";
@@ -101,10 +99,8 @@ const emit = defineEmits<{
 }>();
 
 const { getPlatforms } = useSearch();
-const { getSerie } = useSerie();
 const { deleteSeason, getSeasonInfosBySerieIdByNumber, getSeasonWatchedTime, updateSeason, updateWatchedWith } = useSeason();
 const { addAllEpisodesViewing } = useEpisode();
-const { getProfile } = useUser();
 const { getUserPlatforms } = usePlatform();
 const { getCachedFriends } = useFriend();
 const { showError } = useSnackbar();
@@ -114,7 +110,6 @@ const seasons = ref<SeasonDetail[]>([]);
 const selected = ref(-1);
 const time = ref(0);
 const toEdit = ref(-1);
-const episodeTrackingEnabled = ref(false);
 const platforms = ref<Platform[]>([]);
 const friends = ref<User[]>([]);
 const bulkOfferSeasonId = ref(-1);
@@ -137,9 +132,7 @@ const selectSeason = (id: number) => {
 }
 
 const refreshTime = async () => {
-    if (episodeTrackingEnabled.value) {
-        time.value = (await getSeasonWatchedTime(props.id, props.season.number)) ?? 0;
-    }
+    time.value = await getSeasonWatchedTime(props.id, props.season.number);
 }
 
 const acceptBulkAdd = async (userSeasonId: number) => {
@@ -205,19 +198,11 @@ onBeforeMount(async () => {
     ];
     friends.value = cachedFriends;
     seasons.value = await getSeasonInfosBySerieIdByNumber(props.id, props.season.number);
-    const user = await getProfile();
-    episodeTrackingEnabled.value = user.episodeTrackingEnabled ?? false;
 
-    if (episodeTrackingEnabled.value && props.justAdded && seasons.value.length) {
+    if (props.justAdded && seasons.value.length) {
         bulkOfferSeasonId.value = seasons.value[seasons.value.length - 1].id;
     }
-
-    if (episodeTrackingEnabled.value) {
-        await refreshTime();
-    } else {
-        const serie = await getSerie({ id: props.id });
-        time.value = serie.duration * props.season.episodes * seasons.value.length;
-    }
+    await refreshTime();
 });
 </script>
 

@@ -12,8 +12,6 @@ export interface User {
 
     picture?: string;
 
-    episodeTrackingEnabled?: boolean;
-
     createdAt?: string;
 
     isAdmin?: boolean;

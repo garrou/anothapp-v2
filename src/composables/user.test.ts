@@ -8,7 +8,6 @@ const userServiceMocks = vi.hoisted(() => ({
     updateImage: vi.fn(),
     updatePassword: vi.fn(),
     updateLogin: vi.fn(),
-    updateEpisodeTracking: vi.fn(),
     getUsers: vi.fn(),
     requestDeletion: vi.fn(),
 }));
@@ -125,38 +124,6 @@ describe("useUser.changeEmail", () => {
 
         await expect(useUser().changeEmail("new@example.com", "new@example.com", "s3cret-pass"))
             .rejects.toThrow("Requête invalide");
-    });
-});
-
-describe("useUser.updateEpisodeTracking", () => {
-    beforeEach(() => {
-        vi.resetAllMocks();
-        setActivePinia(createPinia());
-    });
-
-    it("shows the 'activated' message when enabling", async () => {
-        userServiceMocks.updateEpisodeTracking.mockResolvedValue(jsonResponse(200, null));
-        userServiceMocks.getProfile.mockResolvedValue(jsonResponse(200, profile));
-
-        await useUser().updateEpisodeTracking(true);
-
-        expect(useUserStore().profile?.episodeTrackingEnabled).toBe(true);
-        expect(snackbarMocks.showSuccess).toHaveBeenCalledWith("Suivi des épisodes activé");
-    });
-
-    it("shows the 'deactivated' message when disabling", async () => {
-        userServiceMocks.updateEpisodeTracking.mockResolvedValue(jsonResponse(200, null));
-        userServiceMocks.getProfile.mockResolvedValue(jsonResponse(200, profile));
-
-        await useUser().updateEpisodeTracking(false);
-
-        expect(snackbarMocks.showSuccess).toHaveBeenCalledWith("Suivi des épisodes désactivé");
-    });
-
-    it("throws on failure without showing a success toast", async () => {
-        userServiceMocks.updateEpisodeTracking.mockResolvedValue(jsonResponse(400, { message: "Requête invalide" }));
-
-        await expect(useUser().updateEpisodeTracking(true)).rejects.toThrow("Requête invalide");
     });
 });
 

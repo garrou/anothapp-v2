@@ -18,14 +18,8 @@ const seasonComposableMocks = vi.hoisted(() => ({
 const episodeComposableMocks = vi.hoisted(() => ({
     addAllEpisodesViewing: vi.fn(),
 }));
-const serieComposableMocks = vi.hoisted(() => ({
-    getSerie: vi.fn(),
-}));
 const searchComposableMocks = vi.hoisted(() => ({
     getPlatforms: vi.fn(),
-}));
-const userComposableMocks = vi.hoisted(() => ({
-    getProfile: vi.fn(),
 }));
 const platformComposableMocks = vi.hoisted(() => ({
     getUserPlatforms: vi.fn(),
@@ -39,9 +33,7 @@ const snackbarMocks = vi.hoisted(() => ({
 
 vi.mock("@/composables/season", () => ({ useSeason: () => seasonComposableMocks }));
 vi.mock("@/composables/episode", () => ({ useEpisode: () => episodeComposableMocks }));
-vi.mock("@/composables/serie", () => ({ useSerie: () => serieComposableMocks }));
 vi.mock("@/composables/search", () => ({ useSearch: () => searchComposableMocks }));
-vi.mock("@/composables/user", () => ({ useUser: () => userComposableMocks }));
 vi.mock("@/composables/platform", () => ({ usePlatform: () => platformComposableMocks }));
 vi.mock("@/composables/friend", () => ({ useFriend: () => friendComposableMocks }));
 vi.mock("@/composables/snackbar", () => ({ useSnackbar: () => snackbarMocks }));
@@ -59,26 +51,20 @@ const subSeason = (id: number, overrides: Partial<SeasonDetail> = {}): SeasonDet
 
 interface MountOptions {
     seasons?: SeasonDetail[];
-    episodeTrackingEnabled?: boolean;
     justAdded?: boolean;
-    watchedTime?: number | null;
-    serieDuration?: number;
+    watchedTime?: number;
 }
 
 const mountDetails = async ({
     seasons = [subSeason(501)],
-    episodeTrackingEnabled = false,
     justAdded = false,
     watchedTime = 120,
-    serieDuration = 45,
 }: MountOptions = {}) => {
     seasonComposableMocks.getSeasonInfosBySerieIdByNumber.mockResolvedValue(seasons);
     seasonComposableMocks.getSeasonWatchedTime.mockResolvedValue(watchedTime);
     searchComposableMocks.getPlatforms.mockResolvedValue([platform1]);
-    userComposableMocks.getProfile.mockResolvedValue({ episodeTrackingEnabled });
     platformComposableMocks.getUserPlatforms.mockResolvedValue([1]);
     friendComposableMocks.getCachedFriends.mockResolvedValue([friend1]);
-    serieComposableMocks.getSerie.mockResolvedValue({ duration: serieDuration });
 
     const wrapper = mount(SeasonDetails, {
         global: { plugins: [vuetify], stubs: { EpisodesChecklist: true } },
@@ -100,42 +86,26 @@ describe("SeasonDetails", () => {
         expect(wrapper.find(".season-details-total").exists()).toBe(false);
     });
 
-    it("computes total time from the serie's duration when episode tracking is disabled", async () => {
-        const wrapper = await mountDetails({ episodeTrackingEnabled: false, serieDuration: 45 });
-
-        expect(serieComposableMocks.getSerie).toHaveBeenCalledWith({ id: 1 });
-        expect(seasonComposableMocks.getSeasonWatchedTime).not.toHaveBeenCalled();
-        expect(wrapper.find(".season-details-total").text()).toContain("7 h 30");
-    });
-
-    it("computes total time from watched episodes when episode tracking is enabled", async () => {
-        const wrapper = await mountDetails({ episodeTrackingEnabled: true, watchedTime: 125 });
+    it("computes total time from watched episodes", async () => {
+        const wrapper = await mountDetails({ watchedTime: 125 });
 
         expect(seasonComposableMocks.getSeasonWatchedTime).toHaveBeenCalledWith(1, 1);
         expect(wrapper.find(".season-details-total").text()).toContain("2 h 5");
     });
 
-    it("offers a bulk-mark prompt for the last season when justAdded and episode tracking is enabled", async () => {
+    it("offers a bulk-mark prompt for the last season when justAdded", async () => {
         const wrapper = await mountDetails({
             seasons: [subSeason(501), subSeason(502)],
-            episodeTrackingEnabled: true,
             justAdded: true,
         });
 
         expect(wrapper.text()).toContain("Marquer tous les épisodes diffusés de cette saison comme vus ?");
     });
 
-    it("does not offer the bulk-mark prompt when episode tracking is disabled", async () => {
-        const wrapper = await mountDetails({ episodeTrackingEnabled: false, justAdded: true });
-
-        expect(wrapper.text()).not.toContain("Marquer tous les épisodes diffusés");
-    });
-
     it("marks all episodes watched, refreshes the time, and emits refreshStats on bulk accept", async () => {
         episodeComposableMocks.addAllEpisodesViewing.mockResolvedValue(undefined);
         const wrapper = await mountDetails({
             seasons: [subSeason(501)],
-            episodeTrackingEnabled: true,
             justAdded: true,
             watchedTime: 60,
         });
@@ -153,7 +123,6 @@ describe("SeasonDetails", () => {
     it("dismisses the bulk-mark prompt without side effects", async () => {
         const wrapper = await mountDetails({
             seasons: [subSeason(501)],
-            episodeTrackingEnabled: true,
             justAdded: true,
         });
 

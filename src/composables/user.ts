@@ -58,18 +58,6 @@ export function useUser() {
         showSuccess("Vérifiez votre nouvelle adresse email pour confirmer le changement");
     }
 
-    const updateEpisodeTracking = async (enabled: boolean): Promise<void> => {
-        const resp = await userService.updateEpisodeTracking(enabled);
-
-        if (isError(resp.status)) {
-            const data = await resp.json();
-            throw new Error(data.message);
-        }
-        await ensureProfileLoaded();
-        userStore.patch({ episodeTrackingEnabled: enabled });
-        showSuccess(enabled ? "Suivi des épisodes activé" : "Suivi des épisodes désactivé");
-    }
-
     const getUsers = async (username: string): Promise<User[]> => {
         const resp = await userService.getUsers(username);
         const data = await resp.json();
@@ -94,5 +82,5 @@ export function useUser() {
         }
     }
 
-    return { changeEmail, changePassword, changeImage, getUsers, getProfile, updateEpisodeTracking, requestDeletion }
+    return { changeEmail, changePassword, changeImage, getUsers, getProfile, requestDeletion }
 }

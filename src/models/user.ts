@@ -15,4 +15,6 @@ export interface User {
     episodeTrackingEnabled?: boolean;
 
     createdAt?: string;
+
+    isAdmin?: boolean;
 }

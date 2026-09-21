@@ -40,8 +40,8 @@ vi.mock("@/composables/friend", () => ({ useFriend: () => friendComposableMocks 
 vi.mock("@/composables/auth", () => ({ useAuth: () => authComposableMocks }));
 vi.mock("vue-router", () => ({ useRoute: () => routeMock }));
 
-const mountAppBar = async (props: Record<string, unknown> = {}) => {
-    userComposableMocks.getProfile.mockResolvedValue({ id: "1", username: "Dexter" });
+const mountAppBar = async (props: Record<string, unknown> = {}, user: Record<string, unknown> = { id: "1", username: "Dexter" }) => {
+    userComposableMocks.getProfile.mockResolvedValue(user);
     searchComposableMocks.getKinds.mockResolvedValue([]);
     searchComposableMocks.getPlatforms.mockResolvedValue([]);
     searchComposableMocks.getNotes.mockResolvedValue([]);
@@ -64,6 +64,18 @@ beforeEach(() => {
 });
 
 describe("BaseAppBar", () => {
+    it("shows the Admin link in the drawer only for an admin user", async () => {
+        const wrapper = await mountAppBar({}, { id: "admin-1", username: "Dexter", isAdmin: true });
+
+        expect(wrapper.text()).toContain("Admin");
+    });
+
+    it("hides the Admin link for a non-admin user", async () => {
+        const wrapper = await mountAppBar({}, { id: "user-1", username: "Dexter", isAdmin: false });
+
+        expect(wrapper.text()).not.toContain("Admin");
+    });
+
     it("shows a search field only when search is true", async () => {
         expect((await mountAppBar({ search: true })).find("form").exists()).toBe(true);
         expect((await mountAppBar({ search: false })).find("form").exists()).toBe(false);

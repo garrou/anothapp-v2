@@ -62,13 +62,9 @@ import BaseImage from "@/components/BaseImage.vue";
 import DayBadge from "@/components/DayBadge.vue";
 import EmptyState from "@/components/EmptyState.vue";
 import { useSearch } from "@/composables/search";
-import { useSeason } from "@/composables/season";
 import { useEpisode } from "@/composables/episode";
-import { useUser } from "@/composables/user";
-import type { SeasonTimeline } from "@/models/season";
 import type { EpisodeTimeline } from "@/models/episodeTimeline";
 import type { Platform } from "@/models/serie";
-import { buildPlural } from "@/utils/format";
 import { MONTHS_FR, WEEKDAYS_LONG, WEEKDAYS_SHORT, isSameDay, parseLocalDate, toLocalDateKey } from "@/utils/date";
 import { CHECK_ICON, CHEVRON_RIGHT_ICON, MOVIE_EMPTY_ICON } from "@/constants/icons";
 import { computed, onBeforeMount, ref } from "vue";
@@ -94,17 +90,13 @@ const MONTHS = [
 ];
 
 const { getPlatforms } = useSearch();
-const { getSeasonsTimeline } = useSeason();
 const { getEpisodesTimeline } = useEpisode();
-const { getProfile } = useUser();
 
 const loading = ref(false);
 const month = ref(0);
 const menuOpen = ref(false);
-const timeline = ref<SeasonTimeline[]>([]);
 const episodeTimeline = ref<EpisodeTimeline[]>([]);
 const platforms = ref<Platform[]>([]);
-const episodeTrackingEnabled = ref(false);
 
 const selectedMonthLabel = computed(() => MONTHS.find((m) => m.value === month.value)?.text ?? MONTHS[0].text);
 
@@ -115,17 +107,7 @@ const selectMonth = (value: number) => {
 
 const getSpecificPlatform = (id?: number): Platform | undefined => platforms.value.find((p) => p.id === id);
 
-const seasonCards = computed<HistoryCard[]>(() => timeline.value.map((item) => ({
-    key: `season-${item.showId}-${item.season.number}-${item.addedAt}`,
-    date: item.addedAt,
-    showId: item.showId,
-    title: item.showTitle,
-    subtitle: `Saison ${item.season.number} · ${buildPlural("épisode", item.season.episodes)}`,
-    poster: item.season.image,
-    platformId: item.platformId
-})));
-
-const episodeCards = computed<HistoryCard[]>(() => episodeTimeline.value.map((item) => ({
+const cards = computed<HistoryCard[]>(() => episodeTimeline.value.map((item) => ({
     key: `episode-${item.episode.id}-${item.watchedAt}`,
     date: item.watchedAt,
     showId: item.showId,
@@ -134,8 +116,6 @@ const episodeCards = computed<HistoryCard[]>(() => episodeTimeline.value.map((it
     poster: item.showPoster,
     platformId: item.platformId
 })));
-
-const cards = computed<HistoryCard[]>(() => episodeTrackingEnabled.value ? episodeCards.value : seasonCards.value);
 
 const groups = computed(() => {
     const today = new Date();
@@ -168,11 +148,7 @@ const groups = computed(() => {
 const getHistory = async () => {
     loading.value = true;
     try {
-        if (episodeTrackingEnabled.value) {
-            episodeTimeline.value = await getEpisodesTimeline(month.value);
-        } else {
-            timeline.value = await getSeasonsTimeline(month.value);
-        }
+        episodeTimeline.value = await getEpisodesTimeline(month.value);
     } finally {
         loading.value = false;
     }
@@ -183,8 +159,6 @@ const getAllPlatforms = async () => {
 }
 
 onBeforeMount(async () => {
-    const user = await getProfile();
-    episodeTrackingEnabled.value = user.episodeTrackingEnabled ?? false;
     await Promise.all([
         getAllPlatforms(),
         getHistory()

@@ -3,7 +3,6 @@ import { useSeason } from "./season";
 
 const seasonServiceMocks = vi.hoisted(() => ({
     deleteSeasonById: vi.fn(),
-    getSeasons: vi.fn(),
     updateSeason: vi.fn(),
     updateWatchedWith: vi.fn(),
 }));
@@ -150,19 +149,9 @@ describe("useSeason.updateWatchedWith", () => {
     });
 });
 
-describe("useSeason.getSeasonsTimeline / getSeasonInfosBySerieIdByNumber / getSeasonWatchedTime", () => {
+describe("useSeason.getSeasonInfosBySerieIdByNumber / getSeasonWatchedTime", () => {
     beforeEach(() => {
         vi.resetAllMocks();
-    });
-
-    it("getSeasonsTimeline returns the timeline on success", async () => {
-        const timeline = [{ month: "2025-01" }];
-        seasonServiceMocks.getSeasons.mockResolvedValue(jsonResponse(200, timeline));
-
-        const result = await useSeason().getSeasonsTimeline(3);
-
-        expect(result).toEqual(timeline);
-        expect(seasonServiceMocks.getSeasons).toHaveBeenCalledWith(undefined, 3);
     });
 
     it("getSeasonInfosBySerieIdByNumber returns the details on success", async () => {

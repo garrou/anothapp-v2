@@ -7,9 +7,6 @@ const deleteSeasonById = (id: number): Promise<Response> => httpClient.delete(`$
 const updateSeason = (id: number, platformId: number, viewedAt: string): Promise<Response> =>
     httpClient.patch(`${PREFIX}/${id}`, { platform: platformId, viewedAt });
 
-const getSeasons = (year?: number, month?: number): Promise<Response> =>
-    httpClient.get(PREFIX, [{ name: year ? "year" : "month", value: year ?? month }]);
-
 const getEpisodesBySeasonId = (id: number): Promise<Response> => httpClient.get(`${PREFIX}/${id}/episodes`);
 
 const addEpisodeViewing = (id: number, episodeId: number): Promise<Response> =>
@@ -25,7 +22,6 @@ export default {
     addEpisodeViewing,
     deleteSeasonById,
     getEpisodesBySeasonId,
-    getSeasons,
     updateSeason,
     updateWatchedWith
 }

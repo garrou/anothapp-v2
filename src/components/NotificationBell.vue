@@ -103,8 +103,6 @@ const describe = (item: Notification): string => {
             const noteName = noteNames.value[Number(meta.noteId)];
             return noteName ? `${actor} a noté "${show}" : ${noteName}` : `${actor} a noté "${show}"`;
         }
-        case "season_watched":
-            return `${actor} a vu la saison ${meta.seasonNumber} de "${show}"`;
         case "season_watched_with":
             return `${actor} a vu la saison ${meta.seasonNumber} de "${show}" avec vous`;
         case "episode_watched":

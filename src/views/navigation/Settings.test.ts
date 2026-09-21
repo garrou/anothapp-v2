@@ -6,8 +6,6 @@ import { vuetify } from "@/test/vuetify";
 import { THEME_ANOTHAPP, THEME_ANOTHAPP_DARK } from "@/utils/theme";
 
 const userComposableMocks = vi.hoisted(() => ({
-    getProfile: vi.fn(),
-    updateEpisodeTracking: vi.fn(),
     requestDeletion: vi.fn(),
 }));
 const settingsComposableMocks = vi.hoisted(() => ({
@@ -35,8 +33,7 @@ vi.mock("@/composables/auth", () => ({ useAuth: () => authComposableMocks }));
 vi.mock("@/composables/snackbar", () => ({ useSnackbar: () => snackbarMocks }));
 vi.mock("@/services/storageService", () => ({ default: storageServiceMocks }));
 
-const mountView = async (episodeTrackingEnabled = false) => {
-    userComposableMocks.getProfile.mockResolvedValue({ episodeTrackingEnabled });
+const mountView = async () => {
     const wrapper = mount(Settings, {
         global: { plugins: [vuetify], stubs: { BaseAppBar: true } },
     });
@@ -51,75 +48,12 @@ beforeEach(() => {
 });
 
 describe("Settings", () => {
-    it("pre-fills the episode-tracking switch from the profile", async () => {
-        const enabled = await mountView(true);
-        expect((switches(enabled)[1].element as HTMLInputElement).checked).toBe(true);
-
-        const disabled = await mountView(false);
-        expect((switches(disabled)[1].element as HTMLInputElement).checked).toBe(false);
-    });
-
     it("stores and applies the theme when the dark-mode switch is toggled", async () => {
         const wrapper = await mountView();
 
         await switches(wrapper)[0].setValue(true);
 
         expect(storageServiceMocks.storeTheme).toHaveBeenCalledWith(THEME_ANOTHAPP_DARK);
-    });
-
-    it("opens a confirm dialog before enabling episode tracking, and only applies it on confirm", async () => {
-        userComposableMocks.updateEpisodeTracking.mockResolvedValue(undefined);
-        const wrapper = await mountView(false);
-
-        await switches(wrapper)[1].setValue(true);
-        expect(userComposableMocks.updateEpisodeTracking).not.toHaveBeenCalled();
-
-        const confirmBtn = wrapper.findAllComponents({ name: "VBtn" }).find((btn) => btn.text() === "Activer");
-        await confirmBtn!.trigger("click");
-        await flushPromises();
-
-        expect(userComposableMocks.updateEpisodeTracking).toHaveBeenCalledWith(true);
-    });
-
-    it("reverts the switch when enabling episode tracking is cancelled", async () => {
-        const wrapper = await mountView(false);
-
-        await switches(wrapper)[1].setValue(true);
-        const cancelBtn = wrapper.findAllComponents({ name: "VBtn" }).find((btn) => btn.text() === "Annuler");
-        await cancelBtn!.trigger("click");
-
-        expect((switches(wrapper)[1].element as HTMLInputElement).checked).toBe(false);
-        expect(userComposableMocks.updateEpisodeTracking).not.toHaveBeenCalled();
-    });
-
-    it("opens a confirm dialog before disabling episode tracking, and only applies it on confirm", async () => {
-        userComposableMocks.updateEpisodeTracking.mockResolvedValue(undefined);
-        const wrapper = await mountView(true);
-
-        await switches(wrapper)[1].setValue(false);
-        expect(userComposableMocks.updateEpisodeTracking).not.toHaveBeenCalled();
-
-        const confirmBtn = wrapper.findAllComponents({ name: "VBtn" }).find((btn) => btn.text() === "Désactiver");
-        await confirmBtn!.trigger("click");
-        await flushPromises();
-
-        expect(userComposableMocks.updateEpisodeTracking).toHaveBeenCalledWith(false);
-    });
-
-    it("reverts the switch state when applying the change fails", async () => {
-        userComposableMocks.updateEpisodeTracking.mockRejectedValue(new Error("Nope"));
-        const wrapper = await mountView(false);
-        // The component rethrows after reverting its own state, relying on
-        // main.ts's app-level errorHandler to report it (tested separately);
-        // silence it here so the expected rejection doesn't surface as noise.
-        wrapper.vm.$.appContext.app.config.errorHandler = () => {};
-
-        await switches(wrapper)[1].setValue(true);
-        const confirmBtn = wrapper.findAllComponents({ name: "VBtn" }).find((btn) => btn.text() === "Activer");
-        await confirmBtn!.trigger("click");
-        await flushPromises();
-
-        expect((switches(wrapper)[1].element as HTMLInputElement).checked).toBe(false);
     });
 
     it("asks for confirmation before exporting, and only exports on confirm", async () => {

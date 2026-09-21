@@ -185,18 +185,11 @@ const ringCircumference = 2 * Math.PI * 54;
 
 const missingTime = computed(() => {
     const serie = infos.value?.serie;
-    const watchedSeasons = infos.value?.seasons.length ?? 0;
 
-    if (!serie) return minsToStringHoursDays(0);
+    if (!serie || !infos.value) return minsToStringHoursDays(0);
 
-    if (infos.value?.distinctEpisodes !== undefined && serie.episodes) {
-        const missingEpisodes = Math.max(0, serie.episodes - infos.value.distinctEpisodes);
-        return minsToStringHoursDays(missingEpisodes * serie.duration);
-    }
-    const totalSeasons = serie.seasons ?? 0;
-    const missingSeasons = Math.max(0, totalSeasons - watchedSeasons);
-    const avgEpisodesPerSeason = totalSeasons ? (serie.episodes ?? 0) / totalSeasons : 0;
-    return minsToStringHoursDays(missingSeasons * avgEpisodesPerSeason * serie.duration);
+    const missingEpisodes = Math.max(0, (serie.episodes ?? 0) - infos.value.distinctEpisodes);
+    return minsToStringHoursDays(missingEpisodes * serie.duration);
 });
 const isMissingSeasons = computed(() => (infos.value?.serie.seasons ?? 0) - (infos.value?.seasons?.length ?? 0) > 0);
 const time = computed(() => minsToStringHoursDays(infos.value?.time));
@@ -204,13 +197,10 @@ const time = computed(() => minsToStringHoursDays(infos.value?.time));
 const viewingPercent = computed(() => {
     const serie = infos.value?.serie;
 
-    if (infos.value?.distinctEpisodes !== undefined && serie?.episodes) {
-        return (Math.min(1, infos.value.distinctEpisodes / serie.episodes) * 100).toFixed(0);
-    }
-    if (!serie?.seasons) {
+    if (!infos.value || !serie?.episodes) {
         return "0";
     }
-    return (Math.min(1, (infos.value?.seasons.length ?? 0) / serie.seasons) * 100).toFixed(0);
+    return (Math.min(1, infos.value.distinctEpisodes / serie.episodes) * 100).toFixed(0);
 });
 const ringOffset = computed(() => ringCircumference * (1 - Number(viewingPercent.value) / 100));
 

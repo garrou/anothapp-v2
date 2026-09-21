@@ -70,6 +70,7 @@ const serieInfo = (overrides: Partial<SerieInfo["serie"]> = {}, infoOverrides: P
     seasons: [],
     time: 120,
     episodes: 10,
+    distinctEpisodes: 0,
     ...infoOverrides,
 } as SerieInfo);
 
@@ -133,17 +134,14 @@ describe("Serie", () => {
         expect(wrapper.find(".ring-value").text()).toBe("100%");
     });
 
-    it("falls back to seasons-based viewingPercent when distinctEpisodes is unavailable", async () => {
-        const wrapper = await mountView(1, serieInfo(
-            { seasons: 4 },
-            { distinctEpisodes: undefined, seasons: [{ number: 1 }, { number: 2 }] as Season[] },
-        ));
+    it("shows 0% when nothing has been watched yet", async () => {
+        const wrapper = await mountView(1, serieInfo({ episodes: 62 }, { distinctEpisodes: 0 }));
 
-        expect(wrapper.find(".ring-value").text()).toBe("50%");
+        expect(wrapper.find(".ring-value").text()).toBe("0%");
     });
 
-    it("shows 0% when the serie has no season count at all", async () => {
-        const wrapper = await mountView(1, serieInfo({ seasons: undefined }, { distinctEpisodes: undefined, seasons: [] }));
+    it("shows 0% when the serie has no episode count at all", async () => {
+        const wrapper = await mountView(1, serieInfo({ episodes: 0 }, { distinctEpisodes: 0 }));
 
         expect(wrapper.find(".ring-value").text()).toBe("0%");
     });

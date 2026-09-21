@@ -67,7 +67,7 @@ export interface SerieInfo {
 
     episodes: number;
 
-    distinctEpisodes?: number;
+    distinctEpisodes: number;
 }
 
 export type Similar = Required<BaseSerie>;

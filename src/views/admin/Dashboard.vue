@@ -44,7 +44,7 @@
 
         <v-card v-if="dashboard" class="pa-4 mt-6">
             <div class="text-subtitle-1 font-weight-bold mb-2">Rechercher un compte</div>
-            <v-form @submit="onSearch" @submit.prevent>
+            <v-form @submit.prevent="onSearch">
                 <v-text-field v-model="searchQuery" density="compact" hide-details :disabled="searchLoading"
                     placeholder="Nom d'utilisateur ou email">
                     <template #append-inner>
@@ -146,7 +146,7 @@ const healthSubtitle = (check: AdminHealthCheck): string => {
 }
 
 const onSearch = async () => {
-    const query = searchQuery.value;
+    const query = searchQuery.value.trim();
 
     if (query.length < 2) {
         searchResults.value = [];

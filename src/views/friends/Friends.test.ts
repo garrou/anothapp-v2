@@ -74,21 +74,21 @@ describe("Friends", () => {
     it("badges the nested 'Invitations' tab with the pending invites count", async () => {
         const wrapper = await openManageTab(await mountView({ friends: [], sent: [], received: [] }, [invite(1), invite(2)]));
 
-        const manageTabs = wrapper.findAllComponents({ name: "PillTabs" })[1].props("tabs") as { label: string; badge?: number }[];
+        const manageTabs = wrapper.findComponent({ name: "ChipTabs" }).props("tabs") as { label: string; badge?: number }[];
         expect(manageTabs.find((t) => t.label === "Invitations")!.badge).toBe(2);
     });
 
     it("auto-switches to the 'Invitations' management tab when there are pending invites but no received requests", async () => {
         const wrapper = await openManageTab(await mountView({ friends: [], sent: [], received: [] }, [invite(1)]));
 
-        const manageTabs = wrapper.findAllComponents({ name: "PillTabs" })[1];
+        const manageTabs = wrapper.findComponent({ name: "ChipTabs" });
         expect(manageTabs.props("modelValue")).toBe(4);
     });
 
     it("prioritizes the 'received requests' tab over invitations when both are pending", async () => {
         const wrapper = await openManageTab(await mountView({ friends: [], sent: [], received: [user("r1")] }, [invite(1)]));
 
-        const manageTabs = wrapper.findAllComponents({ name: "PillTabs" })[1];
+        const manageTabs = wrapper.findComponent({ name: "ChipTabs" });
         expect(manageTabs.props("modelValue")).toBe(2);
     });
 
@@ -97,7 +97,7 @@ describe("Friends", () => {
         const wrapper = await mountView({ friends: [], sent: [], received: [user("r1")] });
 
         const tabs = wrapper.findComponent({ name: "PillTabs" });
-        const manageTabs = wrapper.findAllComponents({ name: "PillTabs" })[1];
+        const manageTabs = wrapper.findComponent({ name: "ChipTabs" });
         expect(tabs.props("modelValue")).toBe(3);
         expect(manageTabs.props("modelValue")).toBe(4);
     });
@@ -114,7 +114,7 @@ describe("Friends", () => {
     it("passes the active watch-together links to the 'Actifs' tab, without a badge", async () => {
         const wrapper = await openManageTab(await mountView({ friends: [], sent: [], received: [] }, [], [invite(1), invite(2)]));
 
-        const manageTabs = wrapper.findAllComponents({ name: "PillTabs" })[1].props("tabs") as { label: string; badge?: number }[];
+        const manageTabs = wrapper.findComponent({ name: "ChipTabs" }).props("tabs") as { label: string; badge?: number }[];
         expect(manageTabs.find((t) => t.label === "Actifs")!.badge).toBeUndefined();
         const rows = wrapper.findAllComponents({ name: "WatchTogetherInvitesRow" });
         const activeRow = rows.find((row) => row.props("active"));
@@ -135,14 +135,14 @@ describe("Friends", () => {
     it("auto-switches to the 'received requests' management tab when there are pending requests", async () => {
         const wrapper = await openManageTab(await mountView({ friends: [], sent: [], received: [user("r1")] }));
 
-        const manageTabs = wrapper.findAllComponents({ name: "PillTabs" })[1];
+        const manageTabs = wrapper.findComponent({ name: "ChipTabs" });
         expect(manageTabs.props("modelValue")).toBe(2);
     });
 
     it("stays on the 'add' management tab when there are no pending requests", async () => {
         const wrapper = await openManageTab(await mountView({ friends: [], sent: [], received: [] }));
 
-        const manageTabs = wrapper.findAllComponents({ name: "PillTabs" })[1];
+        const manageTabs = wrapper.findComponent({ name: "ChipTabs" });
         expect(manageTabs.props("modelValue")).toBe(1);
     });
 

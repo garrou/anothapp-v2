@@ -13,7 +13,7 @@
         </v-window-item>
 
         <v-window-item :value="3">
-            <pill-tabs v-model="manageTab" class="mb-4 px-3" :tabs="manageTabs" />
+            <chip-tabs v-model="manageTab" class="mb-4 px-3" :tabs="manageTabs" />
 
             <v-window v-model="manageTab">
                 <v-window-item :value="1">
@@ -44,6 +44,7 @@ import LeaderboardList from "@/components/friends/LeaderboardList.vue";
 import WatchTogetherInvitesRow from "@/components/friends/WatchTogetherInvitesRow.vue";
 import BaseAppBar from "@/components/BaseAppBar.vue";
 import PillTabs from "@/components/PillTabs.vue";
+import ChipTabs from "@/components/ChipTabs.vue";
 import { computed, onBeforeMount, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useFriend } from "@/composables/friend";

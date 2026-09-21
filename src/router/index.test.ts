@@ -6,12 +6,16 @@ import { useScrollStore } from "@/stores/scroll";
 const authComposableMocks = vi.hoisted(() => ({
     checkAuth: vi.fn(),
 }));
+const userComposableMocks = vi.hoisted(() => ({
+    getProfile: vi.fn(),
+}));
 const navigationMocks = vi.hoisted(() => ({
     trackNavigation: vi.fn(),
     goBack: vi.fn(),
 }));
 
 vi.mock("@/composables/auth", () => ({ useAuth: () => authComposableMocks }));
+vi.mock("@/composables/user", () => ({ useUser: () => userComposableMocks }));
 vi.mock("@/utils/navigation", () => navigationMocks);
 
 const importRouter = async () => {
@@ -122,5 +126,35 @@ describe("router guards", () => {
         await router.push("/login");
 
         expect(navigationMocks.trackNavigation).toHaveBeenCalledWith(router.currentRoute.value.fullPath);
+    });
+
+    it("redirects to /login (not /series) for a logged-out user hitting /admin", async () => {
+        const router = await importRouter();
+        authComposableMocks.checkAuth.mockResolvedValue(false);
+
+        await router.push("/admin");
+
+        expect(router.currentRoute.value.path).toBe("/login");
+        expect(userComposableMocks.getProfile).not.toHaveBeenCalled();
+    });
+
+    it("redirects a logged-in non-admin user away from /admin to /series", async () => {
+        const router = await importRouter();
+        authComposableMocks.checkAuth.mockResolvedValue(true);
+        userComposableMocks.getProfile.mockResolvedValue({ id: "user-1", isAdmin: false });
+
+        await router.push("/admin");
+
+        expect(router.currentRoute.value.path).toBe("/series");
+    });
+
+    it("lets a logged-in admin reach /admin", async () => {
+        const router = await importRouter();
+        authComposableMocks.checkAuth.mockResolvedValue(true);
+        userComposableMocks.getProfile.mockResolvedValue({ id: "admin-1", isAdmin: true });
+
+        await router.push("/admin");
+
+        expect(router.currentRoute.value.path).toBe("/admin");
     });
 });

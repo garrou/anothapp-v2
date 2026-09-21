@@ -45,6 +45,9 @@
                 <v-list-item v-for="(item, index) in NAV_OTHERS" :key="index" class="drawer-menu-item"
                     :class="{ 'drawer-menu-item--active': isMenuActive(item.link) }" rounded="lg" :to="item.link"
                     :prepend-icon="item.icon" :title="item.title" variant="plain" />
+                <v-list-item v-if="user?.isAdmin" class="drawer-menu-item"
+                    :class="{ 'drawer-menu-item--active': isMenuActive('/admin') }" rounded="lg" to="/admin"
+                    prepend-icon="mdi-shield-account" title="Admin" variant="plain" />
             </v-list>
 
             <v-list :density="DENSITY" nav class="px-2 py-2 drawer-menu">

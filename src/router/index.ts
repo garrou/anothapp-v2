@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory, useRoute } from "vue-router";
 import { useAuth } from "@/composables/auth";
+import { useUser } from "@/composables/user";
 import { useScrollStore } from "@/stores/scroll";
 import { trackNavigation } from "@/utils/navigation";
 
@@ -198,6 +199,15 @@ const router = createRouter({
       }
     },
     {
+      path: "/admin",
+      name: "admin",
+      component: () => import("@/views/admin/Dashboard.vue"),
+      meta: {
+        requiresAuth: true,
+        requiresAdmin: true
+      }
+    },
+    {
       path: "/:catchAll(.*)",
       redirect: "/",
     },
@@ -216,6 +226,14 @@ router.beforeEach(async (to, from) => {
   }
   if (!to.meta.requiresAuth && !to.meta.allowAuthenticated && isLoggedIn) {
     return { path: "/series" };
+  }
+  if (to.meta.requiresAdmin && isLoggedIn) {
+    const { getProfile } = useUser();
+    const profile = await getProfile();
+
+    if (!profile.isAdmin) {
+      return { path: "/series" };
+    }
   }
 });
 

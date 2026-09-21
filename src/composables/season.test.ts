@@ -5,6 +5,8 @@ const seasonServiceMocks = vi.hoisted(() => ({
     deleteSeasonById: vi.fn(),
     updateSeason: vi.fn(),
     updateWatchedWith: vi.fn(),
+    getPendingWatchedWith: vi.fn(),
+    respondToWatchedWith: vi.fn(),
 }));
 const serieServiceMocks = vi.hoisted(() => ({
     getSeasonsBySerieId: vi.fn(),
@@ -146,6 +148,57 @@ describe("useSeason.updateWatchedWith", () => {
         seasonServiceMocks.updateWatchedWith.mockResolvedValue(jsonResponse(400, { message: "Requête invalide" }));
 
         await expect(useSeason().updateWatchedWith(1, ["friend-1"])).rejects.toThrow("Requête invalide");
+    });
+});
+
+describe("useSeason.getPendingWatchedWith", () => {
+    beforeEach(() => {
+        vi.resetAllMocks();
+    });
+
+    it("returns the pending invitations on success", async () => {
+        const invites = [{ userSeasonId: 1 }];
+        seasonServiceMocks.getPendingWatchedWith.mockResolvedValue(jsonResponse(200, invites));
+
+        const result = await useSeason().getPendingWatchedWith();
+
+        expect(result).toEqual(invites);
+    });
+
+    it("throws the server's message on failure", async () => {
+        seasonServiceMocks.getPendingWatchedWith.mockResolvedValue(jsonResponse(400, { message: "Requête invalide" }));
+
+        await expect(useSeason().getPendingWatchedWith()).rejects.toThrow("Requête invalide");
+    });
+});
+
+describe("useSeason.respondToWatchedWith", () => {
+    beforeEach(() => {
+        vi.resetAllMocks();
+    });
+
+    it("shows a success toast when accepting", async () => {
+        seasonServiceMocks.respondToWatchedWith.mockResolvedValue(jsonResponse(200, null));
+
+        await useSeason().respondToWatchedWith(1, true);
+
+        expect(seasonServiceMocks.respondToWatchedWith).toHaveBeenCalledWith(1, true);
+        expect(snackbarMocks.showSuccess).toHaveBeenCalledWith("Visionnage partagé accepté");
+    });
+
+    it("shows a different success toast when declining", async () => {
+        seasonServiceMocks.respondToWatchedWith.mockResolvedValue(jsonResponse(200, null));
+
+        await useSeason().respondToWatchedWith(1, false);
+
+        expect(snackbarMocks.showSuccess).toHaveBeenCalledWith("Invitation refusée");
+    });
+
+    it("throws on failure without showing a success toast", async () => {
+        seasonServiceMocks.respondToWatchedWith.mockResolvedValue(jsonResponse(400, { message: "Requête invalide" }));
+
+        await expect(useSeason().respondToWatchedWith(1, true)).rejects.toThrow("Requête invalide");
+        expect(snackbarMocks.showSuccess).not.toHaveBeenCalled();
     });
 });
 

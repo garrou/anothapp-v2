@@ -3,9 +3,8 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
 import SeasonDetails from "./SeasonDetails.vue";
 import { vuetify } from "@/test/vuetify";
-import type { SeasonDetail } from "@/models/season";
+import type { SeasonDetail, WatchedWithFriend } from "@/models/season";
 import type { Platform } from "@/models/serie";
-import type { User } from "@/models/user";
 import { toDatetimeLocalInput } from "@/utils/format";
 
 const seasonComposableMocks = vi.hoisted(() => ({
@@ -39,7 +38,7 @@ vi.mock("@/composables/friend", () => ({ useFriend: () => friendComposableMocks 
 vi.mock("@/composables/snackbar", () => ({ useSnackbar: () => snackbarMocks }));
 
 const platform1: Platform = { id: 1, name: "Netflix" } as Platform;
-const friend1: User = { id: "f1", username: "Ami1", current: false } as User;
+const friend1: WatchedWithFriend = { id: "f1", username: "Ami1", current: false, status: "accepted" } as WatchedWithFriend;
 
 const subSeason = (id: number, overrides: Partial<SeasonDetail> = {}): SeasonDetail => ({
     id,
@@ -131,6 +130,30 @@ describe("SeasonDetails", () => {
 
         expect(episodeComposableMocks.addAllEpisodesViewing).not.toHaveBeenCalled();
         expect(wrapper.text()).not.toContain("Marquer tous les épisodes diffusés");
+    });
+
+    it("shows a friend's status next to their name when pending or declined", async () => {
+        const pendingFriend: WatchedWithFriend = { id: "f2", username: "Ami2", current: false, status: null } as WatchedWithFriend;
+        const declinedFriend: WatchedWithFriend = { id: "f3", username: "Ami3", current: false, status: "declined" } as WatchedWithFriend;
+        const wrapper = await mountDetails({
+            seasons: [subSeason(501, { watchedWith: [friend1, pendingFriend, declinedFriend] })],
+        });
+
+        expect(wrapper.text()).toContain("Vu avec Ami1, Ami2 (en attente), Ami3 (refusé)");
+    });
+
+    it("re-fetches the season info after saving instead of guessing statuses locally", async () => {
+        seasonComposableMocks.updateSeason.mockResolvedValue(true);
+        seasonComposableMocks.updateWatchedWith.mockResolvedValue(undefined);
+        const wrapper = await mountDetails();
+
+        const buttons = wrapper.findAll(".season-entry-btn");
+        await buttons[0].trigger("click");
+        const saveBtn = wrapper.findAllComponents({ name: "VBtn" }).find((btn) => btn.text() === "Enregistrer");
+        await saveBtn!.trigger("click");
+        await flushPromises();
+
+        expect(seasonComposableMocks.getSeasonInfosBySerieIdByNumber).toHaveBeenCalledTimes(2);
     });
 
     it("enters edit mode and hides the edit button once editing", async () => {

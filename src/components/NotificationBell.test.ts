@@ -176,6 +176,30 @@ describe("NotificationBell", () => {
         expect(wrapper.text()).toContain('Dexter a retiré "Breaking Bad" de la playlist "Mes séries"');
     });
 
+    it("describes a season_watched_with notification as an invitation", async () => {
+        const wrapper = await openMenu(await mountBell([
+            notif(1, { type: "season_watched_with", show: { id: 5, title: "Breaking Bad" }, metadata: { seasonNumber: 2 } }),
+        ]));
+
+        expect(wrapper.text()).toContain('Dexter vous invite à regarder la saison 2 de "Breaking Bad" ensemble');
+    });
+
+    it("describes a season_watched_with_accepted notification", async () => {
+        const wrapper = await openMenu(await mountBell([
+            notif(1, { type: "season_watched_with_accepted", show: { id: 5, title: "Breaking Bad" }, metadata: { seasonNumber: 2 } }),
+        ]));
+
+        expect(wrapper.text()).toContain('Dexter a accepté de regarder la saison 2 de "Breaking Bad" avec vous');
+    });
+
+    it("describes a season_watched_with_declined notification", async () => {
+        const wrapper = await openMenu(await mountBell([
+            notif(1, { type: "season_watched_with_declined", show: { id: 5, title: "Breaking Bad" }, metadata: { seasonNumber: 2 } }),
+        ]));
+
+        expect(wrapper.text()).toContain('Dexter a refusé de regarder la saison 2 de "Breaking Bad" avec vous');
+    });
+
     it("falls back to the actor's name for unknown notification types", async () => {
         const wrapper = await openMenu(await mountBell([
             { ...notif(1), type: "unknown_type" as never },
@@ -242,6 +266,29 @@ describe("NotificationBell", () => {
         await flushPromises();
 
         expect(routerMocks.push).toHaveBeenCalledWith("/actor/42");
+    });
+
+    it("navigates to the friends page (Invitations tab) for a season_watched_with notification, not the show's page", async () => {
+        const wrapper = await openMenu(await mountBell([
+            notif(1, { type: "season_watched_with", show: { id: 5, title: "Breaking Bad" }, metadata: { seasonNumber: 2 } }),
+        ]));
+
+        await wrapper.findComponent({ name: "VListItem" }).trigger("click");
+        await flushPromises();
+
+        expect(routerMocks.push).toHaveBeenCalledWith("/friends");
+        expect(routerMocks.push).not.toHaveBeenCalledWith("/discover/5");
+    });
+
+    it("navigates to the show's page for a season_watched_with_accepted/declined notification", async () => {
+        const wrapper = await openMenu(await mountBell([
+            notif(1, { type: "season_watched_with_accepted", show: { id: 5, title: "Breaking Bad" }, metadata: { seasonNumber: 2 } }),
+        ]));
+
+        await wrapper.findComponent({ name: "VListItem" }).trigger("click");
+        await flushPromises();
+
+        expect(routerMocks.push).toHaveBeenCalledWith("/discover/5");
     });
 
     it("navigates to the friends page for a friend_* notification without a show", async () => {

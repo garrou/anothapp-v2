@@ -104,7 +104,11 @@ const describe = (item: Notification): string => {
             return noteName ? `${actor} a noté "${show}" : ${noteName}` : `${actor} a noté "${show}"`;
         }
         case "season_watched_with":
-            return `${actor} a vu la saison ${meta.seasonNumber} de "${show}" avec vous`;
+            return `${actor} vous invite à regarder la saison ${meta.seasonNumber} de "${show}" ensemble`;
+        case "season_watched_with_accepted":
+            return `${actor} a accepté de regarder la saison ${meta.seasonNumber} de "${show}" avec vous`;
+        case "season_watched_with_declined":
+            return `${actor} a refusé de regarder la saison ${meta.seasonNumber} de "${show}" avec vous`;
         case "episode_watched":
             return `${actor} a vu l'épisode ${meta.episodeCode} de "${show}"`;
         case "episode_bulk_watched":
@@ -156,7 +160,10 @@ const openNotification = async (item: Notification) => {
         unreadCount.value = Math.max(0, unreadCount.value - 1);
         await markAsRead(item.id);
     }
-    if (item.show) {
+    if (item.type === "season_watched_with") {
+        // Friends.vue auto-opens the "Invitations" tab when there are pending watch-together invites
+        router.push("/friends");
+    } else if (item.show) {
         router.push(`/discover/${item.show.id}`);
     } else if (item.type === "actor_favorited" && item.metadata?.actorId) {
         router.push(`/actor/${item.metadata.actorId}`);

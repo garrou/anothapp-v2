@@ -44,8 +44,15 @@
 
         <v-card v-if="dashboard" class="pa-4 mt-6">
             <div class="text-subtitle-1 font-weight-bold mb-2">Rechercher un compte</div>
-            <v-text-field v-model="searchQuery" density="compact" hide-details :prepend-inner-icon="SEARCH_ICON"
-                placeholder="Nom d'utilisateur ou email" @update:model-value="onSearch" />
+            <v-form @submit="onSearch" @submit.prevent>
+                <v-text-field v-model="searchQuery" density="compact" hide-details :disabled="searchLoading"
+                    placeholder="Nom d'utilisateur ou email">
+                    <template #append-inner>
+                        <v-btn :icon="SEARCH_ICON" density="compact" size="small" variant="text"
+                            :loading="searchLoading" :disabled="searchLoading" @click="onSearch" />
+                    </template>
+                </v-text-field>
+            </v-form>
 
             <empty-state v-if="searchDone && searchResults.length === 0" class="mt-4" :icon="ACCOUNT_ICON"
                 title="Aucun compte trouvé" />
@@ -117,9 +124,9 @@ const dashboard = ref<AdminDashboard>();
 const searchQuery = ref("");
 const searchResults = ref<AdminUserSearchResult[]>([]);
 const searchDone = ref(false);
+const searchLoading = ref(false);
 const revokeConfirmOpen = ref(false);
 const userToRevoke = ref<AdminUserSearchResult>();
-let searchEpoch = 0;
 
 const newUsersChartData = computed((): Stat[] => (dashboard.value?.users.newByDay ?? []).map((entry, index): Stat => ({
     id: index,
@@ -138,19 +145,24 @@ const healthSubtitle = (check: AdminHealthCheck): string => {
     return check.error ?? "Injoignable";
 }
 
-const onSearch = async (query: string) => {
-    const epoch = ++searchEpoch;
+const onSearch = async () => {
+    const query = searchQuery.value;
 
     if (query.length < 2) {
         searchResults.value = [];
         searchDone.value = false;
         return;
     }
-    const results = await searchUsers(query);
+    searchLoading.value = true;
 
-    if (epoch === searchEpoch) {
-        searchResults.value = results;
+    try {
+        searchResults.value = await searchUsers(query);
         searchDone.value = true;
+    } catch (e) {
+        searchResults.value = [];
+        showError(e as Error);
+    } finally {
+        searchLoading.value = false;
     }
 }
 

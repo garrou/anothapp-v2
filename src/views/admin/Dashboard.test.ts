@@ -86,7 +86,7 @@ describe("Dashboard.vue", () => {
         expect(wrapper.text()).toContain("revoke_sessions");
     });
 
-    it("searches users as the query grows past 2 characters", async () => {
+    it("searches users on submit, not on every keystroke", async () => {
         const results: AdminUserSearchResult[] = [{ id: "user-1", username: "bob", email: "bob@test.fr" }];
         adminComposableMocks.searchUsers.mockResolvedValue(results);
         const wrapper = await mountView();
@@ -94,19 +94,52 @@ describe("Dashboard.vue", () => {
         const input = wrapper.find("input[placeholder=\"Nom d'utilisateur ou email\"]");
         await input.setValue("bob");
         await flushPromises();
+        expect(adminComposableMocks.searchUsers).not.toHaveBeenCalled();
+
+        await wrapper.find("form").trigger("submit");
+        await flushPromises();
 
         expect(adminComposableMocks.searchUsers).toHaveBeenCalledWith("bob");
         expect(wrapper.text()).toContain("bob@test.fr");
     });
 
-    it("does not search when the query is shorter than 2 characters", async () => {
+    it("does not search when the submitted query is shorter than 2 characters", async () => {
         const wrapper = await mountView();
 
-        const input = wrapper.find("input[placeholder=\"Nom d'utilisateur ou email\"]");
-        await input.setValue("b");
+        await wrapper.find("input[placeholder=\"Nom d'utilisateur ou email\"]").setValue("b");
+        await wrapper.find("form").trigger("submit");
         await flushPromises();
 
         expect(adminComposableMocks.searchUsers).not.toHaveBeenCalled();
+    });
+
+    it("shows an error via the snackbar when the search fails, instead of an unhandled rejection", async () => {
+        adminComposableMocks.searchUsers.mockRejectedValue(new Error("Erreur serveur"));
+        const wrapper = await mountView();
+
+        await wrapper.find("input[placeholder=\"Nom d'utilisateur ou email\"]").setValue("bob");
+        await wrapper.find("form").trigger("submit");
+        await flushPromises();
+
+        expect(snackbarMocks.showError).toHaveBeenCalled();
+    });
+
+    it("disables the search input and button while a search is in flight, re-enabling once it resolves", async () => {
+        let resolveSearch!: (value: AdminUserSearchResult[]) => void;
+        adminComposableMocks.searchUsers.mockReturnValue(new Promise((resolve) => { resolveSearch = resolve; }));
+        const wrapper = await mountView();
+
+        const input = wrapper.find("input[placeholder=\"Nom d'utilisateur ou email\"]");
+        await input.setValue("bob");
+        await wrapper.find("form").trigger("submit");
+        await flushPromises();
+
+        expect(input.attributes("disabled")).toBeDefined();
+
+        resolveSearch([]);
+        await flushPromises();
+
+        expect(input.attributes("disabled")).toBeUndefined();
     });
 
     it("opens the confirmation dialog when revoke is clicked, and revokes on confirm", async () => {
@@ -115,6 +148,7 @@ describe("Dashboard.vue", () => {
         const wrapper = await mountView();
 
         await wrapper.find("input[placeholder=\"Nom d'utilisateur ou email\"]").setValue("bob");
+        await wrapper.find("form").trigger("submit");
         await flushPromises();
         const revokeButton = wrapper.findAll("button").find((btn) => btn.text().includes("Révoquer les sessions"));
         expect(revokeButton).toBeDefined();

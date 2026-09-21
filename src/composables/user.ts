@@ -58,6 +58,18 @@ export function useUser() {
         showSuccess("Vérifiez votre nouvelle adresse email pour confirmer le changement");
     }
 
+    const changeUsername = async (newUsername: string, confirmUsername: string, currentPassword: string): Promise<void> => {
+        const resp = await userService.updateUsername(newUsername, confirmUsername, currentPassword);
+
+        if (isError(resp.status)) {
+            const data = await resp.json();
+            throw new Error(data.message);
+        }
+        await ensureProfileLoaded();
+        userStore.patch({ username: newUsername });
+        showSuccess("Nom d'utilisateur modifié");
+    }
+
     const getUsers = async (username: string): Promise<User[]> => {
         const resp = await userService.getUsers(username);
         const data = await resp.json();
@@ -82,5 +94,5 @@ export function useUser() {
         }
     }
 
-    return { changeEmail, changePassword, changeImage, getUsers, getProfile, requestDeletion }
+    return { changeEmail, changeUsername, changePassword, changeImage, getUsers, getProfile, requestDeletion }
 }

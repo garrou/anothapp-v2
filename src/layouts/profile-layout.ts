@@ -7,6 +7,11 @@ export const ProfileLayout: Layout[] = [
         value: "images"
     },
     {
+        icon: "mdi-account-edit",
+        name: "Modifier le nom d'utilisateur",
+        value: "username"
+    },
+    {
         icon: "mdi-email",
         name: "Modifier l'email",
         value: "email"

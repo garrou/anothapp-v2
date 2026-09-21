@@ -29,7 +29,10 @@ const serie = (id: number, title: string): Partial<Serie> => ({ id, title });
 const mountView = async () => {
     userComposableMocks.getProfile.mockResolvedValue(profile());
     const wrapper = mount(Profile, {
-        global: { plugins: [vuetify], stubs: { BaseAppBar: true, Email: true, Password: true, ImagesRow: true } },
+        global: {
+            plugins: [vuetify],
+            stubs: { BaseAppBar: true, Email: true, Password: true, Username: true, ImagesRow: true },
+        },
     });
     await flushPromises();
     return wrapper;
@@ -56,7 +59,10 @@ describe("Profile", () => {
     it("shows the join date when the profile has a createdAt", async () => {
         userComposableMocks.getProfile.mockResolvedValue(profile({ createdAt: "2019-06-15T12:00:00.000Z" }));
         const wrapper = mount(Profile, {
-            global: { plugins: [vuetify], stubs: { BaseAppBar: true, Email: true, Password: true, ImagesRow: true } },
+            global: {
+                plugins: [vuetify],
+                stubs: { BaseAppBar: true, Email: true, Password: true, Username: true, ImagesRow: true },
+            },
         });
         await flushPromises();
 
@@ -67,6 +73,13 @@ describe("Profile", () => {
         const wrapper = await mountView();
 
         expect(wrapper.text()).not.toContain("Membre depuis");
+    });
+
+    it("opens the username form when 'Modifier le nom d'utilisateur' is clicked", async () => {
+        const wrapper = await openMenuItem(await mountView(), "Modifier le nom d'utilisateur");
+
+        expect(wrapper.findComponent({ name: "Username" }).exists()).toBe(true);
+        expect(wrapper.findComponent({ name: "Email" }).exists()).toBe(false);
     });
 
     it("opens the email form when 'Modifier l'email' is clicked", async () => {

@@ -8,6 +8,7 @@ const userServiceMocks = vi.hoisted(() => ({
     updateImage: vi.fn(),
     updatePassword: vi.fn(),
     updateLogin: vi.fn(),
+    updateUsername: vi.fn(),
     getUsers: vi.fn(),
     requestDeletion: vi.fn(),
 }));
@@ -124,6 +125,31 @@ describe("useUser.changeEmail", () => {
 
         await expect(useUser().changeEmail("new@example.com", "new@example.com", "s3cret-pass"))
             .rejects.toThrow("Requête invalide");
+    });
+});
+
+describe("useUser.changeUsername", () => {
+    beforeEach(() => {
+        vi.resetAllMocks();
+        setActivePinia(createPinia());
+    });
+
+    it("patches the store's username and shows a success toast", async () => {
+        userServiceMocks.updateUsername.mockResolvedValue(jsonResponse(200, null));
+        userServiceMocks.getProfile.mockResolvedValue(jsonResponse(200, profile));
+
+        await useUser().changeUsername("newname", "newname", "s3cret-pass");
+
+        expect(userServiceMocks.updateUsername).toHaveBeenCalledWith("newname", "newname", "s3cret-pass");
+        expect(useUserStore().profile?.username).toBe("newname");
+        expect(snackbarMocks.showSuccess).toHaveBeenCalledWith("Nom d'utilisateur modifié");
+    });
+
+    it("throws on failure without showing a success toast", async () => {
+        userServiceMocks.updateUsername.mockResolvedValue(jsonResponse(400, { message: "Requête invalide" }));
+
+        await expect(useUser().changeUsername("newname", "newname", "s3cret-pass")).rejects.toThrow("Requête invalide");
+        expect(snackbarMocks.showSuccess).not.toHaveBeenCalled();
     });
 });
 

@@ -79,14 +79,37 @@ describe("WatchTogetherInvitesRow", () => {
         expect(wrapper.findAll(".friend-quick-btn")).toHaveLength(2);
     });
 
-    it("leaves an active watch-together link and emits refresh", async () => {
+    it("opens a confirm dialog without leaving yet when the leave button is clicked", async () => {
+        const wrapper = mountRow({ invites: [invite(1)], active: true });
+
+        await wrapper.find(".friend-quick-btn").trigger("click");
+
+        expect(wrapper.findComponent({ name: "VDialog" }).exists()).toBe(true);
+        expect(seasonComposableMocks.respondToWatchedWith).not.toHaveBeenCalled();
+    });
+
+    it("leaves an active watch-together link and emits refresh once confirmed", async () => {
         seasonComposableMocks.respondToWatchedWith.mockResolvedValue(undefined);
         const wrapper = mountRow({ invites: [invite(1)], active: true });
 
         await wrapper.find(".friend-quick-btn").trigger("click");
+        const confirmBtn = wrapper.findAllComponents({ name: "VBtn" }).find((btn) => btn.text() === "Confirmer");
+        await confirmBtn!.trigger("click");
         await flushPromises();
 
         expect(seasonComposableMocks.respondToWatchedWith).toHaveBeenCalledWith(1, false);
         expect(wrapper.emitted("refresh")).toHaveLength(1);
+    });
+
+    it("does not leave when the confirm dialog is cancelled", async () => {
+        const wrapper = mountRow({ invites: [invite(1)], active: true });
+
+        await wrapper.find(".friend-quick-btn").trigger("click");
+        const cancelBtn = wrapper.findAllComponents({ name: "VBtn" }).find((btn) => btn.text() === "Annuler");
+        await cancelBtn!.trigger("click");
+        await flushPromises();
+
+        expect(seasonComposableMocks.respondToWatchedWith).not.toHaveBeenCalled();
+        expect(wrapper.emitted("refresh")).toBeUndefined();
     });
 });

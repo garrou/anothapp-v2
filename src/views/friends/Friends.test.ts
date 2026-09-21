@@ -14,8 +14,7 @@ const userComposableMocks = vi.hoisted(() => ({
     getUsers: vi.fn(),
 }));
 const seasonComposableMocks = vi.hoisted(() => ({
-    getPendingWatchedWith: vi.fn(),
-    getActiveWatchedWith: vi.fn(),
+    getWatchedWith: vi.fn(),
 }));
 
 vi.mock("@/composables/friend", () => ({ useFriend: () => friendComposableMocks }));
@@ -37,8 +36,8 @@ const mountView = async (
     active: WatchTogetherInvite[] = [],
 ) => {
     friendComposableMocks.getFriends.mockResolvedValue({ viewed: [], ...response });
-    seasonComposableMocks.getPendingWatchedWith.mockResolvedValue(invites);
-    seasonComposableMocks.getActiveWatchedWith.mockResolvedValue(active);
+    seasonComposableMocks.getWatchedWith.mockImplementation((status: string) =>
+        Promise.resolve(status === "active" ? active : invites));
     const wrapper = mount(Friends, {
         global: { plugins: [vuetify], stubs: { BaseAppBar: true, LeaderboardList: true } },
     });
@@ -109,7 +108,7 @@ describe("Friends", () => {
         await wrapper.findComponent({ name: "WatchTogetherInvitesRow" }).vm.$emit("refresh");
         await flushPromises();
 
-        expect(seasonComposableMocks.getPendingWatchedWith).toHaveBeenCalledTimes(2);
+        expect(seasonComposableMocks.getWatchedWith.mock.calls.filter(([s]) => s === "pending")).toHaveLength(2);
     });
 
     it("passes the active watch-together links to the 'Actifs' tab, without a badge", async () => {
@@ -130,7 +129,7 @@ describe("Friends", () => {
         await activeRow!.vm.$emit("refresh");
         await flushPromises();
 
-        expect(seasonComposableMocks.getActiveWatchedWith).toHaveBeenCalledTimes(2);
+        expect(seasonComposableMocks.getWatchedWith.mock.calls.filter(([s]) => s === "active")).toHaveLength(2);
     });
 
     it("auto-switches to the 'received requests' management tab when there are pending requests", async () => {

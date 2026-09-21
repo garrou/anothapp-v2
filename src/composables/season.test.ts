@@ -5,8 +5,7 @@ const seasonServiceMocks = vi.hoisted(() => ({
     deleteSeasonById: vi.fn(),
     updateSeason: vi.fn(),
     updateWatchedWith: vi.fn(),
-    getPendingWatchedWith: vi.fn(),
-    getActiveWatchedWith: vi.fn(),
+    getWatchedWith: vi.fn(),
     respondToWatchedWith: vi.fn(),
 }));
 const serieServiceMocks = vi.hoisted(() => ({
@@ -152,45 +151,35 @@ describe("useSeason.updateWatchedWith", () => {
     });
 });
 
-describe("useSeason.getPendingWatchedWith", () => {
+describe("useSeason.getWatchedWith", () => {
     beforeEach(() => {
         vi.resetAllMocks();
     });
 
-    it("returns the pending invitations on success", async () => {
+    it("returns the pending invitations for status=pending", async () => {
         const invites = [{ userSeasonId: 1 }];
-        seasonServiceMocks.getPendingWatchedWith.mockResolvedValue(jsonResponse(200, invites));
+        seasonServiceMocks.getWatchedWith.mockResolvedValue(jsonResponse(200, invites));
 
-        const result = await useSeason().getPendingWatchedWith();
+        const result = await useSeason().getWatchedWith("pending");
 
         expect(result).toEqual(invites);
+        expect(seasonServiceMocks.getWatchedWith).toHaveBeenCalledWith("pending");
     });
 
-    it("throws the server's message on failure", async () => {
-        seasonServiceMocks.getPendingWatchedWith.mockResolvedValue(jsonResponse(400, { message: "Requête invalide" }));
-
-        await expect(useSeason().getPendingWatchedWith()).rejects.toThrow("Requête invalide");
-    });
-});
-
-describe("useSeason.getActiveWatchedWith", () => {
-    beforeEach(() => {
-        vi.resetAllMocks();
-    });
-
-    it("returns the active watch-together links on success", async () => {
+    it("returns the active watch-together links for status=active", async () => {
         const active = [{ userSeasonId: 1 }];
-        seasonServiceMocks.getActiveWatchedWith.mockResolvedValue(jsonResponse(200, active));
+        seasonServiceMocks.getWatchedWith.mockResolvedValue(jsonResponse(200, active));
 
-        const result = await useSeason().getActiveWatchedWith();
+        const result = await useSeason().getWatchedWith("active");
 
         expect(result).toEqual(active);
+        expect(seasonServiceMocks.getWatchedWith).toHaveBeenCalledWith("active");
     });
 
     it("throws the server's message on failure", async () => {
-        seasonServiceMocks.getActiveWatchedWith.mockResolvedValue(jsonResponse(400, { message: "Requête invalide" }));
+        seasonServiceMocks.getWatchedWith.mockResolvedValue(jsonResponse(400, { message: "Requête invalide" }));
 
-        await expect(useSeason().getActiveWatchedWith()).rejects.toThrow("Requête invalide");
+        await expect(useSeason().getWatchedWith("pending")).rejects.toThrow("Requête invalide");
     });
 });
 

@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-const getPendingWatchedWithMock = vi.hoisted(() => vi.fn());
+const getWatchedWithMock = vi.hoisted(() => vi.fn());
 const routeMock = vi.hoisted(() => ({ name: "series" as string | undefined }));
 
-vi.mock("./season", () => ({ useSeason: () => ({ getPendingWatchedWith: getPendingWatchedWithMock }) }));
+vi.mock("./season", () => ({ useSeason: () => ({ getWatchedWith: getWatchedWithMock }) }));
 vi.mock("vue-router", () => ({ useRoute: () => routeMock }));
 
 const flushPromises = () => new Promise((resolve) => setTimeout(resolve, 0));
@@ -24,41 +24,42 @@ beforeEach(() => {
 
 describe("usePendingWatchTogetherInvites", () => {
     it("fetches the pending invite count immediately on a visible route", async () => {
-        getPendingWatchedWithMock.mockResolvedValue([{ userSeasonId: 1 }, { userSeasonId: 2 }]);
+        getWatchedWithMock.mockResolvedValue([{ userSeasonId: 1 }, { userSeasonId: 2 }]);
 
         const pendingInvites = await freshUsePendingWatchTogetherInvites();
         await flushPromises();
 
         expect(pendingInvites.value).toBe(2);
+        expect(getWatchedWithMock).toHaveBeenCalledWith("pending");
     });
 
     it("doesn't fetch on a route without the bottom navbar", async () => {
         routeMock.name = "login";
-        getPendingWatchedWithMock.mockResolvedValue([{ userSeasonId: 1 }]);
+        getWatchedWithMock.mockResolvedValue([{ userSeasonId: 1 }]);
 
         const pendingInvites = await freshUsePendingWatchTogetherInvites();
         await flushPromises();
 
         expect(pendingInvites.value).toBe(0);
-        expect(getPendingWatchedWithMock).not.toHaveBeenCalled();
+        expect(getWatchedWithMock).not.toHaveBeenCalled();
     });
 
     it.each(["verify-email", "forgot-password", "reset-password"])(
         "doesn't fetch on the anonymous %s page (no session to authenticate the call with)",
         async (name) => {
             routeMock.name = name;
-            getPendingWatchedWithMock.mockResolvedValue([{ userSeasonId: 1 }]);
+            getWatchedWithMock.mockResolvedValue([{ userSeasonId: 1 }]);
 
             const pendingInvites = await freshUsePendingWatchTogetherInvites();
             await flushPromises();
 
             expect(pendingInvites.value).toBe(0);
-            expect(getPendingWatchedWithMock).not.toHaveBeenCalled();
+            expect(getWatchedWithMock).not.toHaveBeenCalled();
         }
     );
 
     it("stays at 0 when there are no pending invites", async () => {
-        getPendingWatchedWithMock.mockResolvedValue([]);
+        getWatchedWithMock.mockResolvedValue([]);
 
         const pendingInvites = await freshUsePendingWatchTogetherInvites();
         await flushPromises();

@@ -56,7 +56,7 @@ import { useUser } from "@/composables/user";
 const route = useRoute();
 const { getFriends } = useFriend();
 const { getUsers } = useUser();
-const { getPendingWatchedWith, getActiveWatchedWith } = useSeason();
+const { getWatchedWith } = useSeason();
 
 const friends = ref<FriendResponse>();
 const searched = ref<User[]>([]);
@@ -107,7 +107,7 @@ const fetchFriends = async () => {
 const fetchPendingInvites = async () => {
     loading.value = true;
     try {
-        pendingInvites.value = await getPendingWatchedWith();
+        pendingInvites.value = await getWatchedWith("pending");
     } finally {
         loading.value = false;
     }
@@ -116,7 +116,7 @@ const fetchPendingInvites = async () => {
 const fetchActiveWatchedWith = async () => {
     loading.value = true;
     try {
-        activeWatchedWith.value = await getActiveWatchedWith();
+        activeWatchedWith.value = await getWatchedWith("active");
     } finally {
         loading.value = false;
     }

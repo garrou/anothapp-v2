@@ -8,7 +8,7 @@ let watching = false;
 
 export function usePendingWatchTogetherInvites() {
     const route = useRoute();
-    const { getPendingWatchedWith } = useSeason();
+    const { getWatchedWith } = useSeason();
 
     if (!watching) {
         watching = true;
@@ -17,7 +17,7 @@ export function usePendingWatchTogetherInvites() {
             () => !!route.name && !PAGE_WITHOUT_BOTTOM_NAVBAR.includes(route.name as string),
             async (visible) => {
                 if (!visible) return;
-                const invites = await getPendingWatchedWith();
+                const invites = await getWatchedWith("pending");
                 pendingInvites.value = invites.length;
             },
             { immediate: true }

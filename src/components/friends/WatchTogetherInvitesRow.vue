@@ -10,7 +10,7 @@
                     <template #quick-actions>
                         <template v-if="active">
                             <v-btn class="friend-quick-btn" :icon="LOGOUT_ICON" size="32" variant="flat"
-                                color="red" title="Quitter" @click.stop="respond(invite, false)" />
+                                color="red" title="Quitter" @click.stop="startLeaving(invite)" />
                         </template>
                         <template v-else>
                             <v-btn class="friend-quick-btn" :icon="CHECK_ICON" size="32" variant="flat"
@@ -29,16 +29,20 @@
         </card-grid>
         <empty-state v-else :icon="emptyCopy.icon" :title="emptyCopy.title" :description="emptyCopy.description" />
     </div>
+
+    <base-confirm v-model="leaving" text="Quitter ce visionnage partagé ? Les épisodes déjà synchronisés ne seront pas supprimés."
+        title="Quitter" persistent @cancel="leaving = false" @confirm="confirmLeave" />
 </template>
 
 <script lang="ts" setup>
+import BaseConfirm from "@/components/BaseConfirm.vue";
 import CardGrid from "@/components/CardGrid.vue";
 import EmptyState from "@/components/EmptyState.vue";
 import PosterCard from "@/components/PosterCard.vue";
 import { CHECK_ICON, DELETE_ICON, LOGOUT_ICON } from "@/constants/icons";
 import type { WatchTogetherInvite } from "@/models/season";
 import { useSeason } from "@/composables/season";
-import { computed, type PropType } from "vue";
+import { computed, ref, type PropType } from "vue";
 
 const props = defineProps({
     invites: { type: Array as PropType<WatchTogetherInvite[]>, default: () => [] },
@@ -51,6 +55,9 @@ const emit = defineEmits<{
 }>();
 
 const { respondToWatchedWith } = useSeason();
+
+const leaving = ref(false);
+const selected = ref<WatchTogetherInvite>();
 
 const emptyCopy = computed(() => props.active
     ? {
@@ -67,6 +74,18 @@ const emptyCopy = computed(() => props.active
 const respond = async (invite: WatchTogetherInvite, accepted: boolean) => {
     await respondToWatchedWith(invite.userSeasonId, accepted);
     emit("refresh");
+}
+
+const startLeaving = (invite: WatchTogetherInvite) => {
+    selected.value = invite;
+    leaving.value = true;
+}
+
+const confirmLeave = async () => {
+    leaving.value = false;
+    if (!selected.value) return;
+    await respond(selected.value, false);
+    selected.value = undefined;
 }
 </script>
 

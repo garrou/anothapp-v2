@@ -89,18 +89,8 @@ export function useSeason() {
         }
     }
 
-    const getPendingWatchedWith = async (): Promise<WatchTogetherInvite[]> => {
-        const resp = await seasonService.getPendingWatchedWith();
-        const data = await resp.json();
-
-        if (isError(resp.status))
-            throw new Error(data.message);
-
-        return data;
-    }
-
-    const getActiveWatchedWith = async (): Promise<WatchTogetherInvite[]> => {
-        const resp = await seasonService.getActiveWatchedWith();
+    const getWatchedWith = async (status: "pending" | "active"): Promise<WatchTogetherInvite[]> => {
+        const resp = await seasonService.getWatchedWith(status);
         const data = await resp.json();
 
         if (isError(resp.status))
@@ -126,8 +116,7 @@ export function useSeason() {
         getSeasonsBySerieId,
         getSeasonInfosBySerieIdByNumber,
         getSeasonWatchedTime,
-        getPendingWatchedWith,
-        getActiveWatchedWith,
+        getWatchedWith,
         respondToWatchedWith,
         updateSeason,
         updateWatchedWith

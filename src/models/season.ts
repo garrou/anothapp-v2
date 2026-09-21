@@ -13,7 +13,7 @@ export interface SeasonDetail {
 }
 
 export interface Season {
-    
+
     episodes: number;
 
     image: string;
@@ -21,17 +21,4 @@ export interface Season {
     number: number;
 
     interval?: string;
-}
-
-export interface SeasonTimeline {
-
-    addedAt: string;
-
-    season: Season;
-
-    showId: number;
-
-    platformId?: number;
-
-    showTitle: string
 }

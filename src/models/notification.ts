@@ -1,7 +1,6 @@
 export type NotificationType =
     | "show_started"
     | "show_rated"
-    | "season_watched"
     | "season_watched_with"
     | "episode_watched"
     | "episode_bulk_watched"
@@ -31,7 +30,6 @@ export const NOTIFICATION_GROUPS: Record<NotificationType, NotificationGroup> = 
     playlist_show_removed: "activity",
     show_started: "activity",
     show_rated: "activity",
-    season_watched: "activity",
     season_watched_with: "activity",
     episode_watched: "activity",
     episode_bulk_watched: "activity",

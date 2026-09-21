@@ -16,6 +16,9 @@ const updateLogin = (newEmail: string, confirmEmail: string, currentPassword: st
 const updatePassword = (currentPassword: string, newPassword: string, confirmPassword: string): Promise<Response> =>
     httpClient.patch(`${PREFIX}/me`, { currentPassword, newPassword, confirmPassword });
 
+const updateUsername = (newUsername: string, confirmUsername: string, currentPassword: string): Promise<Response> =>
+    httpClient.patch(`${PREFIX}/me`, { newUsername, confirmUsername, currentPassword });
+
 const requestDeletion = (password: string): Promise<Response> =>
     httpClient.delete(`${PREFIX}/me`, { password });
 
@@ -25,5 +28,6 @@ export default {
     updateImage,
     updateLogin,
     updatePassword,
+    updateUsername,
     requestDeletion
 };

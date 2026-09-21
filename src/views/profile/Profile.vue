@@ -34,6 +34,9 @@
                 </v-expansion-panel>
             </v-expansion-panels>
         </div>
+        <div v-else-if="selected === 'username'">
+            <username @refresh="refresh" />
+        </div>
         <div v-else-if="selected === 'email'">
             <email @refresh="refresh" />
         </div>
@@ -48,6 +51,7 @@ import BaseAppBar from "@/components/BaseAppBar.vue";
 import BaseModal from "@/components/BaseModal.vue";
 import Email from "./Email.vue";
 import Password from "./Password.vue";
+import Username from "./Username.vue";
 import ImagesRow from "@/components/ImagesRow.vue";
 import { useUser } from "@/composables/user";
 import type { User } from "@/models/user";

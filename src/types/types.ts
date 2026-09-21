@@ -7,6 +7,7 @@ export enum FriendStatus {
 
 export enum ProfileModal {
     Images = "images",
+    Username = "username",
     Email = "email",
     Password = "password"
 }

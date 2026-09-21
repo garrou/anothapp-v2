@@ -19,6 +19,8 @@ const updateWatchedWith = (id: number, friendIds: string[]): Promise<Response> =
 
 const getPendingWatchedWith = (): Promise<Response> => httpClient.get(`${PREFIX}/watched-with/pending`);
 
+const getActiveWatchedWith = (): Promise<Response> => httpClient.get(`${PREFIX}/watched-with/active`);
+
 const respondToWatchedWith = (userSeasonId: number, accepted: boolean): Promise<Response> =>
     httpClient.patch(`${PREFIX}/${userSeasonId}/watched-with/response`, { accepted });
 
@@ -28,6 +30,7 @@ export default {
     deleteSeasonById,
     getEpisodesBySeasonId,
     getPendingWatchedWith,
+    getActiveWatchedWith,
     respondToWatchedWith,
     updateSeason,
     updateWatchedWith

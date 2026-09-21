@@ -66,4 +66,27 @@ describe("WatchTogetherInvitesRow", () => {
         expect(seasonComposableMocks.respondToWatchedWith).toHaveBeenCalledWith(1, false);
         expect(wrapper.emitted("refresh")).toHaveLength(1);
     });
+
+    it("shows an active-specific empty state when active is true", () => {
+        const wrapper = mountRow({ invites: [], active: true });
+
+        expect(wrapper.findComponent({ name: "EmptyState" }).props("title")).toBe("Aucun visionnage partagé actif");
+    });
+
+    it("shows a single leave button per card when active is true", () => {
+        const wrapper = mountRow({ invites: [invite(1), invite(2)], active: true });
+
+        expect(wrapper.findAll(".friend-quick-btn")).toHaveLength(2);
+    });
+
+    it("leaves an active watch-together link and emits refresh", async () => {
+        seasonComposableMocks.respondToWatchedWith.mockResolvedValue(undefined);
+        const wrapper = mountRow({ invites: [invite(1)], active: true });
+
+        await wrapper.find(".friend-quick-btn").trigger("click");
+        await flushPromises();
+
+        expect(seasonComposableMocks.respondToWatchedWith).toHaveBeenCalledWith(1, false);
+        expect(wrapper.emitted("refresh")).toHaveLength(1);
+    });
 });

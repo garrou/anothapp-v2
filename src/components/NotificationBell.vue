@@ -161,8 +161,7 @@ const openNotification = async (item: Notification) => {
         await markAsRead(item.id);
     }
     if (item.type === "season_watched_with") {
-        // Friends.vue auto-opens the "Invitations" tab when there are pending watch-together invites
-        router.push("/friends");
+        router.push({ path: "/friends", query: { tab: "3", manageTab: "4" } });
     } else if (item.show) {
         router.push(`/discover/${item.show.id}`);
     } else if (item.type === "actor_favorited" && item.metadata?.actorId) {

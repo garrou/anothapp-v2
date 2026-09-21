@@ -268,7 +268,7 @@ describe("NotificationBell", () => {
         expect(routerMocks.push).toHaveBeenCalledWith("/actor/42");
     });
 
-    it("navigates to the friends page (Invitations tab) for a season_watched_with notification, not the show's page", async () => {
+    it("navigates to the friends page's Invitations tab for a season_watched_with notification, not the show's page", async () => {
         const wrapper = await openMenu(await mountBell([
             notif(1, { type: "season_watched_with", show: { id: 5, title: "Breaking Bad" }, metadata: { seasonNumber: 2 } }),
         ]));
@@ -276,7 +276,7 @@ describe("NotificationBell", () => {
         await wrapper.findComponent({ name: "VListItem" }).trigger("click");
         await flushPromises();
 
-        expect(routerMocks.push).toHaveBeenCalledWith("/friends");
+        expect(routerMocks.push).toHaveBeenCalledWith({ path: "/friends", query: { tab: "3", manageTab: "4" } });
         expect(routerMocks.push).not.toHaveBeenCalledWith("/discover/5");
     });
 

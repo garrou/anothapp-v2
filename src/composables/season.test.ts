@@ -6,6 +6,7 @@ const seasonServiceMocks = vi.hoisted(() => ({
     updateSeason: vi.fn(),
     updateWatchedWith: vi.fn(),
     getPendingWatchedWith: vi.fn(),
+    getActiveWatchedWith: vi.fn(),
     respondToWatchedWith: vi.fn(),
 }));
 const serieServiceMocks = vi.hoisted(() => ({
@@ -172,6 +173,27 @@ describe("useSeason.getPendingWatchedWith", () => {
     });
 });
 
+describe("useSeason.getActiveWatchedWith", () => {
+    beforeEach(() => {
+        vi.resetAllMocks();
+    });
+
+    it("returns the active watch-together links on success", async () => {
+        const active = [{ userSeasonId: 1 }];
+        seasonServiceMocks.getActiveWatchedWith.mockResolvedValue(jsonResponse(200, active));
+
+        const result = await useSeason().getActiveWatchedWith();
+
+        expect(result).toEqual(active);
+    });
+
+    it("throws the server's message on failure", async () => {
+        seasonServiceMocks.getActiveWatchedWith.mockResolvedValue(jsonResponse(400, { message: "Requête invalide" }));
+
+        await expect(useSeason().getActiveWatchedWith()).rejects.toThrow("Requête invalide");
+    });
+});
+
 describe("useSeason.respondToWatchedWith", () => {
     beforeEach(() => {
         vi.resetAllMocks();
@@ -191,7 +213,7 @@ describe("useSeason.respondToWatchedWith", () => {
 
         await useSeason().respondToWatchedWith(1, false);
 
-        expect(snackbarMocks.showSuccess).toHaveBeenCalledWith("Invitation refusée");
+        expect(snackbarMocks.showSuccess).toHaveBeenCalledWith("Visionnage partagé arrêté");
     });
 
     it("throws on failure without showing a success toast", async () => {

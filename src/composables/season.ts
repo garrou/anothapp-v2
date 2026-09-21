@@ -99,6 +99,16 @@ export function useSeason() {
         return data;
     }
 
+    const getActiveWatchedWith = async (): Promise<WatchTogetherInvite[]> => {
+        const resp = await seasonService.getActiveWatchedWith();
+        const data = await resp.json();
+
+        if (isError(resp.status))
+            throw new Error(data.message);
+
+        return data;
+    }
+
     const respondToWatchedWith = async (userSeasonId: number, accepted: boolean): Promise<void> => {
         const resp = await seasonService.respondToWatchedWith(userSeasonId, accepted);
 
@@ -106,7 +116,8 @@ export function useSeason() {
             const data = await resp.json();
             throw new Error(data.message);
         }
-        showSuccess(accepted ? "Visionnage partagé accepté" : "Invitation refusée");
+        // wording works both for declining a pending invite and for leaving one already accepted
+        showSuccess(accepted ? "Visionnage partagé accepté" : "Visionnage partagé arrêté");
     }
 
     return {
@@ -116,6 +127,7 @@ export function useSeason() {
         getSeasonInfosBySerieIdByNumber,
         getSeasonWatchedTime,
         getPendingWatchedWith,
+        getActiveWatchedWith,
         respondToWatchedWith,
         updateSeason,
         updateWatchedWith

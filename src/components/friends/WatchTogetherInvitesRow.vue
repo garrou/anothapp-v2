@@ -8,10 +8,16 @@
                     </template>
 
                     <template #quick-actions>
-                        <v-btn class="friend-quick-btn" :icon="CHECK_ICON" size="32" variant="flat"
-                            color="green" @click.stop="respond(invite, true)" />
-                        <v-btn class="friend-quick-btn" :icon="DELETE_ICON" size="32" variant="flat"
-                            color="red" @click.stop="respond(invite, false)" />
+                        <template v-if="active">
+                            <v-btn class="friend-quick-btn" :icon="LOGOUT_ICON" size="32" variant="flat"
+                                color="red" title="Quitter" @click.stop="respond(invite, false)" />
+                        </template>
+                        <template v-else>
+                            <v-btn class="friend-quick-btn" :icon="CHECK_ICON" size="32" variant="flat"
+                                color="green" @click.stop="respond(invite, true)" />
+                            <v-btn class="friend-quick-btn" :icon="DELETE_ICON" size="32" variant="flat"
+                                color="red" @click.stop="respond(invite, false)" />
+                        </template>
                     </template>
 
                     <v-card-subtitle class="pt-4 pb-0 font-weight-medium">{{ invite.showTitle }}</v-card-subtitle>
@@ -21,8 +27,7 @@
                 </poster-card>
             </template>
         </card-grid>
-        <empty-state v-else icon="mdi-account-group-outline" title="Aucune invitation"
-            description="Les invitations à regarder une saison ensemble apparaîtront ici." />
+        <empty-state v-else :icon="emptyCopy.icon" :title="emptyCopy.title" :description="emptyCopy.description" />
     </div>
 </template>
 
@@ -30,14 +35,15 @@
 import CardGrid from "@/components/CardGrid.vue";
 import EmptyState from "@/components/EmptyState.vue";
 import PosterCard from "@/components/PosterCard.vue";
-import { CHECK_ICON, DELETE_ICON } from "@/constants/icons";
+import { CHECK_ICON, DELETE_ICON, LOGOUT_ICON } from "@/constants/icons";
 import type { WatchTogetherInvite } from "@/models/season";
 import { useSeason } from "@/composables/season";
-import { type PropType } from "vue";
+import { computed, type PropType } from "vue";
 
-defineProps({
+const props = defineProps({
     invites: { type: Array as PropType<WatchTogetherInvite[]>, default: () => [] },
     loading: { type: Boolean, default: false },
+    active: { type: Boolean, default: false },
 });
 
 const emit = defineEmits<{
@@ -45,6 +51,18 @@ const emit = defineEmits<{
 }>();
 
 const { respondToWatchedWith } = useSeason();
+
+const emptyCopy = computed(() => props.active
+    ? {
+        icon: "mdi-account-multiple-check-outline",
+        title: "Aucun visionnage partagé actif",
+        description: "Les saisons que vous regardez avec un ami apparaîtront ici.",
+    }
+    : {
+        icon: "mdi-account-group-outline",
+        title: "Aucune invitation",
+        description: "Les invitations à regarder une saison ensemble apparaîtront ici.",
+    });
 
 const respond = async (invite: WatchTogetherInvite, accepted: boolean) => {
     await respondToWatchedWith(invite.userSeasonId, accepted);

@@ -133,7 +133,7 @@ describe("SeasonDetails", () => {
     });
 
     it("shows a friend's status next to their name when pending, declined or revoked", async () => {
-        const pendingFriend: WatchedWithFriend = { id: "f2", username: "Ami2", current: false, status: null } as WatchedWithFriend;
+        const pendingFriend: WatchedWithFriend = { id: "f2", username: "Ami2", current: false, status: "pending" } as WatchedWithFriend;
         const declinedFriend: WatchedWithFriend = { id: "f3", username: "Ami3", current: false, status: "declined" } as WatchedWithFriend;
         const revokedFriend: WatchedWithFriend = { id: "f4", username: "Ami4", current: false, status: "revoked" } as WatchedWithFriend;
         const wrapper = await mountDetails({

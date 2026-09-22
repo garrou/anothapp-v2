@@ -162,6 +162,10 @@ const openNotification = async (item: Notification) => {
     }
     if (item.type === "season_watched_with") {
         router.push({ path: "/friends", query: { tab: "3", manageTab: "4" } });
+    } else if ((item.type === "season_watched_with_accepted" || item.type === "season_watched_with_declined") && item.show) {
+        // unlike a fresh invite, the recipient here is the season's owner - they already have
+        // the show in their library, so /series (not /discover) is the right destination
+        router.push(`/series/${item.show.id}`);
     } else if (item.show) {
         router.push(`/discover/${item.show.id}`);
     } else if (item.type === "actor_favorited" && item.metadata?.actorId) {

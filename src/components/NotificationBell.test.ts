@@ -280,15 +280,24 @@ describe("NotificationBell", () => {
         expect(routerMocks.push).not.toHaveBeenCalledWith("/discover/5");
     });
 
-    it("navigates to the show's page for a season_watched_with_accepted/declined notification", async () => {
-        const wrapper = await openMenu(await mountBell([
+    it("navigates to the show's library page (not /discover) for a season_watched_with_accepted/declined notification, since the owner already has it", async () => {
+        const accepted = await openMenu(await mountBell([
             notif(1, { type: "season_watched_with_accepted", show: { id: 5, title: "Breaking Bad" }, metadata: { seasonNumber: 2 } }),
         ]));
-
-        await wrapper.findComponent({ name: "VListItem" }).trigger("click");
+        await accepted.findComponent({ name: "VListItem" }).trigger("click");
         await flushPromises();
+        expect(routerMocks.push).toHaveBeenCalledWith("/series/5");
+        expect(routerMocks.push).not.toHaveBeenCalledWith("/discover/5");
 
-        expect(routerMocks.push).toHaveBeenCalledWith("/discover/5");
+        vi.clearAllMocks();
+
+        const declined = await openMenu(await mountBell([
+            notif(1, { type: "season_watched_with_declined", show: { id: 5, title: "Breaking Bad" }, metadata: { seasonNumber: 2 } }),
+        ]));
+        await declined.findComponent({ name: "VListItem" }).trigger("click");
+        await flushPromises();
+        expect(routerMocks.push).toHaveBeenCalledWith("/series/5");
+        expect(routerMocks.push).not.toHaveBeenCalledWith("/discover/5");
     });
 
     it("navigates to the friends page for a friend_* notification without a show", async () => {

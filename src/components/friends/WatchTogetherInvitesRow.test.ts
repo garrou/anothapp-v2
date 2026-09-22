@@ -77,8 +77,13 @@ describe("WatchTogetherInvitesRow", () => {
     it("links the card and title to the show's page when active is true", () => {
         const wrapper = mountRow({ invites: [invite(1)], active: true });
 
+        // <router-link> never resolves to a real component here (no router installed in the
+        // test), so its "to" only ever reaches the DOM as a plain attribute, never as a prop
+        // vue-test-utils can introspect via .props() - hence .attributes() below.
         expect(wrapper.findComponent({ name: "PosterCard" }).props("to")).toBe("/series/10");
-        expect(wrapper.findComponent({ name: "RouterLink" }).props("to")).toBe("/series/10");
+        const links = wrapper.findAllComponents({ name: "RouterLink" });
+        expect(links).toHaveLength(2);
+        links.forEach((link) => expect(link.attributes("to")).toBe("/series/10"));
     });
 
     it("shows an active-specific empty state when active is true", () => {

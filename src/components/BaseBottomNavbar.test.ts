@@ -60,6 +60,6 @@ describe("BaseBottomNavbar", () => {
         pendingInvitesCount.value = 1;
         const wrapper = mountNav();
 
-        expect(wrapper.findComponent({ name: "VBadge" }).props("model-value")).toBe(true);
+        expect(wrapper.findComponent({ name: "VBadge" }).props("modelValue")).toBe(true);
     });
 });

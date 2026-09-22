@@ -10,6 +10,11 @@ export function usePendingWatchTogetherInvites() {
     const route = useRoute();
     const { getWatchedWith } = useSeason();
 
+    const refresh = async () => {
+        const invites = await getWatchedWith("pending");
+        pendingInvites.value = invites.length;
+    }
+
     if (!watching) {
         watching = true;
 
@@ -17,11 +22,12 @@ export function usePendingWatchTogetherInvites() {
             () => !!route.name && !PAGE_WITHOUT_BOTTOM_NAVBAR.includes(route.name as string),
             async (visible) => {
                 if (!visible) return;
-                const invites = await getWatchedWith("pending");
-                pendingInvites.value = invites.length;
+                await refresh();
             },
             { immediate: true }
         );
     }
-    return pendingInvites;
+    // exposes refresh so callers that just resolved an invite (accept/decline) can update
+    // the shared badge count immediately, instead of waiting for the next route-visibility change
+    return { pendingInvites, refresh };
 }

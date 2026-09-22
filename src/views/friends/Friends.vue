@@ -49,11 +49,13 @@ import type { FriendResponse } from "@/models/friend";
 import type { User } from "@/models/user";
 import type { WatchTogetherInvite } from "@/models/season";
 import { useUser } from "@/composables/user";
+import { usePendingWatchTogetherInvites } from "@/composables/pendingWatchTogetherInvites";
 
 const route = useRoute();
 const { getFriends } = useFriend();
 const { getUsers } = useUser();
 const { getWatchedWith } = useSeason();
+const { refresh: refreshPendingWatchTogetherInvites } = usePendingWatchTogetherInvites();
 
 const friends = ref<FriendResponse>();
 const searched = ref<User[]>([]);
@@ -103,6 +105,10 @@ const fetchPendingInvites = async () => {
     loading.value = true;
     try {
         pendingInvites.value = await getWatchedWith("pending");
+        // this view keeps its own list (for the tab badges above), separate from the shared
+        // singleton the bottom navbar reads - refresh it too so accepting/declining here doesn't
+        // leave the global badge stale until the next route-visibility change
+        await refreshPendingWatchTogetherInvites();
     } finally {
         loading.value = false;
     }

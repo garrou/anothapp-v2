@@ -26,7 +26,7 @@ describe("usePendingWatchTogetherInvites", () => {
     it("fetches the pending invite count immediately on a visible route", async () => {
         getWatchedWithMock.mockResolvedValue([{ userSeasonId: 1 }, { userSeasonId: 2 }]);
 
-        const pendingInvites = await freshUsePendingWatchTogetherInvites();
+        const { pendingInvites } = await freshUsePendingWatchTogetherInvites();
         await flushPromises();
 
         expect(pendingInvites.value).toBe(2);
@@ -37,7 +37,7 @@ describe("usePendingWatchTogetherInvites", () => {
         routeMock.name = "login";
         getWatchedWithMock.mockResolvedValue([{ userSeasonId: 1 }]);
 
-        const pendingInvites = await freshUsePendingWatchTogetherInvites();
+        const { pendingInvites } = await freshUsePendingWatchTogetherInvites();
         await flushPromises();
 
         expect(pendingInvites.value).toBe(0);
@@ -50,7 +50,7 @@ describe("usePendingWatchTogetherInvites", () => {
             routeMock.name = name;
             getWatchedWithMock.mockResolvedValue([{ userSeasonId: 1 }]);
 
-            const pendingInvites = await freshUsePendingWatchTogetherInvites();
+            const { pendingInvites } = await freshUsePendingWatchTogetherInvites();
             await flushPromises();
 
             expect(pendingInvites.value).toBe(0);
@@ -61,9 +61,23 @@ describe("usePendingWatchTogetherInvites", () => {
     it("stays at 0 when there are no pending invites", async () => {
         getWatchedWithMock.mockResolvedValue([]);
 
-        const pendingInvites = await freshUsePendingWatchTogetherInvites();
+        const { pendingInvites } = await freshUsePendingWatchTogetherInvites();
         await flushPromises();
 
         expect(pendingInvites.value).toBe(0);
+    });
+
+    it("lets a caller refresh the count on demand, e.g. right after resolving an invite", async () => {
+        getWatchedWithMock.mockResolvedValue([{ userSeasonId: 1 }]);
+
+        const { pendingInvites, refresh } = await freshUsePendingWatchTogetherInvites();
+        await flushPromises();
+        expect(pendingInvites.value).toBe(1);
+
+        getWatchedWithMock.mockResolvedValue([]);
+        await refresh();
+
+        expect(pendingInvites.value).toBe(0);
+        expect(getWatchedWithMock).toHaveBeenCalledTimes(2);
     });
 });

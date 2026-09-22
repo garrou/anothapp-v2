@@ -186,7 +186,12 @@ watch(toEdit, () => {
     };
     seasonInfo.platform = season.platform.id;
     seasonInfo.viewedAt = toDatetimeLocalInput(season.addedAt);
-    seasonInfo.watchedWith = season.watchedWith.map((friend) => friend.id);
+    // declined/revoked are history, not an active selection - pre-filling them here would silently
+    // re-invite them (declined -> pending) or drop the "left after accepting" distinction (revoked
+    // -> declined) the next time this form is saved, even for an edit unrelated to watched-with
+    seasonInfo.watchedWith = season.watchedWith
+        .filter((friend) => friend.status !== "declined" && friend.status !== "revoked")
+        .map((friend) => friend.id);
 });
 
 onBeforeMount(async () => {

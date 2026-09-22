@@ -6,6 +6,7 @@ import { vuetify } from "@/test/vuetify";
 import type { FriendResponse } from "@/models/friend";
 import type { User } from "@/models/user";
 import type { WatchTogetherInvite } from "@/models/season";
+import { usePendingWatchTogetherInvites } from "@/composables/pendingWatchTogetherInvites";
 
 const friendComposableMocks = vi.hoisted(() => ({
     getFriends: vi.fn(),
@@ -99,11 +100,28 @@ describe("Friends", () => {
 
     it("re-fetches invitations when WatchTogetherInvitesRow emits refresh", async () => {
         const wrapper = await openManageTab(await mountView({ friends: [], sent: [], received: [] }, [invite(1)]));
+        const callsAfterMount = seasonComposableMocks.getWatchedWith.mock.calls.filter(([s]) => s === "pending").length;
 
         await wrapper.findComponent({ name: "WatchTogetherInvitesRow" }).vm.$emit("refresh");
         await flushPromises();
 
-        expect(seasonComposableMocks.getWatchedWith.mock.calls.filter(([s]) => s === "pending")).toHaveLength(2);
+        // each fetchPendingInvites() run also refreshes the shared usePendingWatchTogetherInvites()
+        // singleton (for the bottom navbar badge), which re-fetches independently - so this doubles
+        // rather than simply incrementing by one
+        expect(seasonComposableMocks.getWatchedWith.mock.calls.filter(([s]) => s === "pending"))
+            .toHaveLength(callsAfterMount * 2);
+    });
+
+    it("refreshes the shared bottom-navbar badge count when invitations are re-fetched", async () => {
+        const wrapper = await openManageTab(await mountView({ friends: [], sent: [], received: [] }, [invite(1)]));
+        const { pendingInvites } = usePendingWatchTogetherInvites();
+        expect(pendingInvites.value).toBe(1);
+
+        seasonComposableMocks.getWatchedWith.mockResolvedValue([]);
+        await wrapper.findComponent({ name: "WatchTogetherInvitesRow" }).vm.$emit("refresh");
+        await flushPromises();
+
+        expect(pendingInvites.value).toBe(0);
     });
 
     it("auto-switches to the 'received requests' management tab when there are pending requests", async () => {

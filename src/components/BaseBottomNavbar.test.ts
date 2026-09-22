@@ -15,7 +15,7 @@ vi.mock("@/composables/pendingFriendRequests", async () => {
 });
 vi.mock("@/composables/pendingWatchTogetherInvites", async () => {
     const { ref } = await import("vue");
-    return { usePendingWatchTogetherInvites: () => ref(pendingInvitesCount.value) };
+    return { usePendingWatchTogetherInvites: () => ({ pendingInvites: ref(pendingInvitesCount.value), refresh: vi.fn() }) };
 });
 vi.mock("vue-router", () => ({ useRoute: () => routeMock }));
 

@@ -22,7 +22,7 @@ import { usePendingWatchTogetherInvites } from "@/composables/pendingWatchTogeth
 
 const route = useRoute();
 const pendingRequests = usePendingFriendRequests();
-const pendingInvites = usePendingWatchTogetherInvites();
+const { pendingInvites } = usePendingWatchTogetherInvites();
 
 const navbar = computed(() => !PAGE_WITHOUT_BOTTOM_NAVBAR.includes(route.name as string));
 const friendsBadgeCount = computed(() => pendingRequests.value + pendingInvites.value);

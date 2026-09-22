@@ -185,6 +185,28 @@ describe("SeasonDetails", () => {
         expect(seasonComposableMocks.updateWatchedWith).toHaveBeenCalledWith(501, ["f1"]);
     });
 
+    it("does not implicitly re-invite a declined or revoked friend on an unrelated save", async () => {
+        seasonComposableMocks.updateSeason.mockResolvedValue(true);
+        seasonComposableMocks.updateWatchedWith.mockResolvedValue(undefined);
+        const pendingFriend: WatchedWithFriend = { id: "f2", username: "Ami2", current: false, status: "pending" } as WatchedWithFriend;
+        const declinedFriend: WatchedWithFriend = { id: "f3", username: "Ami3", current: false, status: "declined" } as WatchedWithFriend;
+        const revokedFriend: WatchedWithFriend = { id: "f4", username: "Ami4", current: false, status: "revoked" } as WatchedWithFriend;
+        const wrapper = await mountDetails({
+            seasons: [subSeason(501, { watchedWith: [friend1, pendingFriend, declinedFriend, revokedFriend] })],
+        });
+
+        const buttons = wrapper.findAll(".season-entry-btn");
+        await buttons[0].trigger("click");
+        const saveBtn = wrapper.findAllComponents({ name: "VBtn" }).find((btn) => btn.text() === "Enregistrer");
+        await saveBtn!.trigger("click");
+        await flushPromises();
+
+        // only the friend currently accepted or pending stays selected - declined/revoked are
+        // history, not something an unrelated edit (here: just re-saving the same platform/date)
+        // should ever resubmit as an active tag
+        expect(seasonComposableMocks.updateWatchedWith).toHaveBeenCalledWith(501, ["f1", "f2"]);
+    });
+
     it("opens a confirm dialog and deletes the season on confirm, emitting refresh", async () => {
         seasonComposableMocks.deleteSeason.mockResolvedValue(undefined);
         const wrapper = await mountDetails();

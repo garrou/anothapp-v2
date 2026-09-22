@@ -100,16 +100,11 @@ describe("Friends", () => {
 
     it("re-fetches invitations when WatchTogetherInvitesRow emits refresh", async () => {
         const wrapper = await openManageTab(await mountView({ friends: [], sent: [], received: [] }, [invite(1)]));
-        const callsAfterMount = seasonComposableMocks.getWatchedWith.mock.calls.filter(([s]) => s === "pending").length;
 
         await wrapper.findComponent({ name: "WatchTogetherInvitesRow" }).vm.$emit("refresh");
         await flushPromises();
 
-        // each fetchPendingInvites() run also refreshes the shared usePendingWatchTogetherInvites()
-        // singleton (for the bottom navbar badge), which re-fetches independently - so this doubles
-        // rather than simply incrementing by one
-        expect(seasonComposableMocks.getWatchedWith.mock.calls.filter(([s]) => s === "pending"))
-            .toHaveLength(callsAfterMount * 2);
+        expect(seasonComposableMocks.getWatchedWith.mock.calls.filter(([s]) => s === "pending")).toHaveLength(2);
     });
 
     it("refreshes the shared bottom-navbar badge count when invitations are re-fetched", async () => {

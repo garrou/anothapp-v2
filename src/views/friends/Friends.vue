@@ -55,7 +55,7 @@ const route = useRoute();
 const { getFriends } = useFriend();
 const { getUsers } = useUser();
 const { getWatchedWith } = useSeason();
-const { refresh: refreshPendingWatchTogetherInvites } = usePendingWatchTogetherInvites();
+const { pendingInvites: globalPendingInvitesCount } = usePendingWatchTogetherInvites();
 
 const friends = ref<FriendResponse>();
 const searched = ref<User[]>([]);
@@ -106,9 +106,9 @@ const fetchPendingInvites = async () => {
     try {
         pendingInvites.value = await getWatchedWith("pending");
         // this view keeps its own list (for the tab badges above), separate from the shared
-        // singleton the bottom navbar reads - refresh it too so accepting/declining here doesn't
-        // leave the global badge stale until the next route-visibility change
-        await refreshPendingWatchTogetherInvites();
+        // singleton the bottom navbar reads - sync it from the list we already fetched, instead of
+        // calling its refresh() and re-fetching the same data a second time
+        globalPendingInvitesCount.value = pendingInvites.value.length;
     } finally {
         loading.value = false;
     }

@@ -29,6 +29,7 @@ const user = (id: string, username = "user" + id): User => ({ id, username, curr
 
 const invite = (userSeasonId: number): WatchTogetherInvite => ({
     userSeasonId, showId: 10, showTitle: "Dexter", seasonNumber: 1, actor: { id: "user-2", username: "bob" },
+    isOwner: false,
 });
 
 const mountView = async (response: Omit<FriendResponse, "viewed">, invites: WatchTogetherInvite[] = []) => {

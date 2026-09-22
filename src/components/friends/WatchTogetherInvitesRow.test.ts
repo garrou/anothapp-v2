@@ -11,9 +11,10 @@ const seasonComposableMocks = vi.hoisted(() => ({
 
 vi.mock("@/composables/season", () => ({ useSeason: () => seasonComposableMocks }));
 
-const invite = (userSeasonId: number): WatchTogetherInvite => ({
+const invite = (userSeasonId: number, overrides: Partial<WatchTogetherInvite> = {}): WatchTogetherInvite => ({
     userSeasonId, showId: 10, showTitle: "Dexter", showPoster: "poster.jpg", seasonNumber: 2,
-    actor: { id: "user-2", username: "bob" },
+    actor: { id: "user-2", username: "bob" }, isOwner: false,
+    ...overrides,
 });
 
 const mountRow = (props: Record<string, unknown> = {}) => mount(WatchTogetherInvitesRow, {
@@ -96,6 +97,18 @@ describe("WatchTogetherInvitesRow", () => {
         const wrapper = mountRow({ invites: [invite(1), invite(2)], active: true });
 
         expect(wrapper.findAll(".friend-quick-btn")).toHaveLength(2);
+    });
+
+    it("shows no leave button for the owner's own shared viewings - they manage friends from the season instead", () => {
+        const wrapper = mountRow({ invites: [invite(1, { isOwner: true }), invite(2)], active: true });
+
+        expect(wrapper.findAll(".friend-quick-btn")).toHaveLength(1);
+    });
+
+    it("still links an owner's card to the show's page", () => {
+        const wrapper = mountRow({ invites: [invite(1, { isOwner: true })], active: true });
+
+        expect(wrapper.findComponent({ name: "PosterCard" }).props("to")).toBe("/series/10");
     });
 
     it("opens a confirm dialog without leaving yet when the leave button is clicked", async () => {

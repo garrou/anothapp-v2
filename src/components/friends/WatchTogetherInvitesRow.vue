@@ -9,8 +9,8 @@
 
                     <template #quick-actions>
                         <template v-if="active">
-                            <v-btn class="friend-quick-btn" :icon="LOGOUT_ICON" size="32" variant="flat"
-                                color="red" title="Quitter" @click.stop="startLeaving(invite)" />
+                            <v-btn v-if="!invite.isOwner" class="friend-quick-btn" :icon="LOGOUT_ICON" size="32"
+                                variant="flat" color="red" title="Quitter" @click.stop="startLeaving(invite)" />
                         </template>
                         <template v-else>
                             <v-btn class="friend-quick-btn" :icon="CHECK_ICON" size="32" variant="flat"

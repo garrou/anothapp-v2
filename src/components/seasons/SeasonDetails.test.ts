@@ -45,6 +45,7 @@ const subSeason = (id: number, overrides: Partial<SeasonDetail> = {}): SeasonDet
     addedAt: "2023-05-01T10:00:00.000Z",
     platform: platform1,
     watchedWith: [friend1],
+    sharedBy: null,
     ...overrides,
 });
 
@@ -141,6 +142,22 @@ describe("SeasonDetails", () => {
         });
 
         expect(wrapper.text()).toContain("Vu avec Ami1, Ami2 (en attente), Ami3 (refusé), Ami4 (a quitté)");
+    });
+
+    it("shows who shared a season with the current user, from the invited friend's side", async () => {
+        const wrapper = await mountDetails({
+            seasons: [subSeason(501, {
+                watchedWith: [], sharedBy: { id: "owner-1", username: "Bob", picture: undefined },
+            })],
+        });
+
+        expect(wrapper.text()).toContain("Partagé par Bob");
+    });
+
+    it("shows no sharedBy line for a season nobody shared", async () => {
+        const wrapper = await mountDetails({ seasons: [subSeason(501, { sharedBy: null })] });
+
+        expect(wrapper.text()).not.toContain("Partagé par");
     });
 
     it("re-fetches the season info after saving instead of guessing statuses locally", async () => {

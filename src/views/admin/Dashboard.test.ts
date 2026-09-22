@@ -29,6 +29,7 @@ const dashboard = (overrides: Partial<AdminDashboard> = {}): AdminDashboard => (
     users: { total: 12, newByDay: [{ day: "2024-01-01", count: 3 }], pendingDeletions: 1, anonymized: 2 },
     sessions: { active: 5, loginAttemptLimit: [] },
     database: { size: "42 MB", history: [] },
+    catalog: { history: [] },
     recentActions: [],
     health: {
         betaseries: { reachable: true, latencyMs: 120 },
@@ -112,6 +113,14 @@ describe("Dashboard.vue", () => {
         const wrapper = await mountView();
 
         expect(wrapper.findComponent({ name: "BaseMultiLineChart" }).exists()).toBe(false);
+    });
+
+    it("renders the catalog evolution chart once there is at least one snapshot", async () => {
+        const wrapper = await mountView(dashboard({
+            catalog: { history: [{ recordedAt: "2024-01-01", shows: 42, seasons: 100, episodes: 2000 }] },
+        }));
+
+        expect(wrapper.findComponent({ name: "BaseMultiLineChart" }).exists()).toBe(true);
     });
 
     it("shows an error via the snackbar when the dashboard fails to load", async () => {

@@ -104,6 +104,22 @@ export interface AdminServiceCalls {
     import: AdminServiceCallStat;
 }
 
+export interface AdminCatalogSizeSnapshot {
+
+    recordedAt: string;
+
+    shows: number;
+
+    seasons: number;
+
+    episodes: number;
+}
+
+export interface AdminCatalogSummary {
+
+    history: AdminCatalogSizeSnapshot[];
+}
+
 export interface AdminDashboard {
 
     users: AdminUsersSummary;
@@ -111,6 +127,8 @@ export interface AdminDashboard {
     sessions: AdminSessionsSummary;
 
     database: AdminDatabaseSummary;
+
+    catalog: AdminCatalogSummary;
 
     health: AdminHealth;
 

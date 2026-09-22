@@ -70,6 +70,13 @@
             </v-col>
         </v-row>
 
+        <v-row class="mt-3" v-if="dashboard">
+            <v-col cols="12">
+                <base-multi-line-chart v-if="catalogSizeChartSeries.length" :series="catalogSizeChartSeries"
+                    title="Évolution du catalogue" />
+            </v-col>
+        </v-row>
+
         <v-card v-if="dashboard" class="pa-4 mt-6">
             <div class="text-subtitle-1 font-weight-bold mb-2">Rechercher un compte</div>
             <v-form @submit.prevent="onSearch">
@@ -182,6 +189,21 @@ const serviceCallsChartSeries = computed((): MultiLineSeries[] => {
         { name: "BetaSeries", data: calls.betaseries.history.map((e) => ({ label: dayLabel(e.day), value: e.count })) },
         { name: "Export", data: calls.export.history.map((e) => ({ label: dayLabel(e.day), value: e.count })) },
         { name: "Import", data: calls.import.history.map((e) => ({ label: dayLabel(e.day), value: e.count })) },
+    ];
+});
+
+const catalogSizeChartSeries = computed((): MultiLineSeries[] => {
+    const history = dashboard.value?.catalog.history ?? [];
+
+    if (!history.length) {
+        return [];
+    }
+    const label = (recordedAt: string) => new Date(recordedAt).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" });
+
+    return [
+        { name: "Séries", data: history.map((e) => ({ label: label(e.recordedAt), value: e.shows })) },
+        { name: "Saisons", data: history.map((e) => ({ label: label(e.recordedAt), value: e.seasons })) },
+        { name: "Épisodes", data: history.map((e) => ({ label: label(e.recordedAt), value: e.episodes })) },
     ];
 });
 

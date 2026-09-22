@@ -132,14 +132,15 @@ describe("SeasonDetails", () => {
         expect(wrapper.text()).not.toContain("Marquer tous les épisodes diffusés");
     });
 
-    it("shows a friend's status next to their name when pending or declined", async () => {
+    it("shows a friend's status next to their name when pending, declined or revoked", async () => {
         const pendingFriend: WatchedWithFriend = { id: "f2", username: "Ami2", current: false, status: null } as WatchedWithFriend;
         const declinedFriend: WatchedWithFriend = { id: "f3", username: "Ami3", current: false, status: "declined" } as WatchedWithFriend;
+        const revokedFriend: WatchedWithFriend = { id: "f4", username: "Ami4", current: false, status: "revoked" } as WatchedWithFriend;
         const wrapper = await mountDetails({
-            seasons: [subSeason(501, { watchedWith: [friend1, pendingFriend, declinedFriend] })],
+            seasons: [subSeason(501, { watchedWith: [friend1, pendingFriend, declinedFriend, revokedFriend] })],
         });
 
-        expect(wrapper.text()).toContain("Vu avec Ami1, Ami2 (en attente), Ami3 (refusé)");
+        expect(wrapper.text()).toContain("Vu avec Ami1, Ami2 (en attente), Ami3 (refusé), Ami4 (a quitté)");
     });
 
     it("re-fetches the season info after saving instead of guessing statuses locally", async () => {

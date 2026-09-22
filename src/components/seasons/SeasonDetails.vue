@@ -124,6 +124,7 @@ const isEdited = (id: number): boolean => toEdit.value === id;
 
 const describeWatchedWith = (friend: WatchedWithFriend): string => {
     if (friend.status === "declined") return `${friend.username} (refusé)`;
+    if (friend.status === "revoked") return `${friend.username} (a quitté)`;
     if (friend.status === null) return `${friend.username} (en attente)`;
     return friend.username;
 }

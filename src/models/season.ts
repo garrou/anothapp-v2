@@ -3,7 +3,7 @@ import type { User } from "./user";
 
 export interface WatchedWithFriend extends User {
 
-    status: "accepted" | "declined" | null;
+    status: "accepted" | "declined" | "revoked" | null;
 }
 
 export interface SeasonDetail {

@@ -3,15 +3,20 @@
 
     <series-tabs class="mx-3 mt-4 mb-2" />
 
-    <series-row :loading="loading" :series="series" :watch-status="displayWatchStatus" :empty-title="emptyCopy.title"
+    <watch-together-invites-row v-if="isWatchTogether" active class="mt-2" :invites="invites" :loading="loading"
+        @refresh="loadSeries" />
+    <series-row v-else :loading="loading" :series="series" :watch-status="displayWatchStatus" :empty-title="emptyCopy.title"
         :empty-description="emptyCopy.description" @refresh="(id, kind) => refresh(id, kind)" />
 </template>
 
 <script lang="ts" setup>
 import SeriesRow from "@/components/series/SeriesRow.vue";
 import SeriesTabs from "@/components/series/SeriesTabs.vue";
+import WatchTogetherInvitesRow from "@/components/friends/WatchTogetherInvitesRow.vue";
 import { useSerie } from "@/composables/serie";
+import { useSeason } from "@/composables/season";
 import type { Serie } from "@/models/serie";
+import type { WatchTogetherInvite } from "@/models/season";
 import { useScrollStore } from "@/stores/scroll";
 import { SerieStatus } from "@/types/types";
 import { ref, type PropType, onMounted, watch, computed } from "vue";
@@ -24,6 +29,9 @@ const props = defineProps({
 
 const route = useRoute();
 const { getSeriesByStatus } = useSerie();
+const { getWatchedWith } = useSeason();
+
+const isWatchTogether = computed(() => props.status === SerieStatus.WatchTogether);
 
 const displayWatchStatus = computed(() => props.status === SerieStatus.Stopped || props.status === SerieStatus.Continue);
 
@@ -43,6 +51,7 @@ const emptyCopy = computed(() => {
 });
 
 const series = ref<Serie[]>([]);
+const invites = ref<WatchTogetherInvite[]>([]);
 const loading = ref(false);
 
 const refresh = (id: number, kind: "favorite" | "list" | "watch") => {
@@ -59,7 +68,11 @@ const refresh = (id: number, kind: "favorite" | "list" | "watch") => {
 const loadSeries = async () => {
     loading.value = true;
     try {
-        series.value = await getSeriesByStatus(props.status);
+        if (isWatchTogether.value) {
+            invites.value = await getWatchedWith("active");
+        } else {
+            series.value = await getSeriesByStatus(props.status);
+        }
     } finally {
         loading.value = false;
     }

@@ -10,7 +10,7 @@
                     <div class="season-entry-date">{{ formatDate(subSeason.addedAt) }}</div>
                     <div class="season-entry-subtitle">{{ subSeason.platform.name }}</div>
                     <div v-if="subSeason.watchedWith.length" class="season-entry-subtitle">
-                        Vu avec {{ subSeason.watchedWith.map((friend) => friend.username).join(", ") }}
+                        Vu avec {{ subSeason.watchedWith.map(describeWatchedWith).join(", ") }}
                     </div>
                 </div>
 
@@ -71,7 +71,7 @@
 import BaseConfirm from "@/components/BaseConfirm.vue";
 import type { PropType } from "vue";
 import { onBeforeMount, reactive, ref, watch } from "vue";
-import type { Season, SeasonDetail } from "@/models/season";
+import type { Season, SeasonDetail, WatchedWithFriend } from "@/models/season";
 import { useSeason } from "@/composables/season";
 import { useEpisode } from "@/composables/episode";
 import { formatDate, toDatetimeLocalInput, minsToStringHoursDays } from "@/utils/format";
@@ -122,6 +122,13 @@ const seasonInfo = reactive({
 
 const isEdited = (id: number): boolean => toEdit.value === id;
 
+const describeWatchedWith = (friend: WatchedWithFriend): string => {
+    if (friend.status === "declined") return `${friend.username} (refusé)`;
+    if (friend.status === "revoked") return `${friend.username} (a quitté)`;
+    if (friend.status === "pending") return `${friend.username} (en attente)`;
+    return friend.username;
+}
+
 const editSeason = (id: number) => {
     toEdit.value = isEdited(id) ? -1 : id;
 }
@@ -165,15 +172,9 @@ const changeSeason = async () => {
 
     await updateWatchedWith(toEdit.value, seasonInfo.watchedWith);
 
-    const idx = seasons.value.map((s) => s.id).indexOf(toEdit.value);
-    if (idx < 0 || !seasonInfo.viewedAt || !seasonInfo.platform) return;
-
-    const newPlatform = platforms.value.find((s) => s.id === seasonInfo.platform);
-    if (!newPlatform) return;
-
-    seasons.value[idx].addedAt = seasonInfo.viewedAt;
-    seasons.value[idx].platform = newPlatform;
-    seasons.value[idx].watchedWith = friends.value.filter((f) => seasonInfo.watchedWith.includes(f.id));
+    // re-fetch rather than patch locally: a dropped friend isn't removed but marked declined, and a
+    // newly tagged one starts pending - both statuses live server-side, so a local guess would be wrong
+    seasons.value = await getSeasonInfosBySerieIdByNumber(props.id, props.season.number);
 }
 
 watch(toEdit, () => {
@@ -185,7 +186,12 @@ watch(toEdit, () => {
     };
     seasonInfo.platform = season.platform.id;
     seasonInfo.viewedAt = toDatetimeLocalInput(season.addedAt);
-    seasonInfo.watchedWith = season.watchedWith.map((friend) => friend.id);
+    // declined/revoked are history, not an active selection - pre-filling them here would silently
+    // re-invite them (declined -> pending) or drop the "left after accepting" distinction (revoked
+    // -> declined) the next time this form is saved, even for an edit unrelated to watched-with
+    seasonInfo.watchedWith = season.watchedWith
+        .filter((friend) => friend.status !== "declined" && friend.status !== "revoked")
+        .map((friend) => friend.id);
 });
 
 onBeforeMount(async () => {

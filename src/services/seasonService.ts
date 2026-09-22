@@ -17,11 +17,19 @@ const addAllEpisodesViewing = (id: number): Promise<Response> => httpClient.post
 const updateWatchedWith = (id: number, friendIds: string[]): Promise<Response> =>
     httpClient.patch(`${PREFIX}/${id}/watched-with`, { friendIds });
 
+const getWatchedWith = (status: "pending" | "active"): Promise<Response> =>
+    httpClient.get(`${PREFIX}/watched-with`, [{ name: "status", value: status }]);
+
+const respondToWatchedWith = (userSeasonId: number, accepted: boolean): Promise<Response> =>
+    httpClient.patch(`${PREFIX}/${userSeasonId}/watched-with/response`, { accepted });
+
 export default {
     addAllEpisodesViewing,
     addEpisodeViewing,
     deleteSeasonById,
     getEpisodesBySeasonId,
+    getWatchedWith,
+    respondToWatchedWith,
     updateSeason,
     updateWatchedWith
 }

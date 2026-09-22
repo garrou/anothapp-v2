@@ -1,5 +1,6 @@
 import type { NavStatusMenuItem, BottomNavMenuItem, NavOthersMenuItem } from "@/models/menu";
 import {
+    ACCOUNT_MULTIPLE_ICON,
     ADD_ICON,
     CHART_BAR_ICON,
     CHECK_CIRCLE_ICON,
@@ -64,6 +65,11 @@ export const NAV_SERIES_STATUS: NavStatusMenuItem[] = [
         title: "Terminées",
         icon: CHECK_CIRCLE_ICON,
         status: SerieStatus.Finished
+    },
+    {
+        title: "Partagées",
+        icon: ACCOUNT_MULTIPLE_ICON,
+        status: SerieStatus.WatchTogether
     }
 ];
 

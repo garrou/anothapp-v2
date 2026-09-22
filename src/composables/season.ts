@@ -1,4 +1,4 @@
-import type { Season, SeasonDetail } from "@/models/season";
+import type { Season, SeasonDetail, WatchTogetherInvite } from "@/models/season";
 import type { Serie } from "@/models/serie";
 import serieService from "@/services/serieService";
 import type { SeasonSearchOptions } from "@/models/search";
@@ -89,12 +89,35 @@ export function useSeason() {
         }
     }
 
+    const getWatchedWith = async (status: "pending" | "active"): Promise<WatchTogetherInvite[]> => {
+        const resp = await seasonService.getWatchedWith(status);
+        const data = await resp.json();
+
+        if (isError(resp.status))
+            throw new Error(data.message);
+
+        return data;
+    }
+
+    const respondToWatchedWith = async (userSeasonId: number, accepted: boolean): Promise<void> => {
+        const resp = await seasonService.respondToWatchedWith(userSeasonId, accepted);
+
+        if (isError(resp.status)) {
+            const data = await resp.json();
+            throw new Error(data.message);
+        }
+        // wording works both for declining a pending invite and for leaving one already accepted
+        showSuccess(accepted ? "Visionnage partagé accepté" : "Visionnage partagé arrêté");
+    }
+
     return {
         addSeason,
         deleteSeason,
         getSeasonsBySerieId,
         getSeasonInfosBySerieIdByNumber,
         getSeasonWatchedTime,
+        getWatchedWith,
+        respondToWatchedWith,
         updateSeason,
         updateWatchedWith
     }

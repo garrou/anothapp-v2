@@ -36,5 +36,7 @@ export enum SerieStatus {
     Watchlist = "watchlist",
     Shared = "shared",
     Next = "next",
-    All = "all"
+    All = "all",
+    // client-side only - never sent to GET /shows, SeriesStatus.vue branches on it before that call
+    WatchTogether = "watch-together"
 }

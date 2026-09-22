@@ -3,9 +3,8 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
 import SeasonDetails from "./SeasonDetails.vue";
 import { vuetify } from "@/test/vuetify";
-import type { SeasonDetail } from "@/models/season";
+import type { SeasonDetail, WatchedWithFriend } from "@/models/season";
 import type { Platform } from "@/models/serie";
-import type { User } from "@/models/user";
 import { toDatetimeLocalInput } from "@/utils/format";
 
 const seasonComposableMocks = vi.hoisted(() => ({
@@ -39,7 +38,7 @@ vi.mock("@/composables/friend", () => ({ useFriend: () => friendComposableMocks 
 vi.mock("@/composables/snackbar", () => ({ useSnackbar: () => snackbarMocks }));
 
 const platform1: Platform = { id: 1, name: "Netflix" } as Platform;
-const friend1: User = { id: "f1", username: "Ami1", current: false } as User;
+const friend1: WatchedWithFriend = { id: "f1", username: "Ami1", current: false, status: "accepted" } as WatchedWithFriend;
 
 const subSeason = (id: number, overrides: Partial<SeasonDetail> = {}): SeasonDetail => ({
     id,
@@ -133,6 +132,31 @@ describe("SeasonDetails", () => {
         expect(wrapper.text()).not.toContain("Marquer tous les épisodes diffusés");
     });
 
+    it("shows a friend's status next to their name when pending, declined or revoked", async () => {
+        const pendingFriend: WatchedWithFriend = { id: "f2", username: "Ami2", current: false, status: "pending" } as WatchedWithFriend;
+        const declinedFriend: WatchedWithFriend = { id: "f3", username: "Ami3", current: false, status: "declined" } as WatchedWithFriend;
+        const revokedFriend: WatchedWithFriend = { id: "f4", username: "Ami4", current: false, status: "revoked" } as WatchedWithFriend;
+        const wrapper = await mountDetails({
+            seasons: [subSeason(501, { watchedWith: [friend1, pendingFriend, declinedFriend, revokedFriend] })],
+        });
+
+        expect(wrapper.text()).toContain("Vu avec Ami1, Ami2 (en attente), Ami3 (refusé), Ami4 (a quitté)");
+    });
+
+    it("re-fetches the season info after saving instead of guessing statuses locally", async () => {
+        seasonComposableMocks.updateSeason.mockResolvedValue(true);
+        seasonComposableMocks.updateWatchedWith.mockResolvedValue(undefined);
+        const wrapper = await mountDetails();
+
+        const buttons = wrapper.findAll(".season-entry-btn");
+        await buttons[0].trigger("click");
+        const saveBtn = wrapper.findAllComponents({ name: "VBtn" }).find((btn) => btn.text() === "Enregistrer");
+        await saveBtn!.trigger("click");
+        await flushPromises();
+
+        expect(seasonComposableMocks.getSeasonInfosBySerieIdByNumber).toHaveBeenCalledTimes(2);
+    });
+
     it("enters edit mode and hides the edit button once editing", async () => {
         const wrapper = await mountDetails();
 
@@ -159,6 +183,28 @@ describe("SeasonDetails", () => {
 
         expect(seasonComposableMocks.updateSeason).toHaveBeenCalledWith(501, 1, toDatetimeLocalInput(subSeason(501).addedAt));
         expect(seasonComposableMocks.updateWatchedWith).toHaveBeenCalledWith(501, ["f1"]);
+    });
+
+    it("does not implicitly re-invite a declined or revoked friend on an unrelated save", async () => {
+        seasonComposableMocks.updateSeason.mockResolvedValue(true);
+        seasonComposableMocks.updateWatchedWith.mockResolvedValue(undefined);
+        const pendingFriend: WatchedWithFriend = { id: "f2", username: "Ami2", current: false, status: "pending" } as WatchedWithFriend;
+        const declinedFriend: WatchedWithFriend = { id: "f3", username: "Ami3", current: false, status: "declined" } as WatchedWithFriend;
+        const revokedFriend: WatchedWithFriend = { id: "f4", username: "Ami4", current: false, status: "revoked" } as WatchedWithFriend;
+        const wrapper = await mountDetails({
+            seasons: [subSeason(501, { watchedWith: [friend1, pendingFriend, declinedFriend, revokedFriend] })],
+        });
+
+        const buttons = wrapper.findAll(".season-entry-btn");
+        await buttons[0].trigger("click");
+        const saveBtn = wrapper.findAllComponents({ name: "VBtn" }).find((btn) => btn.text() === "Enregistrer");
+        await saveBtn!.trigger("click");
+        await flushPromises();
+
+        // only the friend currently accepted or pending stays selected - declined/revoked are
+        // history, not something an unrelated edit (here: just re-saving the same platform/date)
+        // should ever resubmit as an active tag
+        expect(seasonComposableMocks.updateWatchedWith).toHaveBeenCalledWith(501, ["f1", "f2"]);
     });
 
     it("opens a confirm dialog and deletes the season on confirm, emitting refresh", async () => {

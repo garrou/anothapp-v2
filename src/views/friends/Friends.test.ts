@@ -5,6 +5,8 @@ import Friends from "./Friends.vue";
 import { vuetify } from "@/test/vuetify";
 import type { FriendResponse } from "@/models/friend";
 import type { User } from "@/models/user";
+import type { WatchTogetherInvite } from "@/models/season";
+import { usePendingWatchTogetherInvites } from "@/composables/pendingWatchTogetherInvites";
 
 const friendComposableMocks = vi.hoisted(() => ({
     getFriends: vi.fn(),
@@ -12,15 +14,26 @@ const friendComposableMocks = vi.hoisted(() => ({
 const userComposableMocks = vi.hoisted(() => ({
     getUsers: vi.fn(),
 }));
+const seasonComposableMocks = vi.hoisted(() => ({
+    getWatchedWith: vi.fn(),
+}));
 
 vi.mock("@/composables/friend", () => ({ useFriend: () => friendComposableMocks }));
 vi.mock("@/composables/user", () => ({ useUser: () => userComposableMocks }));
-vi.mock("vue-router", () => ({ useRouter: () => ({ push: vi.fn() }) }));
+vi.mock("@/composables/season", () => ({ useSeason: () => seasonComposableMocks }));
+const routeMock = vi.hoisted(() => ({ query: {} as Record<string, string> }));
+
+vi.mock("vue-router", () => ({ useRouter: () => ({ push: vi.fn() }), useRoute: () => routeMock }));
 
 const user = (id: string, username = "user" + id): User => ({ id, username, current: false } as User);
 
-const mountView = async (response: Omit<FriendResponse, "viewed">) => {
+const invite = (userSeasonId: number): WatchTogetherInvite => ({
+    userSeasonId, showId: 10, showTitle: "Dexter", seasonNumber: 1, actor: { id: "user-2", username: "bob" },
+});
+
+const mountView = async (response: Omit<FriendResponse, "viewed">, invites: WatchTogetherInvite[] = []) => {
     friendComposableMocks.getFriends.mockResolvedValue({ viewed: [], ...response });
+    seasonComposableMocks.getWatchedWith.mockResolvedValue(invites);
     const wrapper = mount(Friends, {
         global: { plugins: [vuetify], stubs: { BaseAppBar: true, LeaderboardList: true } },
     });
@@ -37,6 +50,7 @@ const openManageTab = async (wrapper: Awaited<ReturnType<typeof mountView>>) => 
 
 beforeEach(() => {
     vi.resetAllMocks();
+    routeMock.query = {};
 });
 
 describe("Friends", () => {
@@ -46,24 +60,76 @@ describe("Friends", () => {
         expect(friendComposableMocks.getFriends).toHaveBeenCalled();
     });
 
-    it("badges the 'Gérer' tab with the received count", async () => {
-        const wrapper = await mountView({ friends: [], sent: [], received: [user("r1"), user("r2")] });
+    it("badges the 'Gérer' tab with the combined received requests and pending invites count", async () => {
+        const wrapper = await mountView({ friends: [], sent: [], received: [user("r1"), user("r2")] }, [invite(1)]);
 
         const tabs = wrapper.findComponent({ name: "PillTabs" }).props("tabs") as { label: string; badge?: number }[];
-        expect(tabs.find((t) => t.label === "Gérer")!.badge).toBe(2);
+        expect(tabs.find((t) => t.label === "Gérer")!.badge).toBe(3);
+    });
+
+    it("badges the nested 'Invitations' tab with the pending invites count", async () => {
+        const wrapper = await openManageTab(await mountView({ friends: [], sent: [], received: [] }, [invite(1), invite(2)]));
+
+        const manageTabs = wrapper.findComponent({ name: "ChipTabs" }).props("tabs") as { label: string; badge?: number }[];
+        expect(manageTabs.find((t) => t.label === "Invitations")!.badge).toBe(2);
+    });
+
+    it("auto-switches to the 'Invitations' management tab when there are pending invites but no received requests", async () => {
+        const wrapper = await openManageTab(await mountView({ friends: [], sent: [], received: [] }, [invite(1)]));
+
+        const manageTabs = wrapper.findComponent({ name: "ChipTabs" });
+        expect(manageTabs.props("modelValue")).toBe(4);
+    });
+
+    it("prioritizes the 'received requests' tab over invitations when both are pending", async () => {
+        const wrapper = await openManageTab(await mountView({ friends: [], sent: [], received: [user("r1")] }, [invite(1)]));
+
+        const manageTabs = wrapper.findComponent({ name: "ChipTabs" });
+        expect(manageTabs.props("modelValue")).toBe(2);
+    });
+
+    it("opens the exact tab given in the route query, overriding the auto-select heuristic", async () => {
+        routeMock.query = { tab: "3", manageTab: "4" };
+        const wrapper = await mountView({ friends: [], sent: [], received: [user("r1")] });
+
+        const tabs = wrapper.findComponent({ name: "PillTabs" });
+        const manageTabs = wrapper.findComponent({ name: "ChipTabs" });
+        expect(tabs.props("modelValue")).toBe(3);
+        expect(manageTabs.props("modelValue")).toBe(4);
+    });
+
+    it("re-fetches invitations when WatchTogetherInvitesRow emits refresh", async () => {
+        const wrapper = await openManageTab(await mountView({ friends: [], sent: [], received: [] }, [invite(1)]));
+
+        await wrapper.findComponent({ name: "WatchTogetherInvitesRow" }).vm.$emit("refresh");
+        await flushPromises();
+
+        expect(seasonComposableMocks.getWatchedWith.mock.calls.filter(([s]) => s === "pending")).toHaveLength(2);
+    });
+
+    it("refreshes the shared bottom-navbar badge count when invitations are re-fetched", async () => {
+        const wrapper = await openManageTab(await mountView({ friends: [], sent: [], received: [] }, [invite(1)]));
+        const { pendingInvites } = usePendingWatchTogetherInvites();
+        expect(pendingInvites.value).toBe(1);
+
+        seasonComposableMocks.getWatchedWith.mockResolvedValue([]);
+        await wrapper.findComponent({ name: "WatchTogetherInvitesRow" }).vm.$emit("refresh");
+        await flushPromises();
+
+        expect(pendingInvites.value).toBe(0);
     });
 
     it("auto-switches to the 'received requests' management tab when there are pending requests", async () => {
         const wrapper = await openManageTab(await mountView({ friends: [], sent: [], received: [user("r1")] }));
 
-        const manageTabs = wrapper.findAllComponents({ name: "PillTabs" })[1];
+        const manageTabs = wrapper.findComponent({ name: "ChipTabs" });
         expect(manageTabs.props("modelValue")).toBe(2);
     });
 
     it("stays on the 'add' management tab when there are no pending requests", async () => {
         const wrapper = await openManageTab(await mountView({ friends: [], sent: [], received: [] }));
 
-        const manageTabs = wrapper.findAllComponents({ name: "PillTabs" })[1];
+        const manageTabs = wrapper.findComponent({ name: "ChipTabs" });
         expect(manageTabs.props("modelValue")).toBe(1);
     });
 

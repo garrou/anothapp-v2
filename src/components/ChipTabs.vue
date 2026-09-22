@@ -1,23 +1,30 @@
 <template>
     <div class="pill-tabs">
-        <router-link to="/series" class="pill-tab" :class="{ 'pill-tab--active': active === 'all' }">
-            Toutes
-        </router-link>
-        <router-link v-for="item in NAV_SERIES_STATUS" :key="item.status" :to="`/series-status?status=${item.status}`"
-            class="pill-tab" :class="{ 'pill-tab--active': active === item.status }">
-            {{ item.title }}
-        </router-link>
+        <button v-for="item in tabs" :key="item.value" type="button" class="pill-tab"
+            :class="{ 'pill-tab--active': modelValue === item.value }" @click="$emit('update:modelValue', item.value)">
+            {{ item.label }}
+            <v-badge v-if="item.badge" :content="item.badge" color="error" inline />
+        </button>
     </div>
 </template>
 
 <script lang="ts" setup>
-import { computed } from "vue";
-import { useRoute } from "vue-router";
-import { NAV_SERIES_STATUS } from "@/constants/menus";
+import type { PropType } from "vue";
 
-const route = useRoute();
+interface TabItem {
+    value: number;
+    label: string;
+    badge?: number;
+}
 
-const active = computed(() => route.name === "series-status" ? (route.query.status as string) : "all");
+defineProps({
+    modelValue: { type: Number, required: true },
+    tabs: { type: Array as PropType<TabItem[]>, required: true }
+});
+
+defineEmits<{
+    "update:modelValue": [number]
+}>();
 </script>
 
 <style scoped>
@@ -25,7 +32,6 @@ const active = computed(() => route.name === "series-status" ? (route.query.stat
     display: flex;
     flex-wrap: nowrap;
     gap: 4px;
-    padding-top: 20px;
     overflow-x: auto;
     scrollbar-width: none;
     -ms-overflow-style: none;
@@ -39,9 +45,12 @@ const active = computed(() => route.name === "series-status" ? (route.query.stat
     display: inline-flex;
     flex-shrink: 0;
     align-items: center;
+    gap: 6px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
     border-radius: 999px;
     padding: 7px 18px;
-    text-decoration: none;
     font-weight: 600;
     font-size: 13.5px;
     color: rgb(var(--v-theme-on-surface-variant));

@@ -154,9 +154,14 @@ const openExportConfirm = () => {
     confirmExportDialog.value = true;
 }
 
-const confirmExport = () => {
+const confirmExport = async () => {
     confirmExportDialog.value = false;
-    settings.exportData();
+
+    try {
+        await settings.exportData();
+    } catch (e) {
+        showError((e as Error).message);
+    }
 }
 
 const openImportDialog = () => {

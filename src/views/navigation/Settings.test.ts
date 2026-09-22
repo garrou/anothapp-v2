@@ -70,6 +70,19 @@ describe("Settings", () => {
         expect(settingsComposableMocks.exportData).toHaveBeenCalled();
     });
 
+    it("shows the server error instead of failing silently when the export fails", async () => {
+        settingsComposableMocks.exportData.mockRejectedValue(new Error("Too many export requests"));
+        const wrapper = await mountView();
+
+        const exportItem = wrapper.findAllComponents({ name: "VListItem" }).find((item) => item.text().includes("Exporter mes données"));
+        await exportItem!.trigger("click");
+        const confirmBtn = wrapper.findAllComponents({ name: "VBtn" }).find((btn) => btn.text() === "Exporter");
+        await confirmBtn!.trigger("click");
+        await flushPromises();
+
+        expect(snackbarMocks.showError).toHaveBeenCalledWith("Too many export requests");
+    });
+
     it("closes the export confirm dialog without exporting when cancelled", async () => {
         const wrapper = await mountView();
 

@@ -12,6 +12,9 @@
                     <div v-if="subSeason.watchedWith.length" class="season-entry-subtitle">
                         Vu avec {{ subSeason.watchedWith.map(describeWatchedWith).join(", ") }}
                     </div>
+                    <div v-if="subSeason.sharedBy" class="season-entry-subtitle">
+                        Partagé par {{ subSeason.sharedBy.username }}
+                    </div>
                 </div>
 
                 <v-btn v-if="!isEdited(subSeason.id)" class="season-entry-btn" :icon="EDIT_ICON" size="32"

@@ -12,6 +12,8 @@ export const EDIT_ICON = "mdi-pencil";
 
 export const FAVORITE_ICON = "mdi-heart";
 
+export const FAVORITE_OUTLINE_ICON = "mdi-heart-outline";
+
 export const FILTER_ICON = "mdi-filter";
 
 export const PLATFORM_ICON = "mdi-movie-open-play";

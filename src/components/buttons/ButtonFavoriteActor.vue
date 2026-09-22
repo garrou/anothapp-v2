@@ -2,7 +2,7 @@
     <v-tooltip :text="favoriteText" :location="TOOLTIP_LOCATION">
         <template v-slot:activator="{ props }">
             <v-btn v-bind="props" class="fav-btn" :class="{ 'fav-btn--quick': quick }" :color="favoriteColor"
-                :icon="FAVORITE_ICON" :size="quick ? 32 : undefined" :variant="quick ? 'flat' : 'text'"
+                :icon="favoriteIcon" :size="quick ? 32 : undefined" :variant="quick ? 'flat' : 'text'"
                 :loading="loading" :disabled="loading" @click="changeFavorite" />
         </template>
     </v-tooltip>
@@ -12,7 +12,7 @@
 import { useActor } from '@/composables/actor';
 import { useActorStore } from '@/stores/actor';
 import { useSnackbar } from '@/composables/snackbar';
-import { FAVORITE_ICON } from '@/constants/icons';
+import { FAVORITE_ICON, FAVORITE_OUTLINE_ICON } from '@/constants/icons';
 import { TOOLTIP_LOCATION } from '@/constants/style';
 import { computed, onBeforeMount, ref } from 'vue';
 
@@ -35,6 +35,7 @@ const loading = ref(false);
 const isFavorite = computed(() => actorStore.isFavorite(props.actorId));
 const favoriteText = computed(() => isFavorite.value ? "Supprimer des favoris" : "Ajouter aux favoris");
 const favoriteColor = computed(() => isFavorite.value ? "red" : "on-surface-variant");
+const favoriteIcon = computed(() => isFavorite.value ? FAVORITE_ICON : FAVORITE_OUTLINE_ICON);
 
 const changeFavorite = async (): Promise<void> => {
     loading.value = true;

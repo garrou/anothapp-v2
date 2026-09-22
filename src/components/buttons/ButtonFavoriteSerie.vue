@@ -1,11 +1,11 @@
     <template>
-    <v-list-item v-if="!!serie && menuItem" :prepend-icon="FAVORITE_ICON" :title="favoriteText"
+    <v-list-item v-if="!!serie && menuItem" :prepend-icon="favoriteIcon" :title="favoriteText"
         :class="{ 'text-red': isFavorite }" @click="changeFavorite" />
 
     <v-tooltip v-else-if="!!serie" :text="favoriteText" :location="tooltipLocation">
         <template v-slot:activator="{ props }">
             <v-btn v-bind="props" class="fav-btn" :class="{ 'fav-btn--quick': quick }" :color="favoriteColor"
-                :icon="FAVORITE_ICON" :size="quick ? 32 : undefined" :variant="quick ? 'flat' : 'text'"
+                :icon="favoriteIcon" :size="quick ? 32 : undefined" :variant="quick ? 'flat' : 'text'"
                 @click="changeFavorite" />
         </template>
     </v-tooltip>
@@ -14,7 +14,7 @@
 <script lang="ts" setup>
 import { useSerie } from '@/composables/serie';
 import { useSnackbar } from '@/composables/snackbar';
-import { FAVORITE_ICON } from '@/constants/icons';
+import { FAVORITE_ICON, FAVORITE_OUTLINE_ICON } from '@/constants/icons';
 import { TOOLTIP_LOCATION } from '@/constants/style';
 import type { Serie } from '@/models/serie';
 import { computed, onBeforeMount, ref, type PropType } from 'vue';
@@ -38,6 +38,7 @@ const isFavorite = ref(false);
 
 const favoriteText = computed(() => isFavorite.value ? "Supprimer des favoris" : "Ajouter aux favoris");
 const favoriteColor = computed(() => isFavorite.value ? "red" : "on-surface-variant");
+const favoriteIcon = computed(() => isFavorite.value ? FAVORITE_ICON : FAVORITE_OUTLINE_ICON);
 
 const changeFavorite = async (): Promise<void> => {
     if (!serie.value) throw new Error("Impossible de modifier la série");

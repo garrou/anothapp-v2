@@ -31,23 +31,19 @@
         </v-container>
 
         <v-container>
-            <h2 class="text-h4 font-weight-bold mb-4 text-center">
+            <h2 class="text-h4 font-weight-bold mb-8 text-center">
                 Tout ce dont vous avez besoin pour suivre vos séries
             </h2>
 
-            <v-row justify="center">
-                <v-col v-for="feature in HOME_FEATURES" :key="feature.id" cols="12" md="4" class="mb-4 d-flex">
-                    <v-card class="pa-6 text-center feature-card" height="100%" width="100%">
-                        <icon-badge :icon="feature.icon" class="mx-auto mb-4" />
-                        <v-card-title class="justify-center text-h6 font-weight-bold px-0">
-                            {{ feature.title }}
-                        </v-card-title>
-                        <v-card-text class="text-body-2 px-0">
-                            {{ feature.description }}
-                        </v-card-text>
-                    </v-card>
-                </v-col>
-            </v-row>
+            <div class="feature-list">
+                <div v-for="feature in HOME_FEATURES" :key="feature.id" class="feature-row">
+                    <icon-badge :icon="feature.icon" :size="44" />
+                    <div class="feature-copy">
+                        <h3 class="feature-title">{{ feature.title }}</h3>
+                        <p class="feature-text">{{ feature.description }}</p>
+                    </div>
+                </div>
+            </div>
         </v-container>
 
         <v-container>
@@ -99,7 +95,7 @@ const { getImages } = useSearch();
 const images = ref<string[]>([]);
 
 onBeforeMount(async () => {
-    images.value = await getImages(6);
+    images.value = await getImages(6).catch(() => []);
 });
 </script>
 
@@ -124,16 +120,48 @@ onBeforeMount(async () => {
     pointer-events: none;
 }
 
-.feature-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+.feature-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 36px 56px;
+    max-width: 880px;
+    margin: 0 auto;
 }
 
-.feature-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 24px rgba(56, 24, 95, 0.12);
+.feature-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    text-align: left;
+}
+
+.feature-row :deep(.icon-badge) {
+    flex-shrink: 0;
+}
+
+.feature-copy {
+    min-width: 0;
+}
+
+.feature-title {
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.feature-text {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: rgb(var(--v-theme-on-surface-variant));
+}
+
+@media (max-width: 720px) {
+    .feature-list {
+        grid-template-columns: 1fr;
+        gap: 28px;
+    }
 }
 
 .hero-actions {

@@ -65,9 +65,59 @@ export interface AdminSessionsSummary {
     loginAttemptLimit: AdminLoginAttemptLimitEntry[];
 }
 
+export interface AdminDatabaseSizeSnapshot {
+
+    recordedAt: string;
+
+    sizeBytes: number;
+}
+
 export interface AdminDatabaseSummary {
 
     size: string;
+
+    history: AdminDatabaseSizeSnapshot[];
+}
+
+export interface AdminServiceCallDay {
+
+    day: string;
+
+    count: number;
+}
+
+export interface AdminServiceCallStat {
+
+    total: number;
+
+    history: AdminServiceCallDay[];
+}
+
+export interface AdminServiceCalls {
+
+    mailer: AdminServiceCallStat;
+
+    betaseries: AdminServiceCallStat;
+
+    export: AdminServiceCallStat;
+
+    import: AdminServiceCallStat;
+}
+
+export interface AdminCatalogSizeSnapshot {
+
+    recordedAt: string;
+
+    shows: number;
+
+    seasons: number;
+
+    episodes: number;
+}
+
+export interface AdminCatalogSummary {
+
+    history: AdminCatalogSizeSnapshot[];
 }
 
 export interface AdminDashboard {
@@ -78,9 +128,13 @@ export interface AdminDashboard {
 
     database: AdminDatabaseSummary;
 
+    catalog: AdminCatalogSummary;
+
     health: AdminHealth;
 
     recentActions: AdminAction[];
+
+    serviceCalls: AdminServiceCalls;
 }
 
 export interface AdminUserSearchResult {

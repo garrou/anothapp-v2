@@ -22,16 +22,24 @@ vi.mock("@/composables/snackbar", () => ({ useSnackbar: () => snackbarMocks }));
 const stubs = {
     BaseAppBar: true,
     Chart: true,
+    BaseMultiLineChart: true,
 };
 
 const dashboard = (overrides: Partial<AdminDashboard> = {}): AdminDashboard => ({
     users: { total: 12, newByDay: [{ day: "2024-01-01", count: 3 }], pendingDeletions: 1, anonymized: 2 },
     sessions: { active: 5, loginAttemptLimit: [] },
-    database: { size: "42 MB" },
+    database: { size: "42 MB", history: [] },
+    catalog: { history: [] },
     recentActions: [],
     health: {
         betaseries: { reachable: true, latencyMs: 120 },
         mailer: { reachable: true, configured: true, latencyMs: 40 },
+    },
+    serviceCalls: {
+        mailer: { total: 0, history: [] },
+        betaseries: { total: 0, history: [] },
+        export: { total: 0, history: [] },
+        import: { total: 0, history: [] },
     },
     ...overrides,
 });
@@ -56,6 +64,63 @@ describe("Dashboard.vue", () => {
         expect(wrapper.text()).toContain("12");
         expect(wrapper.text()).toContain("42 MB");
         expect(wrapper.text()).toContain("5");
+    });
+
+    it("shows each external dependency's call count alongside its health status", async () => {
+        const wrapper = await mountView(dashboard({
+            serviceCalls: {
+                mailer: { total: 42, history: [] },
+                betaseries: { total: 340, history: [] },
+                export: { total: 0, history: [] },
+                import: { total: 0, history: [] },
+            },
+        }));
+
+        expect(wrapper.text()).toContain("42 appel(s)");
+        expect(wrapper.text()).toContain("340 appel(s)");
+    });
+
+    it("shows the export/import request totals", async () => {
+        const wrapper = await mountView(dashboard({
+            serviceCalls: {
+                mailer: { total: 0, history: [] },
+                betaseries: { total: 0, history: [] },
+                export: { total: 7, history: [] },
+                import: { total: 2, history: [] },
+            },
+        }));
+
+        expect(wrapper.text()).toContain("Exports demandés");
+        expect(wrapper.text()).toContain("7");
+        expect(wrapper.text()).toContain("Imports demandés");
+        expect(wrapper.text()).toContain("2");
+    });
+
+    it("renders the service-calls chart once at least one service has history", async () => {
+        const wrapper = await mountView(dashboard({
+            serviceCalls: {
+                mailer: { total: 1, history: [{ day: "2024-01-01", count: 1 }] },
+                betaseries: { total: 0, history: [] },
+                export: { total: 0, history: [] },
+                import: { total: 0, history: [] },
+            },
+        }));
+
+        expect(wrapper.findComponent({ name: "BaseMultiLineChart" }).exists()).toBe(true);
+    });
+
+    it("does not render the service-calls chart when no service has any history yet", async () => {
+        const wrapper = await mountView();
+
+        expect(wrapper.findComponent({ name: "BaseMultiLineChart" }).exists()).toBe(false);
+    });
+
+    it("renders the catalog evolution chart once there is at least one snapshot", async () => {
+        const wrapper = await mountView(dashboard({
+            catalog: { history: [{ recordedAt: "2024-01-01", shows: 42, seasons: 100, episodes: 2000 }] },
+        }));
+
+        expect(wrapper.findComponent({ name: "BaseMultiLineChart" }).exists()).toBe(true);
     });
 
     it("shows an error via the snackbar when the dashboard fails to load", async () => {

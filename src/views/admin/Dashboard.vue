@@ -31,20 +31,42 @@
             <v-row>
                 <v-col cols="12" sm="6">
                     <v-list-item :prepend-icon="healthIcon(dashboard.health.betaseries)" title="BetaSeries"
-                        :subtitle="healthSubtitle(dashboard.health.betaseries)" />
+                        :subtitle="serviceSubtitle(dashboard.health.betaseries, dashboard.serviceCalls.betaseries.total)" />
                 </v-col>
 
                 <v-col cols="12" sm="6">
                     <v-list-item :prepend-icon="healthIcon(dashboard.health.mailer)" title="Email (SMTP)"
-                        :subtitle="healthSubtitle(dashboard.health.mailer)" />
+                        :subtitle="serviceSubtitle(dashboard.health.mailer, dashboard.serviceCalls.mailer.total)" />
                 </v-col>
             </v-row>
+        </v-card>
+
+        <v-card v-if="dashboard" class="kpi-strip mt-6">
+            <div class="kpi-row kpi-row-2">
+                <div class="kpi-cell">
+                    <stat-tile icon="mdi-database-export" label="Exports demandés" :value="dashboard.serviceCalls.export.total" />
+                </div>
+                <div class="kpi-cell">
+                    <stat-tile icon="mdi-database-import" label="Imports demandés" :value="dashboard.serviceCalls.import.total" />
+                </div>
+            </div>
         </v-card>
 
         <v-row class="mt-3" v-if="dashboard">
             <v-col cols="12">
                 <chart :data="newUsersChartData" :type="ChartType.Bar" chart-id="admin-new-users"
                     :default-color="CATEGORICAL_COLORS[0]" title="Nouveaux comptes (14 derniers jours)" />
+            </v-col>
+        </v-row>
+
+        <v-row class="mt-3" v-if="dashboard">
+            <v-col cols="12" md="6">
+                <chart :data="dbSizeChartData" :type="ChartType.Line" chart-id="admin-database-size"
+                    :default-color="CATEGORICAL_COLORS[1]" title="Taille de la base (Mo)" />
+            </v-col>
+            <v-col cols="12" md="6">
+                <base-multi-line-chart v-if="serviceCallsChartSeries.length" :series="serviceCallsChartSeries"
+                    title="Appels de services (30 derniers jours)" />
             </v-col>
         </v-row>
 
@@ -112,6 +134,7 @@
 import { computed, onBeforeMount, ref } from "vue";
 import BaseAppBar from "@/components/BaseAppBar.vue";
 import Chart from "@/components/stats/Chart.vue";
+import BaseMultiLineChart, { type MultiLineSeries } from "@/components/BaseMultiLineChart.vue";
 import StatTile from "@/components/StatTile.vue";
 import EmptyState from "@/components/EmptyState.vue";
 import BaseConfirm from "@/components/BaseConfirm.vue";
@@ -140,6 +163,28 @@ const newUsersChartData = computed((): Stat[] => (dashboard.value?.users.newByDa
     value: entry.count
 })));
 
+const dbSizeChartData = computed((): Stat[] => (dashboard.value?.database.history ?? []).map((entry, index): Stat => ({
+    id: index,
+    label: new Date(entry.recordedAt).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" }),
+    value: Math.round((entry.sizeBytes / (1024 * 1024)) * 10) / 10,
+})));
+
+const dayLabel = (day: string): string => new Date(day).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" });
+
+const serviceCallsChartSeries = computed((): MultiLineSeries[] => {
+    const calls = dashboard.value?.serviceCalls;
+
+    if (!calls || Object.values(calls).every((stat) => stat.history.length === 0)) {
+        return [];
+    }
+    return [
+        { name: "Email (SMTP)", data: calls.mailer.history.map((e) => ({ label: dayLabel(e.day), value: e.count })) },
+        { name: "BetaSeries", data: calls.betaseries.history.map((e) => ({ label: dayLabel(e.day), value: e.count })) },
+        { name: "Export", data: calls.export.history.map((e) => ({ label: dayLabel(e.day), value: e.count })) },
+        { name: "Import", data: calls.import.history.map((e) => ({ label: dayLabel(e.day), value: e.count })) },
+    ];
+});
+
 const formatDateTime = (iso: string): string => new Date(iso).toLocaleString("fr-FR");
 
 const healthIcon = (check: AdminHealthCheck): string =>
@@ -150,6 +195,9 @@ const healthSubtitle = (check: AdminHealthCheck): string => {
     if (check.reachable) return `Joignable${check.latencyMs !== undefined ? ` (${check.latencyMs} ms)` : ""}`;
     return check.error ?? "Injoignable";
 }
+
+const serviceSubtitle = (check: AdminHealthCheck, totalCalls: number): string =>
+    `${healthSubtitle(check)} · ${totalCalls} appel(s)`;
 
 const onSearch = async () => {
     const query = searchQuery.value.trim();
@@ -214,6 +262,10 @@ onBeforeMount(async () => {
 @media (min-width: 960px) {
     .kpi-row {
         grid-template-columns: repeat(5, 1fr);
+    }
+
+    .kpi-row-2 {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 

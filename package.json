@@ -13,6 +13,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@tanstack/vue-virtual": "^3.13.39",
     "echarts": "^5.5.0",
     "html-to-image": "^1.11.13",
     "pinia": "^2.1.7",

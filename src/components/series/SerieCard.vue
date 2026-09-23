@@ -6,7 +6,7 @@
             <button-list-serie :serie="serie" quick @refresh="$emit('refresh', serie.id, 'list')" />
         </template>
 
-        <v-card-subtitle class="pt-4 pb-4 text-wrap font-weight-medium">
+        <v-card-subtitle class="pt-4 pb-4 font-weight-medium" :title="serie.title">
             <router-link class="serie-card-title" :text="serie.title" :to="link" />
         </v-card-subtitle>
 

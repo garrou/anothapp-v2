@@ -1,7 +1,7 @@
 <template>
     <span v-if="total">{{ buildPlural("série", series.length) }}</span>
-    <card-grid v-if="series.length || loading" class="mt-2" :items="series" :loading="loading" :sm="4" :md="3"
-        :lg="2" :xl="2">
+    <card-grid v-if="series.length || loading" ref="cardGridRef" class="mt-2" :items="series" :loading="loading"
+        :sm="4" :md="3" :lg="2" :xl="2">
         <template #default="{ item: serie }">
             <serie-card :serie="serie" :watch-status="watchStatus" :hide-details-button="hideDetailsButton"
                 @refresh="(id: number, kind: 'favorite' | 'list' | 'watch') => $emit('refresh', id, kind)" />
@@ -19,7 +19,13 @@ import SerieCard from "@/components/series/SerieCard.vue";
 import { MOVIE_EMPTY_ICON } from "@/constants/icons";
 import type { Serie } from "@/models/serie";
 import { buildPlural } from "@/utils/format";
-import type { PropType } from "vue";
+import { ref, type PropType } from "vue";
+
+const cardGridRef = ref<InstanceType<typeof CardGrid> | null>(null);
+
+defineExpose({
+    restoreScroll: (offsetY: number): void => cardGridRef.value?.restoreScroll(offsetY),
+});
 
 defineProps({
     emptyCta: { type: Boolean, default: true },

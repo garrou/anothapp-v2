@@ -1,6 +1,6 @@
 <template>
   <v-card>
-    <v-chart class="chart mt-2" :color="CATEGORICAL_COLORS" :option="option" autoresize @click="handleChartClick" />
+    <v-chart class="chart mt-2" :color="colors" :option="option" autoresize @click="handleChartClick" />
   </v-card>
 </template>
 
@@ -18,7 +18,7 @@ import VChart from "vue-echarts";
 import { computed, type PropType } from "vue";
 import { useTheme } from "vuetify";
 import type { Stat } from "@/models/stat";
-import { CATEGORICAL_COLORS } from "@/constants/style";
+import { CATEGORICAL_COLORS, CATEGORICAL_COLORS_DARK } from "@/constants/style";
 
 const props = defineProps({
   data: { type: Array as PropType<Stat[]>, required: true },
@@ -28,6 +28,7 @@ const props = defineProps({
 
 const theme = useTheme();
 
+const colors = computed(() => theme.current.value.dark ? CATEGORICAL_COLORS_DARK : CATEGORICAL_COLORS);
 const textColor = computed(() => theme.current.value.colors["on-surface"]);
 
 const emit = defineEmits<{

@@ -14,7 +14,7 @@ import { HeatmapChart } from "echarts/charts";
 import { CalendarComponent, TitleComponent, TooltipComponent, VisualMapComponent } from "echarts/components";
 import VChart from "vue-echarts";
 import { useTheme } from "vuetify";
-import { HEATMAP_COLORS } from "@/constants/style";
+import { getHeatmapColors } from "@/constants/style";
 
 use([CanvasRenderer, HeatmapChart, CalendarComponent, TitleComponent, TooltipComponent, VisualMapComponent]);
 
@@ -26,6 +26,8 @@ const theme = useTheme();
 
 const textColor = computed(() => theme.current.value.colors["on-surface"]);
 const lineColor = computed(() => theme.current.value.colors["surface-variant"]);
+const surfaceColor = computed(() => theme.current.value.colors.surface);
+const heatmapColors = computed(() => getHeatmapColors(theme.current.value.dark));
 
 const range = computed<[string, string]>(() => {
     const today = new Date();
@@ -60,7 +62,7 @@ const chartOptions = computed(() => ({
         orient: "horizontal",
         left: "center",
         top: 36,
-        inRange: { color: HEATMAP_COLORS },
+        inRange: { color: heatmapColors.value },
         textStyle: { color: textColor.value }
     },
     calendar: {
@@ -69,7 +71,7 @@ const chartOptions = computed(() => ({
         right: 20,
         range: range.value,
         cellSize: ["auto", 22],
-        itemStyle: { borderWidth: 2, borderColor: lineColor.value },
+        itemStyle: { color: surfaceColor.value, borderWidth: 2, borderColor: lineColor.value },
         yearLabel: { show: false },
         dayLabel: { color: textColor.value, nameMap: ["D", "L", "M", "M", "J", "V", "S"] },
         monthLabel: {

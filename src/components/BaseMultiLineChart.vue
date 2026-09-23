@@ -17,7 +17,7 @@ import { CanvasRenderer } from "echarts/renderers";
 import VChart from "vue-echarts";
 import { computed, type PropType } from "vue";
 import { useTheme } from "vuetify";
-import { CATEGORICAL_COLORS } from "@/constants/style";
+import { getCategoricalColor } from "@/constants/style";
 
 export interface MultiLineSeries {
   name: string;
@@ -78,7 +78,7 @@ const option = computed(() => ({
     name: s.name,
     type: "line",
     smooth: true,
-    itemStyle: { color: CATEGORICAL_COLORS[index % CATEGORICAL_COLORS.length] },
+    itemStyle: { color: getCategoricalColor(index % 8, theme.current.value.dark) },
     data: labels.value.map((label) => s.data.find((entry) => entry.label === label)?.value ?? 0),
   })),
 }));

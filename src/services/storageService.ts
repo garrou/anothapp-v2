@@ -29,10 +29,6 @@ const clearCachedList = (key: string): void => {
     }
 }
 
-const getColorChart = (id: string): string | null => localStorage.getItem(id);
-
-const saveColorChart = (id: string, color: string) => localStorage.setItem(id, color);
-
 const getTheme = (): string | null => localStorage.getItem(THEME);
 
 const storeTheme = (value: string): void => localStorage.setItem(THEME, value);
@@ -40,9 +36,7 @@ const storeTheme = (value: string): void => localStorage.setItem(THEME, value);
 export default {
     clearCachedList,
     getCachedList,
-    getColorChart,
     getTheme,
-    saveColorChart,
     storeCachedList,
     storeTheme,
 }

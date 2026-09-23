@@ -55,14 +55,14 @@
         <v-row class="mt-3" v-if="dashboard">
             <v-col cols="12">
                 <chart :data="newUsersChartData" :type="ChartType.Bar" chart-id="admin-new-users"
-                    :default-color="CATEGORICAL_COLORS[0]" title="Nouveaux comptes (14 derniers jours)" />
+                    :color-index="0" title="Nouveaux comptes (14 derniers jours)" />
             </v-col>
         </v-row>
 
         <v-row class="mt-3" v-if="dashboard">
             <v-col cols="12" md="6">
                 <chart :data="dbSizeChartData" :type="ChartType.Line" chart-id="admin-database-size"
-                    :default-color="CATEGORICAL_COLORS[1]" title="Taille de la base (Mo)" />
+                    :color-index="1" title="Taille de la base (Mo)" />
             </v-col>
             <v-col cols="12" md="6">
                 <base-multi-line-chart v-if="serviceCallsChartSeries.length" :series="serviceCallsChartSeries"
@@ -148,7 +148,6 @@ import BaseConfirm from "@/components/BaseConfirm.vue";
 import { useAdmin } from "@/composables/admin";
 import { useSnackbar } from "@/composables/snackbar";
 import { ChartType } from "@/types/types";
-import { CATEGORICAL_COLORS } from "@/constants/style";
 import { SEARCH_ICON, ACCOUNT_ICON, CHECK_CIRCLE_ICON, CLOSE_CIRCLE_ICON } from "@/constants/icons";
 import type { AdminDashboard, AdminHealthCheck, AdminUserSearchResult } from "@/models/admin";
 import type { Stat } from "@/models/stat";

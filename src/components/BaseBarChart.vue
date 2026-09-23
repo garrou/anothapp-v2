@@ -1,6 +1,5 @@
 <template>
   <v-card class="chart-card">
-    <base-color class="chart-color-picker" :default="colorRef" :id="id" @change="changeColor" />
     <v-chart class="chart mt-2" :option="option" autoresize />
   </v-card>
 </template>
@@ -15,16 +14,14 @@ import {
 } from "echarts/components";
 import { CanvasRenderer } from "echarts/renderers";
 import VChart from "vue-echarts";
-import { computed, ref, type PropType } from "vue";
+import { computed, type PropType } from "vue";
 import { useTheme } from "vuetify";
 import type { Stat } from "@/models/stat";
-import BaseColor from "./BaseColor.vue";
-import storageService from "@/services/storageService";
+import { getCategoricalColor } from "@/constants/style";
 
 const props = defineProps({
-  color: { type: String, required: true },
+  colorIndex: { type: Number, required: true },
   data: { type: Array as PropType<Stat[]>, required: true },
-  id: { type: String, required: true },
   title: { type: String, required: true },
 });
 
@@ -37,7 +34,7 @@ use([
 ]);
 
 const theme = useTheme();
-const colorRef = ref(props.color);
+const color = computed(() => getCategoricalColor(props.colorIndex, theme.current.value.dark));
 
 const textColor = computed(() => theme.current.value.colors["on-surface"]);
 
@@ -62,27 +59,16 @@ const option = computed(() => ({
     {
       data: props.data.map((record) => record.value),
       itemStyle: {
-        color: colorRef.value
+        color: color.value
       },
       type: "bar"
     }
   ]
 }));
-
-const changeColor = () => {
-  colorRef.value = storageService.getColorChart(props.id) ?? props.color;
-}
 </script>
 
 <style scoped>
 .chart-card {
   position: relative;
-}
-
-.chart-color-picker {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  z-index: 1;
 }
 </style>

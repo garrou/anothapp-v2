@@ -15,7 +15,7 @@ import { useTheme } from "vuetify";
 import worldGeoJSON from "@/assets/world.json";
 import type { GeoJSONSourceInput } from "echarts/types/src/coord/geo/geoTypes.js";
 import type { Stat } from "@/models/stat";
-import { SEQUENTIAL_COLORS } from "@/constants/style";
+import { getSequentialColors } from "@/constants/style";
 
 use([CanvasRenderer, MapChart, TitleComponent, TooltipComponent, VisualMapComponent]);
 
@@ -26,6 +26,7 @@ const props = defineProps({
 const theme = useTheme();
 
 const textColor = computed(() => theme.current.value.colors["on-surface"]);
+const sequentialColors = computed(() => getSequentialColors(theme.current.value.dark));
 
 const chartOptions = computed(() => ({
   title: {
@@ -41,7 +42,7 @@ const chartOptions = computed(() => ({
     left: "left",
     top: "bottom",
     calculable: true,
-    inRange: { color: SEQUENTIAL_COLORS },
+    inRange: { color: sequentialColors.value },
     textStyle: { color: textColor.value },
   },
   series: [
@@ -52,7 +53,7 @@ const chartOptions = computed(() => ({
       scaleLimit: { min: 0.5, max: 5 },
       type: "map",
       map: "world",
-      emphasis: { label: { show: true }, itemStyle: { areaColor: SEQUENTIAL_COLORS[4] } },
+      emphasis: { label: { show: true }, itemStyle: { areaColor: sequentialColors.value[4] } },
       itemStyle: { borderColor: "#fff", borderWidth: 0.5 },
       data: props.data.map((record) => ({ name: record.label, value: record.value }))
     },

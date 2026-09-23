@@ -16,8 +16,11 @@ export const useScrollStore = defineStore("scroll", () => {
         }
     }
 
+    const getScrollPosition = (path: string): number | undefined => positions[path];
+
     return {
         saveScrollPosition,
-        scrollToPosition
+        scrollToPosition,
+        getScrollPosition
     }
 });

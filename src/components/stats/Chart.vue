@@ -17,7 +17,7 @@ import { minsToHours } from "@/utils/format.js";
 
 const props = defineProps({
     data: { type: Array as PropType<Stat[]>, default: [] },
-    type: { type: Object as PropType<ChartType>, required: true },
+    type: { type: String as PropType<ChartType>, required: true },
     title: { type: String, required: true },
     chartId: { type: String, required: true },
     colorIndex: { type: Number, default: 0 }

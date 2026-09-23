@@ -15,7 +15,7 @@
             </v-avatar>
         </div>
 
-        <v-card-subtitle class="pt-2 pb-1 text-wrap font-weight-medium">
+        <v-card-subtitle class="pt-2 pb-1 font-weight-medium" :title="recommendation.title">
             <router-link class="recommendation-card-title" :text="recommendation.title" :to="link" />
         </v-card-subtitle>
 

@@ -24,7 +24,7 @@ import { useRoute } from "vue-router";
 import BaseAppBar from "@/components/BaseAppBar.vue";
 
 const props = defineProps({
-    status: { type: Object as PropType<SerieStatus>, required: true }
+    status: { type: String as PropType<SerieStatus>, required: true }
 });
 
 const route = useRoute();

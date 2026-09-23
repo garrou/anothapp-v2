@@ -58,6 +58,10 @@ if (typeof window !== "undefined") {
         globalThis.visualViewport = visualViewportStub;
     }
 
+    // jsdom defines window.scrollTo but logs a "not implemented" error when
+    // called (used by @tanstack/vue-virtual to correct scroll position).
+    window.scrollTo = () => {};
+
     if (!window.matchMedia) {
         window.matchMedia = (query: string) => ({
             matches: false,

@@ -211,7 +211,15 @@ const router = createRouter({
       path: "/:catchAll(.*)",
       redirect: "/",
     },
-  ]
+  ],
+  // Vue Router doesn't reset scroll on its own: without this, a page
+  // navigated to keeps whatever scrollY the previous page was left at. Views
+  // that need to restore a specific position (series grid, discover, ...)
+  // already do so themselves in onMounted, after their own data loads, which
+  // runs after this and overrides it.
+  scrollBehavior() {
+    return { top: 0 };
+  }
 });
 
 router.beforeEach(async (to, from) => {

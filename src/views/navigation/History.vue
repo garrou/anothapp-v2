@@ -197,20 +197,61 @@ onBeforeUnmount(() => {
     window.removeEventListener("resize", updateScrollMargin);
 });
 
+// Rough fallback for a group's height before any real measurement exists:
+// a fixed header/margin overhead plus one card per item.
 const HEADER_HEIGHT = 40;
 const ITEM_HEIGHT = 85;
 const GROUP_MARGIN = 28;
 
+// A day with 1 episode and a day with 10 look nothing alike, so a flat
+// guess is wrong by a wide, inconsistent margin per group — and jumping to
+// a restored scroll position has to sum that guess over every group
+// between the top and the target, compounding the error badly (e.g.
+// landing months away from where the user actually was). Instead, learn
+// the real relationship between item count and rendered height from
+// groups actually measured (linear regression: height ≈ intercept + slope
+// × itemCount), and use it to estimate every group not yet rendered —
+// converging on the true shape of this data as more groups get measured.
+const measuredIndexes = new Set<number>();
+let sumItems = 0;
+let sumHeights = 0;
+let sumItemsHeights = 0;
+let sumItemsSquared = 0;
+
+const estimateGroupSize = (index: number): number => {
+    const itemCount = groups.value[index]?.items.length ?? 1;
+    const n = measuredIndexes.size;
+    const denominator = n * sumItemsSquared - sumItems * sumItems;
+    if (n < 2 || denominator === 0) {
+        return HEADER_HEIGHT + itemCount * ITEM_HEIGHT + GROUP_MARGIN;
+    }
+    const slope = (n * sumItemsHeights - sumItems * sumHeights) / denominator;
+    const intercept = (sumHeights - slope * sumItems) / n;
+    return Math.max(1, intercept + slope * itemCount);
+};
+
 const virtualizer = useWindowVirtualizer<HTMLElement>(computed(() => ({
     count: groups.value.length,
-    estimateSize: (index: number) => HEADER_HEIGHT + (groups.value[index]?.items.length ?? 1) * ITEM_HEIGHT + GROUP_MARGIN,
+    estimateSize: estimateGroupSize,
     overscan: 3,
     scrollMargin: scrollMargin.value,
 })));
 
 const measureRow = (el: unknown): void => {
     const node = (el as { $el?: HTMLElement })?.$el ?? (el as HTMLElement | null);
-    if (node) virtualizer.value.measureElement(node);
+    if (!node) return;
+    virtualizer.value.measureElement(node);
+
+    const index = Number(node.getAttribute("data-index"));
+    if (Number.isNaN(index) || measuredIndexes.has(index)) return;
+    measuredIndexes.add(index);
+
+    const itemCount = groups.value[index]?.items.length ?? 1;
+    const height = node.getBoundingClientRect().height;
+    sumItems += itemCount;
+    sumHeights += height;
+    sumItemsHeights += itemCount * height;
+    sumItemsSquared += itemCount * itemCount;
 };
 
 // Unlike the series grid (mounted from the first paint, loading state and

@@ -76,6 +76,10 @@ import { CHECK_ICON, CHEVRON_RIGHT_ICON, MOVIE_EMPTY_ICON } from "@/constants/ic
 import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import PlatformCard from "@/components/series/PlatformCard.vue";
 import { useWindowVirtualizer } from "@tanstack/vue-virtual";
+import { useRoute } from "vue-router";
+import { storeToRefs } from "pinia";
+import { useHistoryStore } from "@/stores/history";
+import { useScrollStore } from "@/stores/scroll";
 
 interface HistoryCard {
     key: string;
@@ -98,9 +102,11 @@ const MONTHS = [
 
 const { getPlatforms } = useSearch();
 const { getEpisodesTimeline } = useEpisode();
+const route = useRoute();
+const scrollStore = useScrollStore();
+const { month } = storeToRefs(useHistoryStore());
 
 const loading = ref(false);
-const month = ref(0);
 const menuOpen = ref(false);
 const episodeTimeline = ref<EpisodeTimeline[]>([]);
 const platforms = ref<Platform[]>([]);
@@ -187,14 +193,6 @@ onMounted(() => {
     window.addEventListener("resize", updateScrollMargin);
 });
 
-// Unlike the series grid (mounted from the first paint, loading state and
-// all), this list's container doesn't exist until data has loaded, so the
-// offsetTop captured on mount is stale (usually 0) until it's recomputed
-// once the container actually appears in the DOM.
-watch(() => groups.value.length > 0, (hasGroups) => {
-    if (hasGroups) nextTick(updateScrollMargin);
-});
-
 onBeforeUnmount(() => {
     window.removeEventListener("resize", updateScrollMargin);
 });
@@ -214,6 +212,29 @@ const measureRow = (el: unknown): void => {
     const node = (el as { $el?: HTMLElement })?.$el ?? (el as HTMLElement | null);
     if (node) virtualizer.value.measureElement(node);
 };
+
+// Unlike the series grid (mounted from the first paint, loading state and
+// all), this list's container doesn't exist until data has loaded, so the
+// offsetTop captured on mount is stale (usually 0) until it's recomputed
+// once the container actually appears in the DOM. That first appearance is
+// also the one moment to restore a saved scroll position, so returning from
+// a serie's page lands back where the month filter (persisted separately,
+// in the history store) was left, instead of resetting to the top.
+let hasRestoredScroll = false;
+
+watch(() => groups.value.length > 0, (hasGroups) => {
+    if (!hasGroups) return;
+    nextTick(() => {
+        updateScrollMargin();
+        if (hasRestoredScroll) return;
+        hasRestoredScroll = true;
+
+        const savedPosition = scrollStore.getScrollPosition(route.fullPath);
+        if (!savedPosition) return;
+        const targetIndex = virtualizer.value.getVirtualItemForOffset(savedPosition + scrollMargin.value)?.index;
+        if (targetIndex !== undefined) virtualizer.value.scrollToIndex(targetIndex, { align: "start" });
+    });
+});
 </script>
 
 <style scoped>

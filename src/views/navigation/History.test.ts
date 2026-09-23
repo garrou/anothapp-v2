@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
+import { createPinia, setActivePinia } from "pinia";
 import History from "./History.vue";
 import { vuetify } from "@/test/vuetify";
 import { parseLocalDate, toLocalDateKey } from "@/utils/date";
@@ -13,9 +14,11 @@ const searchComposableMocks = vi.hoisted(() => ({
 const episodeComposableMocks = vi.hoisted(() => ({
     getEpisodesTimeline: vi.fn(),
 }));
+const routeMock = vi.hoisted(() => ({ fullPath: "/history" }));
 
 vi.mock("@/composables/search", () => ({ useSearch: () => searchComposableMocks }));
 vi.mock("@/composables/episode", () => ({ useEpisode: () => episodeComposableMocks }));
+vi.mock("vue-router", () => ({ useRoute: () => routeMock }));
 
 // The global RouterLink:true stub swallows its default slot, hiding the
 // serie title/subtitle text these tests assert on.
@@ -49,6 +52,7 @@ const mountView = async ({
 
 beforeEach(() => {
     vi.resetAllMocks();
+    setActivePinia(createPinia());
 });
 
 describe("History", () => {
@@ -112,5 +116,18 @@ describe("History", () => {
         expect(wrapper.findAllComponents({ name: "DayBadge" })).toHaveLength(1);
         expect(wrapper.text()).toContain("Serie 1");
         expect(wrapper.text()).toContain("Serie 2");
+    });
+
+    it("keeps the selected month across a remount, since it lives in the history store", async () => {
+        const wrapper = await mountView();
+        await wrapper.findComponent({ name: "VMenu" }).vm.$emit("update:modelValue", true);
+        await wrapper.findAll(".month-option")[2].trigger("click"); // "Depuis 2 mois" -> value 2
+        await flushPromises();
+
+        wrapper.unmount();
+        const remounted = await mountView();
+
+        expect(episodeComposableMocks.getEpisodesTimeline).toHaveBeenLastCalledWith(2);
+        expect(remounted.find(".month-trigger span").text()).toBe("Depuis 2 mois");
     });
 });

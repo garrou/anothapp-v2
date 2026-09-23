@@ -145,7 +145,7 @@ const isDark = ref(theme.global.name.value === THEME_ANOTHAPP_DARK);
 
 const toggleTheme = (value: boolean | null) => {
     const name = value ? THEME_ANOTHAPP_DARK : THEME_ANOTHAPP;
-    theme.global.name.value = name;
+    theme.change(name);
     applyThemeClass(name);
     storageService.storeTheme(name);
 }

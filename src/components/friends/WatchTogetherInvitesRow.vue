@@ -1,42 +1,44 @@
 <template>
-    <div class="px-3">
-        <card-grid v-if="invites.length" :items="invites" :loading="loading" :sm="4" :md="2" :lg="2">
-            <template #default="{ item: invite }">
-                <poster-card :image="invite.showPoster" :to="active ? `/series/${invite.showId}` : undefined">
-                    <template #placeholder>
-                        <span class="friend-initial">{{ invite.showTitle.charAt(0).toUpperCase() }}</span>
-                    </template>
-
-                    <template #quick-actions>
-                        <template v-if="active">
-                            <v-btn v-if="!invite.isOwner" class="friend-quick-btn" :icon="LOGOUT_ICON" size="32"
-                                variant="flat" color="red" title="Quitter" @click.stop="startLeaving(invite)" />
+    <div>
+        <div class="px-3">
+            <card-grid v-if="invites.length" :items="invites" :loading="loading" :sm="4" :md="2" :lg="2">
+                <template #default="{ item: invite }">
+                    <poster-card :image="invite.showPoster" :to="active ? `/series/${invite.showId}` : undefined">
+                        <template #placeholder>
+                            <span class="friend-initial">{{ invite.showTitle.charAt(0).toUpperCase() }}</span>
                         </template>
-                        <template v-else>
-                            <v-btn class="friend-quick-btn" :icon="CHECK_ICON" size="32" variant="flat"
-                                color="green" @click.stop="respond(invite, true)" />
-                            <v-btn class="friend-quick-btn" :icon="DELETE_ICON" size="32" variant="flat"
-                                color="red" @click.stop="respond(invite, false)" />
-                        </template>
-                    </template>
 
-                    <v-card-subtitle class="pt-4 pb-0 font-weight-medium">
-                        <router-link v-if="active" class="show-title-link" :to="`/series/${invite.showId}`">
-                            {{ invite.showTitle }}
-                        </router-link>
-                        <template v-else>{{ invite.showTitle }}</template>
-                    </v-card-subtitle>
-                    <v-card-subtitle class="pt-0 pb-4 text-caption text-medium-emphasis">
-                        Saison {{ invite.seasonNumber }} · {{ invite.actor.username }}
-                    </v-card-subtitle>
-                </poster-card>
-            </template>
-        </card-grid>
-        <empty-state v-else :icon="emptyCopy.icon" :title="emptyCopy.title" :description="emptyCopy.description" />
+                        <template #quick-actions>
+                            <template v-if="active">
+                                <v-btn v-if="!invite.isOwner" class="friend-quick-btn" :icon="LOGOUT_ICON" size="32"
+                                    variant="flat" color="red" title="Quitter" @click.stop="startLeaving(invite)" />
+                            </template>
+                            <template v-else>
+                                <v-btn class="friend-quick-btn" :icon="CHECK_ICON" size="32" variant="flat"
+                                    color="green" @click.stop="respond(invite, true)" />
+                                <v-btn class="friend-quick-btn" :icon="DELETE_ICON" size="32" variant="flat"
+                                    color="red" @click.stop="respond(invite, false)" />
+                            </template>
+                        </template>
+
+                        <v-card-subtitle class="pt-4 pb-0 font-weight-medium">
+                            <router-link v-if="active" class="show-title-link" :to="`/series/${invite.showId}`">
+                                {{ invite.showTitle }}
+                            </router-link>
+                            <template v-else>{{ invite.showTitle }}</template>
+                        </v-card-subtitle>
+                        <v-card-subtitle class="pt-0 pb-4 text-caption text-medium-emphasis">
+                            Saison {{ invite.seasonNumber }} · {{ invite.actor.username }}
+                        </v-card-subtitle>
+                    </poster-card>
+                </template>
+            </card-grid>
+            <empty-state v-else :icon="emptyCopy.icon" :title="emptyCopy.title" :description="emptyCopy.description" />
+        </div>
+
+        <base-confirm v-model="leaving" text="Quitter ce visionnage partagé ? Les épisodes déjà synchronisés ne seront pas supprimés."
+            title="Quitter" persistent @cancel="leaving = false" @confirm="confirmLeave" />
     </div>
-
-    <base-confirm v-model="leaving" text="Quitter ce visionnage partagé ? Les épisodes déjà synchronisés ne seront pas supprimés."
-        title="Quitter" persistent @cancel="leaving = false" @confirm="confirmLeave" />
 </template>
 
 <script lang="ts" setup>

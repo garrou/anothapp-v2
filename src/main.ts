@@ -89,7 +89,7 @@ app.use(router);
 app.use(vuetify);
 
 const storedTheme = storageService.getTheme() ?? THEME_ANOTHAPP;
-vuetify.theme.global.name.value = storedTheme;
+vuetify.theme.change(storedTheme);
 applyThemeClass(storedTheme);
 
 const snackbar = useSnackbar();

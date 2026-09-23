@@ -6,28 +6,34 @@
             <v-progress-circular color="primary" indeterminate />
         </div>
 
-        <template v-else-if="groups.length">
-            <div v-for="group in groups" :key="group.date" class="upcoming-group">
-                <day-badge :active="group.isToday" :day="group.day" :dow="group.dow" />
+        <div v-else-if="groups.length" ref="containerRef"
+            :style="{ height: `${virtualizer.getTotalSize()}px`, position: 'relative' }">
+            <div v-for="virtualRow in virtualizer.getVirtualItems()" :key="virtualRow.index" class="virtual-row"
+                :data-index="virtualRow.index" :ref="measureRow"
+                :style="{ transform: `translateY(${virtualRow.start - virtualizer.options.scrollMargin}px)` }">
+                <div class="upcoming-group">
+                    <day-badge :active="groups[virtualRow.index].isToday" :day="groups[virtualRow.index].day"
+                        :dow="groups[virtualRow.index].dow" />
 
-                <div class="upcoming-column">
-                    <div class="upcoming-label">{{ group.label }}</div>
+                    <div class="upcoming-column">
+                        <div class="upcoming-label">{{ groups[virtualRow.index].label }}</div>
 
-                    <router-link v-for="serie in group.series" :key="serie.id" :to="`/series/${serie.id}`"
-                        class="upcoming-card">
-                        <base-image v-if="serie.poster" class="upcoming-poster" :src="serie.poster" cover />
-                        <div v-else class="upcoming-poster upcoming-poster--empty">
-                            <v-icon :icon="MOVIE_EMPTY_ICON" size="16" />
-                        </div>
-                        <div class="upcoming-info">
-                            <div class="upcoming-title">{{ serie.title }}</div>
-                            <div v-if="serie.kinds?.length" class="upcoming-kinds">{{ serie.kinds.slice(0, 2).join(" · ") }}</div>
-                        </div>
-                        <v-icon :icon="CHEVRON_RIGHT_ICON" size="18" class="upcoming-chevron" />
-                    </router-link>
+                        <router-link v-for="serie in groups[virtualRow.index].series" :key="serie.id"
+                            :to="`/series/${serie.id}`" class="upcoming-card">
+                            <base-image v-if="serie.poster" class="upcoming-poster" :src="serie.poster" cover />
+                            <div v-else class="upcoming-poster upcoming-poster--empty">
+                                <v-icon :icon="MOVIE_EMPTY_ICON" size="16" />
+                            </div>
+                            <div class="upcoming-info">
+                                <div class="upcoming-title">{{ serie.title }}</div>
+                                <div v-if="serie.kinds?.length" class="upcoming-kinds">{{ serie.kinds.slice(0, 2).join(" · ") }}</div>
+                            </div>
+                            <v-icon :icon="CHEVRON_RIGHT_ICON" size="18" class="upcoming-chevron" />
+                        </router-link>
+                    </div>
                 </div>
             </div>
-        </template>
+        </div>
 
         <empty-state v-else icon="mdi-calendar-blank-outline" title="Rien à venir"
             description="Les prochains épisodes de vos séries suivies apparaîtront ici dès qu'une date de diffusion sera connue." />
@@ -44,7 +50,8 @@ import { CHEVRON_RIGHT_ICON, MOVIE_EMPTY_ICON } from "@/constants/icons";
 import type { Serie } from "@/models/serie";
 import { SerieStatus } from "@/types/types";
 import { MONTHS_FR, WEEKDAYS_LONG, WEEKDAYS_SHORT, isSameDay, parseLocalDate } from "@/utils/date";
-import { computed, onBeforeMount, ref } from "vue";
+import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { useWindowVirtualizer } from "@tanstack/vue-virtual";
 
 const { getSeriesByStatus } = useSerie();
 
@@ -92,6 +99,47 @@ onBeforeMount(async () => {
         loading.value = false;
     }
 });
+
+// A user following many currently-airing shows can have a day group per
+// upcoming episode; windowed the same way as the history timeline, so only
+// the groups near the viewport are actually mounted.
+const containerRef = ref<HTMLElement | null>(null);
+const scrollMargin = ref(0);
+
+const updateScrollMargin = (): void => {
+    scrollMargin.value = containerRef.value?.offsetTop ?? 0;
+};
+
+onMounted(() => {
+    updateScrollMargin();
+    window.addEventListener("resize", updateScrollMargin);
+});
+
+onBeforeUnmount(() => {
+    window.removeEventListener("resize", updateScrollMargin);
+});
+
+// This container doesn't exist until data has loaded, so the offsetTop
+// captured on mount is stale until recomputed once it actually appears.
+watch(() => groups.value.length > 0, (hasGroups) => {
+    if (hasGroups) nextTick(updateScrollMargin);
+});
+
+const HEADER_HEIGHT = 40;
+const ITEM_HEIGHT = 85;
+const GROUP_MARGIN = 28;
+
+const virtualizer = useWindowVirtualizer<HTMLElement>(computed(() => ({
+    count: groups.value.length,
+    estimateSize: (index: number) => HEADER_HEIGHT + (groups.value[index]?.series.length ?? 1) * ITEM_HEIGHT + GROUP_MARGIN,
+    overscan: 3,
+    scrollMargin: scrollMargin.value,
+})));
+
+const measureRow = (el: unknown): void => {
+    const node = (el as { $el?: HTMLElement })?.$el ?? (el as HTMLElement | null);
+    if (node) virtualizer.value.measureElement(node);
+};
 </script>
 
 <style scoped>
@@ -183,5 +231,12 @@ onBeforeMount(async () => {
 .upcoming-chevron {
     flex-shrink: 0;
     color: rgb(var(--v-theme-on-surface-variant));
+}
+
+.virtual-row {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
 }
 </style>

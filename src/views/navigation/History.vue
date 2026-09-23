@@ -25,31 +25,37 @@
             <v-progress-circular color="primary" indeterminate />
         </div>
 
-        <template v-else-if="groups.length">
-            <div v-for="group in groups" :key="group.date" class="history-group">
-                <day-badge :active="group.isToday" :day="group.day" :dow="group.dow" />
+        <div v-else-if="groups.length" ref="containerRef"
+            :style="{ height: `${virtualizer.getTotalSize()}px`, position: 'relative' }">
+            <div v-for="virtualRow in virtualizer.getVirtualItems()" :key="virtualRow.index" class="virtual-row"
+                :data-index="virtualRow.index" :ref="measureRow"
+                :style="{ transform: `translateY(${virtualRow.start - virtualizer.options.scrollMargin}px)` }">
+                <div class="history-group">
+                    <day-badge :active="groups[virtualRow.index].isToday" :day="groups[virtualRow.index].day"
+                        :dow="groups[virtualRow.index].dow" />
 
-                <div class="history-column">
-                    <div class="history-label">{{ group.label }}</div>
+                    <div class="history-column">
+                        <div class="history-label">{{ groups[virtualRow.index].label }}</div>
 
-                    <router-link v-for="item in group.items" :key="item.key" :to="`/series/${item.showId}`"
-                        class="history-card">
-                        <base-image v-if="item.poster" class="history-poster" :src="item.poster" cover />
-                        <div v-else class="history-poster history-poster--empty">
-                            <v-icon :icon="MOVIE_EMPTY_ICON" size="16" />
-                        </div>
+                        <router-link v-for="item in groups[virtualRow.index].items" :key="item.key"
+                            :to="`/series/${item.showId}`" class="history-card">
+                            <base-image v-if="item.poster" class="history-poster" :src="item.poster" cover />
+                            <div v-else class="history-poster history-poster--empty">
+                                <v-icon :icon="MOVIE_EMPTY_ICON" size="16" />
+                            </div>
 
-                        <div class="history-info">
-                            <div class="history-title">{{ item.title }}</div>
-                            <div class="history-subtitle">{{ item.subtitle }}</div>
-                        </div>
+                            <div class="history-info">
+                                <div class="history-title">{{ item.title }}</div>
+                                <div class="history-subtitle">{{ item.subtitle }}</div>
+                            </div>
 
-                        <platform-card class="history-platform" :platform="getSpecificPlatform(item.platformId)" />
-                        <v-icon :icon="CHEVRON_RIGHT_ICON" size="18" class="history-chevron" />
-                    </router-link>
+                            <platform-card class="history-platform" :platform="getSpecificPlatform(item.platformId)" />
+                            <v-icon :icon="CHEVRON_RIGHT_ICON" size="18" class="history-chevron" />
+                        </router-link>
+                    </div>
                 </div>
             </div>
-        </template>
+        </div>
 
         <empty-state v-else icon="mdi-history" title="Aucun historique"
             description="Les saisons que vous marquez comme vues apparaissent ici." />
@@ -67,8 +73,9 @@ import type { EpisodeTimeline } from "@/models/episodeTimeline";
 import type { Platform } from "@/models/serie";
 import { MONTHS_FR, WEEKDAYS_LONG, WEEKDAYS_SHORT, isSameDay, parseLocalDate, toLocalDateKey } from "@/utils/date";
 import { CHECK_ICON, CHEVRON_RIGHT_ICON, MOVIE_EMPTY_ICON } from "@/constants/icons";
-import { computed, onBeforeMount, ref } from "vue";
+import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import PlatformCard from "@/components/series/PlatformCard.vue";
+import { useWindowVirtualizer } from "@tanstack/vue-virtual";
 
 interface HistoryCard {
     key: string;
@@ -164,6 +171,49 @@ onBeforeMount(async () => {
         getHistory()
     ]);
 })
+
+// A busy month (or a full year) can mean hundreds of watched episodes; each
+// day group is windowed like the series grid, so only the ones near the
+// viewport are actually mounted.
+const containerRef = ref<HTMLElement | null>(null);
+const scrollMargin = ref(0);
+
+const updateScrollMargin = (): void => {
+    scrollMargin.value = containerRef.value?.offsetTop ?? 0;
+};
+
+onMounted(() => {
+    updateScrollMargin();
+    window.addEventListener("resize", updateScrollMargin);
+});
+
+// Unlike the series grid (mounted from the first paint, loading state and
+// all), this list's container doesn't exist until data has loaded, so the
+// offsetTop captured on mount is stale (usually 0) until it's recomputed
+// once the container actually appears in the DOM.
+watch(() => groups.value.length > 0, (hasGroups) => {
+    if (hasGroups) nextTick(updateScrollMargin);
+});
+
+onBeforeUnmount(() => {
+    window.removeEventListener("resize", updateScrollMargin);
+});
+
+const HEADER_HEIGHT = 40;
+const ITEM_HEIGHT = 85;
+const GROUP_MARGIN = 28;
+
+const virtualizer = useWindowVirtualizer<HTMLElement>(computed(() => ({
+    count: groups.value.length,
+    estimateSize: (index: number) => HEADER_HEIGHT + (groups.value[index]?.items.length ?? 1) * ITEM_HEIGHT + GROUP_MARGIN,
+    overscan: 3,
+    scrollMargin: scrollMargin.value,
+})));
+
+const measureRow = (el: unknown): void => {
+    const node = (el as { $el?: HTMLElement })?.$el ?? (el as HTMLElement | null);
+    if (node) virtualizer.value.measureElement(node);
+};
 </script>
 
 <style scoped>
@@ -239,6 +289,13 @@ onBeforeMount(async () => {
 .month-option--active {
     color: rgb(var(--v-theme-primary));
     font-weight: 700;
+}
+
+.virtual-row {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
 }
 
 .history-loading {

@@ -6,7 +6,13 @@
         <template #default="{ item: season }">
             <season-card :season="season" :serie-poster="seriePoster" @show="$emit('showSeason', season, addable)">
                 <template v-if="addable" #add>
-                    <v-btn :color="MAIN_COLOR" :icon="ADD_ICON" variant="text" @click="$emit('addSeason', season)" />
+                    <v-tooltip text="Ajouter la saison" :location="TOOLTIP_LOCATION">
+                        <template v-slot:activator="{ props: tooltipProps }">
+                            <v-btn v-bind="tooltipProps" class="add-season-btn" color="on-surface-variant"
+                                :elevation="0" :icon="ADD_ICON" size="32" variant="flat"
+                                @click="$emit('addSeason', season)" />
+                        </template>
+                    </v-tooltip>
                 </template>
             </season-card>
         </template>
@@ -19,7 +25,7 @@ import SeasonCard from "./SeasonCard.vue";
 import { computed, ref, type PropType } from "vue";
 import type { Season } from "@/models/season";
 import { ADD_ICON } from "@/constants/icons";
-import { MAIN_COLOR } from "@/constants/style";
+import { TOOLTIP_LOCATION } from "@/constants/style";
 
 const props = defineProps({
     addable: { type: Boolean, default: false },
@@ -43,3 +49,9 @@ const orderSeasons = (): void => {
     order.value = !order.value;
 }
 </script>
+
+<style scoped>
+.add-season-btn {
+    box-shadow: 0 8px 18px rgba(108, 92, 224, 0.35);
+}
+</style>

@@ -39,14 +39,14 @@ describe("SeasonsRow", () => {
     });
 
     it("shows an add button per season only when addable is true", () => {
-        expect(mountRow([season(1)], { addable: true }).findAllComponents({ name: "SeasonCard" })[0].find("button.v-btn--variant-text").exists()).toBe(true);
-        expect(mountRow([season(1)], { addable: false }).findAllComponents({ name: "SeasonCard" })[0].find("button.v-btn--variant-text").exists()).toBe(false);
+        expect(mountRow([season(1)], { addable: true }).findAllComponents({ name: "SeasonCard" })[0].find(".add-season-btn").exists()).toBe(true);
+        expect(mountRow([season(1)], { addable: false }).findAllComponents({ name: "SeasonCard" })[0].find(".add-season-btn").exists()).toBe(false);
     });
 
     it("emits addSeason when a season's add button is clicked", async () => {
         const wrapper = mountRow([season(1)], { addable: true });
 
-        await wrapper.findAllComponents({ name: "SeasonCard" })[0].find("button.v-btn--variant-text").trigger("click");
+        await wrapper.findAllComponents({ name: "SeasonCard" })[0].find(".add-season-btn").trigger("click");
 
         expect(wrapper.emitted("addSeason")).toEqual([[season(1)]]);
     });

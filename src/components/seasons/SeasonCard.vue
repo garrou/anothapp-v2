@@ -1,15 +1,14 @@
 <template>
     <poster-card :image="season.image || seriePoster" :to="serieLink" @click="$emit('show', season)">
+        <template #quick-actions>
+            <slot name="add" />
+        </template>
+
         <v-card-title>Saison {{ season.number }}</v-card-title>
 
         <v-chip class="ml-2" :color="MAIN_COLOR" size="small">
             {{ text }}
         </v-chip>
-
-        <template #actions>
-            <slot name="add" />
-            <slot name="show" />
-        </template>
     </poster-card>
 </template>
 

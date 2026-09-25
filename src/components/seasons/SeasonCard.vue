@@ -6,7 +6,7 @@
 
         <v-card-title>Saison {{ season.number }}</v-card-title>
 
-        <v-chip class="ml-2" :color="MAIN_COLOR" size="small">
+        <v-chip class="ml-2 mb-2" :color="MAIN_COLOR" size="small">
             {{ text }}
         </v-chip>
     </poster-card>

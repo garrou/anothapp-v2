@@ -24,6 +24,11 @@ export const NAV_MENU: BottomNavMenuItem[] = [
         link: "/series"
     },
     {
+        title: "Calendrier",
+        icon: "mdi-calendar",
+        link: "/calendar"
+    },
+    {
         title: "Ajouter",
         icon: ADD_ICON,
         link: "/discover"
@@ -83,11 +88,6 @@ export const NAV_OTHERS: NavOthersMenuItem[] = [
         title: "Mes plateformes",
         icon: "mdi-animation-play",
         link: "/platforms"
-    },
-    {
-        title: "Prochains épisodes",
-        icon: "mdi-calendar",
-        link: "/calendar"
     },
     {
         title: "Playlists",

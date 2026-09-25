@@ -31,7 +31,7 @@ const friendsBadgeCount = computed(() => pendingRequests.value + pendingInvites.
 <style scoped>
 @media screen and (max-width: 960px) {
     .v-btn {
-        min-width: 75px !important;
+        min-width: 64px !important;
     }
 
     .v-btn span {

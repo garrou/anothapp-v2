@@ -65,4 +65,10 @@ describe("ButtonWatchSerie", () => {
 
         expect(wrapper.find(".watch-btn--primary").text()).toContain("Reprendre le visionnage");
     });
+
+    it("renders as a compact icon button when quick is set", () => {
+        const wrapper = mountButton({ id: 1, title: "Breaking Bad", watch: false }, { quick: true });
+
+        expect(wrapper.find(".watch-btn--quick").exists()).toBe(true);
+    });
 });

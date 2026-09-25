@@ -8,7 +8,9 @@
 
     <v-tooltip v-else :text="watchText" :location="tooltipLocation">
         <template v-slot:activator="{ props }">
-            <v-btn v-bind="props" :color="watchColor" :icon="watchIcon" variant="text" @click="changeWatch" />
+            <v-btn v-bind="props" class="watch-btn" :class="{ 'watch-btn--quick': quick }" :color="watchColor"
+                :icon="watchIcon" :size="quick ? 32 : undefined" :variant="quick ? 'flat' : 'text'"
+                @click="changeWatch" />
         </template>
     </v-tooltip>
 </template>
@@ -24,6 +26,7 @@ import { computed, ref, watch, type PropType } from 'vue';
 const props = defineProps({
     menuItem: { type: Boolean, default: false },
     primary: { type: Boolean, default: false },
+    quick: { type: Boolean, default: false },
     serie: { type: Object as PropType<Serie>, required: true },
     tooltipLocation: { type: String as PropType<"left" | "bottom">, default: TOOLTIP_LOCATION }
 });
@@ -53,7 +56,8 @@ const changeWatch = async (): Promise<void> => {
 </script>
 
 <style scoped>
-.watch-btn--primary {
+.watch-btn--primary,
+.watch-btn--quick {
     box-shadow: 0 8px 18px rgba(108, 92, 224, 0.32);
 }
 </style>

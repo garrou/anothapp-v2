@@ -3,7 +3,7 @@
     <card-grid v-if="series.length || loading" ref="cardGridRef" class="mt-2" :items="series" :loading="loading"
         :sm="4" :md="3" :lg="2" :xl="2">
         <template #default="{ item: serie }">
-            <serie-card :serie="serie" :watch-status="watchStatus" :hide-details-button="hideDetailsButton"
+            <serie-card :serie="serie" :watch-status="watchStatus"
                 @refresh="(id: number, kind: 'favorite' | 'list' | 'watch') => $emit('refresh', id, kind)" />
         </template>
     </card-grid>
@@ -32,7 +32,6 @@ defineProps({
     emptyCta: { type: Boolean, default: true },
     emptyDescription: { type: String, default: "Il n'y a rien à afficher ici pour le moment." },
     emptyTitle: { type: String, default: "Aucune série" },
-    hideDetailsButton: { type: Boolean, default: false },
     loading: { type: Boolean, required: true },
     series: { type: Array as PropType<Serie[]>, required: true },
     total: { type: Boolean, default: false },

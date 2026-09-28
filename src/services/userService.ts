@@ -1,4 +1,5 @@
 import httpClient from "./httpClient";
+import type { NotificationGroup } from "@/models/notification";
 
 const PREFIX = "users";
 
@@ -22,6 +23,9 @@ const updateUsername = (newUsername: string, confirmUsername: string, currentPas
 const requestDeletion = (password: string): Promise<Response> =>
     httpClient.delete(`${PREFIX}/me`, { password });
 
+const updateNotificationSettings = (disabledNotificationGroups: NotificationGroup[]): Promise<Response> =>
+    httpClient.patch(`${PREFIX}/me`, { disabledNotificationGroups });
+
 export default {
     getUsers,
     getProfile,
@@ -29,5 +33,6 @@ export default {
     updateLogin,
     updatePassword,
     updateUsername,
-    requestDeletion
+    requestDeletion,
+    updateNotificationSettings
 };

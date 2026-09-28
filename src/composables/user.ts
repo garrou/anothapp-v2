@@ -2,6 +2,7 @@ import userService from "@/services/userService"
 import { isError } from "@/utils/response";
 import { useSnackbar } from "./snackbar";
 import type { User } from "@/models/user";
+import type { NotificationGroup } from "@/models/notification";
 import { useUserStore } from "@/stores/user";
 import { currentEpoch, loadOnce } from "@/utils/loadOnce";
 
@@ -94,5 +95,18 @@ export function useUser() {
         }
     }
 
-    return { changeEmail, changeUsername, changePassword, changeImage, getUsers, getProfile, requestDeletion }
+    const updateNotificationSettings = async (disabledNotificationGroups: NotificationGroup[]): Promise<void> => {
+        const resp = await userService.updateNotificationSettings(disabledNotificationGroups);
+
+        if (isError(resp.status)) {
+            const data = await resp.json();
+            throw new Error(data.message);
+        }
+        userStore.patch({ disabledNotificationGroups });
+    }
+
+    return {
+        changeEmail, changeUsername, changePassword, changeImage, getUsers, getProfile, requestDeletion,
+        updateNotificationSettings
+    }
 }

@@ -57,9 +57,11 @@ import PillTabs from "@/components/PillTabs.vue";
 
 const TABS: { value: number; label: string; group?: NotificationGroup }[] = [
     { value: 0, label: "Tout" },
-    { value: 1, label: "Amis", group: "friends" },
-    { value: 2, label: "Activité", group: "activity" },
-    { value: 3, label: "Rappels", group: "reminders" },
+    { value: 1, label: "Invitations", group: "invitations" },
+    { value: 2, label: "Réponses", group: "responses" },
+    { value: 3, label: "Activité", group: "activity" },
+    { value: 4, label: "Succès", group: "achievements" },
+    { value: 5, label: "Rappels", group: "reminders" },
 ];
 
 const router = useRouter();

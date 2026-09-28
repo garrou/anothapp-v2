@@ -9,6 +9,13 @@
                         <v-switch v-model="isDark" color="primary" hide-details @update:model-value="toggleTheme" />
                     </template>
                 </v-list-item>
+                <v-list-item v-for="group in NOTIFICATION_GROUP_IDS" :key="group" prepend-icon="mdi-bell-outline"
+                    :title="NOTIFICATION_GROUP_LABELS[group]">
+                    <template #append>
+                        <v-switch :model-value="!disabledGroups.includes(group)" color="primary" hide-details
+                            @update:model-value="(value) => toggleNotificationGroup(group, value)" />
+                    </template>
+                </v-list-item>
                 <v-list-item :prepend-icon="DATABASE_EXPORT_ICON" title="Exporter mes données" @click="openExportConfirm" />
                 <v-list-item :prepend-icon="DATABASE_IMPORT_ICON" title="Importer mes données"
                     @click="openImportDialog" />
@@ -93,13 +100,16 @@ import storageService from '@/services/storageService';
 import { THEME_ANOTHAPP, THEME_ANOTHAPP_DARK, applyThemeClass } from '@/utils/theme';
 import { useTheme } from 'vuetify';
 import type { ImportPayload, ImportPreview } from '@/models/importPayload';
-import { ref, watch } from 'vue';
+import { NOTIFICATION_GROUP_IDS, NOTIFICATION_GROUP_LABELS, type NotificationGroup } from '@/models/notification';
+import { onBeforeMount, ref, watch } from 'vue';
 
 const settings = useSettings();
-const { requestDeletion } = useUser();
+const { getProfile, requestDeletion, updateNotificationSettings } = useUser();
 const { logout } = useAuth();
 const { showInfo, showSuccess, showError } = useSnackbar();
 const theme = useTheme();
+
+const disabledGroups = ref<NotificationGroup[]>([]);
 
 const deleteAccountDialog = ref(false);
 const deleteAccountValid = ref(false);
@@ -148,6 +158,18 @@ const toggleTheme = (value: boolean | null) => {
     theme.change(name);
     applyThemeClass(name);
     storageService.storeTheme(name);
+}
+
+const toggleNotificationGroup = async (group: NotificationGroup, enabled: boolean | null): Promise<void> => {
+    const previous = disabledGroups.value;
+    disabledGroups.value = enabled ? previous.filter((g) => g !== group) : [...previous, group];
+
+    try {
+        await updateNotificationSettings(disabledGroups.value);
+    } catch (e) {
+        disabledGroups.value = previous;
+        showError((e as Error).message);
+    }
 }
 
 const openExportConfirm = () => {
@@ -229,4 +251,8 @@ const confirmDeleteAccount = async () => {
         deleteAccountLoading.value = false;
     }
 }
+
+onBeforeMount(async () => {
+    disabledGroups.value = (await getProfile()).disabledNotificationGroups ?? [];
+});
 </script>

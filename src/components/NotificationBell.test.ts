@@ -233,9 +233,11 @@ describe("NotificationBell", () => {
         const tabs = wrapper.findComponent({ name: "PillTabs" });
         expect(tabs.props("tabs")).toEqual([
             { value: 0, label: "Tout", badge: undefined },
-            { value: 1, label: "Amis", badge: 1 },
-            { value: 2, label: "Activité", badge: 1 },
-            { value: 3, label: "Rappels", badge: undefined },
+            { value: 1, label: "Invitations", badge: 1 },
+            { value: 2, label: "Réponses", badge: undefined },
+            { value: 3, label: "Activité", badge: 1 },
+            { value: 4, label: "Succès", badge: undefined },
+            { value: 5, label: "Rappels", badge: undefined },
         ]);
 
         await tabs.vm.$emit("update:modelValue", 1);

@@ -7,6 +7,8 @@ import { THEME_ANOTHAPP, THEME_ANOTHAPP_DARK } from "@/utils/theme";
 
 const userComposableMocks = vi.hoisted(() => ({
     requestDeletion: vi.fn(),
+    getProfile: vi.fn(),
+    updateNotificationSettings: vi.fn(),
 }));
 const settingsComposableMocks = vi.hoisted(() => ({
     exportData: vi.fn(),
@@ -45,6 +47,7 @@ const switches = (wrapper: Awaited<ReturnType<typeof mountView>>) => wrapper.fin
 
 beforeEach(() => {
     vi.resetAllMocks();
+    userComposableMocks.getProfile.mockResolvedValue({ disabledNotificationGroups: [] });
 });
 
 describe("Settings", () => {
@@ -54,6 +57,52 @@ describe("Settings", () => {
         await switches(wrapper)[0].setValue(true);
 
         expect(storageServiceMocks.storeTheme).toHaveBeenCalledWith(THEME_ANOTHAPP_DARK);
+    });
+
+    describe("notification preferences", () => {
+        it("reflects the groups already disabled on the loaded profile", async () => {
+            userComposableMocks.getProfile.mockResolvedValue({ disabledNotificationGroups: ["responses"] });
+            const wrapper = await mountView();
+
+            const groupSwitches = switches(wrapper).slice(1);
+            expect((groupSwitches[0].element as HTMLInputElement).checked).toBe(true); // invitations
+            expect((groupSwitches[1].element as HTMLInputElement).checked).toBe(false); // responses
+            expect((groupSwitches[2].element as HTMLInputElement).checked).toBe(true); // activity
+        });
+
+        it("disables a group and sends the updated list, without touching the others", async () => {
+            userComposableMocks.getProfile.mockResolvedValue({ disabledNotificationGroups: ["achievements"] });
+            userComposableMocks.updateNotificationSettings.mockResolvedValue(undefined);
+            const wrapper = await mountView();
+
+            await switches(wrapper)[1].setValue(false); // invitations off
+
+            expect(userComposableMocks.updateNotificationSettings).toHaveBeenCalledWith(
+                expect.arrayContaining(["achievements", "invitations"])
+            );
+        });
+
+        it("re-enables a disabled group", async () => {
+            userComposableMocks.getProfile.mockResolvedValue({ disabledNotificationGroups: ["invitations"] });
+            userComposableMocks.updateNotificationSettings.mockResolvedValue(undefined);
+            const wrapper = await mountView();
+
+            await switches(wrapper)[1].setValue(true); // invitations back on
+
+            expect(userComposableMocks.updateNotificationSettings).toHaveBeenCalledWith([]);
+        });
+
+        it("reverts the switch and shows the error when saving fails", async () => {
+            userComposableMocks.getProfile.mockResolvedValue({ disabledNotificationGroups: [] });
+            userComposableMocks.updateNotificationSettings.mockRejectedValue(new Error("Requête invalide"));
+            const wrapper = await mountView();
+
+            await switches(wrapper)[1].setValue(false);
+            await flushPromises();
+
+            expect(snackbarMocks.showError).toHaveBeenCalledWith("Requête invalide");
+            expect((switches(wrapper)[1].element as HTMLInputElement).checked).toBe(true);
+        });
     });
 
     it("asks for confirmation before exporting, and only exports on confirm", async () => {

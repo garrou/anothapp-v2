@@ -103,6 +103,42 @@ describe("Settings", () => {
             expect(snackbarMocks.showError).toHaveBeenCalledWith("Requête invalide");
             expect((switches(wrapper)[1].element as HTMLInputElement).checked).toBe(true);
         });
+
+        it("does not let a slow initial profile load overwrite a toggle made before it resolves", async () => {
+            let resolveProfile!: (profile: { disabledNotificationGroups: string[] }) => void;
+            userComposableMocks.getProfile.mockReturnValue(new Promise((resolve) => { resolveProfile = resolve; }));
+            userComposableMocks.updateNotificationSettings.mockResolvedValue(undefined);
+            const wrapper = await mountView();
+
+            // The user toggles a switch before the initial profile fetch (still pending) resolves.
+            await switches(wrapper)[1].setValue(false);
+
+            // That fetch now resolves with a snapshot that predates the toggle.
+            resolveProfile({ disabledNotificationGroups: [] });
+            await flushPromises();
+
+            expect((switches(wrapper)[1].element as HTMLInputElement).checked).toBe(false);
+        });
+
+        it("does not let an earlier toggle's failure revert a switch a newer toggle already changed", async () => {
+            userComposableMocks.getProfile.mockResolvedValue({ disabledNotificationGroups: [] });
+            let rejectFirst!: (e: Error) => void;
+            userComposableMocks.updateNotificationSettings
+                .mockReturnValueOnce(new Promise((_resolve, reject) => { rejectFirst = reject; }))
+                .mockResolvedValueOnce(undefined);
+            const wrapper = await mountView();
+
+            await switches(wrapper)[1].setValue(false); // invitations off - stays pending
+            await switches(wrapper)[2].setValue(false); // responses off - resolves right away
+
+            rejectFirst(new Error("Requête invalide"));
+            await flushPromises();
+
+            // the superseded failure must not roll the newer, successful toggle back
+            expect((switches(wrapper)[2].element as HTMLInputElement).checked).toBe(false);
+            // but it must still be surfaced, not silently swallowed
+            expect(snackbarMocks.showError).toHaveBeenCalledWith("Requête invalide");
+        });
     });
 
     it("asks for confirmation before exporting, and only exports on confirm", async () => {

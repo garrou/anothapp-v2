@@ -95,14 +95,22 @@ export function useUser() {
         }
     }
 
+    // Guards against a slower, earlier call overwriting the store with stale data once it
+    // resolves after a more recent call has already settled (e.g. toggling two notification
+    // groups in quick succession, with their responses arriving out of order).
+    let notificationSettingsRequestId = 0;
+
     const updateNotificationSettings = async (disabledNotificationGroups: NotificationGroup[]): Promise<void> => {
+        const requestId = ++notificationSettingsRequestId;
         const resp = await userService.updateNotificationSettings(disabledNotificationGroups);
 
         if (isError(resp.status)) {
             const data = await resp.json();
             throw new Error(data.message);
         }
-        userStore.patch({ disabledNotificationGroups });
+        if (requestId === notificationSettingsRequestId) {
+            userStore.patch({ disabledNotificationGroups });
+        }
     }
 
     return {

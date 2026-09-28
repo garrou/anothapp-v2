@@ -160,14 +160,25 @@ const toggleTheme = (value: boolean | null) => {
     storageService.storeTheme(name);
 }
 
+// Shared with the initial profile load below: whichever of these two resolves last must win,
+// not whichever happens to finish first over the network (e.g. toggling a switch right after
+// the page loads, before the initial profile fetch has resolved).
+let notificationSettingsRequestId = 0;
+
 const toggleNotificationGroup = async (group: NotificationGroup, enabled: boolean | null): Promise<void> => {
+    const requestId = ++notificationSettingsRequestId;
     const previous = disabledGroups.value;
     disabledGroups.value = enabled ? previous.filter((g) => g !== group) : [...previous, group];
 
     try {
         await updateNotificationSettings(disabledGroups.value);
     } catch (e) {
-        disabledGroups.value = previous;
+        // Only roll back the displayed state if no newer toggle has superseded this one since -
+        // otherwise we'd stomp on a switch the user has already changed again in the meantime.
+        // The error itself is always surfaced, superseded or not.
+        if (requestId === notificationSettingsRequestId) {
+            disabledGroups.value = previous;
+        }
         showError((e as Error).message);
     }
 }
@@ -253,6 +264,10 @@ const confirmDeleteAccount = async () => {
 }
 
 onBeforeMount(async () => {
-    disabledGroups.value = (await getProfile()).disabledNotificationGroups ?? [];
+    const requestId = ++notificationSettingsRequestId;
+    const profile = await getProfile();
+
+    if (requestId !== notificationSettingsRequestId) return;
+    disabledGroups.value = profile.disabledNotificationGroups ?? [];
 });
 </script>

@@ -11,6 +11,7 @@ const userServiceMocks = vi.hoisted(() => ({
     updateUsername: vi.fn(),
     getUsers: vi.fn(),
     requestDeletion: vi.fn(),
+    updateNotificationSettings: vi.fn(),
 }));
 const snackbarMocks = vi.hoisted(() => ({
     showSuccess: vi.fn(),
@@ -172,6 +173,47 @@ describe("useUser.getUsers", () => {
         userServiceMocks.getUsers.mockResolvedValue(jsonResponse(400, { message: "Requête invalide" }));
 
         await expect(useUser().getUsers("garrou")).rejects.toThrow("Requête invalide");
+    });
+});
+
+describe("useUser.updateNotificationSettings", () => {
+    beforeEach(() => {
+        vi.resetAllMocks();
+        setActivePinia(createPinia());
+    });
+
+    it("patches the store with the new disabled groups on success", async () => {
+        userServiceMocks.updateNotificationSettings.mockResolvedValue(jsonResponse(200, null));
+        useUserStore().set(profile);
+
+        await useUser().updateNotificationSettings(["invitations"]);
+
+        expect(useUserStore().profile?.disabledNotificationGroups).toEqual(["invitations"]);
+    });
+
+    it("throws on failure without patching the store", async () => {
+        userServiceMocks.updateNotificationSettings.mockResolvedValue(jsonResponse(400, { message: "Requête invalide" }));
+        useUserStore().set(profile);
+
+        await expect(useUser().updateNotificationSettings(["invitations"])).rejects.toThrow("Requête invalide");
+        expect(useUserStore().profile?.disabledNotificationGroups).toBeUndefined();
+    });
+
+    it("does not let an earlier call's out-of-order response overwrite a later call's result in the store", async () => {
+        let resolveFirst!: (r: unknown) => void;
+        userServiceMocks.updateNotificationSettings
+            .mockReturnValueOnce(new Promise((resolve) => { resolveFirst = resolve; }))
+            .mockResolvedValueOnce(jsonResponse(200, null));
+        useUserStore().set(profile);
+
+        const { updateNotificationSettings } = useUser();
+        const first = updateNotificationSettings(["invitations"]);
+        await updateNotificationSettings(["invitations", "responses"]);
+
+        resolveFirst(jsonResponse(200, null));
+        await first;
+
+        expect(useUserStore().profile?.disabledNotificationGroups).toEqual(["invitations", "responses"]);
     });
 });
 

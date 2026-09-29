@@ -9,6 +9,13 @@
                         <v-switch v-model="isDark" color="primary" hide-details @update:model-value="toggleTheme" />
                     </template>
                 </v-list-item>
+                <v-list-item v-for="group in NOTIFICATION_GROUP_IDS" :key="group" prepend-icon="mdi-bell-outline"
+                    :title="NOTIFICATION_GROUP_LABELS[group]">
+                    <template #append>
+                        <v-switch :model-value="!disabledGroups.includes(group)" color="primary" hide-details
+                            @update:model-value="(value) => toggleNotificationGroup(group, value)" />
+                    </template>
+                </v-list-item>
                 <v-list-item :prepend-icon="DATABASE_EXPORT_ICON" title="Exporter mes données" @click="openExportConfirm" />
                 <v-list-item :prepend-icon="DATABASE_IMPORT_ICON" title="Importer mes données"
                     @click="openImportDialog" />
@@ -93,13 +100,16 @@ import storageService from '@/services/storageService';
 import { THEME_ANOTHAPP, THEME_ANOTHAPP_DARK, applyThemeClass } from '@/utils/theme';
 import { useTheme } from 'vuetify';
 import type { ImportPayload, ImportPreview } from '@/models/importPayload';
-import { ref, watch } from 'vue';
+import { NOTIFICATION_GROUP_IDS, NOTIFICATION_GROUP_LABELS, type NotificationGroup } from '@/models/notification';
+import { onBeforeMount, ref, watch } from 'vue';
 
 const settings = useSettings();
-const { requestDeletion } = useUser();
+const { getProfile, requestDeletion, updateNotificationSettings } = useUser();
 const { logout } = useAuth();
 const { showInfo, showSuccess, showError } = useSnackbar();
 const theme = useTheme();
+
+const disabledGroups = ref<NotificationGroup[]>([]);
 
 const deleteAccountDialog = ref(false);
 const deleteAccountValid = ref(false);
@@ -148,6 +158,29 @@ const toggleTheme = (value: boolean | null) => {
     theme.change(name);
     applyThemeClass(name);
     storageService.storeTheme(name);
+}
+
+// Shared with the initial profile load below: whichever of these two resolves last must win,
+// not whichever happens to finish first over the network (e.g. toggling a switch right after
+// the page loads, before the initial profile fetch has resolved).
+let notificationSettingsRequestId = 0;
+
+const toggleNotificationGroup = async (group: NotificationGroup, enabled: boolean | null): Promise<void> => {
+    const requestId = ++notificationSettingsRequestId;
+    const previous = disabledGroups.value;
+    disabledGroups.value = enabled ? previous.filter((g) => g !== group) : [...previous, group];
+
+    try {
+        await updateNotificationSettings(disabledGroups.value);
+    } catch (e) {
+        // Only roll back the displayed state if no newer toggle has superseded this one since -
+        // otherwise we'd stomp on a switch the user has already changed again in the meantime.
+        // The error itself is always surfaced, superseded or not.
+        if (requestId === notificationSettingsRequestId) {
+            disabledGroups.value = previous;
+        }
+        showError((e as Error).message);
+    }
 }
 
 const openExportConfirm = () => {
@@ -229,4 +262,12 @@ const confirmDeleteAccount = async () => {
         deleteAccountLoading.value = false;
     }
 }
+
+onBeforeMount(async () => {
+    const requestId = ++notificationSettingsRequestId;
+    const profile = await getProfile();
+
+    if (requestId !== notificationSettingsRequestId) return;
+    disabledGroups.value = profile.disabledNotificationGroups ?? [];
+});
 </script>

@@ -1,5 +1,7 @@
+import type { NotificationGroup } from "./notification";
+
 export interface User {
-    
+
     id: string;
 
     username: string;
@@ -15,4 +17,6 @@ export interface User {
     createdAt?: string;
 
     isAdmin?: boolean;
+
+    disabledNotificationGroups?: NotificationGroup[];
 }

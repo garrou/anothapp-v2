@@ -160,6 +160,30 @@ describe("SeasonDetails", () => {
         expect(wrapper.text()).not.toContain("Partagé par");
     });
 
+    it("shows the owner's name as a read-only field instead of the editable watched-with list, for a shared season", async () => {
+        const wrapper = await mountDetails({
+            seasons: [subSeason(501, {
+                watchedWith: [], sharedBy: { id: "owner-1", username: "Bob", picture: undefined },
+            })],
+        });
+
+        await wrapper.findAll(".season-entry-btn")[0].trigger("click");
+
+        const readOnlyField = wrapper.findAllComponents({ name: "VTextField" })
+            .find((field) => field.props("modelValue") === "Bob");
+        expect(readOnlyField).toBeTruthy();
+        expect(readOnlyField!.props("disabled")).toBe(true);
+        expect(wrapper.findComponent({ name: "VAutocomplete" }).exists()).toBe(false);
+    });
+
+    it("keeps the editable watched-with list for a season the current user owns", async () => {
+        const wrapper = await mountDetails({ seasons: [subSeason(501, { sharedBy: null })] });
+
+        await wrapper.findAll(".season-entry-btn")[0].trigger("click");
+
+        expect(wrapper.findComponent({ name: "VAutocomplete" }).exists()).toBe(true);
+    });
+
     it("re-fetches the season info after saving instead of guessing statuses locally", async () => {
         seasonComposableMocks.updateSeason.mockResolvedValue(true);
         seasonComposableMocks.updateWatchedWith.mockResolvedValue(undefined);

@@ -30,7 +30,10 @@
                 <v-text-field v-model="seasonInfo.viewedAt" class="mb-3" hide-details type="datetime-local" />
 
                 <v-label class="season-entry-label">Vu avec</v-label>
-                <v-autocomplete v-model="seasonInfo.watchedWith" class="mb-3" :density="DENSITY"
+                <v-text-field v-if="subSeason.sharedBy" class="mb-3" :model-value="subSeason.sharedBy.username"
+                    readonly disabled :prepend-inner-icon="ACCOUNT_ICON"
+                    hint="Saison partagée par cet ami, vous ne pouvez pas modifier cette liste ici" persistent-hint />
+                <v-autocomplete v-else v-model="seasonInfo.watchedWith" class="mb-3" :density="DENSITY"
                     multiple chips closable-chips :items="friends" item-title="username" item-value="id"
                     :hint="`${seasonInfo.watchedWith.length} / ${MAX_WATCHED_WITH}`" persistent-hint
                     :rules="[(v: string[]) => v.length <= MAX_WATCHED_WITH || `Maximum ${MAX_WATCHED_WITH} amis`]">

@@ -145,7 +145,8 @@ const groups = computed(() => {
     return Array.from(byDate.entries()).map(([key, items]) => {
         const date = parseLocalDate(key);
         const isToday = isSameDay(date, today);
-        const label = isToday ? "Aujourd'hui" : `${WEEKDAYS_LONG[date.getDay()]} ${date.getDate()} ${MONTHS_FR[date.getMonth()]}`;
+        const label = isToday ? "Aujourd'hui"
+            : `${WEEKDAYS_LONG[date.getDay()]} ${date.getDate()} ${MONTHS_FR[date.getMonth()]} ${date.getFullYear()}`;
 
         return {
             date: key,

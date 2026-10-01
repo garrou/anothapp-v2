@@ -107,6 +107,14 @@ describe("History", () => {
         expect(badges[1].props("day")).toBe(expectedOlderDay);
     });
 
+    it("includes the year in the day label, to avoid ambiguity across past years", async () => {
+        const wrapper = await mountView({
+            episodes: [episodeItem(1, "2024-01-10T10:00:00.000Z")],
+        });
+
+        expect(wrapper.text()).toContain("mercredi 10 janvier 2024");
+    });
+
     it("groups same-day items from different shows together", async () => {
         const sameDate = "2024-01-10T10:00:00.000Z";
         const wrapper = await mountView({

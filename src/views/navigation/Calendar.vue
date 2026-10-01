@@ -78,7 +78,8 @@ const groups = computed(() => {
         const date = parseLocalDate(key);
         const isToday = isSameDay(date, today);
         const isTomorrow = isSameDay(date, tomorrow);
-        const label = isToday ? "Aujourd'hui" : isTomorrow ? "Demain" : `${WEEKDAYS_LONG[date.getDay()]} ${date.getDate()} ${MONTHS_FR[date.getMonth()]}`;
+        const label = isToday ? "Aujourd'hui" : isTomorrow ? "Demain"
+            : `${WEEKDAYS_LONG[date.getDay()]} ${date.getDate()} ${MONTHS_FR[date.getMonth()]} ${date.getFullYear()}`;
 
         return {
             date: key,

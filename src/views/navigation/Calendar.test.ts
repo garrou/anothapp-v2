@@ -51,9 +51,15 @@ describe("Calendar", () => {
 
         const groups = wrapper.findAllComponents({ name: "DayBadge" });
         expect(groups).toHaveLength(1);
-        expect(wrapper.text()).toContain("samedi 15 juin");
+        expect(wrapper.text()).toContain("samedi 15 juin 2024");
         expect(wrapper.text()).toContain("Serie 1");
         expect(wrapper.text()).toContain("Serie 2");
+    });
+
+    it("includes the year in the label, to avoid ambiguity for dates landing next year", async () => {
+        const wrapper = await mountView([serie(1, "2030-01-03T10:00:00.000Z")]);
+
+        expect(wrapper.text()).toContain("jeudi 3 janvier 2030");
     });
 
     it("sorts groups chronologically by date", async () => {

@@ -49,4 +49,33 @@ describe("CardGrid", () => {
         expect(wrapper.text()).not.toContain("Item A");
         expect(wrapper.findAllComponents({ name: "BaseSkeleton" })).toHaveLength(2);
     });
+
+    // Regression: while the very first fetch is in flight, `items` is still
+    // empty, so there was nothing to chunk into rows - the grid rendered
+    // with zero height (no skeleton, just blank space) until data arrived,
+    // instead of showing a loading placeholder like every other list in the
+    // app. Most noticeable below content that loads faster and pushes this
+    // grid further down the page (e.g. the discover page's friend
+    // suggestions, loaded from a fast query, above a grid backed by a much
+    // slower paginated external API).
+    it("shows skeleton placeholders even before any real item has loaded", () => {
+        const wrapper = mount(CardGrid, {
+            global: { plugins: [vuetify] },
+            props: { items: [], loading: true },
+            slots: { default: "<template #default=\"{ item }\">{{ item.name }}</template>" },
+        });
+
+        expect(wrapper.findComponent({ name: "VContainer" }).exists()).toBe(true);
+        expect(wrapper.findAllComponents({ name: "BaseSkeleton" }).length).toBeGreaterThan(0);
+    });
+
+    it("does not replace already-loaded items with skeletons while a refresh is in flight", () => {
+        const wrapper = mount(CardGrid, {
+            global: { plugins: [vuetify] },
+            props: { items, loading: true },
+            slots: { default: "<template #default=\"{ item }\">{{ item.name }}</template>" },
+        });
+
+        expect(wrapper.findAllComponents({ name: "BaseSkeleton" })).toHaveLength(items.length);
+    });
 });

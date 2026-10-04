@@ -63,8 +63,14 @@ const effectiveSpan = computed(() => {
 
 const itemsPerRow = computed(() => Math.max(1, Math.floor(12 / effectiveSpan.value)));
 
+const PLACEHOLDER_ROWS = 2;
+
 const rows = computed<T[][]>(() => {
     const perRow = itemsPerRow.value;
+
+    if (!props.items.length && props.loading) {
+        return Array.from({ length: PLACEHOLDER_ROWS }, () => Array.from({ length: perRow }) as T[]);
+    }
     const chunks: T[][] = [];
     for (let i = 0; i < props.items.length; i += perRow) {
         chunks.push(props.items.slice(i, i + perRow));
@@ -79,16 +85,22 @@ const containerRef = ref<HTMLElement | null>(null);
 const scrollMargin = ref(0);
 
 const updateScrollMargin = (): void => {
-    scrollMargin.value = containerRef.value?.offsetTop ?? 0;
+    const el = (containerRef.value as unknown as { $el?: HTMLElement })?.$el ?? containerRef.value;
+    scrollMargin.value = el?.offsetTop ?? 0;
 };
+
+let bodyResizeObserver: ResizeObserver | null = null;
 
 onMounted(() => {
     updateScrollMargin();
     window.addEventListener("resize", updateScrollMargin);
+    bodyResizeObserver = new ResizeObserver(updateScrollMargin);
+    bodyResizeObserver.observe(document.body);
 });
 
 onBeforeUnmount(() => {
     window.removeEventListener("resize", updateScrollMargin);
+    bodyResizeObserver?.disconnect();
 });
 
 // Cards in a row are made uniform height on purpose (single-line truncated

@@ -88,7 +88,7 @@
         text="Confirmez-vous la suppression de la série ?" @cancel="confirmModal = false"
         @confirm="deleteSerie(infos.serie)" />
 
-    <base-modal v-if="selected" v-model="modal" :title="`Saison ${selected.number}`">
+    <base-modal v-if="selected" v-model="modal" :title="`Saison ${selected.number}`" fullscreen-on-mobile>
         <season-episodes v-if="isAddable" :id="id" :number="selected.number" />
         <season-details v-else :id="id" :season="selected" :just-added="justAddedSeason" @refresh="refresh"
             @refresh-stats="refreshStats" />

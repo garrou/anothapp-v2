@@ -248,6 +248,36 @@ describe("SeasonDetails", () => {
         expect(seasonComposableMocks.updateWatchedWith).toHaveBeenCalledWith(501, ["f1", "f2"]);
     });
 
+    it("shows episodes inline with no toggle to tap, when there is only one viewing", async () => {
+        const wrapper = await mountDetails({ seasons: [subSeason(501)] });
+
+        expect(wrapper.find(".episodes-toggle").exists()).toBe(false);
+        expect(wrapper.findComponent({ name: "EpisodesChecklist" }).exists()).toBe(true);
+        expect(wrapper.text()).toContain("Épisodes");
+    });
+
+    it("collapses every viewing's episodes behind a toggle when the season has several (a rewatch)", async () => {
+        const wrapper = await mountDetails({ seasons: [subSeason(501), subSeason(502)] });
+
+        expect(wrapper.findAll(".episodes-toggle")).toHaveLength(2);
+        expect(wrapper.findAllComponents({ name: "EpisodesChecklist" })).toHaveLength(0);
+    });
+
+    it("only expands one viewing's episodes at a time, closing the previous one", async () => {
+        const wrapper = await mountDetails({ seasons: [subSeason(501), subSeason(502)] });
+
+        const toggles = wrapper.findAll(".episodes-toggle");
+        await toggles[0].trigger("click");
+        expect(wrapper.findAllComponents({ name: "EpisodesChecklist" })).toHaveLength(1);
+
+        await toggles[1].trigger("click");
+        expect(wrapper.findAllComponents({ name: "EpisodesChecklist" })).toHaveLength(1);
+
+        // clicking the already-open toggle again closes it
+        await toggles[1].trigger("click");
+        expect(wrapper.findAllComponents({ name: "EpisodesChecklist" })).toHaveLength(0);
+    });
+
     it("opens a confirm dialog and deletes the season on confirm, emitting refresh", async () => {
         seasonComposableMocks.deleteSeason.mockResolvedValue(undefined);
         const wrapper = await mountDetails();

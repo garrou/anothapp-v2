@@ -29,7 +29,6 @@ const mountChecklist = async (episodes: UserEpisode[]) => {
         props: { userSeasonId: 7 },
     });
     await flushPromises();
-    await wrapper.find(".v-expansion-panel-title").trigger("click");
     return wrapper;
 };
 

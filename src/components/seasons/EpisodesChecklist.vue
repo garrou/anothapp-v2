@@ -1,39 +1,41 @@
 <template>
-    <v-expansion-panels>
-        <v-expansion-panel title="Épisodes">
-            <v-expansion-panel-text>
-                <div v-for="episode in episodes" :key="episode.episodeId" class="episode-entry">
-                    <div class="episode-entry-row">
-                        <div class="episode-entry-info">
-                            <div class="episode-entry-title">#{{ episode.global }} {{ episode.title }}</div>
-                            <div class="episode-entry-subtitle">{{ episode.code }}</div>
-                        </div>
+    <div class="episodes-list">
+        <div v-for="episode in episodes" :key="episode.episodeId" class="episode-entry">
+            <div class="episode-entry-title">#{{ episode.global }} {{ episode.title }}</div>
 
-                        <v-chip v-if="!isAired(episode)" size="small" variant="outlined">À venir</v-chip>
+            <div class="episode-entry-row">
+                <div class="episode-entry-subtitle">{{ episode.code }}</div>
 
-                        <template v-else-if="episode.watchedAt">
-                            <div class="episode-entry-date">{{ formatDate(episode.watchedAt) }}</div>
-                            <v-btn v-if="!isEdited(episode.episodeId)" class="episode-entry-btn" :icon="EDIT_ICON"
-                                size="32" variant="text" @click="editEpisode(episode.episodeId)" />
-                            <v-btn class="episode-entry-btn" :icon="DELETE_ICON" size="32" variant="text"
-                                @click="selectViewing(episode)" />
-                        </template>
+                <template v-if="!isAired(episode)">
+                    <v-spacer />
+                    <v-chip size="small" variant="outlined">À venir</v-chip>
+                </template>
 
-                        <v-btn v-else class="episode-entry-btn" :color="MAIN_COLOR" :icon="ADD_ICON" size="32"
-                            variant="text" @click="addViewing(episode)" />
-                    </div>
+                <template v-else-if="episode.watchedAt">
+                    <div class="episode-entry-date">{{ formatDate(episode.watchedAt) }}</div>
+                    <v-spacer />
+                    <v-btn v-if="!isEdited(episode.episodeId)" class="episode-entry-btn" :icon="EDIT_ICON"
+                        size="32" variant="text" @click="editEpisode(episode.episodeId)" />
+                    <v-btn class="episode-entry-btn" :icon="DELETE_ICON" size="32" variant="text"
+                        @click="selectViewing(episode)" />
+                </template>
 
-                    <p v-if="episode.description" class="episode-entry-description">{{ episode.description }}</p>
+                <template v-else>
+                    <v-spacer />
+                    <v-btn class="episode-entry-btn" :color="MAIN_COLOR" :icon="ADD_ICON" size="32"
+                        variant="text" @click="addViewing(episode)" />
+                </template>
+            </div>
 
-                    <div v-if="isEdited(episode.episodeId)" class="episode-entry-edit">
-                        <v-text-field v-model="watchedAtInput" class="mb-3" hide-details type="datetime-local" />
+            <p v-if="episode.description" class="episode-entry-description">{{ episode.description }}</p>
 
-                        <v-btn block color="primary" rounded="pill" @click="saveViewedAt(episode)">Enregistrer</v-btn>
-                    </div>
-                </div>
-            </v-expansion-panel-text>
-        </v-expansion-panel>
-    </v-expansion-panels>
+            <div v-if="isEdited(episode.episodeId)" class="episode-entry-edit">
+                <v-text-field v-model="watchedAtInput" class="mb-3" hide-details type="datetime-local" />
+
+                <v-btn block color="primary" rounded="pill" @click="saveViewedAt(episode)">Enregistrer</v-btn>
+            </div>
+        </div>
+    </div>
 
     <base-confirm v-model="modal" text="Supprimer ce visionnage ?" title="Supprimer" persistent @cancel="modal = false"
         @confirm="removeViewing" />
@@ -110,8 +112,8 @@ onBeforeMount(load);
 </script>
 
 <style scoped>
-.v-expansion-panels {
-    margin-top: 16px;
+.episodes-list {
+    margin-top: 12px;
 }
 
 .episode-entry {
@@ -124,28 +126,21 @@ onBeforeMount(load);
 .episode-entry-row {
     display: flex;
     align-items: center;
-    gap: 12px;
-}
-
-.episode-entry-info {
-    flex: 1;
-    min-width: 0;
+    gap: 8px;
 }
 
 .episode-entry-title {
     font-weight: 600;
     font-size: 14px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    margin-bottom: 4px;
+    overflow-wrap: break-word;
 }
 
 .episode-entry-subtitle {
     font-size: 12px;
     color: rgb(var(--v-theme-on-surface-variant));
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    flex-shrink: 0;
 }
 
 .episode-entry-date {

@@ -64,8 +64,27 @@
                 </div>
             </div>
 
-            <episodes-checklist :key="`${subSeason.id}-${episodesRefreshKey}`"
-                :user-season-id="subSeason.id" @refresh="onEpisodesRefresh" />
+            <!-- A season watched more than once (e.g. a rewatch) has several entries here, each with
+                 its own full episode list - left all expanded at once, a handful of rewatches alone
+                 can mean scrolling through hundreds of rows to reach anything else. With a single
+                 viewing (by far the common case) there's nothing to pick between, so the episodes
+                 just show - no toggle, no indentation for it. -->
+            <template v-if="seasons.length > 1">
+                <button type="button" class="episodes-toggle" :aria-expanded="expandedViewingId === subSeason.id"
+                    @click="toggleViewingEpisodes(subSeason.id)">
+                    <span>Épisodes</span>
+                    <v-icon icon="mdi-chevron-down" size="18" class="episodes-toggle-chevron"
+                        :class="{ 'episodes-toggle-chevron--open': expandedViewingId === subSeason.id }" />
+                </button>
+                <episodes-checklist v-if="expandedViewingId === subSeason.id"
+                    :key="`${subSeason.id}-${episodesRefreshKey}`" :user-season-id="subSeason.id"
+                    @refresh="onEpisodesRefresh" />
+            </template>
+            <template v-else>
+                <v-label class="season-entry-label episodes-label">Épisodes</v-label>
+                <episodes-checklist :key="`${subSeason.id}-${episodesRefreshKey}`"
+                    :user-season-id="subSeason.id" @refresh="onEpisodesRefresh" />
+            </template>
         </div>
     </template>
 
@@ -120,6 +139,7 @@ const platforms = ref<Platform[]>([]);
 const friends = ref<User[]>([]);
 const bulkOfferSeasonId = ref(-1);
 const episodesRefreshKey = ref(0);
+const expandedViewingId = ref(-1);
 const seasonInfo = reactive({
     platform: 0,
     viewedAt: "",
@@ -137,6 +157,10 @@ const describeWatchedWith = (friend: WatchedWithFriend): string => {
 
 const editSeason = (id: number) => {
     toEdit.value = isEdited(id) ? -1 : id;
+}
+
+const toggleViewingEpisodes = (id: number) => {
+    expandedViewingId.value = expandedViewingId.value === id ? -1 : id;
 }
 
 const selectSeason = (id: number) => {
@@ -276,5 +300,36 @@ onBeforeMount(async () => {
     text-transform: uppercase;
     letter-spacing: 0.04em;
     color: rgb(var(--v-theme-on-surface-variant));
+}
+
+.episodes-label {
+    display: block;
+    margin-top: 12px;
+}
+
+.episodes-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 12px;
+    padding: 10px 2px;
+    border: none;
+    border-top: 1px solid rgb(var(--v-border-color));
+    background: none;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: rgb(var(--v-theme-on-surface-variant));
+    cursor: pointer;
+}
+
+.episodes-toggle-chevron {
+    transition: transform 0.15s ease;
+}
+
+.episodes-toggle-chevron--open {
+    transform: rotate(180deg);
 }
 </style>

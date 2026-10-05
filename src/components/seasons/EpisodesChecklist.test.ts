@@ -64,6 +64,19 @@ describe("EpisodesChecklist", () => {
         expect(wrapper.findAll(".episode-entry-btn")).toHaveLength(2);
     });
 
+    it("shows the synopsis for an episode not watched yet", async () => {
+        const wrapper = await mountChecklist([{ ...airedUnwatched, description: "A thrilling setup." }]);
+
+        expect(wrapper.text()).toContain("A thrilling setup.");
+    });
+
+    it("hides the synopsis once an episode has been watched - it's done its job", async () => {
+        const wrapper = await mountChecklist([{ ...watched, description: "A thrilling setup." }]);
+
+        expect(wrapper.find(".episode-entry-description").exists()).toBe(false);
+        expect(wrapper.text()).not.toContain("A thrilling setup.");
+    });
+
     it("adds a viewing, reloads, and emits refresh when the add button is clicked", async () => {
         episodeComposableMocks.addEpisodeViewing.mockResolvedValue(undefined);
         const wrapper = await mountChecklist([airedUnwatched]);

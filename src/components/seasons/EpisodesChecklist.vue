@@ -27,7 +27,9 @@
                 </template>
             </div>
 
-            <p v-if="episode.description" class="episode-entry-description">{{ episode.description }}</p>
+            <p v-if="episode.description && !episode.watchedAt" class="episode-entry-description">
+                {{ episode.description }}
+            </p>
 
             <div v-if="isEdited(episode.episodeId)" class="episode-entry-edit">
                 <v-text-field v-model="watchedAtInput" class="mb-3" hide-details type="datetime-local" />

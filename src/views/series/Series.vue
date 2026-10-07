@@ -26,12 +26,20 @@ const loading = ref(false);
 const series = ref<Serie[]>([]);
 const seriesRowRef = ref<InstanceType<typeof SeriesRow> | null>(null);
 
+let fetchSeriesRequestId = 0;
+
 const fetchSeries = async (): Promise<void> => {
+    const requestId = ++fetchSeriesRequestId;
     loading.value = true;
     try {
-        series.value = await getSeries();
+        const result = await getSeries();
+        if (requestId === fetchSeriesRequestId) {
+            series.value = result;
+        }
     } finally {
-        loading.value = false;
+        if (requestId === fetchSeriesRequestId) {
+            loading.value = false;
+        }
     }
 }
 

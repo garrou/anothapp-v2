@@ -57,4 +57,25 @@ describe("Series", () => {
 
         expect(wrapper.findComponent({ name: "SeriesTabs" }).exists()).toBe(true);
     });
+
+    it("ignores a stale response that resolves after a newer request", async () => {
+        let resolveStale: (value: Partial<Serie>[]) => void = () => {};
+        const stale = new Promise<Partial<Serie>[]>((resolve) => { resolveStale = resolve; });
+        serieComposableMocks.getSeries.mockReturnValueOnce(stale);
+
+        const wrapper = mount(Series, {
+            global: { plugins: [vuetify], stubs: { BaseAppBar: true, SeriesRow: true } },
+        });
+        await flushPromises();
+
+        serieComposableMocks.getSeries.mockResolvedValueOnce([{ id: 2, title: "Fresh" } as Serie]);
+        useSerieStore().filterTitle = "Breaking Bad";
+        await flushPromises();
+
+        resolveStale([{ id: 1, title: "Stale" } as Serie]);
+        await flushPromises();
+
+        expect(wrapper.findComponent({ name: "SeriesRow" }).props("series"))
+            .toEqual([{ id: 2, title: "Fresh" }]);
+    });
 });

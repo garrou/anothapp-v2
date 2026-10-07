@@ -126,12 +126,20 @@ const cardStyle = (index: number) => ({
     "--delay": `${index * 60}ms`
 });
 
+let loadRequestId = 0;
+
 const load = async (): Promise<void> => {
+    const requestId = ++loadRequestId;
     loading.value = true;
     try {
-        wrapped.value = await getWrapped(selectedYear.value);
+        const result = await getWrapped(selectedYear.value);
+        if (requestId === loadRequestId) {
+            wrapped.value = result;
+        }
     } finally {
-        loading.value = false;
+        if (requestId === loadRequestId) {
+            loading.value = false;
+        }
     }
 }
 

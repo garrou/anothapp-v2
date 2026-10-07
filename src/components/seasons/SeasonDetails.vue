@@ -27,7 +27,6 @@
                 <v-label class="season-entry-label">Plateforme</v-label>
                 <v-select v-model="seasonInfo.platform" class="mb-3" :density="DENSITY" hide-details
                     :items="platforms" item-title="name" item-value="id" />
-                <v-text-field v-model="seasonInfo.viewedAt" class="mb-3" hide-details type="datetime-local" />
 
                 <v-label class="season-entry-label">Vu avec</v-label>
                 <v-text-field v-if="subSeason.sharedBy" class="mb-3" :model-value="subSeason.sharedBy.username"
@@ -48,6 +47,10 @@
                         </v-list-item>
                     </template>
                 </v-autocomplete>
+
+                <v-label class="season-entry-label">Date</v-label>
+                <v-text-field v-model="seasonInfo.viewedAt" class="mb-3" :density="DENSITY" hide-details
+                    type="datetime-local" />
 
                 <v-btn block color="primary" rounded="pill" @click="changeSeason">Enregistrer</v-btn>
             </div>

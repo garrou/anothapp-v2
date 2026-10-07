@@ -71,6 +71,29 @@ describe("Wrapped", () => {
         expect(statisticComposableMocks.getWrapped).toHaveBeenCalledWith(2022);
     });
 
+    it("ignores a stale response that resolves after a newer request", async () => {
+        let resolveStale: (value: WrappedStat) => void = () => {};
+        const stale = new Promise<WrappedStat>((resolve) => { resolveStale = resolve; });
+        statisticComposableMocks.getWrapped.mockReturnValueOnce(stale);
+
+        const wrapper = mount(Wrapped, {
+            global: { plugins: [vuetify], stubs: { BaseAppBar: true, WrappedShareCard: WrappedShareCardStub } },
+        });
+        await flushPromises();
+
+        statisticComposableMocks.getWrapped.mockResolvedValueOnce(
+            wrapped({ topShow: { label: "Fresh Year" } } as Partial<WrappedStat>)
+        );
+        await wrapper.findComponent({ name: "VSelect" }).vm.$emit("update:modelValue", 2022);
+        await flushPromises();
+
+        resolveStale(wrapped({ topShow: { label: "Stale Year" } } as Partial<WrappedStat>));
+        await flushPromises();
+
+        expect(wrapper.text()).toContain("Fresh Year");
+        expect(wrapper.text()).not.toContain("Stale Year");
+    });
+
     it("shows an empty state when there's no watch time for the year", async () => {
         const wrapper = await mountView(wrapped({ totalTime: 0 }));
 

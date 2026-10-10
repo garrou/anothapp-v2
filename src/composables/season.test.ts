@@ -19,6 +19,9 @@ const snackbarMocks = vi.hoisted(() => ({
     showError: vi.fn(),
     showInfo: vi.fn(),
 }));
+const userSeriesStoreMocks = vi.hoisted(() => ({
+    reset: vi.fn(),
+}));
 
 vi.mock("@/services/seasonService", () => ({
     default: seasonServiceMocks,
@@ -28,6 +31,9 @@ vi.mock("@/services/serieService", () => ({
 }));
 vi.mock("./snackbar", () => ({
     useSnackbar: () => snackbarMocks,
+}));
+vi.mock("@/stores/userSeries", () => ({
+    useUserSeriesStore: () => userSeriesStoreMocks,
 }));
 
 const jsonResponse = (status: number, body: unknown) => ({
@@ -197,6 +203,17 @@ describe("useSeason.respondToWatchedWith", () => {
         expect(snackbarMocks.showSuccess).toHaveBeenCalledWith("Visionnage partagé accepté");
     });
 
+    // Regression test: accepting can silently add a show the user didn't already have (the
+    // backend auto-tracks it), so the cached series list must be invalidated - otherwise it
+    // never reflects the new show, with no way to force-refresh an installed PWA.
+    it("invalidates the cached series list when accepting", async () => {
+        seasonServiceMocks.respondToWatchedWith.mockResolvedValue(jsonResponse(200, null));
+
+        await useSeason().respondToWatchedWith(1, true);
+
+        expect(userSeriesStoreMocks.reset).toHaveBeenCalled();
+    });
+
     it("shows a different success toast when declining", async () => {
         seasonServiceMocks.respondToWatchedWith.mockResolvedValue(jsonResponse(200, null));
 
@@ -205,11 +222,20 @@ describe("useSeason.respondToWatchedWith", () => {
         expect(snackbarMocks.showSuccess).toHaveBeenCalledWith("Visionnage partagé arrêté");
     });
 
+    it("does not invalidate the cached series list when declining", async () => {
+        seasonServiceMocks.respondToWatchedWith.mockResolvedValue(jsonResponse(200, null));
+
+        await useSeason().respondToWatchedWith(1, false);
+
+        expect(userSeriesStoreMocks.reset).not.toHaveBeenCalled();
+    });
+
     it("throws on failure without showing a success toast", async () => {
         seasonServiceMocks.respondToWatchedWith.mockResolvedValue(jsonResponse(400, { message: "Requête invalide" }));
 
         await expect(useSeason().respondToWatchedWith(1, true)).rejects.toThrow("Requête invalide");
         expect(snackbarMocks.showSuccess).not.toHaveBeenCalled();
+        expect(userSeriesStoreMocks.reset).not.toHaveBeenCalled();
     });
 });
 

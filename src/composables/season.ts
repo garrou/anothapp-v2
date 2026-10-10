@@ -6,6 +6,7 @@ import { isError } from "@/utils/response";
 import { useSnackbar } from "./snackbar";
 import seasonService from "@/services/seasonService";
 import { fromDatetimeLocalInput } from "@/utils/format";
+import { useUserSeriesStore } from "@/stores/userSeries";
 
 export function useSeason() {
 
@@ -105,6 +106,9 @@ export function useSeason() {
         if (isError(resp.status)) {
             const data = await resp.json();
             throw new Error(data.message);
+        }
+        if (accepted) {
+            useUserSeriesStore().reset();
         }
         // wording works both for declining a pending invite and for leaving one already accepted
         showSuccess(accepted ? "Visionnage partagé accepté" : "Visionnage partagé arrêté");

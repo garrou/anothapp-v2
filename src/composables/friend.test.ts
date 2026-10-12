@@ -8,6 +8,8 @@ const friendServiceMocks = vi.hoisted(() => ({
     sendFriendRequest: vi.fn(),
     acceptFriendRequest: vi.fn(),
     deleteFriend: vi.fn(),
+    getAutoAcceptWatchTogether: vi.fn(),
+    setAutoAcceptWatchTogether: vi.fn(),
 }));
 const snackbarMocks = vi.hoisted(() => ({
     showSuccess: vi.fn(),
@@ -155,5 +157,58 @@ describe("useFriend.getCachedFriends", () => {
         friendServiceMocks.getFriends.mockResolvedValue(jsonResponse(400, { message: "Requête invalide" }));
 
         await expect(useFriend().getCachedFriends()).rejects.toThrow("Requête invalide");
+    });
+});
+
+describe("useFriend.getAutoAcceptWatchTogether", () => {
+    beforeEach(() => {
+        vi.resetAllMocks();
+        setActivePinia(createPinia());
+    });
+
+    it("returns the enabled flag from the response", async () => {
+        friendServiceMocks.getAutoAcceptWatchTogether.mockResolvedValue(jsonResponse(200, { enabled: true }));
+
+        const result = await useFriend().getAutoAcceptWatchTogether("friend-1");
+
+        expect(result).toBe(true);
+        expect(friendServiceMocks.getAutoAcceptWatchTogether).toHaveBeenCalledWith("friend-1");
+    });
+
+    it("throws the server's message on failure", async () => {
+        friendServiceMocks.getAutoAcceptWatchTogether.mockResolvedValue(jsonResponse(400, { message: "Requête invalide" }));
+
+        await expect(useFriend().getAutoAcceptWatchTogether("friend-1")).rejects.toThrow("Requête invalide");
+    });
+});
+
+describe("useFriend.setAutoAcceptWatchTogether", () => {
+    beforeEach(() => {
+        vi.resetAllMocks();
+        setActivePinia(createPinia());
+    });
+
+    it("shows a success toast confirming it's now enabled", async () => {
+        friendServiceMocks.setAutoAcceptWatchTogether.mockResolvedValue(jsonResponse(204, null));
+
+        await useFriend().setAutoAcceptWatchTogether(user, true);
+
+        expect(friendServiceMocks.setAutoAcceptWatchTogether).toHaveBeenCalledWith("friend-1", true);
+        expect(snackbarMocks.showSuccess).toHaveBeenCalledWith("Les invitations de garrou seront acceptées automatiquement");
+    });
+
+    it("shows a different success toast confirming it's now disabled", async () => {
+        friendServiceMocks.setAutoAcceptWatchTogether.mockResolvedValue(jsonResponse(204, null));
+
+        await useFriend().setAutoAcceptWatchTogether(user, false);
+
+        expect(snackbarMocks.showSuccess).toHaveBeenCalledWith("Les invitations de garrou ne seront plus acceptées automatiquement");
+    });
+
+    it("throws on failure without showing a success toast", async () => {
+        friendServiceMocks.setAutoAcceptWatchTogether.mockResolvedValue(jsonResponse(400, { message: "Requête invalide" }));
+
+        await expect(useFriend().setAutoAcceptWatchTogether(user, true)).rejects.toThrow("Requête invalide");
+        expect(snackbarMocks.showSuccess).not.toHaveBeenCalled();
     });
 });

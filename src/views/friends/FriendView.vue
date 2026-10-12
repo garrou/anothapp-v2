@@ -13,6 +13,16 @@
             </div>
         </div>
 
+        <v-list class="px-2 px-sm-4">
+            <v-list-item :prepend-icon="AUTO_ACCEPT_ICON" title="Accepter ses invitations automatiquement"
+                :subtitle="`Les invitations de ${friend.username} à regarder une saison ensemble seront acceptées sans action de votre part`">
+                <template #append>
+                    <v-switch :model-value="autoAccept" color="primary" hide-details
+                        @update:model-value="toggleAutoAccept" />
+                </template>
+            </v-list-item>
+        </v-list>
+
         <template v-if="theirsPromise">
             <v-container fluid class="px-0 px-sm-4 py-0">
                 <friend-compare :friend-username="friend.username" :theirs="theirsPromise" />
@@ -28,7 +38,8 @@ import Dashboard from "@/views/stats/Dashboard.vue";
 import FriendCompare from "@/components/friends/FriendCompare.vue";
 import { useFriend } from "@/composables/friend";
 import { useStatistic } from "@/composables/statistic";
-import { BACK_ICON } from "@/constants/icons";
+import { useSnackbar } from "@/composables/snackbar";
+import { AUTO_ACCEPT_ICON, BACK_ICON } from "@/constants/icons";
 import type { GlobalStat } from "@/models/stat";
 import type { User } from "@/models/user";
 import { goBack as navigateBack } from "@/utils/navigation";
@@ -41,11 +52,13 @@ const props = defineProps({
 });
 
 const router = useRouter();
-const { getCachedFriends } = useFriend();
+const { getCachedFriends, getAutoAcceptWatchTogether, setAutoAcceptWatchTogether } = useFriend();
 const { getStats } = useStatistic();
+const { showError } = useSnackbar();
 
 const friend = ref<User>();
 const theirsPromise = ref<Promise<GlobalStat>>();
+const autoAccept = ref(false);
 
 const goBack = () => navigateBack(router, "/friends");
 
@@ -57,6 +70,33 @@ const load = async (): Promise<void> => {
         return;
     }
     theirsPromise.value = getStats(friend.value.id);
+
+    try {
+        autoAccept.value = await getAutoAcceptWatchTogether(friend.value.id);
+    } catch (e) {
+        showError((e as Error).message);
+    }
+}
+
+// Guards against an older, slower request resolving after a newer one and rolling back (or
+// leaving stuck) a toggle the user has already changed again in the meantime - same pattern as
+// Settings.vue's notification toggles. The error itself is always surfaced, superseded or not.
+let autoAcceptRequestId = 0;
+
+const toggleAutoAccept = async (value: boolean | null): Promise<void> => {
+    if (!friend.value) return;
+    const requestId = ++autoAcceptRequestId;
+    const previous = autoAccept.value;
+    autoAccept.value = !!value;
+
+    try {
+        await setAutoAcceptWatchTogether(friend.value, !!value);
+    } catch (e) {
+        if (requestId === autoAcceptRequestId) {
+            autoAccept.value = previous;
+        }
+        showError((e as Error).message);
+    }
 }
 
 watch(() => props.id, load);

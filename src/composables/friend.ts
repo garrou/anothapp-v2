@@ -77,5 +77,30 @@ export function useFriend() {
         return friendsStore.friends;
     }
 
-    return { acceptFriendRequest, deleteFriend, getCachedFriends, getFriends, sendFriendRequest }
+    const getAutoAcceptWatchTogether = async (userId: string): Promise<boolean> => {
+        const resp = await friendService.getAutoAcceptWatchTogether(userId);
+        const data = await resp.json();
+
+        if (isError(resp.status)) {
+            throw new Error(data.message);
+        }
+        return data.enabled;
+    }
+
+    const setAutoAcceptWatchTogether = async (user: User, enabled: boolean): Promise<void> => {
+        const resp = await friendService.setAutoAcceptWatchTogether(user.id, enabled);
+
+        if (isError(resp.status)) {
+            const data = await resp.json();
+            throw new Error(data.message);
+        }
+        showSuccess(enabled
+            ? `Les invitations de ${user.username} seront acceptées automatiquement`
+            : `Les invitations de ${user.username} ne seront plus acceptées automatiquement`);
+    }
+
+    return {
+        acceptFriendRequest, deleteFriend, getAutoAcceptWatchTogether, getCachedFriends, getFriends,
+        sendFriendRequest, setAutoAcceptWatchTogether
+    }
 }

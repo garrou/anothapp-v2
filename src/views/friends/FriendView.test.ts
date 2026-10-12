@@ -9,9 +9,15 @@ import { formatMonthYear } from "@/utils/date";
 
 const friendComposableMocks = vi.hoisted(() => ({
     getCachedFriends: vi.fn(),
+    getAutoAcceptWatchTogether: vi.fn(),
+    setAutoAcceptWatchTogether: vi.fn(),
 }));
 const statisticComposableMocks = vi.hoisted(() => ({
     getStats: vi.fn(),
+}));
+const snackbarMocks = vi.hoisted(() => ({
+    showError: vi.fn(),
+    showSuccess: vi.fn(),
 }));
 const routerMocks = vi.hoisted(() => ({
     push: vi.fn(),
@@ -20,12 +26,14 @@ const routerMocks = vi.hoisted(() => ({
 
 vi.mock("@/composables/friend", () => ({ useFriend: () => friendComposableMocks }));
 vi.mock("@/composables/statistic", () => ({ useStatistic: () => statisticComposableMocks }));
+vi.mock("@/composables/snackbar", () => ({ useSnackbar: () => snackbarMocks }));
 vi.mock("vue-router", () => ({ useRouter: () => routerMocks }));
 
 const friend = (id: string, username = "friend" + id): User => ({ id, username, current: false } as User);
 
-const mountView = async (id: string, friends: User[]) => {
+const mountView = async (id: string, friends: User[], autoAccept = false) => {
     friendComposableMocks.getCachedFriends.mockResolvedValue(friends);
+    friendComposableMocks.getAutoAcceptWatchTogether.mockResolvedValue(autoAccept);
     statisticComposableMocks.getStats.mockResolvedValue({ totalTime: 0 } as GlobalStat);
     const wrapper = mount(FriendView, {
         global: { plugins: [vuetify], stubs: { Dashboard: true, FriendCompare: true } },
@@ -88,5 +96,37 @@ describe("FriendView", () => {
         await wrapper.find(".back-btn").trigger("click");
 
         expect(routerMocks.replace).toHaveBeenCalledWith("/friends");
+    });
+});
+
+describe("FriendView auto-accept toggle", () => {
+    it("loads and shows the current auto-accept setting", async () => {
+        const wrapper = await mountView("f1", [friend("f1")], true);
+
+        expect(friendComposableMocks.getAutoAcceptWatchTogether).toHaveBeenCalledWith("f1");
+        expect(wrapper.findComponent({ name: "VSwitch" }).props("modelValue")).toBe(true);
+    });
+
+    it("toggles it on and updates optimistically", async () => {
+        friendComposableMocks.setAutoAcceptWatchTogether.mockResolvedValue(undefined);
+        const theFriend = friend("f1", "Dexter");
+        const wrapper = await mountView("f1", [theFriend]);
+
+        await wrapper.findComponent({ name: "VSwitch" }).vm.$emit("update:modelValue", true);
+        await flushPromises();
+
+        expect(friendComposableMocks.setAutoAcceptWatchTogether).toHaveBeenCalledWith(theFriend, true);
+        expect(wrapper.findComponent({ name: "VSwitch" }).props("modelValue")).toBe(true);
+    });
+
+    it("rolls back and shows an error when the update fails", async () => {
+        friendComposableMocks.setAutoAcceptWatchTogether.mockRejectedValue(new Error("Vous n'êtes pas en relation avec cette personne"));
+        const wrapper = await mountView("f1", [friend("f1")]);
+
+        await wrapper.findComponent({ name: "VSwitch" }).vm.$emit("update:modelValue", true);
+        await flushPromises();
+
+        expect(wrapper.findComponent({ name: "VSwitch" }).props("modelValue")).toBe(false);
+        expect(snackbarMocks.showError).toHaveBeenCalledWith("Vous n'êtes pas en relation avec cette personne");
     });
 });

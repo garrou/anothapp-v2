@@ -20,10 +20,18 @@ const deleteFriend = (userId: string): Promise<Response> =>
 const getFriendProfile = (userId: string): Promise<Response> =>
     httpClient.get(`${PREFIX}/${userId}`);
 
+const getAutoAcceptWatchTogether = (userId: string): Promise<Response> =>
+    httpClient.get(`${PREFIX}/${userId}/auto-accept-watch-together`);
+
+const setAutoAcceptWatchTogether = (userId: string, enabled: boolean): Promise<Response> =>
+    httpClient.patch(`${PREFIX}/${userId}/auto-accept-watch-together`, { enabled });
+
 export default {
     acceptFriendRequest,
     deleteFriend,
+    getAutoAcceptWatchTogether,
     getFriendProfile,
     getFriends,
-    sendFriendRequest
+    sendFriendRequest,
+    setAutoAcceptWatchTogether
 }

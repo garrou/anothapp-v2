@@ -87,3 +87,5 @@ export const ACCOUNT_MULTIPLE_ICON = "mdi-account-multiple";
 export const LOGOUT_ICON = "mdi-logout";
 
 export const AUTO_ACCEPT_ICON = "mdi-account-check-outline";
+
+export const GENRE_MATCH_ICON = "mdi-tag-heart-outline";

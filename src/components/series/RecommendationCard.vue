@@ -4,7 +4,7 @@
             <button-add-serie :serie-id="recommendation.id" quick />
         </template>
 
-        <div class="friend-avatars px-4 pt-3">
+        <div v-if="recommendation.nbFriends > 0" class="friend-avatars px-4 pt-3">
             <v-avatar v-for="friend in visibleFriends" :key="friend.id" size="28" class="friend-avatar"
                 :color="friend.picture ? undefined : 'primary'" @click.stop="goToFriend(friend)">
                 <v-img v-if="friend.picture" :src="friend.picture" alt="" />
@@ -14,13 +14,23 @@
                 <span class="text-caption font-weight-bold">+{{ extraFriendsCount }}</span>
             </v-avatar>
         </div>
+        <div v-else class="friend-avatars px-4 pt-3">
+            <v-avatar size="28" color="surface-variant">
+                <v-icon :icon="GENRE_MATCH_ICON" size="16" />
+            </v-avatar>
+        </div>
 
         <v-card-subtitle class="pt-2 pb-1 font-weight-medium" :title="recommendation.title">
             <router-link class="recommendation-card-title" :text="recommendation.title" :to="link" />
         </v-card-subtitle>
 
         <v-card-text class="pt-0 pb-4 text-caption text-medium-emphasis">
-            Aimé par {{ buildPlural("ami", recommendation.nbFriends) }} · {{ Math.round(recommendation.avgNote) }}/5
+            <template v-if="recommendation.nbFriends > 0">
+                Aimé par {{ buildPlural("ami", recommendation.nbFriends) }} · {{ Math.round(recommendation.avgNote) }}/5
+            </template>
+            <template v-else>
+                Basé sur vos genres préférés
+            </template>
         </v-card-text>
     </poster-card>
 </template>
@@ -29,6 +39,7 @@
 import PosterCard from "@/components/PosterCard.vue";
 import ButtonAddSerie from "@/components/buttons/ButtonAddSerie.vue";
 import type { Recommendation, RecommendationFriend } from "@/models/serie";
+import { GENRE_MATCH_ICON } from "@/constants/icons";
 import { buildPlural } from "@/utils/format";
 import { computed, type PropType } from "vue";
 import { useRouter } from "vue-router";

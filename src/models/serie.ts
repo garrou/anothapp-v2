@@ -86,6 +86,8 @@ export interface Recommendation extends BaseSerie {
 
     avgNote: number;
 
+    genreScore: number;
+
     friends: RecommendationFriend[];
 }
 

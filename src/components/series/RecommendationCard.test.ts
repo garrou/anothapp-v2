@@ -65,4 +65,12 @@ describe("RecommendationCard", () => {
         expect(wrapper.text()).toContain("Aimé par 1 ami");
         expect(wrapper.text()).toContain("4/5");
     });
+
+    it("shows a genre-match badge instead of friend avatars when no friend recommended it", () => {
+        const wrapper = mountCard({ id: 1, title: "X", friends: [], nbFriends: 0, avgNote: 0, genreScore: 4.2 });
+
+        expect(wrapper.findAll(".friend-avatar")).toHaveLength(0);
+        expect(wrapper.text()).toContain("Basé sur vos genres préférés");
+        expect(wrapper.text()).not.toContain("Aimé par");
+    });
 });

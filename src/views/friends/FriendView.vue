@@ -70,18 +70,31 @@ const load = async (): Promise<void> => {
         return;
     }
     theirsPromise.value = getStats(friend.value.id);
-    autoAccept.value = await getAutoAcceptWatchTogether(friend.value.id);
+
+    try {
+        autoAccept.value = await getAutoAcceptWatchTogether(friend.value.id);
+    } catch (e) {
+        showError((e as Error).message);
+    }
 }
+
+// Guards against an older, slower request resolving after a newer one and rolling back (or
+// leaving stuck) a toggle the user has already changed again in the meantime - same pattern as
+// Settings.vue's notification toggles. The error itself is always surfaced, superseded or not.
+let autoAcceptRequestId = 0;
 
 const toggleAutoAccept = async (value: boolean | null): Promise<void> => {
     if (!friend.value) return;
+    const requestId = ++autoAcceptRequestId;
     const previous = autoAccept.value;
     autoAccept.value = !!value;
 
     try {
         await setAutoAcceptWatchTogether(friend.value, !!value);
     } catch (e) {
-        autoAccept.value = previous;
+        if (requestId === autoAcceptRequestId) {
+            autoAccept.value = previous;
+        }
         showError((e as Error).message);
     }
 }

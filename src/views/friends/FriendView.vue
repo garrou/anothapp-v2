@@ -13,15 +13,22 @@
             </div>
         </div>
 
-        <v-list class="px-0 px-sm-4 mb-2">
-            <v-list-item :prepend-icon="AUTO_ACCEPT_ICON" title="Accepter ses invitations automatiquement"
-                :subtitle="`Les invitations de ${friend.username} à regarder une saison ensemble seront acceptées sans action de votre part`">
-                <template #append>
-                    <v-switch :model-value="autoAccept" color="primary" hide-details
-                        @update:model-value="toggleAutoAccept" />
-                </template>
-            </v-list-item>
-        </v-list>
+        <v-card class="mb-4 mx-0 mx-sm-4" rounded="lg" flat>
+            <v-row class="pa-4" no-gutters>
+                <div class="flex-grow-1">
+                    <div class="text-body-1">
+                        Accepter ses invitations automatiquement
+                    </div>
+                    <div class="text-body-2 text-medium-emphasis">
+                        Les invitations de {{ friend.username }} pour regarder une saison ensemble
+                        seront acceptées automatiquement
+                    </div>
+                </div>
+
+                <v-switch :model-value="autoAccept" color="primary" hide-details class="ml-4"
+                    @update:model-value="toggleAutoAccept" />
+            </v-row>
+        </v-card>
 
         <template v-if="theirsPromise">
             <v-container fluid class="px-0 px-sm-4 py-0">

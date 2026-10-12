@@ -13,7 +13,7 @@
             </div>
         </div>
 
-        <v-list class="px-2 px-sm-4">
+        <v-list class="px-0 px-sm-4 mb-2">
             <v-list-item :prepend-icon="AUTO_ACCEPT_ICON" title="Accepter ses invitations automatiquement"
                 :subtitle="`Les invitations de ${friend.username} à regarder une saison ensemble seront acceptées sans action de votre part`">
                 <template #append>

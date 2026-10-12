@@ -80,6 +80,7 @@ const vuetify = createVuetify({
     VNavigationDrawer: { elevation: 0, border: true },
     VChip: { rounded: "lg" },
     VDialog: { transition: "fade-transition" },
+    VSwitch: { baseColor: "grey" },
   }
 });
 const app = createApp(App);

@@ -46,6 +46,16 @@
                 <p v-if="infos.serie.description" class="serie-meta-description">{{ infos.serie.description }}</p>
             </div>
 
+            <v-tooltip v-if="infos.favoriteActors.length" location="top">
+                <template #activator="{ props }">
+                    <v-chip v-bind="props" size="small" class="mb-6" :prepend-icon="FAVORITE_ACTOR_ICON"
+                        color="primary" variant="tonal">
+                        {{ favoriteActorsLabel }}
+                    </v-chip>
+                </template>
+                <span>{{ infos.favoriteActors.map((a) => a.name).join(", ") }}</span>
+            </v-tooltip>
+
             <div class="actions-row mb-6">
                 <button-watch-serie :serie="infos.serie" primary />
                 <button-favorite-serie :serie-id="id" />
@@ -131,7 +141,7 @@ import { useSearch } from "@/composables/search";
 import { useSerie } from "@/composables/serie";
 import type { Season } from "@/models/season";
 import { buildPlural, formatLanguage, fromDatetimeLocalInput, toDatetimeLocalInput, minsToStringHoursDays } from "@/utils/format";
-import { FRIENDS_ICON, NOTE_ICONS } from "@/constants/icons";
+import { FAVORITE_ACTOR_ICON, FRIENDS_ICON, NOTE_ICONS } from "@/constants/icons";
 import type { User } from "@/models/user";
 import { useFriend } from "@/composables/friend";
 import { useState } from "@/composables/state";
@@ -208,6 +218,10 @@ const languageLabel = computed(() => formatLanguage(infos.value?.serie.language)
 const hasMeta = computed(() => {
     const serie = infos.value?.serie;
     return !!(serie?.network || serie?.description || languageLabel.value || serie?.creation);
+});
+const favoriteActorsLabel = computed(() => {
+    const n = infos.value?.favoriteActors.length ?? 0;
+    return n > 1 ? `${n} acteurs favoris` : `${n} acteur favori`;
 });
 
 const goBack = () => navigateBack(router, "/series");

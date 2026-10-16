@@ -1,4 +1,5 @@
 import type { Season } from "./season";
+import type { FavoriteActor } from "./person";
 
 interface BaseSerie {
 
@@ -68,6 +69,8 @@ export interface SerieInfo {
     episodes: number;
 
     distinctEpisodes: number;
+
+    favoriteActors: FavoriteActor[];
 }
 
 export type Similar = Required<BaseSerie>;

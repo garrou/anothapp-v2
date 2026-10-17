@@ -44,8 +44,8 @@ export function useActor() {
         }
     });
 
-    const addFavoriteActor = async (id: number, name: string): Promise<void> => {
-        const resp = await actorService.addFavorite(id);
+    const addFavoriteActor = async (id: number, name: string, showId?: number): Promise<void> => {
+        const resp = await actorService.addFavorite(id, showId);
 
         if (isError(resp.status)) {
             const data = await resp.json();

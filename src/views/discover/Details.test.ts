@@ -108,6 +108,15 @@ describe("Details", () => {
         expect(friendComposableMocks.getFriends).toHaveBeenCalledWith(FriendStatus.Viewed, 1);
     });
 
+    it("passes the serie id to the actors row, so a favorite can be linked to it", async () => {
+        searchComposableMocks.getCharacters.mockResolvedValue([{ id: 1 }]);
+        const wrapper = await mountView(1);
+
+        await openTab(wrapper, 2);
+
+        expect(wrapper.findComponent({ name: "ActorsRow" }).props("serieId")).toBe(1);
+    });
+
     it("resets every tab's cached data and re-fetches when the id prop changes", async () => {
         searchComposableMocks.getCharacters.mockResolvedValue([{ id: 1 }]);
         const wrapper = await mountView(1);

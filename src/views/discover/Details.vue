@@ -19,7 +19,7 @@
                 </v-window-item>
 
                 <v-window-item :value="2" @group:selected="getChars">
-                    <actors-row :characters="characters" :loading="loading" />
+                    <actors-row :characters="characters" :loading="loading" :serie-id="serie.id" />
                 </v-window-item>
 
                 <v-window-item :value="3" @group:selected="getSimilars">

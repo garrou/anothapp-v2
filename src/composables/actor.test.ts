@@ -106,6 +106,15 @@ describe("useActor.addFavoriteActor", () => {
 
         expect(useActorStore().isFavorite(1)).toBe(true);
         expect(snackbarMocks.showSuccess).toHaveBeenCalledWith('"Bryan Cranston" ajouté aux acteurs favoris');
+        expect(actorServiceMocks.addFavorite).toHaveBeenCalledWith(1, undefined);
+    });
+
+    it("passes the show id through when given", async () => {
+        actorServiceMocks.addFavorite.mockResolvedValue(jsonResponse(200, null));
+
+        await useActor().addFavoriteActor(1, "Bryan Cranston", 42);
+
+        expect(actorServiceMocks.addFavorite).toHaveBeenCalledWith(1, 42);
     });
 
     it("throws on failure without touching the store", async () => {

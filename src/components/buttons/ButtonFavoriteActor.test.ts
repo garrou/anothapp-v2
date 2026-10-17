@@ -58,8 +58,17 @@ describe("ButtonFavoriteActor", () => {
 
         await wrapper.find("button").trigger("click");
 
-        expect(actorComposableMocks.addFavoriteActor).toHaveBeenCalledWith(1, "Bryan Cranston");
+        expect(actorComposableMocks.addFavoriteActor).toHaveBeenCalledWith(1, "Bryan Cranston", undefined);
         expect(wrapper.emitted("change")).toEqual([[true]]);
+    });
+
+    it("passes the show id through when given", async () => {
+        actorComposableMocks.addFavoriteActor.mockResolvedValue(undefined);
+        const wrapper = mountButton({ showId: 42 });
+
+        await wrapper.find("button").trigger("click");
+
+        expect(actorComposableMocks.addFavoriteActor).toHaveBeenCalledWith(1, "Bryan Cranston", 42);
     });
 
     it("removes the actor and emits change(false) when already a favorite", async () => {

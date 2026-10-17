@@ -3,7 +3,8 @@
         <template #default="{ item: character }">
             <poster-card :image="character.picture" :to="`/actor/${character.id}`">
                 <template #quick-actions>
-                    <button-favorite-actor :actor-id="character.id" :actor-name="character.actor" quick />
+                    <button-favorite-actor :actor-id="character.id" :actor-name="character.actor" :show-id="serieId"
+                        quick />
                 </template>
 
                 <v-card-title>
@@ -28,6 +29,7 @@ import type { PropType } from 'vue';
 defineProps({
     characters: { type: Array as PropType<Character[]>, required: true },
     loading: { type: Boolean, required: true },
+    serieId: { type: Number, required: false },
 });
 </script>
 

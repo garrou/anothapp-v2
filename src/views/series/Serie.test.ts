@@ -71,6 +71,7 @@ const serieInfo = (overrides: Partial<SerieInfo["serie"]> = {}, infoOverrides: P
     time: 120,
     episodes: 10,
     distinctEpisodes: 0,
+    favoriteActors: [],
     ...infoOverrides,
 } as SerieInfo);
 
@@ -160,6 +161,17 @@ describe("Serie", () => {
 
         const withMeta = await mountView(1, serieInfo({ network: "AMC", country: "USA" }));
         expect(withMeta.find(".serie-meta").exists()).toBe(true);
+    });
+
+    it("shows the favorite actors chip only when there's at least one", async () => {
+        const none = await mountView(1, serieInfo({}, { favoriteActors: [] }));
+        expect(none.text()).not.toContain("acteur favori");
+
+        const one = await mountView(1, serieInfo({}, { favoriteActors: [{ id: 1, name: "Rami Malek" }] }));
+        expect(one.text()).toContain("1 acteur favori");
+
+        const many = await mountView(1, serieInfo({}, { favoriteActors: [{ id: 1, name: "Rami Malek" }, { id: 2, name: "Bryan Cranston" }] }));
+        expect(many.text()).toContain("2 acteurs favoris");
     });
 
     it("loads seasons once, the first time the 'Ajouter' tab is opened", async () => {

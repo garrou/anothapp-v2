@@ -8,9 +8,9 @@ import type { Character } from "@/models/person";
 const character = (id: number, actor = "Bryan Cranston"): Character =>
     ({ id, actor, name: "Walter White", picture: "x.jpg" } as Character);
 
-const mountRow = (characters: Character[], loading = false) => mount(ActorsRow, {
+const mountRow = (characters: Character[], loading = false, serieId?: number) => mount(ActorsRow, {
     global: { plugins: [vuetify], stubs: { ButtonFavoriteActor: true } },
-    props: { characters, loading },
+    props: { characters, loading, serieId },
 });
 
 describe("ActorsRow", () => {
@@ -29,5 +29,11 @@ describe("ActorsRow", () => {
         expect(cards).toHaveLength(2);
         expect(cards.map((c) => c.props("to"))).toEqual(["/actor/1", "/actor/2"]);
         expect(wrapper.text()).toContain("Walter White");
+    });
+
+    it("forwards the serie id to the favorite button", () => {
+        const wrapper = mountRow([character(1)], false, 42);
+
+        expect(wrapper.findComponent({ name: "ButtonFavoriteActor" }).props("showId")).toBe(42);
     });
 });

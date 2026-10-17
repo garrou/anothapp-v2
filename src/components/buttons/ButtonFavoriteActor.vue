@@ -19,6 +19,7 @@ import { computed, onBeforeMount, ref } from 'vue';
 const props = defineProps({
     actorId: { type: Number, required: true },
     actorName: { type: String, required: true },
+    showId: { type: Number, required: false },
     quick: { type: Boolean, default: false }
 });
 
@@ -45,7 +46,7 @@ const changeFavorite = async (): Promise<void> => {
             await removeFavoriteActor(props.actorId, props.actorName);
             emit("change", false);
         } else {
-            await addFavoriteActor(props.actorId, props.actorName);
+            await addFavoriteActor(props.actorId, props.actorName, props.showId);
             emit("change", true);
         }
     } catch (e) {
